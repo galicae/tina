@@ -10,13 +10,7 @@ package bioinfo.proteins;
  * @date November 23, 2012
  */
 public class Atom {
-	
-	/**
-	 * U is for Unknown
-	 */
-	public enum AtomType {
-		CA, C, N, O, CB, CG, CD, NE, CZ, NH1, NH2, U
-	}
+
 	
 	private final AtomType type;
 	private final double[] position;

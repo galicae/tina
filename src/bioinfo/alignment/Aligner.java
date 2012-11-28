@@ -25,6 +25,7 @@ public interface Aligner {
 	 * @param arg
 	 * @return true if score is correct, false else.
 	 */
+	
 	public abstract boolean check(Alignment arg);
 	
 }

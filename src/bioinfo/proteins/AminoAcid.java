@@ -5,8 +5,6 @@
  ******************************************************************************/
 package bioinfo.proteins;
 
-import bioinfo.proteins.Atom.AtomType;
-
 /**
  * @author gobi_4
  * @date November 24, 2012
