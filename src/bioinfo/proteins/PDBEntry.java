@@ -7,11 +7,13 @@ package bioinfo.proteins;
 
 import java.util.List;
 
+import bioinfo.alignment.Alignable;
+
 /**
  * @author gobi_4
  * @date November 24, 2012
  */
-public class PDBEntry {
+public class PDBEntry implements Alignable{
 	
 	private final String id;
 	private AminoAcid[] aminoAcids;
@@ -73,6 +75,11 @@ public class PDBEntry {
 	
 	public AminoAcid getAminoAcid(int n) {
 		return aminoAcids[n];
+	}
+
+	@Override
+	public int length() {
+		return aminoAcids.length;
 	}
 	
 }

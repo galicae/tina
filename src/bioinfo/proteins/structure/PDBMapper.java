@@ -5,7 +5,7 @@
  ******************************************************************************/
 package bioinfo.proteins.structure;
 
-import bioinfo.alignment.Alignment;
+import bioinfo.alignment.SequenceAlignment;
 import bioinfo.proteins.PDBEntry;
 
 /**
@@ -18,6 +18,6 @@ public abstract class PDBMapper {
 		
 	}
 	
-	public abstract PDBEntry map (Alignment arg1, PDBEntry arg2);
+	public abstract PDBEntry map (SequenceAlignment arg1, PDBEntry arg2);
 	
 }

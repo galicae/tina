@@ -5,20 +5,12 @@
  ******************************************************************************/
 package bioinfo.alignment;
 
-import bioinfo.Sequence;
-
 /**
  * @author gobi_4
  * @date November 25, 2012
  */
-public abstract class Aligner {
+public interface Aligner {
 	
-	/**
-	 * This should construct a standard Aligner
-	 */
-	public Aligner() {
-		
-	}
 	
 	/**
 	 * This method should align the two given sequences.
@@ -26,7 +18,7 @@ public abstract class Aligner {
 	 * @param sequence2
 	 * @return the Alignment of the two given sequences
 	 */
-	public abstract Alignment align(Sequence sequence1, Sequence sequence2);
+	public Alignment align(Alignable sequence1, Alignable sequence2);
 	
 	/**
 	 * This method should check if the score in the given Alignment is correct.
