@@ -53,6 +53,7 @@ public class PDBEntry implements Alignable{
 	 * 
 	 * @return the ID of the PDBEntry
 	 */
+	@Override
 	public String getID() {
 		return id;
 	}
@@ -80,6 +81,11 @@ public class PDBEntry implements Alignable{
 	@Override
 	public int length() {
 		return aminoAcids.length;
+	}
+
+	@Override
+	public Object getComp(int i) {
+		return aminoAcids[i];
 	}
 	
 }

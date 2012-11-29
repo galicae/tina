@@ -11,7 +11,7 @@ package bioinfo.alignment;
  */
 public interface Aligner {
 	
-	
+		
 	/**
 	 * This method should align the two given sequences.
 	 * @param sequence1

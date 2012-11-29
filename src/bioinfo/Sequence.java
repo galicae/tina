@@ -5,11 +5,13 @@
  ******************************************************************************/
 package bioinfo;
 
+import bioinfo.alignment.Alignable;
+
 /**
  * @author gobi_4
  * @date November 25, 2012
  */
-public class Sequence {
+public class Sequence implements Alignable{
 
 	private final String id;
 	private final char[] sequence;
@@ -27,6 +29,7 @@ public class Sequence {
 		this.length = sequence.length();
 	}
 	
+	@Override
 	public String getID() {
 		return id;
 	}
@@ -39,8 +42,14 @@ public class Sequence {
 		return sequence.toString();
 	}
 	
+	@Override
 	public int length() {
 		return length;
+	}
+
+	@Override
+	public Object getComp(int i) {
+		return sequence[i];
 	}
 	
 }
