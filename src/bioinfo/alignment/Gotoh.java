@@ -99,6 +99,7 @@ public abstract class Gotoh implements Aligner {
 			out.append("\n");
 		}
 		out.append("\n");
+		out.flush();
 	}
 	
 	/**
@@ -150,6 +151,7 @@ public abstract class Gotoh implements Aligner {
 			out.append("</tr>\n");
 		}
 		out.append("</table>\n");
+		out.flush();
 
 	}
 	

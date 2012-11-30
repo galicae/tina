@@ -1,21 +1,24 @@
 package bioinfo.alignment;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
 import bioinfo.Sequence;
 
-public class LocalSequenceGotoh extends Gotoh{
+public class FreeshiftSequenceGotoh extends Gotoh{
 
 	private static final int INIT_VAL = Integer.MIN_VALUE/2;
 	private int[][] scoringmatrix;
-	Sequence sequence1;
-	Sequence sequence2;
-	
+
 	/**
 	 * 
 	 * @param gapOpen
 	 * @param gapExtend
 	 * @param scoringmatrix 26x26 matrix containing all scoring values plus some empty lines due to faster access
 	 */
-	public LocalSequenceGotoh(int gapOpen, int gapExtend, int[][] scoringmatrix) {
+	public FreeshiftSequenceGotoh(int gapOpen, int gapExtend, int[][] scoringmatrix) {
 		super(gapOpen, gapExtend);
 		this.scoringmatrix = scoringmatrix;
 	}
@@ -87,9 +90,9 @@ public class LocalSequenceGotoh extends Gotoh{
 			for(int j = 1; j <= sequence2.length(); j++){
 				D[i][j] = Math.max(M[i][j-1]+gapOpen, D[i][j-1]+gapExtend);
 				I[i][j] = Math.max(M[i-1][j]+gapOpen,I[i-1][j]+gapExtend);
-				M[i][j] = Math.max(M[i-1][j-1]+score(sequence1.getComp(i-1),sequence2.getComp(j-1)),
+				M[i][j] = Math.max(M[i-1][j-1]+score((Character)sequence1.getComp(i-1),(Character)sequence2.getComp(j-1)),
 							Math.max(I[i][j],
-							Math.max(D[i][j],0)));
+							D[i][j]));
 				
 			}
 		}		
@@ -106,12 +109,17 @@ public class LocalSequenceGotoh extends Gotoh{
 		int y = 0;
 		
 		for(int i = 0; i != M.length; i++){
-			for(int j = 0; j != M[i].length; j++){
-				if(max <= M[i][j]){
-					max = M[i][j];
-					x = i-1;
-					y = j-1;
-				}
+			if(M[i][M[i].length-1] >= max){
+				max = M[i][M[i].length-1];
+				x = i-1;
+				y = M[i].length-2;
+			}
+		}
+		for(int i = (M[M.length-1].length-1); i >= 0; i--){
+			if(M[(M.length-1)][i] > max){
+				max = M[(M.length-1)][i];
+				y = i-1;
+				x = M.length-2;
 			}
 		}
 		
@@ -131,11 +139,11 @@ public class LocalSequenceGotoh extends Gotoh{
 			row1 += "-";
 		}
 		
-		while(x >= 0 && y >= 0 && M[x+1][y+1] != 0){
+		while(x >= 0 && y >= 0){
 			
 			actScore = M[x+1][y+1];
-			actx = sequence1.getComp(x);
-			acty = sequence2.getComp(y);
+			actx = (Character)sequence1.getComp(x);
+			acty = (Character)sequence2.getComp(y);
 			
 			if(actScore == M[x][y]+score(actx, acty)){
 				row0 += actx;
@@ -147,7 +155,7 @@ public class LocalSequenceGotoh extends Gotoh{
 					row0 += "-";
 					row1 += acty;
 					y--;
-					acty = sequence2.getComp(y);
+					acty = (Character)sequence2.getComp(y);
 				}
 				row0 += "-";
 				row1 += acty;
@@ -157,7 +165,7 @@ public class LocalSequenceGotoh extends Gotoh{
 					row0 += actx;
 					row1 += "-";
 					x--;
-					actx = sequence1.getComp(x);
+					actx = (Character)sequence1.getComp(x);
 				}
 				row0 += actx;
 				row1 += "-";
@@ -173,7 +181,7 @@ public class LocalSequenceGotoh extends Gotoh{
 			row1 += "-";
 		}
 		
-		return new SequenceAlignment(sequence1, sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), score);
+		return new SequenceAlignment((Sequence)sequence1, (Sequence)sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), score);
 	}
 
 	/**
@@ -191,4 +199,5 @@ public class LocalSequenceGotoh extends Gotoh{
 		}
 		return out;
 	}
+
 }
