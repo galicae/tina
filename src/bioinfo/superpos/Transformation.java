@@ -17,6 +17,8 @@ public class Transformation {
 	private DoubleMatrix1D translation;
 	private DoubleMatrix2D rotation;
 	private double rmsd;
+	private double gdt;
+	private double tmscore;
 	
 	/**
 	 * 
