@@ -1,50 +1,53 @@
 package bioinfo.alignment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import bioinfo.Sequence;
+import bioinfo.proteins.AminoAcid;
+import bioinfo.proteins.AtomType;
+import bioinfo.proteins.PDBEntry;
 
 /**
  * 
  * @author andreseitz
  * Freeshift Alignment of two Sqeuences
  */
-public class FreeshiftSequenceGotoh extends Gotoh{
+public class EuklidPDBEntryGotoh extends Gotoh{
 
 	private static final int INIT_VAL = Integer.MIN_VALUE/2;
-	private int[][] scoringmatrix;
 
 	/**
 	 * 
 	 * @param gapOpen
 	 * @param gapExtend
-	 * @param scoringmatrix 26x26 matrix containing all scoring values plus some empty lines due to faster access
 	 */
-	public FreeshiftSequenceGotoh(int gapOpen, int gapExtend, int[][] scoringmatrix) {
-		super(gapOpen, gapExtend);
-		this.scoringmatrix = scoringmatrix;
+	public EuklidPDBEntryGotoh(int gapOpen, int gapExtend) {
+		super(gapOpen*1000, gapExtend*1000);
 	}
 	
 	@Override
-	public SequenceAlignment align(Alignable sequence1, Alignable sequence2) {
+	public StructureAlignment align(Alignable sequence1, Alignable sequence2) {
 		this.M = new int[sequence1.length()+1][sequence2.length()+1];
 		this.I = new int[sequence1.length()+1][sequence2.length()+1];
 		this.D = new int[sequence1.length()+1][sequence2.length()+1];
-		this.sequence1 = (Sequence)sequence1;
-		this.sequence2 = (Sequence)sequence2;
+		this.sequence1 = (PDBEntry)sequence1;
+		this.sequence2 = (PDBEntry)sequence2;
 		prepareMatrices();
 		calculateMatrices();
-		return (SequenceAlignment)traceback();
+		return (StructureAlignment)traceback();
 	}
 
 	@Override
 	public boolean check(Alignment alignment) {
-		SequenceAlignment ali = (SequenceAlignment)alignment;
+		StructureAlignment ali = (StructureAlignment)alignment;
 		int score = 0;
-		char[] row0 = ali.getRow(0);
-		char[] row1 = ali.getRow(1);
+		AminoAcid[] row0 = ali.getRow(0);
+		AminoAcid[] row1 = ali.getRow(1);
 		for(int i = 0; i < row0.length; i++){
-			if(row0[i] == '-' || row1[i] == '-'){
+			if(row0[i] == null || row1[i] == null){
 				score += gapOpen;
-				while(i < row0.length && (row0[i] == '-' || row1[i] == '-')){
+				while(i < row0.length && (row0[i] == null || row1[i] == null)){
 					score += this.gapExtend;
 					i++;
 				}
@@ -90,7 +93,7 @@ public class FreeshiftSequenceGotoh extends Gotoh{
 			for(int j = 1; j <= sequence2.length(); j++){
 				D[i][j] = Math.max(M[i][j-1]+gapOpen, D[i][j-1]+gapExtend);
 				I[i][j] = Math.max(M[i-1][j]+gapOpen,I[i-1][j]+gapExtend);
-				M[i][j] = Math.max(M[i-1][j-1]+score((Character)sequence1.getComp(i-1),(Character)sequence2.getComp(j-1)),
+				M[i][j] = Math.max(M[i-1][j-1]+score((AminoAcid)sequence1.getComp(i-1),(AminoAcid)sequence2.getComp(j-1)),
 							Math.max(I[i][j],
 							D[i][j]));
 				
@@ -124,76 +127,78 @@ public class FreeshiftSequenceGotoh extends Gotoh{
 		}
 		
 		int score = max;
-		String row0 = "";
-		String row1 = "";
+		List<AminoAcid> row0 = new ArrayList<AminoAcid>();
+		List<AminoAcid> row1 = new ArrayList<AminoAcid>();
 		int actScore = 0;
-		char actx;
-		char acty;
+		AminoAcid actx;
+		AminoAcid acty;
 		
 		for(int i = M[M.length-1].length-1; i > y+1; i--){
-			row0 += "-";
-			row1 += sequence2.getComp(i-1);
+			row0.add(null);
+			row1.add((AminoAcid)sequence2.getComp(i-1));
 		}
 		for(int i = M.length-1; i > x+1; i--){
-			row0 += sequence1.getComp(i-1);
-			row1 += "-";
+			row0.add((AminoAcid)sequence1.getComp(i-1));
+			row1.add(null);
 		}
 		
 		while(x >= 0 && y >= 0){
 			
 			actScore = M[x+1][y+1];
-			actx = (Character)sequence1.getComp(x);
-			acty = (Character)sequence2.getComp(y);
+			actx = (AminoAcid)sequence1.getComp(x);
+			acty = (AminoAcid)sequence2.getComp(y);
 			
 			if(actScore == M[x][y]+score(actx, acty)){
-				row0 += actx;
-				row1 += acty;
+				row0.add(actx);
+				row1.add(acty);
 				y--;
 				x--;
 			} else if (actScore == D[x+1][y+1]){
 				while(D[x+1][y+1] == D[x+1][y]+gapExtend && y > 0){
-					row0 += "-";
-					row1 += acty;
+					row0.add(null);
+					row1.add(acty);
 					y--;
-					acty = (Character)sequence2.getComp(y);
+					acty = (AminoAcid)sequence2.getComp(y);
 				}
-				row0 += "-";
-				row1 += acty;
+				row0.add(null);
+				row1.add(acty);
 				y--;
 			} else if (actScore == I[x+1][y+1]){
 				while(I[x+1][y+1] == I[x][y+1]+gapExtend && x > 0){
-					row0 += actx;
-					row1 += "-";
+					row0.add(actx);
+					row1.add(null);
 					x--;
-					actx = (Character)sequence1.getComp(x);
+					actx = (AminoAcid)sequence1.getComp(x);
 				}
-				row0 += actx;
-				row1 += "-";
+				row0.add(actx);
+				row1.add(null);
 				x--;
 			}	
 		}
 		for(int i = y+1; i > 0; i--){
-			row0 += "-";
-			row1 += sequence2.getComp(i-1);
+			row0.add(null);
+			row1.add((AminoAcid)sequence2.getComp(i-1));
 		}
 		for(int i = x+1; i > 0; i--){
-			row0 += sequence1.getComp(i-1);
-			row1 += "-";
+			row0.add((AminoAcid)sequence1.getComp(i-1));
+			row1.add(null);
 		}
 		
-		return new SequenceAlignment((Sequence)sequence1, (Sequence)sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), score);
+		return new StructureAlignment((PDBEntry)sequence1, (PDBEntry)sequence2, flip(row0.toArray(new AminoAcid[row0.size()])), flip(row1.toArray(new AminoAcid[row1.size()])), score);
 	}
 
 	/**
 	 * @param two components of Alignable implementing equals
 	 * @return score between two components of Alignable
 	 */
-	private int score(char x, char y) {
-		return scoringmatrix[x-65][y-65];
+	private int score(AminoAcid x, AminoAcid y) {
+		double[] p = x.getAtomByType(AtomType.CA).getPosition();
+		double[] q = y.getAtomByType(AtomType.CA).getPosition();
+		return (int)(Math.sqrt(((p[0]-q[0])*(p[0]-q[0]))+((p[1]-q[1])*(p[1]-q[1]))+((p[2]-q[2])*(p[2]-q[2])))*1000);
 	}
 	
-	private char[] flip(char[] in){
-		char[] out = new char[in.length];
+	private AminoAcid[] flip(AminoAcid[] in){
+		AminoAcid[] out = new AminoAcid[in.length];
 		for(int i = in.length-1; i >= 0; i --){
 			out[out.length-1-i] = in[i];
 		}
@@ -201,3 +206,4 @@ public class FreeshiftSequenceGotoh extends Gotoh{
 	}
 
 }
+

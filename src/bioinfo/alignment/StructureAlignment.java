@@ -1,6 +1,9 @@
 package bioinfo.alignment;
 
 import java.text.DecimalFormat;
+import java.util.List;
+
+import bioinfo.proteins.AminoAcid;
 import bioinfo.proteins.PDBEntry;
 
 /**
@@ -25,7 +28,7 @@ public class StructureAlignment implements Alignment{
 	/**
 	 * The two rows of the Alignment
 	 */
-	private final char[][] rows;
+	private final AminoAcid[][] rows;
 	/**
 	 * The score of the Alignment
 	 */
@@ -42,7 +45,7 @@ public class StructureAlignment implements Alignment{
 	 * @param rows the two rows of the alignment
 	 * @param score the score of the Alignment
 	 */
-	public StructureAlignment(PDBEntry seq1, PDBEntry seq2, char[][] rows, int score) {
+	public StructureAlignment(PDBEntry seq1, PDBEntry seq2, AminoAcid[][] rows, int score) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.rows = rows;
@@ -61,12 +64,12 @@ public class StructureAlignment implements Alignment{
 	 */
 	
 	public StructureAlignment
-		(PDBEntry seq1, PDBEntry seq2, char[] row1, char[] row2, int score)
+		(PDBEntry seq1, PDBEntry seq2, AminoAcid[] row1, AminoAcid[] row2, int score)
 	{
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.score = score;
-		char[][] temp = new char[2][];
+		AminoAcid[][] temp = new AminoAcid[2][];
 		temp[0] = row1;
 		temp[1] = row2;
 		this.rows = temp;
@@ -83,16 +86,16 @@ public class StructureAlignment implements Alignment{
 	 * @param score the score of the Alignment
 	 */
 	public StructureAlignment
-		(PDBEntry seq1, PDBEntry seq2, String row1, String row2, int score)
+		(PDBEntry seq1, PDBEntry seq2, List<AminoAcid> row1, List<AminoAcid> row2, int score)
 	{
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.score=score;
-		char[][] temp = new char[2][];
-		temp[0] = row1.toCharArray();
-		temp[1] = row2.toCharArray();
+		AminoAcid[][] temp = new AminoAcid[2][];
+		temp[0] = row1.toArray(new AminoAcid[row1.size()]);
+		temp[1] = row2.toArray(new AminoAcid[row2.size()]);
 		this.rows = temp;
-		this.length = row1.length();
+		this.length = row1.size();
 	}
 	
 	/**
@@ -116,10 +119,10 @@ public class StructureAlignment implements Alignment{
 		int col1 = 0;
 		int col2 = 0;
 		for (int i = 0; i < seq1.length(); i++) {
-			if (rows[0][i] == '-') {	// insertion
+			if (rows[0][i] == null) {	// insertion
 				result[1][col2]=-1;
 				col2++;
-			} else if (rows[1][i] == '-') {	// deletion
+			} else if (rows[1][i] == null) {	// deletion
 				result[0][col1]=-1;
 				col1++;
 			} else {	// (mis)match
@@ -147,10 +150,26 @@ public class StructureAlignment implements Alignment{
 	 *  idtwo: rowtwo"
 	 */
 	public String toStringVerbose() {
+		String amino1 = "";
+		String amino2 = "";
+		
+		for(int i = 0; i != rows[0].length; i++){
+			if(rows[0][i] == null){
+				amino1 += "-";
+			}else{
+				amino1 += rows[0][i].toString();
+			}
+			if(rows[1][i] == null){
+				amino2 += "-";
+			}else{
+				amino2 += rows[1][i].toString();
+			}
+		}
+		
 		String result =
 			">"+seq1.getID()+" "+seq2.getID()+" "+DFSHORT.format(score)+"\n"+
-				seq1.getID() + ": " + String.valueOf(rows[0]) + "\n"+
-				seq2.getID() + ": " + String.valueOf(rows[1]);
+				seq1.getID() + ": " + amino1 + "\n"+
+				seq2.getID() + ": " + amino2;
 		return result;
 	}
 	
@@ -171,7 +190,7 @@ public class StructureAlignment implements Alignment{
 		else return seq2;
 	}
 	
-	public char[] getRow(int n) {
+	public AminoAcid[] getRow(int n) {
 		return rows[n];
 	}
 }

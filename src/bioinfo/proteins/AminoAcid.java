@@ -113,4 +113,12 @@ public class AminoAcid {
 		numberOfAtoms++;
 	}
 	
+	/**
+	 * returns One-letter String representation of AminoAcid
+	 */
+	@Override
+	public String toString(){
+		return name.getOneLetterCode();
+	}
+	
 }

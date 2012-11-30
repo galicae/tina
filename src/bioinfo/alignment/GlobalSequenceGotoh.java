@@ -2,6 +2,11 @@ package bioinfo.alignment;
 
 import bioinfo.Sequence;
 
+/**
+ * 
+ * @author andreseitz
+ * Global Alignment of two sequences
+ */
 public class GlobalSequenceGotoh extends Gotoh{
 
 	private static final int INIT_VAL = Integer.MIN_VALUE/2;
