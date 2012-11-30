@@ -1,8 +1,6 @@
 package bioinfo.alignment;
 
 import java.text.DecimalFormat;
-
-import bioinfo.Sequence;
 import bioinfo.proteins.PDBEntry;
 
 /**

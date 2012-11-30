@@ -1,10 +1,5 @@
 package bioinfo.alignment;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-
 import bioinfo.Sequence;
 
 public class FreeshiftSequenceGotoh extends Gotoh{

@@ -14,6 +14,7 @@ public class Transformation {
 	
 	private DoubleMatrix1D centroidP;
 	private DoubleMatrix1D centroidQ;
+	private DoubleMatrix1D translation;
 	private DoubleMatrix2D rotation;
 	private double rmsd;
 	
