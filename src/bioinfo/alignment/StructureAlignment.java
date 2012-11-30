@@ -31,7 +31,7 @@ public class StructureAlignment implements Alignment{
 	/**
 	 * The score of the Alignment
 	 */
-	private final double score;
+	private final int score;
 	/**
 	 * The length of the Alignment
 	 */
@@ -44,7 +44,7 @@ public class StructureAlignment implements Alignment{
 	 * @param rows the two rows of the alignment
 	 * @param score the score of the Alignment
 	 */
-	public StructureAlignment(PDBEntry seq1, PDBEntry seq2, char[][] rows, double score) {
+	public StructureAlignment(PDBEntry seq1, PDBEntry seq2, char[][] rows, int score) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.rows = rows;
@@ -63,7 +63,7 @@ public class StructureAlignment implements Alignment{
 	 */
 	
 	public StructureAlignment
-		(PDBEntry seq1, PDBEntry seq2, char[] row1, char[] row2, double score)
+		(PDBEntry seq1, PDBEntry seq2, char[] row1, char[] row2, int score)
 	{
 		this.seq1 = seq1;
 		this.seq2 = seq2;
@@ -85,7 +85,7 @@ public class StructureAlignment implements Alignment{
 	 * @param score the score of the Alignment
 	 */
 	public StructureAlignment
-		(PDBEntry seq1, PDBEntry seq2, String row1, String row2, double score)
+		(PDBEntry seq1, PDBEntry seq2, String row1, String row2, int score)
 	{
 		this.seq1 = seq1;
 		this.seq2 = seq2;
@@ -164,11 +164,11 @@ public class StructureAlignment implements Alignment{
 		return length;
 	}
 	
-	public double getScore() {
+	public int getScore() {
 		return score;
 	}
 	
-	public PDBEntry getStructure(int n) {
+	public PDBEntry getComponent(int n) {
 		if (n==0) return seq1;
 		else return seq2;
 	}

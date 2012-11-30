@@ -48,7 +48,7 @@ public class Sequence implements Alignable{
 	}
 
 	@Override
-	public Object getComp(int i) {
+	public Character getComp(int i) {
 		return sequence[i];
 	}
 	
