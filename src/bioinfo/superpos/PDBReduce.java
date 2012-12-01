@@ -25,8 +25,9 @@ public class PDBReduce {
 
 		// first find out how many residues are aligned
 		int alignmentLength = 0;
+		int[][] calcMap = alignment.calcMap();
 		for (int i = 0; i < alignment.length(); i++) {
-			if (alignment.calcMap()[0][i] != -1) {
+			if (calcMap[0][i] != -1) {
 				alignmentLength++;
 			}
 		}
@@ -45,7 +46,7 @@ public class PDBReduce {
 					j++;
 				}
 				// catch amino acids with no CA atom
-				catch (NullPointerException e) {
+				catch (Exception e) {
 					continue;
 				}
 			}
