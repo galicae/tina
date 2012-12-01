@@ -11,7 +11,7 @@ import bioinfo.proteins.PDBEntry;
 /**
  * 
  * @author andreseitz
- * Freeshift Alignment of two Sqeuences
+ * Freeshift Alignment of two PDBEntries by Eukliadian Distances
  */
 public class EuklidPDBEntryGotoh extends Gotoh{
 
@@ -56,7 +56,7 @@ public class EuklidPDBEntryGotoh extends Gotoh{
 				score += score(row0[i], row1[i]);	
 			}
 		}
-		if(score == ali.getScore()){
+		if(score == ali.getScore()*1000){
 			return true;
 		}else{
 			return false;
@@ -184,7 +184,7 @@ public class EuklidPDBEntryGotoh extends Gotoh{
 			row1.add(null);
 		}
 		
-		return new StructureAlignment((PDBEntry)sequence1, (PDBEntry)sequence2, flip(row0.toArray(new AminoAcid[row0.size()])), flip(row1.toArray(new AminoAcid[row1.size()])), score);
+		return new StructureAlignment((PDBEntry)sequence1, (PDBEntry)sequence2, flip(row0.toArray(new AminoAcid[row0.size()])), flip(row1.toArray(new AminoAcid[row1.size()])), score/1000);
 	}
 
 	/**
