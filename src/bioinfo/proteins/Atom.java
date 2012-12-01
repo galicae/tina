@@ -13,7 +13,7 @@ public class Atom {
 
 	
 	private final AtomType type;
-	private final double[] position;
+	private double[] position;
 	
 	public Atom(AtomType type, double[] position) {
 		this.type = type;
@@ -42,6 +42,10 @@ public class Atom {
 	
 	public double[] getPosition() {
 		return position;
+	}
+	
+	public void setPosition(double[] array) {
+		position = array;
 	}
 	
 }

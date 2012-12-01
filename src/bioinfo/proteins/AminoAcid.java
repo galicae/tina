@@ -121,4 +121,8 @@ public class AminoAcid {
 		return name.getOneLetterCode();
 	}
 	
+	public int getAtomNumber() {
+		return atoms.length;
+	}
+	
 }
