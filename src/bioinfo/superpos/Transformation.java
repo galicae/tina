@@ -26,6 +26,7 @@ public class Transformation {
 	private double gdt;
 	private double tmscore;
 
+	
 	public Transformation(DoubleMatrix1D centroidP, DoubleMatrix1D centroidQ,
 			DoubleMatrix1D translation, DoubleMatrix2D rotation, double rmsd,
 			double gdt, double tmscore) {
@@ -47,15 +48,14 @@ public class Transformation {
 	 * @return new PDBEntry Q which is transformed old Q
 	 */
 	public PDBEntry transform(PDBEntry Q) {
-		
-		
 		calculateTranslation();
 		DoubleFactory1D factory = DoubleFactory1D.dense;
 		DoubleMatrix1D tempRow = factory.make(3);
-		
+
 		for (int i = 0; i < Q.length(); i++) {
 			for (int j = 0; j < Q.getAminoAcid(i).getAtomNumber(); j++) {
-				tempRow = factory.make(Q.getAminoAcid(i).getAtom(j).getPosition());
+				tempRow = factory.make(Q.getAminoAcid(i).getAtom(j)
+						.getPosition());
 				multiply1Dwith2D(tempRow, rotation, tempRow);
 				tempRow.assign(translation, Functions.plus);
 				Q.getAminoAcid(i).getAtom(j).setPosition(tempRow.toArray());
@@ -99,5 +99,17 @@ public class Transformation {
 			}
 		}
 		result.assign(t);
+	}
+
+	public double getRmsd() {
+		return rmsd;
+	}
+
+	public double getGdt() {
+		return gdt;
+	}
+
+	public double getTmscore() {
+		return tmscore;
 	}
 }
