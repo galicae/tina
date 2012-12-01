@@ -2,6 +2,8 @@ package bioinfo.proteins;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,66 +15,185 @@ import java.util.List;
 public class PDBFileReader {
 
 	private String folder = null;
-	private List<String> files = null;;
+	private List<String> files = null;
+	private int sequentialReadIndex = 0;
 	
 	/**
-	 * standard constructor
+	 * standard constructor creating "empty" PDBFileReader
 	 */
 	public PDBFileReader(){
 		
 	}
 	
 	/**
-	 * constructor for forlder-parsing
-	 * @param folder
+	 * checked folder will end with "/"
+	 * @param folder which ends with "/"
 	 */
 	public PDBFileReader(String folder){
 		this.folder = checkfolder(folder);
 	}
 	
+	/**
+	 * 
+	 * @param filename representing pdb file to read in format: relpath/aaaaA00.pdb
+	 * @return
+	 */
 	public PDBEntry readPDBFromFile(String filename){
-		//TODO
-		return null;
+		BufferedReader br = null;
+		try{
+			 br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		String id = filename.split("/")[filename.split("/").length-1].split("\\.")[0];
+		return parseEntry(br, id);
 	}
 	
+	/**
+	 * 
+	 * @return List of PDBEntries in folder, null if no pdbs are in folder or folder is not set
+	 */
 	public List<PDBEntry> readPdbFolder(){
-		//TODO
+		List<PDBEntry> result = new ArrayList<PDBEntry>();
+		BufferedReader br = null;
+		String id;
+		try{
+			if(folder == null){
+				return null;
+			}
+			File[] files = new File(folder).listFiles();
+			if(files.length == 0){
+				return null;
+			}
+			for(File file : files){
+				br = new BufferedReader(new InputStreamReader(new FileInputStream(folder+file)));
+				id = file.getName().split("\\.")[0];
+				result.add(parseEntry(br,id));
+			}
+			return result;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
+	/**
+	 * 
+	 * @param folder to read pdbs from, folder will be set as folder-class-variable
+	 * @return List of PDBEntries in folder, null if no pdbs are in folder or folder is not set
+	 */
 	public List<PDBEntry> readPdbFolder(String folder){
-		//TODO
+		this.folder = checkfolder(folder);
+		List<PDBEntry> result = new ArrayList<PDBEntry>();
+		BufferedReader br = null;
+		String id;
+		try{
+			if(folder == null){
+				return null;
+			}
+			File[] files = new File(folder).listFiles();
+			if(files.length == 0){
+				return null;
+			}
+			for(File file : files){
+				br = new BufferedReader(new InputStreamReader(new FileInputStream(folder+file)));
+				id = file.getName().split("\\.")[0];
+				result.add(parseEntry(br,id));
+			}
+			return result;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
+	/**
+	 * 
+	 * @param id of pdb to read from
+	 * @return PDBentry representing the pdb of given id, null if folder is not set or certain pdb does not exist
+	 */
 	public PDBEntry readFromFolderById(String id){
-		//TODO
-		return null;
+		if(folder == null){
+			return null;
+		}
+		String filename = folder+id+".pdb"; 
+		BufferedReader br = null;
+		try{
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
+		}catch(Exception e){
+			return null;
+		}
+		return parseEntry(br,id);
 	}
 	
+	/**
+	 * initialise PDBEntry list to read it out sequentially
+	 */
 	public void initSequentialFolderRead(){
-		//TODO
+		if(folder == null){
+			return;
+		}
+		File[] files = new File(folder).listFiles();
+		List<String> names = new ArrayList<String>();
+		for(File file: files){
+			names.add(file.getName());
+		}
+		this.files = names;
+		sequentialReadIndex = 0;
 	}
 	
+	/**
+	 * 
+	 * @return next PDBEntry from initialisedList
+	 */
 	public PDBEntry nextPdb(){
-		//TODO
-		return  null;
+		if(files.size() > sequentialReadIndex){
+			String file = files.get(sequentialReadIndex);
+			BufferedReader br;
+			try{
+				br = new BufferedReader(new InputStreamReader(new FileInputStream(folder+file)));
+				String id = file.split("\\.")[0];
+				sequentialReadIndex++;
+				return parseEntry(br, id);
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			return null;
+		}else{
+			return null;
+		}
+		
 	}
 	
-	
-
+	/**
+	 * 
+	 * @return folder to read from
+	 */
 	public String getFolder() {
 		return folder;
 	}
 
+	/**
+	 * 
+	 * @param folder to read from
+	 */
 	public void setFolder(String folder) {
 		this.folder = checkfolder(folder);
 	}
 
+	/**
+	 * 
+	 * @return list of files being set for read out 
+	 */
 	public List<String> getFiles() {
 		return files;
 	}
 
+	/**
+	 * 
+	 * @param files which shall be read from folder if folder != null or from anywhere in the file system if folder == null
+	 * @return true if files were set correctly or false if setFiles failed
+	 */
 	public boolean setFiles(List<String> files) {
 		if(folder == null){
 			return false;
@@ -95,6 +216,11 @@ public class PDBFileReader {
 		return true;
 	}
 	
+	/**
+	 * 
+	 * @param folder which should be checked for validity
+	 * @return
+	 */
 	private String checkfolder(String folder){
 		if(folder.endsWith("/")){
 			return folder;
@@ -103,6 +229,12 @@ public class PDBFileReader {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param br BufferedReader to read from
+	 * @param pdbId pdbId of format aaaaA00
+	 * @return PDbEntry representing the read file
+	 */
 	private PDBEntry parseEntry(BufferedReader br, String pdbId){
 		List<AminoAcid> aminoacids = new ArrayList<AminoAcid>();
 		try{
@@ -144,6 +276,7 @@ public class PDBFileReader {
 				}
 				aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(lastResName),atoms.toArray(new Atom[atoms.size()])));
 			}
+			br.close();
 		}catch(Exception e){
 			e.printStackTrace();
 		}

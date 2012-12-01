@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Locale;
 
+import bioinfo.Sequence;
+
 /**
  * 
  * @author gobi4
@@ -33,8 +35,8 @@ public abstract class Gotoh implements Aligner {
 	 * @param gap integer defining gap-costs
 	 */
 	public Gotoh(int gapOpen, int gapExtend){
-		this.gapOpen = gapOpen;
-		this.gapExtend = gapExtend;
+		this.gapOpen = Sequence.FACTOR*gapOpen;
+		this.gapExtend = Sequence.FACTOR*gapExtend;
 	}
 	
 	@Override
@@ -131,7 +133,7 @@ public abstract class Gotoh implements Aligner {
 		for(int i = 0; i != sequence2.length(); i++){
 			out.append("<tr><td><b>"+sequence2.getComp(i)+"</b></td>");
 			for(int j = 0; j != sequence1.length(); j++){
-				out.append("<td>"+String.format(Locale.US,"%.3f",D[j][i]/10.0)+"</td>");
+				out.append("<td>"+D[j][i]+"</td>");
 			}
 			out.append("</tr>\n");
 		}
