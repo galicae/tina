@@ -23,7 +23,7 @@ public class EuklidPDBEntryGotoh extends Gotoh{
 	 * @param gapExtend
 	 */
 	public EuklidPDBEntryGotoh(int gapOpen, int gapExtend) {
-		super(gapOpen*1000, gapExtend*1000);
+		super(gapOpen*Gotoh.FACTOR, gapExtend*Gotoh.FACTOR);
 	}
 	
 	@Override
@@ -194,7 +194,7 @@ public class EuklidPDBEntryGotoh extends Gotoh{
 	private int score(AminoAcid x, AminoAcid y) {
 		double[] p = x.getAtomByType(AtomType.CA).getPosition();
 		double[] q = y.getAtomByType(AtomType.CA).getPosition();
-		return (int)(Math.sqrt(((p[0]-q[0])*(p[0]-q[0]))+((p[1]-q[1])*(p[1]-q[1]))+((p[2]-q[2])*(p[2]-q[2])))*1000);
+		return (int)(Math.sqrt(((p[0]-q[0])*(p[0]-q[0]))+((p[1]-q[1])*(p[1]-q[1]))+((p[2]-q[2])*(p[2]-q[2])))*Gotoh.FACTOR);
 	}
 	
 	private AminoAcid[] flip(AminoAcid[] in){

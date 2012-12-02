@@ -16,7 +16,6 @@ public class Sequence implements Alignable{
 	private final String id;
 	private final char[] sequence;
 	private final int length;
-	public static final int FACTOR = 1000;
 	
 	public Sequence(String id, char[] sequence) {
 		this.id = id;

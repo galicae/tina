@@ -60,7 +60,7 @@ public class SequenceAlignmentFileReader {
 							seq2tmp += ali2tmp.charAt(i);
 						}
 					}
-					alignments.add(new SequenceAlignment(new Sequence(tmp[1].split(":")[0].trim(),seq1tmp), new Sequence(tmp[2].split(":")[0].trim(),seq2tmp), tmp[1].split(":")[1].trim(), tmp[2].split(":")[1].trim(), (int)(Sequence.FACTOR*Double.parseDouble(tmp[0].split("\\s")[2].trim()))));
+					alignments.add(new SequenceAlignment(new Sequence(tmp[1].split(":")[0].trim(),seq1tmp), new Sequence(tmp[2].split(":")[0].trim(),seq2tmp), tmp[1].split(":")[1].trim(), tmp[2].split(":")[1].trim(), (int)(Gotoh.FACTOR*Double.parseDouble(tmp[0].split("\\s")[2].trim()))));
 				}
 			}
 		} catch(Exception e){
@@ -125,7 +125,7 @@ public class SequenceAlignmentFileReader {
 				seq2tmp += ali2tmp.charAt(i);
 			}
 		}
-		return new SequenceAlignment(new Sequence(tmp[1].split(":")[0].trim(),seq1tmp), new Sequence(tmp[2].split(":")[0].trim(),seq2tmp), tmp[1].split(":")[1].trim(), tmp[2].split(":")[1].trim(), (int)(Sequence.FACTOR*Double.parseDouble(tmp[0].split("\\s")[2].trim())));
+		return new SequenceAlignment(new Sequence(tmp[1].split(":")[0].trim(),seq1tmp), new Sequence(tmp[2].split(":")[0].trim(),seq2tmp), tmp[1].split(":")[1].trim(), tmp[2].split(":")[1].trim(), (int)(Gotoh.FACTOR*Double.parseDouble(tmp[0].split("\\s")[2].trim())));
 
 	}
 	
