@@ -1,4 +1,4 @@
-package bioinfo.alignment;
+package bioinfo.alignment.matrices;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
