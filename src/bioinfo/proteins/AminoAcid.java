@@ -122,7 +122,7 @@ public class AminoAcid {
 	}
 	
 	public int getAtomNumber() {
-		return atoms.length;
+		return numberOfAtoms;
 	}
 	
 }
