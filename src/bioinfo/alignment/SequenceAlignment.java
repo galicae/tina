@@ -6,6 +6,7 @@
 package bioinfo.alignment;
 
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 import bioinfo.Sequence;
 
@@ -65,7 +66,7 @@ public class SequenceAlignment implements Alignment {
 	 */
 	public SequenceAlignment
 		(Sequence seq1, Sequence seq2, char[] row1, char[] row2, int score)
-	{
+	{	
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.score = score;
@@ -87,7 +88,7 @@ public class SequenceAlignment implements Alignment {
 	 */
 	public SequenceAlignment
 		(Sequence seq1, Sequence seq2, String row1, String row2, int score)
-	{
+	{	
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.score=score;
