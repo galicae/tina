@@ -191,7 +191,7 @@ public class FreeshiftSequenceGotoh extends Gotoh{
 			row1 += "-";
 		}
 		
-		return new SequenceAlignment((Sequence)sequence1, (Sequence)sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), score/Gotoh.FACTOR);
+		return new SequenceAlignment((Sequence)sequence1, (Sequence)sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), 1.0d*score/Gotoh.FACTOR);
 	}
 
 	/**

@@ -25,6 +25,16 @@ public class GlobalSequenceGotoh extends Gotoh{
 		this.scoringmatrix = scoringmatrix;
 	}
 	
+	public GlobalSequenceGotoh(double gapOpen, double gapExtend, double[][] scoringmatrix){
+		super(gapOpen,gapExtend);
+		this.scoringmatrix = new int[scoringmatrix.length][scoringmatrix[0].length];
+		for(int i = 0; i != scoringmatrix.length; i++){
+			for(int j = 0; j != scoringmatrix[0].length; j++){
+				this.scoringmatrix[i][j] = (int)(Gotoh.FACTOR*scoringmatrix[i][j]);
+			}
+		}
+	}
+	
 	@Override
 	public SequenceAlignment align(Alignable sequence1, Alignable sequence2) {
 		this.M = new int[sequence1.length()+1][sequence2.length()+1];
@@ -71,7 +81,7 @@ public class GlobalSequenceGotoh extends Gotoh{
 			//I[i][0] = 0; //old: vGap
 			D[i][0] = INIT_VAL; //old: hGap
 			if(i==1){
-				M[i][0] = M[i-1][0]+gapOpen;
+				M[i][0] = M[i-1][0]+gapOpen+gapExtend;
 			}else{
 				M[i][0] = M[i-1][0]+gapExtend;
 			}
@@ -80,7 +90,7 @@ public class GlobalSequenceGotoh extends Gotoh{
 		for(int i = 1; i <= sequence2.length(); i++){ //old: vSeq
 			//D[0][i] = 0;
 			if(i==1){
-				M[0][i] = M[0][i-1]+gapOpen;
+				M[0][i] = M[0][i-1]+gapOpen+gapExtend;
 			}else{
 				M[0][i] = M[0][i-1]+gapExtend;
 			}
@@ -98,8 +108,8 @@ public class GlobalSequenceGotoh extends Gotoh{
 	private void calculateMatrices() {
 		for(int i = 1; i <= sequence1.length(); i++){
 			for(int j = 1; j <= sequence2.length(); j++){
-				D[i][j] = Math.max(M[i][j-1]+gapOpen, D[i][j-1]+gapExtend);
-				I[i][j] = Math.max(M[i-1][j]+gapOpen,I[i-1][j]+gapExtend);
+				D[i][j] = Math.max(M[i][j-1]+gapOpen+gapExtend, D[i][j-1]+gapExtend);
+				I[i][j] = Math.max(M[i-1][j]+gapOpen+gapExtend,I[i-1][j]+gapExtend);
 				M[i][j] = Math.max(M[i-1][j-1]+score((Character)sequence1.getComp(i-1),(Character)sequence2.getComp(j-1)),
 							Math.max(I[i][j],
 							D[i][j]));
@@ -163,7 +173,7 @@ public class GlobalSequenceGotoh extends Gotoh{
 			row1 += "-";
 		}
 		
-		return new SequenceAlignment((Sequence)sequence1, (Sequence)sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), score/Gotoh.FACTOR);
+		return new SequenceAlignment((Sequence)sequence1, (Sequence)sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), 1.0d*score/Gotoh.FACTOR);
 	}
 
 	/**

@@ -7,9 +7,11 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
+import java.util.Locale;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.FreeshiftSequenceGotoh;
+import bioinfo.alignment.GlobalSequenceGotoh;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.matrices.QuasarMatrix;
 
@@ -54,9 +56,8 @@ public class GotohTest {
 		String ali1;
 		String ali2;
 		SequenceAlignment ali;
-		int[][] matrix = QuasarMatrix.parseMatrix(args[2]);
-		util.Util.printIntegerArray(matrix);
-		FreeshiftSequenceGotoh gotoh = new FreeshiftSequenceGotoh(-12.0d,-1.0d,matrix);
+		double[][] matrix = QuasarMatrix.parseMatrix(args[2]);
+		GlobalSequenceGotoh gotoh = new GlobalSequenceGotoh(-12.0d,-1.0d,matrix);
 		try{
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(infile)));
 		}catch(Exception e){
@@ -74,7 +75,7 @@ public class GotohTest {
 				seq1 = new Sequence(content[0].trim(),seqlib.get(content[0].trim()));
 				seq2 = new Sequence(content[1].trim(),seqlib.get(content[1].trim()));
 				ali = gotoh.align(seq1, seq2);
-				System.out.println(">"+line+" "+String.format("%.4f",ali.getScore()));
+				System.out.println(">"+line+" "+String.format(Locale.US,"%.3f",ali.getScore()));
 				System.out.println(ali1);
 				System.out.println(ali2);
 				System.out.println(content[0].trim()+": "+ali.getRowAsString(0));
