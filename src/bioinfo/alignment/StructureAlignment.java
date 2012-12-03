@@ -32,7 +32,7 @@ public class StructureAlignment implements Alignment{
 	/**
 	 * The score of the Alignment
 	 */
-	private final int score;
+	private final double score;
 	/**
 	 * The length of the Alignment
 	 */
@@ -45,7 +45,7 @@ public class StructureAlignment implements Alignment{
 	 * @param rows the two rows of the alignment
 	 * @param score the score of the Alignment
 	 */
-	public StructureAlignment(PDBEntry seq1, PDBEntry seq2, AminoAcid[][] rows, int score) {
+	public StructureAlignment(PDBEntry seq1, PDBEntry seq2, AminoAcid[][] rows, double score) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.rows = rows;
@@ -64,7 +64,7 @@ public class StructureAlignment implements Alignment{
 	 */
 	
 	public StructureAlignment
-		(PDBEntry seq1, PDBEntry seq2, AminoAcid[] row1, AminoAcid[] row2, int score)
+		(PDBEntry seq1, PDBEntry seq2, AminoAcid[] row1, AminoAcid[] row2, double score)
 	{
 		this.seq1 = seq1;
 		this.seq2 = seq2;
@@ -86,7 +86,7 @@ public class StructureAlignment implements Alignment{
 	 * @param score the score of the Alignment
 	 */
 	public StructureAlignment
-		(PDBEntry seq1, PDBEntry seq2, List<AminoAcid> row1, List<AminoAcid> row2, int score)
+		(PDBEntry seq1, PDBEntry seq2, List<AminoAcid> row1, List<AminoAcid> row2, double score)
 	{
 		this.seq1 = seq1;
 		this.seq2 = seq2;
@@ -181,7 +181,7 @@ public class StructureAlignment implements Alignment{
 		return length;
 	}
 	
-	public int getScore() {
+	public double getScore() {
 		return score;
 	}
 	

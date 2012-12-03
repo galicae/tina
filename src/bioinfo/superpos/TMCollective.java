@@ -15,6 +15,7 @@ import bioinfo.proteins.PDBFileReader;
  * 
  */
 public class TMCollective {
+	
 	public TMCollective() {
 
 	}
@@ -24,8 +25,8 @@ public class TMCollective {
 		Alignment alignment = ali.readAlignment();
 		PDBFileReader reader = new PDBFileReader();
 
-		ArrayList<AminoAcid> pAminoList = new ArrayList<AminoAcid>();
-		ArrayList<AminoAcid> qAminoList = new ArrayList<AminoAcid>();
+		//ArrayList<AminoAcid> pAminoList = new ArrayList<AminoAcid>();
+		//ArrayList<AminoAcid> qAminoList = new ArrayList<AminoAcid>();
 
 		PDBEntry p = reader.readPDBFromFile(pFile);
 		PDBEntry q = reader.readPDBFromFile(qFile);

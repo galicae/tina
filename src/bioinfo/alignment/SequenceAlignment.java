@@ -34,7 +34,7 @@ public class SequenceAlignment implements Alignment {
 	/**
 	 * The score of the Alignment
 	 */
-	private final int score;
+	private final double score;
 	/**
 	 * The length of the Alignment
 	 */
@@ -47,7 +47,7 @@ public class SequenceAlignment implements Alignment {
 	 * @param rows the two rows of the alignment
 	 * @param score the score of the Alignment
 	 */
-	public SequenceAlignment(Sequence seq1, Sequence seq2, char[][] rows, int score) {
+	public SequenceAlignment(Sequence seq1, Sequence seq2, char[][] rows, double score) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.rows = rows;
@@ -65,7 +65,7 @@ public class SequenceAlignment implements Alignment {
 	 * @param score the score of the Alignment
 	 */
 	public SequenceAlignment
-		(Sequence seq1, Sequence seq2, char[] row1, char[] row2, int score)
+		(Sequence seq1, Sequence seq2, char[] row1, char[] row2, double score)
 	{	
 		this.seq1 = seq1;
 		this.seq2 = seq2;
@@ -87,7 +87,7 @@ public class SequenceAlignment implements Alignment {
 	 * @param score the score of the Alignment
 	 */
 	public SequenceAlignment
-		(Sequence seq1, Sequence seq2, String row1, String row2, int score)
+		(Sequence seq1, Sequence seq2, String row1, String row2, double score)
 	{	
 		this.seq1 = seq1;
 		this.seq2 = seq2;
@@ -166,7 +166,7 @@ public class SequenceAlignment implements Alignment {
 		return length;
 	}
 	
-	public int getScore() {
+	public double getScore() {
 		return score;
 	}
 	
