@@ -248,7 +248,7 @@ public class PDBFileReader {
 			int resSeq;
 			double[] coord = new double[3];
 			
-			int lastResSeq = -1;
+			int lastResSeq = 0;
 			String lastResName = "";
 			
 			
@@ -274,7 +274,7 @@ public class PDBFileReader {
 					lastResName = resName;
 					atoms.add(new Atom(name,coord));
 				}
-				aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(lastResName),atoms.toArray(new Atom[atoms.size()])));
+//				aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(lastResName),atoms.toArray(new Atom[atoms.size()])));
 			}
 			br.close();
 		}catch(Exception e){

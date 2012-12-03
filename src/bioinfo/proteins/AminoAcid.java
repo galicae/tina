@@ -121,6 +121,15 @@ public class AminoAcid {
 		return name.getOneLetterCode();
 	}
 	
+//    1         2         3         4         5         6         7         8
+//    12345678901234567890123456789012345678901234567890123456789012345678901234567890
+//    MODEL        1
+//    ATOM      1  N   ALA A   1      11.104   6.134  -6.504  1.00  0.00           N
+//	  ATOM                                                                          
+	public String toPDBLineString() {
+		return " ";
+	}
+	
 	public int getAtomNumber() {
 		return numberOfAtoms;
 	}
