@@ -98,12 +98,12 @@ public class FreeshiftSequenceGotoh extends Gotoh{
 	private void calculateMatrices() {
 		for(int i = 1; i <= sequence1.length(); i++){
 			for(int j = 1; j <= sequence2.length(); j++){
-				D[i][j] = Math.max(M[i][j-1]+gapOpen, D[i][j-1]+gapExtend);
-				I[i][j] = Math.max(M[i-1][j]+gapOpen,I[i-1][j]+gapExtend);
+				D[i][j] = Math.max(M[i][j-1]+gapOpen+gapExtend, D[i][j-1]+gapExtend);
+				//System.out.println((M[i][j-1]+gapOpen+gapExtend)+" "+(D[i][j-1]+gapExtend));
+				I[i][j] = Math.max(M[i-1][j]+gapOpen+gapExtend,I[i-1][j]+gapExtend);
 				M[i][j] = Math.max(M[i-1][j-1]+score((Character)sequence1.getComp(i-1),(Character)sequence2.getComp(j-1)),
 							Math.max(I[i][j],
 							D[i][j]));
-				
 			}
 		}		
 	}
@@ -191,7 +191,7 @@ public class FreeshiftSequenceGotoh extends Gotoh{
 			row1 += "-";
 		}
 		
-		return new SequenceAlignment((Sequence)sequence1, (Sequence)sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), score);
+		return new SequenceAlignment((Sequence)sequence1, (Sequence)sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), score/Gotoh.FACTOR);
 	}
 
 	/**

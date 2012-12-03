@@ -6,6 +6,7 @@ public interface Alignment {
 	int length();
 	double getScore();
 	String toString();
+	String toStringVerbose();
 	Alignable getComponent(int number);
 	
 }

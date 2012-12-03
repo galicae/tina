@@ -52,4 +52,20 @@ public class Sequence implements Alignable{
 		return sequence[i];
 	}
 	
+	public String toString(){
+		String seq = "";
+		for(char x: sequence){
+			seq += x;
+		}
+		return seq;
+	}
+	
+	public String toStringVerbose(){
+		String seq = "";
+		for(char x: sequence){
+			seq += x;
+		}
+		return id+": "+seq;
+	}
+	
 }

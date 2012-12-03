@@ -178,7 +178,7 @@ public class LocalSequenceGotoh extends Gotoh{
 			row1 += "-";
 		}
 		
-		return new SequenceAlignment(sequence1, sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), score);
+		return new SequenceAlignment(sequence1, sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), score/Gotoh.FACTOR);
 	}
 
 	/**

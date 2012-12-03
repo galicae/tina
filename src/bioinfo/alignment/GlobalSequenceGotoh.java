@@ -163,7 +163,7 @@ public class GlobalSequenceGotoh extends Gotoh{
 			row1 += "-";
 		}
 		
-		return new SequenceAlignment((Sequence)sequence1, (Sequence)sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), score);
+		return new SequenceAlignment((Sequence)sequence1, (Sequence)sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), score/Gotoh.FACTOR);
 	}
 
 	/**

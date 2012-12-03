@@ -179,4 +179,12 @@ public class SequenceAlignment implements Alignment {
 		return rows[n];
 	}
 	
+	public String getRowAsString(int n){
+		String res = "";
+		for(char x: rows[n]){
+			res += x;
+		}
+		return res;
+	}
+	
 }
