@@ -5,8 +5,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class QuasarMatrix {
-	public static int[][] parseMatrix(String filename){
-		int[][] matrix = new int[26][26];
+	public static double[][] parseMatrix(String filename){
+		double[][] matrix = new double[26][26];
 		try{
 			BufferedReader in = new BufferedReader(new FileReader(filename));
 			String line;
@@ -24,7 +24,7 @@ public class QuasarMatrix {
 					for (int i = 0; i < aminos.length; i++) {
 						temp = line.split("\\s+");
 						for (int j = 1; j < temp.length; j++) {
-							matrix[aminos[i]-65][aminos[j-1]-65] = (int)Math.round((Double.parseDouble(temp[j])*1000.0));
+							matrix[aminos[i]-65][aminos[j-1]-65] = Double.parseDouble(temp[j]);
 						}
 						line = in.readLine();
 					}
