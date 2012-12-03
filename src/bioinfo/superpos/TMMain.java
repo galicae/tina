@@ -1,10 +1,10 @@
 package bioinfo.superpos;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import EDU.oswego.cs.dl.util.concurrent.Rendezvous.Rotator;
-import bioinfo.proteins.AminoAcid;
+import bioinfo.alignment.Alignment;
 import bioinfo.proteins.PDBEntry;
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleFactory2D;
@@ -29,9 +29,33 @@ public class TMMain {
 		// read the matrices and scores:
 		DoubleMatrix2D R = readRotationMatrix(tmResult);
 		DoubleMatrix1D T = readTMatrix(tmResult);
-		
-//		Rotator rot = new Rotator(R, T, qFile);
-		Transformation tr = new Transformation(null, null, T, R, tmResult[4][2], tmResult[4][1], tmResult[4][0]);
+
+		// Rotator rot = new Rotator(R, T, qFile);
+		Transformation tr = new Transformation(null, null, T, R,
+				tmResult[4][2], tmResult[4][1], tmResult[4][0]);
+		tr.transform(pdbs[1]);
+	}
+
+	public void calculateTMScore(Alignment alignment, PDBEntry pFile,
+			PDBEntry qFile) throws Exception {
+		TMCollective main = new TMCollective();
+		PDBEntry[] pdbs = main.createTMInput(alignment, pFile, qFile);
+
+		writeToFile("TM" + pFile.getID(), pdbs[0]);
+		writeToFile("TM" + qFile.getID(), pdbs[1]);
+
+		// actual calculation of TM score and corresponding rotation matrix
+		double[][] tmResult = TMScore.doStuff("TM" + pFile + " TM" + qFile);
+
+		// remember that rmResult is [5][4], and that [i][0] is empty
+		// also [4][0] is the TM score and [4][1] the GDT
+		// read the matrices and scores:
+		DoubleMatrix2D R = readRotationMatrix(tmResult);
+		DoubleMatrix1D T = readTMatrix(tmResult);
+
+		// Rotator rot = new Rotator(R, T, qFile);
+		Transformation tr = new Transformation(null, null, T, R,
+				tmResult[4][2], tmResult[4][1], tmResult[4][0]);
 		tr.transform(pdbs[1]);
 	}
 
