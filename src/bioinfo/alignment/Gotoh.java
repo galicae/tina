@@ -21,6 +21,7 @@ import bioinfo.Sequence;
 
 public abstract class Gotoh implements Aligner {
 	
+	public static final int FACTOR = 1000;
 	protected int gapOpen = 0;
 	protected int gapExtend = 0;
 	protected int[][] M;
@@ -34,9 +35,9 @@ public abstract class Gotoh implements Aligner {
 	 * certain gap-penalties
 	 * @param gap integer defining gap-costs
 	 */
-	public Gotoh(int gapOpen, int gapExtend){
-		this.gapOpen = Sequence.FACTOR*gapOpen;
-		this.gapExtend = Sequence.FACTOR*gapExtend;
+	public Gotoh(double gapOpen, double gapExtend){
+		this.gapOpen = (int)(FACTOR*gapOpen);
+		this.gapExtend = (int)(FACTOR*gapExtend);
 	}
 	
 	@Override

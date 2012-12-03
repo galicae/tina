@@ -1,4 +1,4 @@
-package bioinfo.alignment;
+package bioinfo.alignment.matrices;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -39,12 +39,15 @@ public class QuasarMatrix {
 				matrix[j][i] = matrix[i][j];
 			}
 		}
-//		for (int i = 0; i < matrix[0].length; i++) {
-//			for (int j = 0; j < matrix.length; j++) {
-//				System.out.print(matrix[j][i] + " | ");
-//			}
-//			System.out.println();
-//		}
 		return matrix;
 	}
+//	public static void main(String[] args){
+//		int[][] matrix = QuasarMatrix.parseMatrix(args[0]);
+//		for (int i = 0; i < matrix[0].length; i++) {
+//		for (int j = 0; j < matrix.length; j++) {
+//			System.out.print(matrix[j][i] + " | ");
+//		}
+//			System.out.println();
+//		}
+//	}
 }

@@ -4,7 +4,7 @@ public interface Alignment {
 	
 	int[][] calcMap();
 	int length();
-	int getScore();
+	double getScore();
 	String toString();
 	Alignable getComponent(int number);
 	
