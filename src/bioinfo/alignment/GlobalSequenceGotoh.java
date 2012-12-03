@@ -65,7 +65,6 @@ public class GlobalSequenceGotoh extends Gotoh{
 				score += score(row0[i], row1[i]);	
 			}
 		}
-		System.out.println(1.0d*score/Gotoh.FACTOR+" "+ali.getScore());
 		if(1.0d*score/Gotoh.FACTOR == ali.getScore()){
 			return true;
 		}else{

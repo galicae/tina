@@ -28,9 +28,6 @@ public class GotohTest {
 		String line = null;
 		String[] content;
 		String infile = args[0];
-
-		
-		
 		
 		try{
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(seqlibfile)));
@@ -76,7 +73,7 @@ public class GotohTest {
 				seq1 = new Sequence(content[0].trim(),seqlib.get(content[0].trim()));
 				seq2 = new Sequence(content[1].trim(),seqlib.get(content[1].trim()));
 				ali = gotoh.align(seq1, seq2);
-				gotoh.check(ali);
+				//gotoh.check(ali);
 				System.out.println(">"+line+" "+String.format(Locale.US,"%.3f",ali.getScore()));
 				System.out.println(ali1);
 				System.out.println(ali2);
