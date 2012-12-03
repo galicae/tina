@@ -12,6 +12,7 @@ import java.util.Locale;
 import bioinfo.Sequence;
 import bioinfo.alignment.FreeshiftSequenceGotoh;
 import bioinfo.alignment.GlobalSequenceGotoh;
+import bioinfo.alignment.LocalSequenceGotoh;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.matrices.QuasarMatrix;
 
@@ -75,12 +76,13 @@ public class GotohTest {
 				seq1 = new Sequence(content[0].trim(),seqlib.get(content[0].trim()));
 				seq2 = new Sequence(content[1].trim(),seqlib.get(content[1].trim()));
 				ali = gotoh.align(seq1, seq2);
+				gotoh.check(ali);
 				System.out.println(">"+line+" "+String.format(Locale.US,"%.3f",ali.getScore()));
 				System.out.println(ali1);
 				System.out.println(ali2);
 				System.out.println(content[0].trim()+": "+ali.getRowAsString(0));
 				System.out.println(content[1].trim()+": "+ali.getRowAsString(1));
-				gotoh.streamMatricesAsHtml(new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/Users/andreseitz/Desktop/test.ali"))));
+				//gotoh.streamMatricesAsHtml(new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/Users/andreseitz/Desktop/test.ali"))));
 			}
 			br.close();
 		}catch(Exception e){

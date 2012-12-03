@@ -25,6 +25,16 @@ public class LocalSequenceGotoh extends Gotoh{
 		this.scoringmatrix = scoringmatrix;
 	}
 	
+	public LocalSequenceGotoh(double gapOpen, double gapExtend, double[][] scoringmatrix){
+		super(gapOpen,gapExtend);
+		this.scoringmatrix = new int[scoringmatrix.length][scoringmatrix[0].length];
+		for(int i = 0; i != scoringmatrix.length; i++){
+			for(int j = 0; j != scoringmatrix[0].length; j++){
+				this.scoringmatrix[i][j] = (int)(Gotoh.FACTOR*scoringmatrix[i][j]);
+			}
+		}
+	}
+	
 	@Override
 	public SequenceAlignment align(Alignable sequence1, Alignable sequence2) {
 		this.M = new int[sequence1.length()+1][sequence2.length()+1];
@@ -43,19 +53,39 @@ public class LocalSequenceGotoh extends Gotoh{
 		int score = 0;
 		char[] row0 = ali.getRow(0);
 		char[] row1 = ali.getRow(1);
-		for(int i = 0; i < row0.length; i++){
-			if(row0[i] == '-' || row1[i] == '-'){
-				score += gapOpen;
-				while(i < row0.length && (row0[i] == '-' || row1[i] == '-')){
+		score = 0;
+		int begin = -1;
+		int end = -1;
+		
+		int i = 0;
+		while(begin == -1){
+			if(row0[i] != '-' && row1[i] != '-'){
+				begin = i;
+			}
+			i++;
+		}
+		
+		i = row0.length-1;
+		while(end == -1){
+			if(row0[i] != '-' && row1[i] != '-'){
+				end = i;
+			}
+			i--;
+		}
+		
+		for(i = begin; i <= end; i++){
+			if (row0[i] == '-' || row1[i] == '-'){
+				score += this.gapOpen;
+				while(i <= end && (row0[i] == '-' || row1[i] == '-')){
 					score += this.gapExtend;
 					i++;
 				}
 				i--;
-			}else {
-				score += score(row0[i], row1[i]);	
+			} else {
+				score += score(row0[i], row1[i]);
 			}
 		}
-		if(score == ali.getScore()){
+		if(1.0d*score/Gotoh.FACTOR == ali.getScore()){
 			return true;
 		}else{
 			return false;
@@ -90,8 +120,8 @@ public class LocalSequenceGotoh extends Gotoh{
 	private void calculateMatrices() {
 		for(int i = 1; i <= sequence1.length(); i++){
 			for(int j = 1; j <= sequence2.length(); j++){
-				D[i][j] = Math.max(M[i][j-1]+gapOpen, D[i][j-1]+gapExtend);
-				I[i][j] = Math.max(M[i-1][j]+gapOpen,I[i-1][j]+gapExtend);
+				D[i][j] = Math.max(M[i][j-1]+gapOpen+gapExtend, D[i][j-1]+gapExtend);
+				I[i][j] = Math.max(M[i-1][j]+gapOpen+gapExtend,I[i-1][j]+gapExtend);
 				M[i][j] = Math.max(M[i-1][j-1]+score(sequence1.getComp(i-1),sequence2.getComp(j-1)),
 							Math.max(I[i][j],
 							Math.max(D[i][j],0)));
@@ -178,7 +208,7 @@ public class LocalSequenceGotoh extends Gotoh{
 			row1 += "-";
 		}
 		
-		return new SequenceAlignment(sequence1, sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), score/Gotoh.FACTOR);
+		return new SequenceAlignment(sequence1, sequence2, flip(row0.toCharArray()), flip(row1.toCharArray()), 1.0d*score/Gotoh.FACTOR);
 	}
 
 	/**

@@ -51,19 +51,54 @@ public class FreeshiftSequenceGotoh extends Gotoh{
 		int score = 0;
 		char[] row0 = ali.getRow(0);
 		char[] row1 = ali.getRow(1);
-		for(int i = 0; i < row0.length; i++){
-			if(row0[i] == '-' || row1[i] == '-'){
-				score += gapOpen;
-				while(i < row0.length && (row0[i] == '-' || row1[i] == '-')){
+		int begin = -1;
+		int end = -1;
+		
+		int i = 0;
+		if(row0[i] == '-'){
+			while(row0[i] == '-'){
+				i++;
+			}
+			begin = i;		
+		}else if(row1[0] == '-'){
+			while(row1[i] == '-'){
+				i++;
+			}
+			begin = i;	
+		} else{
+			begin = i;
+		}
+
+
+		
+		i = row1.length-1;
+		if(row1[i] == '-'){
+			while(row1[i] == '-'){
+				i--;	
+			}
+			end = i;
+		}else if(row0[i] == '-'){
+			while(row0[i] == '-'){
+				i--;
+			}
+			end = i;
+		} else{
+			end = i;
+		}
+
+		for(i = begin; i <= end; i++){
+			if (row0[i] == '-' || row1[i] == '-'){
+				score += this.gapOpen;
+				while(i <= end && (row0[i] == '-' || row1[i] == '-')){
 					score += this.gapExtend;
 					i++;
 				}
 				i--;
-			}else {
-				score += score(row0[i], row1[i]);	
+			} else {
+				score += score(row0[i], row1[i]);
 			}
 		}
-		if(score == ali.getScore()){
+		if(1.0d*score/Gotoh.FACTOR == ali.getScore()){
 			return true;
 		}else{
 			return false;
