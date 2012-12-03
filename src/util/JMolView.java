@@ -16,6 +16,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
 
 
 import javax.swing.JFrame;
@@ -27,20 +28,23 @@ import org.jmol.api.JmolSimpleViewer;
 import org.openscience.jmol.app.Jmol;
 import org.openscience.jmol.app.jmolpanel.JmolPanel;
 
+import bioinfo.proteins.PDBEntry;
+
 public class JMolView {
 
 	private String title = "Java induced JMol-Frame";
 	private JmolPanel jmolPanel;
 	private JFrame frame;
 	private JmolSimpleViewer viewer;
+
 	
 
-	public JMolView(String inlinePdb) {
+	public JMolView() {
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 		
 		Container contentPane = frame.getContentPane();
-		jmolPanel = new JmolPanel(inlinePdb);
+		jmolPanel = new JmolPanel();
 
 		jmolPanel.setPreferredSize(new Dimension(400, 400));
 		frame.setResizable(false);
@@ -49,26 +53,28 @@ public class JMolView {
 		frame.pack();
 		frame.setVisible(true);
 	}
+	
+	public void executeCmd(String cmd){
+		jmolPanel.executeCmd(cmd);
+	}
+	
+	public void addPDBEntry(PDBEntry entry, String color){
+		jmolPanel.addPDBEntry(entry, color);
+	}
 
 	static class JmolPanel extends JPanel {
+		
+		private static String content= "";
+		private static int nextContent = 1;
+		private static HashMap<Integer,String> color = new HashMap<Integer,String>();
 
 		private static final long serialVersionUID = 1L;
 		private static JmolSimpleViewer viewer;
 		private static JmolAdapter adapter;
 
-		public JmolPanel(String inlinePdb) {
+		public JmolPanel() {
 			adapter = new SmarterJmolAdapter();
 			viewer = JmolSimpleViewer.allocateSimpleViewer(this, adapter);
-			viewer.openStringInline(inlinePdb);
-			executeCmd("cartoon ONLY");
-			executeCmd("model 1");
-			executeCmd("select visible");
-			executeCmd("color red");
-			executeCmd("model 2");
-			executeCmd("select visible");
-			executeCmd("color green");
-			executeCmd("model 0");
-			
 		}
 
 		public JmolSimpleViewer getViewer() {
@@ -87,11 +93,28 @@ public class JMolView {
 			//g.getClipBounds(rectClip);
 			viewer.renderScreenImage(g, (int)currentSize.getHeight(), (int)currentSize.getWidth());
 		}
+		
+		public void addPDBEntry(PDBEntry entry, String jmolColor){
+			color.put(nextContent, jmolColor);
+			content += "MODEL     "+String.format("%4d",nextContent++)+"\n";
+			content += entry.getAtomSectionAsString();
+			content += "ENDMDL\n";
+			System.out.println(content+"\n\n");
+			
+			viewer.openStringInline(content);
+			executeCmd("cartoon ONLY");
+			for(int i = 1; i < nextContent; i++){
+				executeCmd("model "+i);
+				executeCmd("select visible");
+				executeCmd("color "+color.get(i));
+			}
+			executeCmd("model 0");
+		}
 	}
 
 	public static void main(String[] args) {
 		String inlinePdb = "ATOM     31  CB  VAL A   4      14.588  -8.758  20.143";
-			JMolView jmol = new JMolView(inlinePdb);			
+			JMolView jmol = new JMolView();			
 			
 	}
 

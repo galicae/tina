@@ -88,4 +88,15 @@ public class PDBEntry implements Alignable{
 		return aminoAcids[i];
 	}
 	
+	public String getAtomSectionAsString(){
+		int lineCounter = 0;
+		String out = "";
+		for(int i = 0; i != aminoAcids.length; i++){
+			for(int j = 0; j != aminoAcids[i].getAtomNumber(); j++){
+				out += aminoAcids[i].getAtom(j).toString(lineCounter++,i,aminoAcids[i].getName().getThreeLetterCode(),id.charAt(4)).trim()+"\n";
+			}
+		}
+		return out;
+	}
+	
 }

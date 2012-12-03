@@ -22,30 +22,7 @@ public class Atom {
 	}
 
 	public Atom(String type, double[] position) {
-		if (type.trim().equals("CA"))
-			this.type = AtomType.CA;
-		else if (type.trim().equals("C"))
-			this.type = AtomType.C;
-		else if (type.trim().equals("N"))
-			this.type = AtomType.N;
-		else if (type.trim().equals("O"))
-			this.type = AtomType.O;
-		else if (type.trim().equals("CB"))
-			this.type = AtomType.CB;
-		else if (type.trim().equals("CG"))
-			this.type = AtomType.CG;
-		else if (type.trim().equals("CD"))
-			this.type = AtomType.CD;
-		else if (type.trim().equals("NE"))
-			this.type = AtomType.NE;
-		else if (type.trim().equals("CZ"))
-			this.type = AtomType.CZ;
-		else if (type.trim().equals("NH1"))
-			this.type = AtomType.NH1;
-		else if (type.trim().equals("NH2"))
-			this.type = AtomType.NH2;
-		else
-			this.type = AtomType.U;
+		this.type = AtomType.createFromString(type);
 		this.position = position;
 	}
 
@@ -62,7 +39,11 @@ public class Atom {
 	}
 
 	@Override
-	public String toString() {
+	public String toString(){
+		return type+"\t"+position[0]+"\t"+position[1]+"\t"+position[2]+"\n";
+	}
+	
+	public String toString(int atomNumber, int resNumber, String resName, char chain) {
 		// how to produce perfect PDB atom records:
 		// #: atom serial number
 		// a: atom name
@@ -88,10 +69,10 @@ public class Atom {
 		String xCoord = Double.toString(position[0]);
 		while(xCoord.length() < 8)
 			xCoord = " " + xCoord;
-		String yCoord = Double.toString(position[0]);
+		String yCoord = Double.toString(position[1]);
 		while(yCoord.length() < 8)
 			yCoord = " " + yCoord;
-		String zCoord = Double.toString(position[0]);
+		String zCoord = Double.toString(position[2]);
 		while(zCoord.length() < 8)
 			zCoord = " " + zCoord;
 //		atom type
@@ -111,11 +92,20 @@ public class Atom {
 		while(element.length() < 2)
 			element = " " + element;
 		
-		result.replace("ee", element);
-		result.replace("aaaa", atomType);
-		result.replace("xxxxxxxx", xCoord);
-		result.replace("yyyyyyyy", yCoord);
-		result.replace("zzzzzzzz", zCoord);
+		result = result.replace("o"," ");
+		result = result.replace("t"," ");
+		result = result.replace("h"," ");
+		result = result.replace("c", chain+"");
+		result = result.replace("+"," ");
+		result = result.replace("i"," ");
+		result = result.replace("ee", element);
+		result = result.replace("****", String.format("%4d",resNumber));
+		result = result.replace("rrr", resName);
+		result = result.replace("#####", String.format("%5d",atomNumber));
+		result = result.replace("aaaa", atomType);
+		result = result.replace("xxxxxxxx", xCoord);
+		result = result.replace("yyyyyyyy", yCoord);
+		result = result.replace("zzzzzzzz", zCoord);
 		return result;
 	}
 }

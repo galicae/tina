@@ -246,7 +246,7 @@ public class PDBFileReader {
 			String resName;
 			char chainId;
 			int resSeq;
-			double[] coord = new double[3];
+			double[] coord;
 			
 			int lastResSeq = 0;
 			String lastResName = "";
@@ -262,12 +262,13 @@ public class PDBFileReader {
 					resSeq = Integer.parseInt(line.substring(22,26).trim());
 					name = line.substring(12,16).trim();
 					resName = line.substring(17,20).trim();
+					coord = new double[3];
 					coord[0] = Double.parseDouble(line.substring(30,38).trim());
 					coord[1] = Double.parseDouble(line.substring(38,46).trim());
 					coord[2] = Double.parseDouble(line.substring(46,54).trim());
 					
 					if(lastResSeq != resSeq){
-						aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(resName),atoms.toArray(new Atom[atoms.size()])));
+						aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(lastResName),atoms.toArray(new Atom[atoms.size()])));
 						atoms.clear();
 					}
 					lastResSeq = resSeq;
