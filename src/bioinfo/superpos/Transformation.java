@@ -1,10 +1,7 @@
 package bioinfo.superpos;
 
-import java.util.ArrayList;
-
 import bioinfo.proteins.PDBEntry;
 import cern.colt.matrix.DoubleFactory1D;
-import cern.colt.matrix.DoubleFactory2D;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
 import cern.jet.math.Functions;
@@ -26,7 +23,6 @@ public class Transformation {
 	private double gdt;
 	private double tmscore;
 
-	
 	public Transformation(DoubleMatrix1D centroidP, DoubleMatrix1D centroidQ,
 			DoubleMatrix1D translation, DoubleMatrix2D rotation, double rmsd,
 			double gdt, double tmscore) {

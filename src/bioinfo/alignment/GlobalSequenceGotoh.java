@@ -20,7 +20,7 @@ public class GlobalSequenceGotoh extends Gotoh{
 	 * @param gapExtend
 	 * @param scoringmatrix 26x26 matrix containing all scoring values plus some empty lines due to faster access
 	 */
-	public GlobalSequenceGotoh(int gapOpen, int gapExtend, int[][] scoringmatrix) {
+	public GlobalSequenceGotoh(double gapOpen, double gapExtend, int[][] scoringmatrix) {
 		super(gapOpen, gapExtend);
 		this.scoringmatrix = scoringmatrix;
 	}
