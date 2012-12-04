@@ -13,7 +13,7 @@ import cern.colt.matrix.DoubleMatrix2D;
 
 public class TMMain {
 
-	public void calculateTMScore(String alignment, String pFile, String qFile)
+	public Transformation calculateTransformation(String alignment, String pFile, String qFile)
 			throws Exception {
 		TMCollective main = new TMCollective();
 		PDBEntry[] pdbs = main.createTMInput(alignment, pFile, qFile);
@@ -33,10 +33,10 @@ public class TMMain {
 		// Rotator rot = new Rotator(R, T, qFile);
 		Transformation tr = new Transformation(null, null, T, R,
 				tmResult[4][2], tmResult[4][1], tmResult[4][0]);
-		tr.transform(pdbs[1]);
+		return tr;
 	}
 
-	public void calculateTMScore(Alignment alignment, PDBEntry pFile,
+	public Transformation calculateTransformation(Alignment alignment, PDBEntry pFile,
 			PDBEntry qFile) throws Exception {
 		TMCollective main = new TMCollective();
 		PDBEntry[] pdbs = main.createTMInput(alignment, pFile, qFile);
@@ -56,7 +56,7 @@ public class TMMain {
 		// Rotator rot = new Rotator(R, T, qFile);
 		Transformation tr = new Transformation(null, null, T, R,
 				tmResult[4][2], tmResult[4][1], tmResult[4][0]);
-		tr.transform(pdbs[1]);
+		return tr;
 	}
 
 	/**
