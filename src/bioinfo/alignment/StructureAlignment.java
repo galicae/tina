@@ -193,4 +193,8 @@ public class StructureAlignment implements Alignment{
 	public AminoAcid[] getRow(int n) {
 		return rows[n];
 	}
+	
+	public StructureAlignment duplicate(){
+		return new StructureAlignment(seq1, seq2, rows, score);
+	}
 }

@@ -275,7 +275,9 @@ public class PDBFileReader {
 					lastResName = resName;
 					atoms.add(new Atom(name,coord));
 				}
-//				aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(lastResName),atoms.toArray(new Atom[atoms.size()])));
+			}
+			if(atoms != null && atoms.size() != 0){
+				aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(lastResName),atoms.toArray(new Atom[atoms.size()])));
 			}
 			br.close();
 		}catch(Exception e){

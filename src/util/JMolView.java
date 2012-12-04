@@ -99,23 +99,18 @@ public class JMolView {
 			content += "MODEL     "+String.format("%4d",nextContent++)+"\n";
 			content += entry.getAtomSectionAsString();
 			content += "ENDMDL\n";
-			System.out.println(content+"\n\n");
+			//System.out.println(content+"\n\n");
 			
 			viewer.openStringInline(content);
 			executeCmd("cartoon ONLY");
 			for(int i = 1; i < nextContent; i++){
+				//System.out.println(i+" "+color.get(i));
 				executeCmd("model "+i);
 				executeCmd("select visible");
 				executeCmd("color "+color.get(i));
 			}
 			executeCmd("model 0");
 		}
-	}
-
-	public static void main(String[] args) {
-		String inlinePdb = "ATOM     31  CB  VAL A   4      14.588  -8.758  20.143";
-			JMolView jmol = new JMolView();			
-			
 	}
 
 }

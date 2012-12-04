@@ -187,4 +187,8 @@ public class SequenceAlignment implements Alignment {
 		return res;
 	}
 	
+	public SequenceAlignment duplicate(){
+		return new SequenceAlignment(seq1,seq2,rows,score);
+	}
+	
 }

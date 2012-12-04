@@ -8,5 +8,6 @@ public interface Alignment {
 	String toString();
 	String toStringVerbose();
 	Alignable getComponent(int number);
+	Alignment duplicate();
 	
 }
