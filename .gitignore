@@ -3,3 +3,7 @@ bin/*
 *.class
 *.pdb
 *.txt
+*.mat
+*.inpairs
+*.outpairs
+*.seqlib

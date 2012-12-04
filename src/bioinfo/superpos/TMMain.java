@@ -18,8 +18,8 @@ public class TMMain {
 		TMCollective main = new TMCollective();
 		PDBEntry[] pdbs = main.createTMInput(alignment, pFile, qFile);
 
-		writeToFile("TM" + pFile, pdbs[0]);
-		writeToFile("TM" + qFile, pdbs[1]);
+//		writeToFile("TM" + pFile, pdbs[0]);
+//		writeToFile("TM" + qFile, pdbs[1]);
 
 		// actual calculation of TM score and corresponding rotation matrix
 		double[][] tmResult = TMScore.doStuff("TM" + pFile + " TM" + qFile, pdbs[0], pdbs[1]);
@@ -41,8 +41,8 @@ public class TMMain {
 		TMCollective main = new TMCollective();
 		PDBEntry[] pdbs = main.createTMInput(alignment, pFile, qFile);
 
-		writeToFile("TM" + pFile.getID(), pdbs[0]);
-		writeToFile("TM" + qFile.getID(), pdbs[1]);
+//		writeToFile("TM" + pFile.getID(), pdbs[0]);
+//		writeToFile("TM" + qFile.getID(), pdbs[1]);
 
 		// actual calculation of TM score and corresponding rotation matrix
 		double[][] tmResult = TMScore.doStuff("TM" + pFile + " TM" + qFile, pdbs[0], pdbs[1]);

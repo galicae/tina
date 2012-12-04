@@ -585,6 +585,7 @@ public class TMScore {
 		i = 0;
 		AminoAcid curAA = new AminoAcid("C");
 		for (int c = 0; c < file.length(); c++) {
+			try{
 			curAA = file.getAminoAcid(c);
 			seq = seq + curAA.getName().toString();
 			for (int j = i; j < curAA.getAtomNumber(); j++) {
@@ -593,6 +594,10 @@ public class TMScore {
 				z[i] = curAA.getAtom(j).getPosition()[2];
 				nres[i] = c; // cheap surrogate for the real residue number
 				i++;
+			}
+			}
+			catch (Exception e) {
+				continue;
 			}
 			// System.out.println(nres[i]);
 		}
