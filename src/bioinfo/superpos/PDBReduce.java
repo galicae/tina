@@ -30,16 +30,16 @@ public class PDBReduce {
 		// first find out how many residues are aligned
 		int alignmentLength = 0;
 		int[][] calcMap = alignment.calcMap();
-		for (int i = 0; i < alignment.length(); i++) {
-			if (calcMap[0][i] != -1) {
+		for (int i = 0; i < calcMap[0].length; i++) {
+			if (calcMap[0][i] > 0) {
 				alignmentLength++;
 			}
 		}
 		// now go through the alignment again and copy the coordinates
 		double[][][] alignmentCoordinates = new double[2][alignmentLength][3];
 		int j = 0; // the index for the aligned positions
-		for (int i = 0; i < alignment.length(); i++) {
-			if (calcMap[0][i] != -1) {
+		for (int i = 0; i < calcMap[0].length; i++) {
+			if (calcMap[0][i] > 0) {
 				try {
 					alignmentCoordinates[0][j] = pdb1.getAminoAcid(i)
 							.getAtomByType(CA).getPosition();
@@ -61,8 +61,8 @@ public class PDBReduce {
 		// first find out how many residues are aligned
 		int alignmentLength = 0;
 		int[][] calcMap = alignment.calcMap();
-		for (int i = 0; i < alignment.length(); i++) {
-			if (calcMap[0][i] != -1) {
+		for (int i = 0; i < calcMap[0].length; i++) {
+			if (calcMap[0][i] > 0) {
 				alignmentLength++;
 			}
 		}
@@ -73,8 +73,8 @@ public class PDBReduce {
 		// with a CA atom
 
 		Atom[] temp = new Atom[1];
-		for (int i = 0; i < alignment.length(); i++) {
-			if (calcMap[0][i] != -1) {
+		for (int i = 0; i < calcMap[0].length; i++) {
+			if (calcMap[0][i] > 0) {
 				try {
 					temp[0] = pdb1.getAminoAcid(i).getAtomByType(CA);
 					AminoAcid aa1 = new AminoAcid(pdb1.getAminoAcid(i)

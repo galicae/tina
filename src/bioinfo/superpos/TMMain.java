@@ -22,7 +22,7 @@ public class TMMain {
 		writeToFile("TM" + qFile, pdbs[1]);
 
 		// actual calculation of TM score and corresponding rotation matrix
-		double[][] tmResult = TMScore.doStuff("TM" + pFile + " TM" + qFile);
+		double[][] tmResult = TMScore.doStuff("TM" + pFile + " TM" + qFile, pdbs[0], pdbs[1]);
 
 		// remember that rmResult is [5][4], and that [i][0] is empty
 		// also [4][0] is the TM score and [4][1] the GDT
@@ -45,7 +45,7 @@ public class TMMain {
 		writeToFile("TM" + qFile.getID(), pdbs[1]);
 
 		// actual calculation of TM score and corresponding rotation matrix
-		double[][] tmResult = TMScore.doStuff("TM" + pFile + " TM" + qFile);
+		double[][] tmResult = TMScore.doStuff("TM" + pFile + " TM" + qFile, pdbs[0], pdbs[1]);
 
 		// remember that rmResult is [5][4], and that [i][0] is empty
 		// also [4][0] is the TM score and [4][1] the GDT

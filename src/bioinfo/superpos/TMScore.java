@@ -35,6 +35,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
+import bioinfo.proteins.AminoAcid;
+import bioinfo.proteins.PDBEntry;
+
 // This is a heavily modified version of the original Zhang server TMscore.java (version 2011/01/30, as it was on 2012/11/30) 
 
 public class TMScore {
@@ -82,7 +85,7 @@ public class TMScore {
 	 * @param args
 	 * @throws Exception
 	 */
-	public static double[][] doStuff(String argument) throws Exception {
+	public static double[][] doStuff(String argument, PDBEntry pdb1, PDBEntry pdb2) throws Exception {
 		String[] args = argument.split("\\s+");
 		int i, j;
 		int k = 0;
@@ -95,28 +98,10 @@ public class TMScore {
 			System.out.println(help());
 			System.exit(1);
 		}
-		String[] pdbs = new String[2];
-		for (i = 0; i < args.length;) {
-			if (args[i].equals("-o")) {
-				m_out = 1;
-				i++;
-				outname = args[i];
-				i++;
-			} else if (args[i].equals("-d")) {
-				m_fix = 1;
-				i++;
-				d0_fix = Double.valueOf(args[i]);
-				i++;
-			} else if (j < 2) {
-				pdbs[j] = args[i];
-				i++;
-				j++;
-			}
-		}
 
-		seq1A = readPDB(pdbs[0], xa, ya, za, nresA);
+		seq1A = readPDB(pdb1, xa, ya, za, nresA);
 		String seq1B = "";
-		seq1B = readPDB(pdbs[1], xb, yb, zb, nresB);
+		seq1B = readPDB(pdb2, xb, yb, zb, nresB);
 		nseqA = seq1A.length();
 		nseqB = seq1B.length();
 		nseqA--;
@@ -593,37 +578,23 @@ public class TMScore {
 		return result;
 	}
 
-	public static String readPDB(String file, double[] x, double[] y,
+	public static String readPDB(PDBEntry file, double[] x, double[] y,
 			double[] z, int[] nres) {
 		String seq = "*";
-		String line = "";
-		BufferedReader br;
 		int i;
 		i = 0;
-		try {
-			br = new BufferedReader(new FileReader(file));
-			while ((line = br.readLine()) != null) {
-				if (line.startsWith("TER"))
-					break;
-				if (line.startsWith("ATO")) {
-					if (line.substring(12, 16).replaceAll("\\s+", "")
-							.endsWith("CA")) {
-						i++;
-						seq = seq
-								+ NameMap(line.substring(17, 20).toUpperCase());
-						x[i] = Float.valueOf(line.substring(30, 38));
-						y[i] = Float.valueOf(line.substring(38, 46));
-						z[i] = Float.valueOf(line.substring(46, 54));
-						nres[i] = Integer.valueOf(line.substring(22, 29)
-								.replaceAll("\\s+", ""));
-						// System.out.println(nres[i]);
-					}
-				}
+		AminoAcid curAA = new AminoAcid("C");
+		for (int c = 0; c < file.length(); c++) {
+			curAA = file.getAminoAcid(c);
+			seq = seq + curAA.getName().toString();
+			for (int j = i; j < curAA.getAtomNumber(); j++) {
+				x[i] = curAA.getAtom(j).getPosition()[0];
+				y[i] = curAA.getAtom(j).getPosition()[1];
+				z[i] = curAA.getAtom(j).getPosition()[2];
+				nres[i] = c; // cheap surrogate for the real residue number
+				i++;
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			// System.out.println(nres[i]);
 		}
 		return seq;
 	}

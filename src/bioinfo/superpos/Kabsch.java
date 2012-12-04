@@ -33,10 +33,11 @@ public class Kabsch {
 		DoubleMatrix2D p = factory2D.make(coordinates[0]);
 		DoubleMatrix2D q = factory2D.make(coordinates[1]);
 
-		DoubleMatrix1D centroidP = factory1D.make(new double[3]);
-		DoubleMatrix1D centroidQ = factory1D.make(new double[3]);
+		DoubleMatrix1D centroidP = calculateCentroid(p);
+		DoubleMatrix1D centroidQ = calculateCentroid(q);
 
-		translate(centroidP, p, centroidQ, q);
+		p = translate(centroidP, p);
+		q = translate(centroidQ, q);
 
 		double initError = calculateInitError(p, q);
 
@@ -67,19 +68,21 @@ public class Kabsch {
 		double err = calcErr(S);
 
 		DoubleMatrix2D rotation = algebra.mult(V, tU);
-		double rmsd1 = calcDefRMSD(p, q);
+		// double rmsd1 = calcDefRMSD(p, q);
+		// no point in calculating the definition of the rmsd since no rotation
+		// has been performed
 		double rmsd2 = calcEasyRMSD(err, initError, p);
-		if (rmsd1 == rmsd2) {
-			rmsd1 = rmsd2;
-		} else {
-			rmsd1 = -1;
-		}
+		// if (rmsd1 == rmsd2) {
+		// rmsd1 = rmsd2;
+		// } else {
+		// rmsd1 = -1;
+		// }
 
 		DoubleMatrix1D translation = calculateTranslation(centroidQ, centroidP,
 				rotation);
 
 		Transformation result = new Transformation(centroidP, centroidQ,
-				translation, rotation, rmsd1, -1, -1);
+				translation, rotation, rmsd2, -1, -1);
 		return result;
 	}
 
@@ -119,14 +122,12 @@ public class Kabsch {
 	 * @param q
 	 *            the coordinates of protein Q
 	 */
-	private static void translate(DoubleMatrix1D pCentroid, DoubleMatrix2D p,
-			DoubleMatrix1D qCentroid, DoubleMatrix2D q) {
-		pCentroid = calculateCentroid(p);
-		qCentroid = calculateCentroid(q);
+	private static DoubleMatrix2D translate(DoubleMatrix1D pCentroid,
+			DoubleMatrix2D p) {
 		for (int i = 0; i < p.rows(); i++) {
 			p.viewRow(i).assign(pCentroid, Functions.minus);
-			q.viewRow(i).assign(qCentroid, Functions.minus);
 		}
+		return p;
 	}
 
 	/**
