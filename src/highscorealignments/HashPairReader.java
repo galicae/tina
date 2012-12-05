@@ -10,20 +10,36 @@ public class HashPairReader {
 	
 	public static HashMap<String,ArrayList<String>> readPairs(String infilename,String outfilename){
 	HashMap<String,ArrayList<String>> pairs = new HashMap<String,ArrayList<String>>();
-
+	boolean flag;
 	try{
 		BufferedReader in = new BufferedReader(new FileReader(infilename));
 		String line;
 		while((line = in.readLine()) != null){
 			String[] temp = line.split("\\s");
+			flag = false;
 			if(pairs.containsKey(temp[0])){
-				pairs.get(temp[0]).add(temp[1]);
+				for(String id : pairs.get(temp[0])){
+					if(id.equals(temp[1])){
+						flag = true;
+					}
+				}
+				if(!flag){
+					pairs.get(temp[0]).add(temp[1]);
+				}
 			} else{
 				pairs.put(temp[0],new ArrayList<String>());
 				pairs.get(temp[0]).add(temp[1]);	
 			}
+			flag = false;
 			if(pairs.containsKey(temp[1])){
-				pairs.get(temp[1]).add(temp[0]);
+				for(String id : pairs.get(temp[1])){
+					if(id.equals(temp[0])){
+						flag = true;
+					}
+				}
+				if(!flag){
+					pairs.get(temp[1]).add(temp[0]);
+				}
 			} else{
 				pairs.put(temp[1],new ArrayList<String>());
 				pairs.get(temp[1]).add(temp[0]);
@@ -34,14 +50,30 @@ public class HashPairReader {
 		in = new BufferedReader(new FileReader(outfilename));
 		while((line = in.readLine()) != null){
 			String[] temp = line.split("\\s");
+			flag = false;
 			if(pairs.containsKey(temp[0])){
-				pairs.get(temp[0]).add(temp[1]);
+				for(String id : pairs.get(temp[0])){
+					if(id.equals(temp[1])){
+						flag = true;
+					}
+				}
+				if(!flag){
+					pairs.get(temp[0]).add(temp[1]);
+				}
 			} else{
 				pairs.put(temp[0],new ArrayList<String>());
 				pairs.get(temp[0]).add(temp[1]);	
 			}
+			flag = false;
 			if(pairs.containsKey(temp[1])){
-				pairs.get(temp[1]).add(temp[0]);
+				for(String id : pairs.get(temp[1])){
+					if(id.equals(temp[0])){
+						flag = true;
+					}
+				}
+				if(!flag){
+					pairs.get(temp[1]).add(temp[0]);
+				}
 			} else{
 				pairs.put(temp[1],new ArrayList<String>());
 				pairs.get(temp[1]).add(temp[0]);
