@@ -16,16 +16,14 @@ import bioinfo.alignment.matrices.QuasarMatrix;
 public class HighScoreAlign {
 	
 	private HashMap<String,SequenceAlignment> hsalign = new HashMap<String,SequenceAlignment>();
-	private ArrayList<CathScopEntry[]> inpairs;
-	private HashMap<String,ArrayList<CathScopEntry[]>> outpairs;
+	private HashMap<String,ArrayList<String>> pairs;
 	private HashMap<String, char[]> seqlib;
 	private double[][] scoringmatrix;
 	private double go;
 	private double ge;
 	
 	public HighScoreAlign(String inpairs, String outpairs, String seqlibpath){
-		this.inpairs = PairReaderCathScop.readPairs(inpairs);
-		this.outpairs = HashPairReaderCathScop.readPairs(outpairs);
+		this.pairs = HashPairReader.readPairs(inpairs, outpairs);
 		this.seqlib = SeqLibrary.parse(seqlibpath);	
 	}
 	
@@ -43,35 +41,17 @@ public class HighScoreAlign {
 		else{
 			gotoh = new FreeshiftSequenceGotoh(this.go,this.ge,this.scoringmatrix);
 		}
-		
-		String lastcath = "";
-		String actcath;
+				
 		double maxscore = Double.MIN_VALUE;
 		SequenceAlignment temp;
-		for(CathScopEntry[] pair : inpairs){
-			actcath = pair[0].getID();
-			temp = (SequenceAlignment) gotoh.align(new Sequence(pair[0].getID(),seqlib.get(pair[0].getID())),new Sequence(pair[1].getID(),seqlib.get(pair[1].getID())));
-			
-			if(lastcath.equals(actcath)){
+		for(Entry<String,ArrayList<String>> actid : this.pairs.entrySet()){
+			for(String alignpartner : actid.getValue()){
+				temp = (SequenceAlignment) gotoh.align(new Sequence(actid.getKey(),seqlib.get(actid.getKey())),new Sequence(alignpartner,seqlib.get(alignpartner)));
 				if (temp.getScore() > maxscore){
-					hsalign.put(actcath,(SequenceAlignment) gotoh.align(new Sequence(pair[0].getID(),seqlib.get(pair[0].getID())),new Sequence(pair[1].getID(),seqlib.get(pair[1].getID()))));
+					hsalign.put(actid.getKey(),temp.duplicate());
 					maxscore = temp.getScore();
 				}
 			}
-			else{
-				lastcath = actcath;
-				hsalign.put(actcath,(SequenceAlignment) gotoh.align(new Sequence(pair[0].getID(),seqlib.get(pair[0].getID())),new Sequence(pair[1].getID(),seqlib.get(pair[1].getID()))));
-				maxscore = hsalign.get(actcath).getScore();
-				if(this.outpairs.containsKey(actcath)){
-					for(CathScopEntry[] out : this.outpairs.get(actcath)){
-						SequenceAlignment temp2 = (SequenceAlignment) gotoh.align(new Sequence(out[0].getID(),this.seqlib.get(out[0].getID())), new Sequence(out[1].getID(),this.seqlib.get(out[1].getID())));
-						if(temp2.getScore() > maxscore){
-							maxscore = temp2.getScore();
-							hsalign.put(actcath,(SequenceAlignment) gotoh.align(new Sequence(out[0].getID(),this.seqlib.get(out[0].getID())), new Sequence(out[1].getID(),this.seqlib.get(out[1].getID()))));
-						}
-					}
-				}
-			}		
 		}
 	}
 	
@@ -79,11 +59,11 @@ public class HighScoreAlign {
 		return this.hsalign;
 	}
 	
-	public static void main (String[] args){
-		HighScoreAlign test = new HighScoreAlign(args[0],args[1],args[2]);
-		test.calculation(args[3], -12, -1, "freeshift");
-		for(Entry<String,SequenceAlignment> a : test.getHighScoreAligns().entrySet()){
-			System.out.println(a.getValue().toStringVerbose());
-		}
-	}
+//	public static void main (String[] args){
+//		HighScoreAlign test = new HighScoreAlign(args[0],args[1],args[2]);
+//		test.calculation(args[3], -12, -1, "freeshift");
+//		for(Entry<String,SequenceAlignment> a : test.getHighScoreAligns().entrySet()){
+//			System.out.println(a.getValue().toStringVerbose());
+//		}
+//	}
 }
