@@ -63,75 +63,77 @@ public class MatrixReader123D {
 		}
 		return matrix;
 	}
-	
-	/**
-	 * reads a file containing the weights for 123D-Alignment in the following specific manner
-	 * 
-	 * #Alpha	Beta	Other
-	 * 0.0d		0.0d	0.0d	#go
-	 * 0.0d		0.0d	0.0d	#ge
-	 * 0.0d		0.0d	0.0d	#seq
-	 * 0.0d		0.0d	0.0d
-	 * 
-	 * @param filename
-	 * @return the secondary structure preference as a double array
-	 */
+
 	public double[][] readWeights(String filename) {
 		int[] ind = new int[3];
-		
+
 		double[] seq = new double[3];
 		double[] go = new double[3];
 		double[] ge = new double[3];
 		double[] ssp = new double[3];
 		double[] lccp = new double[3];
 		double[] gccp = new double[3];
-		
+
 		double[][] multiresult = new double[6][3];
+
+		String[] cont = new String[6];
 		
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(filename));
 			String line;
 			while ((line = in.readLine()) != null) {
-				if(line.startsWith("#")) {
+				cont = line.split("\\s+");
+				if (line.startsWith("#")) {
 					ind = calcIndices(line.split("\\s+"));
-				}
-				else {
-					String[] cont = line.split("\\s+");
-					if(cont[cont.length].equals("go")) {
+				} else {
+					if (cont[cont.length].equals("go")) {
 						go[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
 						go[BETA] = Double.parseDouble(cont[ind[BETA]]);
 						go[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
-					}
-					else if(cont[cont.length].equals("ge"))
+					} else if (cont[cont.length].equals("ge")) {
 						ge[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
-					else if(cont[cont.length].equals("seq"))
+						ge[BETA] = Double.parseDouble(cont[ind[BETA]]);
+						ge[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
+					} else if (cont[cont.length].equals("seq")) {
 						seq[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
-						
+						seq[BETA] = Double.parseDouble(cont[ind[BETA]]);
+						seq[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
+					} else if (cont[cont.length].equals("ssp")) {
+						ssp[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
+						ssp[BETA] = Double.parseDouble(cont[ind[BETA]]);
+						ssp[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
+					} else if (cont[cont.length].equals("lccp")) {
+						lccp[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
+						lccp[BETA] = Double.parseDouble(cont[ind[BETA]]);
+						lccp[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
+					} else if (cont[cont.length].equals("gccp")) {
+						gccp[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
+						gccp[BETA] = Double.parseDouble(cont[ind[BETA]]);
+						gccp[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
+					}
 				}
 			}
 			in.close();
+			multiresult[0] = seq;
+			multiresult[1] = go;
+			multiresult[2] = ge;
+			multiresult[3] = ssp;
+			multiresult[4] = lccp;
 		} catch (IOException e) {
 			System.out.println("No Input (secondary structure preference)!");
 		}
-		multiresult[0] = seq;
-		multiresult[1] = go;
-		multiresult[2] = ge;
-		multiresult[3] = ssp;
-		multiresult[4] = lccp;
-		multiresult[5] = gccp;
 		return multiresult;
 	}
 
-
 	private int[] calcIndices(String[] split) {
 		int[] result = new int[3];
-		for(int i = 1; i < split.length; i++) {
-			if(split[i].equals("l"))
-				result[i-1] = OTHER;
-			if(split[i].equals("h"))
-				result[i-1] = ALPHA;
-			if(split[i].equals("s"))
-				result[i-1] = BETA;
+		for (int i = 1; i < split.length; i++) {
+			if (split[i].equals("l"))
+				result[i - 1] = OTHER;
+			if (split[i].equals("h"))
+				result[i - 1] = ALPHA;
+			if (split[i].equals("s"))
+				result[i - 1] = BETA;
 		}
 		return result;
 	}
