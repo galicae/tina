@@ -64,7 +64,18 @@ public class MatrixReader123D {
 		return matrix;
 	}
 	
-	
+	/**
+	 * reads a file containing the weights for 123D-Alignment in the following specific manner
+	 * 
+	 * #Alpha	Beta	Other
+	 * 0.0d		0.0d	0.0d	#go
+	 * 0.0d		0.0d	0.0d	#ge
+	 * 0.0d		0.0d	0.0d	#seq
+	 * 0.0d		0.0d	0.0d
+	 * 
+	 * @param filename
+	 * @return the secondary structure preference as a double array
+	 */
 	public double[][] readWeights(String filename) {
 		int[] ind = new int[3];
 		
