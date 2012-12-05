@@ -6,11 +6,11 @@ import java.util.Map.Entry;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.Aligner;
-import bioinfo.alignment.FreeshiftSequenceGotoh;
-import bioinfo.alignment.GlobalSequenceGotoh;
-import bioinfo.alignment.LocalSequenceGotoh;
 import bioinfo.alignment.SequenceAlignment;
 
+import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
+import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
+import bioinfo.alignment.gotoh.LocalSequenceGotoh;
 import bioinfo.alignment.matrices.QuasarMatrix;
 
 public class HighScoreAlign {

@@ -1,9 +1,12 @@
-package bioinfo.alignment;
+package bioinfo.alignment.gotoh;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import bioinfo.Sequence;
+import bioinfo.alignment.Alignable;
+import bioinfo.alignment.Alignment;
+import bioinfo.alignment.StructureAlignment;
 import bioinfo.proteins.AminoAcid;
 import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;

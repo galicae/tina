@@ -1,13 +1,17 @@
-package bioinfo.alignment;
+package bioinfo.alignment.d123;
 
 import bioinfo.Sequence;
+import bioinfo.alignment.Alignable;
+import bioinfo.alignment.Alignment;
+import bioinfo.alignment.SequenceAlignment;
+import bioinfo.alignment.gotoh.Gotoh;
 
 /**
  * 
  * @author andreseitz
  * Freeshift Alignment of two Sqeuences
  */
-public class FreeshiftSequenceGotoh extends Gotoh{
+public class FreeshiftSequence123D extends Gotoh{
 
 	private static final int INIT_VAL = Integer.MIN_VALUE/2;
 	private int[][] scoringmatrix;
@@ -16,15 +20,10 @@ public class FreeshiftSequenceGotoh extends Gotoh{
 	 * 
 	 * @param gapOpen
 	 * @param gapExtend
-	 * @param scoringmatrix 26x26 matrix containing all scoring values plus some empty lines due to faster access
-	 */
-	public FreeshiftSequenceGotoh(double gapOpen, double gapExtend, int[][] scoringmatrix) {
-		super(gapOpen, gapExtend);
-		this.scoringmatrix = scoringmatrix;
-	}
-	
-	public FreeshiftSequenceGotoh(double gapOpen, double gapExtend, double[][] scoringmatrix){
-		super(gapOpen,gapExtend);
+	 * @param scoringmatrix 26x26 matrix containing all scoring values plus some empty lines for faster access
+	 */	
+	public FreeshiftSequence123D(double[][] scoringmatrix, double[][] secondaryStructurePreferences, double[][] weights){
+		super(0.0d,0.0d);
 		this.scoringmatrix = new int[scoringmatrix.length][scoringmatrix[0].length];
 		for(int i = 0; i != scoringmatrix.length; i++){
 			for(int j = 0; j != scoringmatrix[0].length; j++){

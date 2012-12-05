@@ -1,6 +1,9 @@
-package bioinfo.alignment;
+package bioinfo.alignment.gotoh;
 
 import bioinfo.Sequence;
+import bioinfo.alignment.Alignable;
+import bioinfo.alignment.Alignment;
+import bioinfo.alignment.SequenceAlignment;
 
 /**
  * 

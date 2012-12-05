@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bioinfo.Sequence;
+import bioinfo.alignment.gotoh.Gotoh;
 
 /**
  * SequenceAlignmentFileReader read PDBFile and returns it as internal Alignment
