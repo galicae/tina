@@ -15,39 +15,59 @@ import bioinfo.alignment.matrices.QuasarMatrix;
 public class BMCathAndScop {
 	
 	private HashMap<String,char[]> seqlib;
-	private HashMap<String,CathScopEntry> cathinfos;
+	private HashMap<String,CathScopEntry> cathscopinfos;
 	private HashMap<String,ArrayList<String>> pairs;
 	
 	//family recognition test
-	private int recsamefam;
-	private int recsamesup;
-	private int recsamefold;
-	private int recdiffold;
+	private int cath_recsamefam;
+	private int cath_recsamesup;
+	private int cath_recsamefold;
+	private int cath_recdiffold;
+	private int scop_recsamefam;
+	private int scop_recsamesup;
+	private int scop_recsamefold;
+	private int scop_recdiffold;
 	
 	//misclassification tests
-	private int missamefam;
-	private int missamesup;
-	private int missamefold;
-	private int misdiffoldfam;
-	private int misdiffoldsup;
-	private int misdiffoldfold;
+	private int cath_missamefam;
+	private int cath_missamesup;
+	private int cath_missamefold;
+	private int cath_misdiffoldfam;
+	private int cath_misdiffoldsup;
+	private int cath_misdiffoldfold;
+	private int scop_missamefam;
+	private int scop_missamesup;
+	private int scop_missamefold;
+	private int scop_misdiffoldfam;
+	private int scop_misdiffoldsup;
+	private int scop_misdiffoldfold;
 	
 	private Aligner gotoh;
 	
-	public BMCathAndScop(HashMap<String,char[]> seqlib, HashMap<String,CathScopEntry> cathinfos, HashMap<String,ArrayList<String>> pairlist, String matrixpath,int go,int ge, String mode){
+	public BMCathAndScop(HashMap<String,char[]> seqlib, HashMap<String,CathScopEntry> cathscopinfos, HashMap<String,ArrayList<String>> pairlist, String matrixpath,int go,int ge, String mode){
 		this.seqlib = seqlib;
-		this.cathinfos = cathinfos;
-		this.recdiffold = 0;
-		this.recsamefam = 0;
-		this.recsamefold = 0;
-		this.recsamesup = 0;
+		this.cathscopinfos = cathscopinfos;
+		this.cath_recdiffold = 0;
+		this.cath_recsamefam = 0;
+		this.cath_recsamefold = 0;
+		this.cath_recsamesup = 0;
+		this.scop_recdiffold = 0;
+		this.scop_recsamefam = 0;
+		this.scop_recsamefold = 0;
+		this.scop_recsamesup = 0;
 		
-		this.misdiffoldfam = 0;
-		this.misdiffoldsup = 0;
-		this.misdiffoldfold = 0;
-		this.missamefam = 0;
-		this.missamesup = 0;
-		this.missamefold = 0;
+		this.cath_misdiffoldfam = 0;
+		this.cath_misdiffoldsup = 0;
+		this.cath_misdiffoldfold = 0;
+		this.cath_missamefam = 0;
+		this.cath_missamesup = 0;
+		this.cath_missamefold = 0;
+		this.scop_misdiffoldfam = 0;
+		this.scop_misdiffoldsup = 0;
+		this.scop_misdiffoldfold = 0;
+		this.scop_missamefam = 0;
+		this.scop_missamesup = 0;
+		this.scop_missamefold = 0;
 
 		this.pairs = pairlist;
 		double[][] scoringmatrix = QuasarMatrix.parseMatrix(matrixpath);
@@ -61,93 +81,158 @@ public class BMCathAndScop {
 		else{
 			gotoh = new FreeshiftSequenceGotoh(go,ge,scoringmatrix);
 		}
+		benchmark();
 	}
 	
 	public void benchmark(){
 		double maxscore;
 		double score;
-		double samefammaxscore;
-		double samesupmaxscore;
-		double samefoldmaxscore;
-		double diffoldmaxscore;
+		double samefammaxscore_cath;
+		double samesupmaxscore_cath;
+		double samefoldmaxscore_cath;
+		double diffoldmaxscore_cath;
+		double samefammaxscore_scop;
+		double samesupmaxscore_scop;
+		double samefoldmaxscore_scop;
+		double diffoldmaxscore_scop;
 		
 		for(Entry<String,ArrayList<String>> query_entry : pairs.entrySet()){
 		CathScopEntry besthit = null;
 		maxscore = Double.MIN_VALUE;
-		samefammaxscore = Double.MIN_VALUE;
-		samesupmaxscore = Double.MIN_VALUE;
-		samefoldmaxscore = Double.MIN_VALUE;
-		diffoldmaxscore = Double.MIN_VALUE;
+		samefammaxscore_cath = Double.MIN_VALUE;
+		samesupmaxscore_cath = Double.MIN_VALUE;
+		samefoldmaxscore_cath = Double.MIN_VALUE;
+		diffoldmaxscore_cath = Double.MIN_VALUE;
+		samefammaxscore_scop = Double.MIN_VALUE;
+		samesupmaxscore_scop = Double.MIN_VALUE;
+		samefoldmaxscore_scop = Double.MIN_VALUE;
+		diffoldmaxscore_scop = Double.MIN_VALUE;
 		SequenceAlignment temp;
-		CathScopEntry query = cathinfos.get(query_entry.getKey());
+		CathScopEntry query = cathscopinfos.get(query_entry.getKey());
 		
 			for(String template : query_entry.getValue()){
 				temp = (SequenceAlignment)gotoh.align(new Sequence(query.getID(),seqlib.get(query.getID())),new Sequence(template,seqlib.get(template)));
 				score = temp.getScore();
 				if(score > maxscore){
 					maxscore = score;
-					besthit = cathinfos.get(template);
+					besthit = cathscopinfos.get(template);
 				}
 				
-				//for misclassification tests
+				//for cath misclassification tests
 				if(query.getCathClazz() == besthit.getCathClazz() && query.getCathFold() == besthit.getCathFold() && query.getCathSupFam() == besthit.getCathSupFam() && query.getCathFam() == besthit.getCathFam()){
-					if(score > samefammaxscore){
-						samefammaxscore = score;
+					if(score > samefammaxscore_cath){
+						samefammaxscore_cath = score;
 					}
 				}
 				else if(query.getCathClazz() == besthit.getCathClazz() && query.getCathFold() == besthit.getCathFold() && query.getCathSupFam() == besthit.getCathSupFam()){
-					if(score > samesupmaxscore){
-						samesupmaxscore = score;
+					if(score > samesupmaxscore_cath){
+						samesupmaxscore_cath = score;
 					}
 				}
 				else if(query.getCathClazz() == besthit.getCathClazz() && query.getCathFold() == besthit.getCathFold()){
-					if(score > samefoldmaxscore){
-						samefoldmaxscore = score;
+					if(score > samefoldmaxscore_cath){
+						samefoldmaxscore_cath = score;
 					}
 				}
 				else{
-					if(score > diffoldmaxscore){
-						diffoldmaxscore = score;
+					if(score > diffoldmaxscore_cath){
+						diffoldmaxscore_cath = score;
 					}
-				}			
+				}
+				//for scop misclassification tests
+				if(query.getScopClazz() == besthit.getScopClazz() && query.getScopFold() == besthit.getScopFold() && query.getScopSupFam() == besthit.getScopSupFam() && query.getScopFam() == besthit.getScopFam()){
+					if(score > samefammaxscore_scop){
+						samefammaxscore_scop = score;
+					}
+				}
+				else if(query.getScopClazz() == besthit.getScopClazz() && query.getScopFold() == besthit.getScopFold() && query.getScopSupFam() == besthit.getScopSupFam()){
+					if(score > samesupmaxscore_scop){
+						samesupmaxscore_scop = score;
+					}
+				}
+				else if(query.getScopClazz() == besthit.getScopClazz() && query.getScopFold() == besthit.getScopFold()){
+					if(score > samefoldmaxscore_scop){
+						samefoldmaxscore_scop = score;
+					}
+				}
+				else{
+					if(score > diffoldmaxscore_scop){
+						diffoldmaxscore_scop = score;
+					}
+				}
 			}
 			
-			//for family recognition test
+			//for cath family recognition test
 			if(query.getCathClazz() == besthit.getCathClazz() && query.getCathFold() == besthit.getCathFold() && query.getCathSupFam() == besthit.getCathSupFam() && query.getCathFam() == besthit.getCathFam()){
-				recsamefam++;
+				cath_recsamefam++;
 			}
 			else if(query.getCathClazz() == besthit.getCathClazz() && query.getCathFold() == besthit.getCathFold() && query.getCathSupFam() == besthit.getCathSupFam()){
-				recsamesup++;
+				cath_recsamesup++;
 			}
 			else if(query.getCathClazz() == besthit.getCathClazz() && query.getCathFold() == besthit.getCathFold()){
-				recsamefold++;
+				cath_recsamefold++;
 			}
 			else{
-				recdiffold++;
+				cath_recdiffold++;
+			}
+			//for scop family recognition test
+			if(query.getScopClazz() == besthit.getScopClazz() && query.getScopFold() == besthit.getScopFold() && query.getScopSupFam() == besthit.getScopSupFam() && query.getScopFam() == besthit.getScopFam()){
+				scop_recsamefam++;
+			}
+			else if(query.getScopClazz() == besthit.getScopClazz() && query.getScopFold() == besthit.getScopFold() && query.getScopSupFam() == besthit.getScopSupFam()){
+				scop_recsamesup++;
+			}
+			else if(query.getScopClazz() == besthit.getScopClazz() && query.getScopFold() == besthit.getScopFold()){
+				scop_recsamefold++;
+			}
+			else{
+				scop_recdiffold++;
 			}
 			
-			//misclassification test
-			if(samefammaxscore > diffoldmaxscore){
-				missamefam++;
-			} else {misdiffoldfam++;}
-			if(samesupmaxscore > diffoldmaxscore){
-				missamesup++;
-			} else {misdiffoldsup++;}
-			if(samefoldmaxscore > diffoldmaxscore){
-				missamefold++;
-			} else {misdiffoldfold++;}
+			
+			//cath misclassification test
+			if(samefammaxscore_cath > diffoldmaxscore_cath){
+				cath_missamefam++;
+			} else {cath_misdiffoldfam++;}
+			if(samesupmaxscore_cath > diffoldmaxscore_cath){
+				cath_missamesup++;
+			} else {cath_misdiffoldsup++;}
+			if(samefoldmaxscore_cath > diffoldmaxscore_cath){
+				cath_missamefold++;
+			} else {cath_misdiffoldfold++;}
+			//scop misclassification test
+			if(samefammaxscore_scop > diffoldmaxscore_scop){
+				scop_missamefam++;
+			} else {scop_misdiffoldfam++;}
+			if(samesupmaxscore_scop > diffoldmaxscore_scop){
+				scop_missamesup++;
+			} else {scop_misdiffoldsup++;}
+			if(samefoldmaxscore_scop > diffoldmaxscore_scop){
+				scop_missamefold++;
+			} else {scop_misdiffoldfold++;}
 		}
+		printResults();
 	}
 	
 	public void printResults(){
+		//cath
 		//family recognition
-		System.out.println(recsamefam+"\n"+recsamesup+"\n"+recsamefold+"\n"+recdiffold);
+		System.out.println(cath_recsamefam+"\n"+cath_recsamesup+"\n"+cath_recsamefold+"\n"+cath_recdiffold);
 		//family misclassification
-		System.out.println(missamefam+"\n"+misdiffoldfam);
+		System.out.println(cath_missamefam+"\n"+cath_misdiffoldfam);
 		//sup misclassification
-		System.out.println(missamesup+"\n"+misdiffoldsup);
+		System.out.println(cath_missamesup+"\n"+cath_misdiffoldsup);
 		//fold misclassification
-		System.out.println(missamefold+"\n"+misdiffoldfold);
+		System.out.println(cath_missamefold+"\n"+cath_misdiffoldfold);
 
+		//scop
+		//family recognition
+		System.out.println(scop_recsamefam+"\n"+scop_recsamesup+"\n"+scop_recsamefold+"\n"+scop_recdiffold);
+		//family misclassification
+		System.out.println(scop_missamefam+"\n"+scop_misdiffoldfam);
+		//sup misclassification
+		System.out.println(scop_missamesup+"\n"+scop_misdiffoldsup);
+		//fold misclassification
+		System.out.println(scop_missamefold+"\n"+scop_misdiffoldfold);
 	}
 }
