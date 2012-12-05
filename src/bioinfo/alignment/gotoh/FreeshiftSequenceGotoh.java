@@ -19,7 +19,7 @@ public class FreeshiftSequenceGotoh extends Gotoh{
 	 * 
 	 * @param gapOpen
 	 * @param gapExtend
-	 * @param scoringmatrix 26x26 matrix containing all scoring values plus some empty lines due to faster access
+	 * @param scoringmatrix 26x26 matrix containing all scoring values plus some empty lines for faster access
 	 */
 	public FreeshiftSequenceGotoh(double gapOpen, double gapExtend, int[][] scoringmatrix) {
 		super(gapOpen, gapExtend);
