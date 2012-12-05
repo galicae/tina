@@ -14,6 +14,7 @@ import util.Bio;
  * 
  */
 public class MatrixReader123D {
+	private static int ALPHA = 0, BETA = 1, OTHER = 2;
 
 	/**
 	 * reads a file containing the secondary structure preferences for all amino
@@ -61,6 +62,67 @@ public class MatrixReader123D {
 			System.out.println("No Input (secondary structure preference)!");
 		}
 		return matrix;
+	}
+	
+	
+	public double[][] readWeights(String filename) {
+		int[] ind = new int[3];
+		
+		double[] seq = new double[3];
+		double[] go = new double[3];
+		double[] ge = new double[3];
+		double[] ssp = new double[3];
+		double[] lccp = new double[3];
+		double[] gccp = new double[3];
+		
+		double[][] multiresult = new double[6][3];
+		
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(filename));
+			String line;
+			while ((line = in.readLine()) != null) {
+				if(line.startsWith("#")) {
+					ind = calcIndices(line.split("\\s+"));
+				}
+				else {
+					String[] cont = line.split("\\s+");
+					if(cont[cont.length].equals("go")) {
+						go[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
+						go[BETA] = Double.parseDouble(cont[ind[BETA]]);
+						go[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
+					}
+					else if(cont[cont.length].equals("ge"))
+						ge[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
+					else if(cont[cont.length].equals("seq"))
+						seq[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
+						
+				}
+			}
+			in.close();
+		} catch (IOException e) {
+			System.out.println("No Input (secondary structure preference)!");
+		}
+		multiresult[0] = seq;
+		multiresult[1] = go;
+		multiresult[2] = ge;
+		multiresult[3] = ssp;
+		multiresult[4] = lccp;
+		multiresult[5] = gccp;
+		return multiresult;
+	}
+
+
+	private int[] calcIndices(String[] split) {
+		int[] result = new int[3];
+		for(int i = 1; i < split.length; i++) {
+			if(split[i].equals("l"))
+				result[i-1] = OTHER;
+			if(split[i].equals("h"))
+				result[i-1] = ALPHA;
+			if(split[i].equals("s"))
+				result[i-1] = BETA;
+		}
+		return result;
 	}
 
 }
