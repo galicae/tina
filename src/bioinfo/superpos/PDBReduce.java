@@ -57,12 +57,12 @@ public class PDBReduce {
 		return alignmentCoordinates;
 	}
 
-	public static void reducePDB(Alignment alignment, PDBEntry pdb1, PDBEntry pdb2) {
+	public static PDBEntry[] reducePDB(Alignment alignment, PDBEntry pdb1, PDBEntry pdb2) {
 		// first find out how many residues are aligned
 		int alignmentLength = 0;
 		int[][] calcMap = alignment.calcMap();
 		for (int i = 0; i < calcMap[0].length; i++) {
-			if (calcMap[0][i] > 0) {
+			if (calcMap[0][i] >= 0) {
 				alignmentLength++;
 			}
 		}
@@ -74,16 +74,16 @@ public class PDBReduce {
 
 		Atom[] temp = new Atom[1];
 		for (int i = 0; i < calcMap[0].length; i++) {
-			if (calcMap[0][i] > 0) {
+			if (calcMap[0][i] >= 0) {
 				try {
 					temp[0] = pdb1.getAminoAcid(i).getAtomByType(CA);
 					AminoAcid aa1 = new AminoAcid(pdb1.getAminoAcid(i)
-							.getName(), temp);
+							.getName(), temp.clone());
 					pdb1List.addLast(aa1);
 					temp[0] = pdb2.getAminoAcid(calcMap[0][i])
 							.getAtomByType(CA);
 					AminoAcid aa2 = new AminoAcid(pdb2.getAminoAcid(
-							calcMap[0][i]).getName(), temp);
+							calcMap[0][i]).getName(), temp.clone());
 					pdb2List.addLast(aa2);
 				} catch (Exception e) {
 					continue;
@@ -101,6 +101,7 @@ public class PDBReduce {
 		// now change the PDBEntries, so that we can write them in files again
 		pdb1 = new PDBEntry(pdb1.getID(), pdb1Array);
 		pdb2 = new PDBEntry(pdb2.getID(), pdb2Array);
-
+		PDBEntry[] result = {pdb1, pdb2};
+		return result;
 	}
 }

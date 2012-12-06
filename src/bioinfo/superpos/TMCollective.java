@@ -29,10 +29,7 @@ public class TMCollective {
 		PDBEntry q = reader.readPDBFromFile(qFile);
 
 		// return only CA atoms of amino acids in PDB form
-		PDBReduce.reducePDB(alignment, p, q);
-		PDBEntry[] result = new PDBEntry[2];
-		result[0] = p;
-		result[1] = q;
+		PDBEntry[] result = PDBReduce.reducePDB(alignment, p, q);
 		return result;
 	}
 
@@ -40,10 +37,7 @@ public class TMCollective {
 			PDBEntry qFile) {
 
 		// return only CA atoms of amino acids in PDB form
-		PDBReduce.reducePDB(alignment, pFile, qFile);
-		PDBEntry[] result = new PDBEntry[2];
-		result[0] = pFile;
-		result[1] = qFile;
+		PDBEntry[] result = PDBReduce.reducePDB(alignment, pFile, qFile);
 		return result;
 	}
 }
