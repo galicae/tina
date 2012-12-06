@@ -49,14 +49,17 @@ public class BMCathAndScop {
 	
 	private BufferedWriter out = null; 
 	
-	public BMCathAndScop(HashMap<String,char[]> seqlib, HashMap<String,CathScopEntry> cathscopinfos, HashMap<String,ArrayList<String>> pairlist, String matrixpath,int go,int ge, String mode, String outpath){
+	public BMCathAndScop(String seqlibpath, String cathscopinfopath, String pairlistpath, String matrixpath,int go,int ge, String mode, String outpath){
 		try {
 			this.out = new BufferedWriter(new FileWriter(outpath));
 		} catch (IOException e) {
 			System.out.println("geht nischt");
 		}
-		this.seqlib = seqlib;
-		this.cathscopinfos = cathscopinfos;
+		this.seqlib = SeqLibrary.parse(seqlibpath);
+		this.cathscopinfos = CathScopHash.read(cathscopinfopath);
+		this.pairs = HashPairReader.readPairs(pairlistpath+"/cathscop.inpairs", pairlistpath+"/cathscop.outpairs");
+		double[][] scoringmatrix = QuasarMatrix.parseMatrix(matrixpath);
+		
 		this.cath_recdiffold = 0;
 		this.cath_recsamefam = 0;
 		this.cath_recsamefold = 0;
@@ -79,9 +82,6 @@ public class BMCathAndScop {
 		this.scop_missamesup = 0;
 		this.scop_missamefold = 0;
 
-		this.pairs = pairlist;
-		double[][] scoringmatrix = QuasarMatrix.parseMatrix(matrixpath);
-		
 		if(mode.equals("global")){
 			gotoh = new GlobalSequenceGotoh(go,ge,scoringmatrix);
 		}
@@ -220,35 +220,36 @@ public class BMCathAndScop {
 				scop_missamefold++;
 			} else {scop_misdiffoldfold++;}
 		}
-		printResults();
+		
+		try {
+			printResults();
+			out.close();
+		} catch (IOException e) {
+			System.out.println("Cannot write results");
+		}
 	}
 	
-	public void printResults(){
+	public void printResults() throws IOException{
+		out.write(cath_recsamefam+"\n"+cath_recsamesup+"\n"+cath_recsamefold+"\n"+cath_recdiffold);
+		//family misclassification
+		out.write(cath_missamefam+"\n"+cath_misdiffoldfam);
+		//sup misclassification
+		out.write(cath_missamesup+"\n"+cath_misdiffoldsup);
+		//fold misclassification
+		out.write(cath_missamefold+"\n"+cath_misdiffoldfold);
 
-		try {
-			//cath
-			//family recognition
-			out.write(cath_recsamefam+"\n"+cath_recsamesup+"\n"+cath_recsamefold+"\n"+cath_recdiffold);
-			//family misclassification
-			out.write(cath_missamefam+"\n"+cath_misdiffoldfam);
-			//sup misclassification
-			out.write(cath_missamesup+"\n"+cath_misdiffoldsup);
-			//fold misclassification
-			out.write(cath_missamefold+"\n"+cath_misdiffoldfold);
-
-			//scop
-			//family recognition
-			out.write(scop_recsamefam+"\n"+scop_recsamesup+"\n"+scop_recsamefold+"\n"+scop_recdiffold);
-			//family misclassification
-			out.write(scop_missamefam+"\n"+scop_misdiffoldfam);
-			//sup misclassification
-			out.write(scop_missamesup+"\n"+scop_misdiffoldsup);
-			//fold misclassification
-			out.write(scop_missamefold+"\n"+scop_misdiffoldfold);		
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		//scop
+		//family recognition
+		out.write(scop_recsamefam+"\n"+scop_recsamesup+"\n"+scop_recsamefold+"\n"+scop_recdiffold);
+		//family misclassification
+		out.write(scop_missamefam+"\n"+scop_misdiffoldfam);
+		//sup misclassification
+		out.write(scop_missamesup+"\n"+scop_misdiffoldsup);
+		//fold misclassification
+		out.write(scop_missamefold+"\n"+scop_misdiffoldfold);	
 	}
+	
+//	public static void main(String[] args){
+//		BMCathAndScop benchmark = new BMCathAndScop(args[0], args[1], args[2], args[3], Integer.parseInt(args[4]), Integer.parseInt(args[5]), args[6], args[7]);
+//	}
 }
