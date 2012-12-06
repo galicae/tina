@@ -10,7 +10,7 @@ public class benchmark2 {
 		for(String mod : mode){
 			for(String matrix : matrices){
 				for(int go : gapopen){
-					BMCathAndScop bm = new BMCathAndScop(args[0], args[1], args[2], args[3]+"/matrix", go, -1, mod, mod+"_"+matrix+"_"+go+".bm");
+					BMCathAndScop bm = new BMCathAndScop(args[0], args[1], args[2], args[3]+"/"+matrix, go, -1, mod, mod+"_"+matrix+"_"+go+".bm");
 				}
 			}
 		}
