@@ -1,0 +1,104 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  Internal Error (type.cpp:768), pid=5200, tid=4908
+#  Error: ShouldNotReachHere()
+#
+# JRE version: 6.0_22-b04
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (17.1-b03 mixed mode windows-amd64 )
+# If you would like to submit a bug report, please visit:
+#   http://java.sun.com/webapps/bugreport/crash.jsp
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000000049616000):  JavaThread "CompilerThread0" daemon [_thread_in_native, id=4908, stack(0x00000000499c0000,0x0000000049ac0000)]
+
+Stack: [0x00000000499c0000,0x0000000049ac0000]
+[error occurred during error reporting (printing stack bounds), id 0xc0000005]
+
+
+Current CompileTask:
+C2:  2%     bioinfo.alignment.gotoh.GlobalSequenceGotoh.calculateMatrices()V @ 33 (301 bytes)
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x000000004961c000 JavaThread "Low Memory Detector" daemon [_thread_blocked, id=1172, stack(0x0000000049bc0000,0x0000000049cc0000)]
+  0x0000000049619000 JavaThread "CompilerThread1" daemon [_thread_in_native, id=5136, stack(0x0000000049ac0000,0x0000000049bc0000)]
+=>0x0000000049616000 JavaThread "CompilerThread0" daemon [_thread_in_native, id=4908, stack(0x00000000499c0000,0x0000000049ac0000)]
+  0x0000000049613000 JavaThread "Attach Listener" daemon [_thread_blocked, id=2472, stack(0x00000000498c0000,0x00000000499c0000)]
+  0x000000004960d800 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=4512, stack(0x00000000497c0000,0x00000000498c0000)]
+  0x0000000000608000 JavaThread "Finalizer" daemon [_thread_blocked, id=5140, stack(0x00000000494c0000,0x00000000495c0000)]
+  0x0000000000601000 JavaThread "Reference Handler" daemon [_thread_blocked, id=3216, stack(0x00000000493c0000,0x00000000494c0000)]
+  0x000000000050b800 JavaThread "main" [_thread_in_Java, id=1756, stack(0x0000000002500000,0x0000000002600000)]
+
+Other Threads:
+  0x00000000005fd000 VMThread [stack: 0x00000000492c0000,0x00000000493c0000] [id=1784]
+  0x000000004962d800 WatcherThread [stack: 0x0000000049cc0000,0x0000000049dc0000] [id=4860]
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap
+ PSYoungGen      total 34240K, used 4490K [0x0000000033cb0000, 0x0000000038070000, 0x0000000048600000)
+  eden space 31616K, 6% used [0x0000000033cb0000,0x0000000033e8aa80,0x0000000035b90000)
+  from space 2624K, 98% used [0x0000000035b90000,0x0000000035e18048,0x0000000035e20000)
+  to   space 3072K, 0% used [0x0000000037d70000,0x0000000037d70000,0x0000000038070000)
+ PSOldGen        total 42176K, used 528K [0x000000000aa00000, 0x000000000d330000, 0x0000000033cb0000)
+  object space 42176K, 1% used [0x000000000aa00000,0x000000000aa84000,0x000000000d330000)
+ PSPermGen       total 21248K, used 3180K [0x0000000005600000, 0x0000000006ac0000, 0x000000000aa00000)
+  object space 21248K, 14% used [0x0000000005600000,0x000000000591b388,0x0000000006ac0000)
+
+Dynamic libraries:
+0x0000000000400000 - 0x000000000042e000 	C:\Program Files\Java\jre6\bin\javaw.exe
+0x0000000077740000 - 0x00000000778e9000 	C:\Windows\SYSTEM32\ntdll.dll
+0x00000000771b0000 - 0x00000000772cf000 	C:\Windows\system32\kernel32.dll
+0x000007fefdc50000 - 0x000007fefdcbc000 	C:\Windows\system32\KERNELBASE.dll
+0x000007feff970000 - 0x000007feffa4b000 	C:\Windows\system32\ADVAPI32.dll
+0x000007feff1e0000 - 0x000007feff27f000 	C:\Windows\system32\msvcrt.dll
+0x000007feff2b0000 - 0x000007feff2cf000 	C:\Windows\SYSTEM32\sechost.dll
+0x000007fefe070000 - 0x000007fefe19d000 	C:\Windows\system32\RPCRT4.dll
+0x00000000774e0000 - 0x00000000775da000 	C:\Windows\system32\USER32.dll
+0x000007feff2d0000 - 0x000007feff337000 	C:\Windows\system32\GDI32.dll
+0x000007feff3c0000 - 0x000007feff3ce000 	C:\Windows\system32\LPK.dll
+0x000007fefe1a0000 - 0x000007fefe269000 	C:\Windows\system32\USP10.dll
+0x000007feff280000 - 0x000007feff2ae000 	C:\Windows\system32\IMM32.DLL
+0x000007feff700000 - 0x000007feff809000 	C:\Windows\system32\MSCTF.dll
+0x000000006d7f0000 - 0x000000006dec1000 	C:\Program Files\Java\jre6\bin\server\jvm.dll
+0x000007fefbf90000 - 0x000007fefbfcb000 	C:\Windows\system32\WINMM.dll
+0x000000006d760000 - 0x000000006d76e000 	C:\Program Files\Java\jre6\bin\verify.dll
+0x000000006d3b0000 - 0x000000006d3d7000 	C:\Program Files\Java\jre6\bin\java.dll
+0x000000006d310000 - 0x000000006d31a000 	C:\Program Files\Java\jre6\bin\hpi.dll
+0x0000000077900000 - 0x0000000077907000 	C:\Windows\system32\PSAPI.DLL
+0x000000006d7b0000 - 0x000000006d7c2000 	C:\Program Files\Java\jre6\bin\zip.dll
+
+VM Arguments:
+jvm_args: -Dfile.encoding=Cp1252 
+java_command: test.GotohTest cathscop.inpairs domains.seqlib dayhoff.mat
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+CLASSPATH=.;C:\Program Files (x86)\Java\jre7\lib\ext\QTJava.zip
+PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\WIDCOMM\Bluetooth Software\;C:\Program Files\WIDCOMM\Bluetooth Software\syswow64;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files (x86)\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files (x86)\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Java\jdk1.6.0_22\bin;C:\Program Files (x86)\Bitvise Tunnelier;C:\Program Files (x86)\Universal Extractor;C:\Program Files (x86)\Universal Extractor\bin;C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;C:\Windows\Microsoft.NET\Framework\v2.0.50727;C:\Program Files (x86)\Calibre2\;C:\Program Files (x86)\QuickTime\QTSystem\;C:\Program Files (x86)\MiKTeX\miktex\bin\
+USERNAME=nikos
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 37 Stepping 2, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 7 Build 7601 Service Pack 1
+
+CPU:total 4 (8 cores per cpu, 2 threads per core) family 6 model 37 stepping 2, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, ht
+
+Memory: 4k page, physical 4044900k(1235892k free), swap 10110248k(6679664k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (17.1-b03) for windows-amd64 JRE (1.6.0_22-b04), built on Sep 15 2010 00:45:56 by "java_re" with MS VC++ 8.0 (VS2005)
+
+time: Thu Dec 06 18:55:35 2012
+elapsed time: 0 seconds
+
