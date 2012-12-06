@@ -57,18 +57,17 @@ public class BMCathAndScop {
 	private BufferedWriter scopFamMisWr = null;
 	private BufferedWriter scopSupMisWr = null;
 	private BufferedWriter scopFolMisWr = null;
-	private BufferedWriter scopDiffWr = null;
 	private BufferedWriter cathFamMisWr = null;
 	private BufferedWriter cathSupMisWr = null;
 	private BufferedWriter cathFolMisWr = null;
-	private BufferedWriter cathDiffWr = null;
+
 
 	public BMCathAndScop(String seqlibpath, String cathscopinfopath,
 			String pairlistpath, String matrixpath, int go, int ge,
 			String mode, String outpath, String pdbFolder, String famRecPath,
 			String scopFamMisPath, String scopSupMisPath,
-			String scopFolMisPath, String scopDiffPath, String cathFamMisPath,
-			String cathSupMisPath, String cathFolMisPath, String cathDiffPath) {
+			String scopFolMisPath, String cathFamMisPath,
+			String cathSupMisPath, String cathFolMisPath) {
 		try {
 			this.out = new BufferedWriter(new FileWriter(outpath));
 		} catch (IOException e) {
@@ -116,11 +115,9 @@ public class BMCathAndScop {
 			scopFamMisWr = new BufferedWriter(new FileWriter(scopFamMisPath));
 			scopSupMisWr = new BufferedWriter(new FileWriter(scopSupMisPath));
 			scopFolMisWr = new BufferedWriter(new FileWriter(scopFolMisPath));
-			scopDiffWr = new BufferedWriter(new FileWriter(scopDiffPath));
 			cathFamMisWr = new BufferedWriter(new FileWriter(cathFamMisPath));
 			cathSupMisWr = new BufferedWriter(new FileWriter(cathSupMisPath));
 			cathFolMisWr = new BufferedWriter(new FileWriter(cathFolMisPath));
-			cathDiffWr = new BufferedWriter(new FileWriter(cathDiffPath));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -304,7 +301,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else {
+			} else if(samefammaxscore_cath < diffoldmaxscore_cath) {
 				cath_misdiffoldfam++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -313,7 +310,7 @@ public class BMCathAndScop {
 											.getComponent(0).getID()),
 							nikoReader.readFromFolderById(cathDifFol
 									.getComponent(1).getID()));
-					cathDiffWr
+					cathFamMisWr
 							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -333,7 +330,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else {
+			} else if(samesupmaxscore_cath < diffoldmaxscore_cath){
 				cath_misdiffoldsup++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -342,7 +339,7 @@ public class BMCathAndScop {
 											.getComponent(0).getID()),
 							nikoReader.readFromFolderById(cathDifFol
 									.getComponent(1).getID()));
-					cathDiffWr
+					cathSupMisWr
 							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -362,7 +359,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else {
+			} else if(samefoldmaxscore_cath < diffoldmaxscore_cath) {
 				cath_misdiffoldfold++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -371,7 +368,7 @@ public class BMCathAndScop {
 											.getComponent(0).getID()),
 							nikoReader.readFromFolderById(cathDifFol
 									.getComponent(1).getID()));
-					cathDiffWr
+					cathFolMisWr
 							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -393,7 +390,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else {
+			} else if(samefammaxscore_scop < diffoldmaxscore_scop) {
 				scop_misdiffoldfam++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -402,7 +399,7 @@ public class BMCathAndScop {
 											.getComponent(0).getID()),
 							nikoReader.readFromFolderById(scopDifFol
 									.getComponent(1).getID()));
-					scopDiffWr
+					scopFamMisWr
 							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -422,7 +419,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else {
+			} else if(samesupmaxscore_scop < diffoldmaxscore_scop) {
 				scop_misdiffoldsup++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -431,7 +428,7 @@ public class BMCathAndScop {
 											.getComponent(0).getID()),
 							nikoReader.readFromFolderById(scopDifFol
 									.getComponent(1).getID()));
-					scopDiffWr
+					scopSupMisWr
 							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -451,7 +448,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else {
+			} else if(samefoldmaxscore_scop < diffoldmaxscore_scop) {
 				scop_misdiffoldfold++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -460,20 +457,29 @@ public class BMCathAndScop {
 											.getComponent(0).getID()),
 							nikoReader.readFromFolderById(scopDifFol
 									.getComponent(1).getID()));
-					scopDiffWr
+					scopFolMisWr
 							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
+			System.out.println("found max for id: "+query_entry.getKey());
 		}
 
 		try {
 			printResults();
+			FamRecWr.close();
+			scopFamMisWr.close();
+			scopSupMisWr.close();
+			scopFolMisWr.close();
+			cathFamMisWr.close();
+			cathSupMisWr.close();
+			cathFolMisWr.close();
 			out.close();
 		} catch (IOException e) {
 			System.out.println("Cannot write results");
 		}
+		System.out.println("ready");
 	}
 
 	public void printResults() throws IOException {
@@ -502,6 +508,6 @@ public class BMCathAndScop {
 		BMCathAndScop benchmark = new BMCathAndScop(args[0], args[1], args[2],
 				args[3], Integer.parseInt(args[4]), Integer.parseInt(args[5]),
 				args[6], args[7], args[8], args[9], args[10], args[11],
-				args[12], args[13], args[14], args[15], args[16], args[17]);
+				args[12], args[13], args[14], args[15]);
 	}
 }
