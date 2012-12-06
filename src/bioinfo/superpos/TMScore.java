@@ -85,8 +85,12 @@ public class TMScore {
 	 * @param args
 	 * @throws Exception
 	 */
-	public static double[][] doStuff(String argument, PDBEntry pdb1, PDBEntry pdb2) throws Exception {
+	public static double[][] doStuff(String argument, PDBEntry pdb1,
+			PDBEntry pdb2) throws Exception {
 		String[] args = argument.split("\\s+");
+		// System.out.println(pdb1.getAtomSectionAsString());
+		// System.out.println();
+		// System.out.println(pdb2.getAtomSectionAsString());
 		int i, j;
 		int k = 0;
 		d0_fix = -1;
@@ -98,10 +102,32 @@ public class TMScore {
 			System.out.println(help());
 			System.exit(1);
 		}
+		String[] pdbs = new String[2];
+		for (i = 0; i < args.length;) {
+			if (args[i].equals("-o")) {
+				m_out = 1;
+				i++;
+				outname = args[i];
+				i++;
+			} else if (args[i].equals("-d")) {
+				m_fix = 1;
+				i++;
+				d0_fix = Double.valueOf(args[i]);
+				i++;
+			} else if (j < 2) {
+				pdbs[j] = args[i];
+				i++;
+				j++;
+			}
+		}
 
 		seq1A = readPDB(pdb1, xa, ya, za, nresA);
 		String seq1B = "";
 		seq1B = readPDB(pdb2, xb, yb, zb, nresB);
+
+//		System.out.println(seq1A);
+//		System.out.println(seq1B);
+
 		nseqA = seq1A.length();
 		nseqB = seq1B.length();
 		nseqA--;
@@ -574,6 +600,8 @@ public class TMScore {
 		// }
 		// System.out.println("\n");
 		// release_memory();
+		result[4][0] = score_max;
+		result[4][1] = score_GDT;
 		result[4][2] = rmsd_ali;
 		return result;
 	}
@@ -585,17 +613,16 @@ public class TMScore {
 		i = 0;
 		AminoAcid curAA = new AminoAcid("C");
 		for (int c = 0; c < file.length(); c++) {
-			try{
-			curAA = file.getAminoAcid(c);
-			seq = seq + curAA.getName().toString();
-			for (int j = i; j < curAA.getAtomNumber(); j++) {
-				x[i] = curAA.getAtom(j).getPosition()[0];
-				y[i] = curAA.getAtom(j).getPosition()[1];
-				z[i] = curAA.getAtom(j).getPosition()[2];
+			try {
+				curAA = file.getAminoAcid(c);
+				seq = seq + curAA.getName().toString();
+				x[i] = curAA.getAtom(0).getPosition()[0];
+				y[i] = curAA.getAtom(0).getPosition()[1];
+				z[i] = curAA.getAtom(0).getPosition()[2];
 				nres[i] = c; // cheap surrogate for the real residue number
 				i++;
 			}
-			}
+
 			catch (Exception e) {
 				continue;
 			}

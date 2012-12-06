@@ -129,12 +129,15 @@ public class FreeshiftSequenceGotoh extends Gotoh{
 		//M[0][0] = 0;		
 	}
 	
+	
 	/**
 	 * calculates matrices using scoring-function and gap-penalty
 	 * 
 	 */
 	private void calculateMatrices() {
 		for(int i = 1; i <= sequence1.length(); i++){
+//			Gergely Beitrag:
+//			alignable.getMtachscores(i, int[] scores);
 			for(int j = 1; j <= sequence2.length(); j++){
 				D[i][j] = Math.max(M[i][j-1]+gapOpen+gapExtend, D[i][j-1]+gapExtend);
 				//System.out.println((M[i][j-1]+gapOpen+gapExtend)+" "+(D[i][j-1]+gapExtend));

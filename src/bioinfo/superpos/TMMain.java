@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import bioinfo.alignment.Alignment;
+import bioinfo.proteins.Atom;
+import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleFactory2D;
@@ -18,11 +20,11 @@ public class TMMain {
 		TMCollective main = new TMCollective();
 		PDBEntry[] pdbs = main.createTMInput(alignment, pFile, qFile);
 
-//		writeToFile("TM" + pFile, pdbs[0]);
-//		writeToFile("TM" + qFile, pdbs[1]);
+		writeToFile("TM" + pFile, pdbs[0]);
+		writeToFile("TM" + qFile, pdbs[1]);
 
 		// actual calculation of TM score and corresponding rotation matrix
-		double[][] tmResult = TMScore.doStuff("TM" + pFile + " TM" + qFile, pdbs[0], pdbs[1]);
+		double[][] tmResult = TMOriginal.doStuff("TM" + pFile + " TM" + qFile);
 
 		// remember that rmResult is [5][4], and that [i][0] is empty
 		// also [4][0] is the TM score and [4][1] the GDT
@@ -45,7 +47,7 @@ public class TMMain {
 //		writeToFile("TM" + qFile.getID(), pdbs[1]);
 
 		// actual calculation of TM score and corresponding rotation matrix
-		double[][] tmResult = TMScore.doStuff("TM" + pFile + " TM" + qFile, pdbs[0], pdbs[1]);
+		double[][] tmResult = TMScore.doStuff("TM" + pFile.getID() + ".pdb" + " TM" + qFile.getID() + ".pdb", pdbs[0], pdbs[1]);
 
 		// remember that rmResult is [5][4], and that [i][0] is empty
 		// also [4][0] is the TM score and [4][1] the GDT
@@ -97,7 +99,7 @@ public class TMMain {
 
 		// write to file
 		for (int i = 0; i < input.length(); i++) {
-			out.write(input.getAminoAcid(i).toString() + "\n");
+			out.write(input.getAminoAcid(i).getAtomByType(AtomType.CA).toString(i, i, input.getAminoAcid(i).toString(), '1') + "\n");
 		}
 		out.close();
 	}
