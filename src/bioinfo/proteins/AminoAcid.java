@@ -125,7 +125,10 @@ public class AminoAcid {
 //    12345678901234567890123456789012345678901234567890123456789012345678901234567890
 //    MODEL        1
 //    ATOM      1  N   ALA A   1      11.104   6.134  -6.504  1.00  0.00           N
-//	  ATOM                                                                          
+//	  ATOM                      
+	/**
+	 * should return all atoms of an amino acid in PDB format
+	 */
 	public String toPDBLineString() {
 		return " ";
 	}

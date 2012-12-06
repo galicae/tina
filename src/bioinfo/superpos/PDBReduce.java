@@ -57,7 +57,21 @@ public class PDBReduce {
 		return alignmentCoordinates;
 	}
 
-	public static PDBEntry[] reducePDB(Alignment alignment, PDBEntry pdb1, PDBEntry pdb2) {
+	/**
+	 * 
+	 * alternative version of reducePDB, after we stopped reading files and
+	 * started using objects instead
+	 * 
+	 * @param alignment
+	 *            an Alignment object
+	 * @param pdb1
+	 *            the first pdb (p)
+	 * @param pdb2
+	 *            the second pdb (q)
+	 * @return two reduced pdb entries, where only the aligned Ca atons
+	 */
+	public static PDBEntry[] reducePDB(Alignment alignment, PDBEntry pdb1,
+			PDBEntry pdb2) {
 		// first find out how many residues are aligned
 		int alignmentLength = 0;
 		int[][] calcMap = alignment.calcMap();
@@ -101,7 +115,7 @@ public class PDBReduce {
 		// now change the PDBEntries, so that we can write them in files again
 		pdb1 = new PDBEntry(pdb1.getID(), pdb1Array);
 		pdb2 = new PDBEntry(pdb2.getID(), pdb2Array);
-		PDBEntry[] result = {pdb1, pdb2};
+		PDBEntry[] result = { pdb1, pdb2 };
 		return result;
 	}
 }
