@@ -14,14 +14,19 @@ import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
 import bioinfo.alignment.gotoh.LocalSequenceGotoh;
 import bioinfo.alignment.matrices.QuasarMatrix;
+import bioinfo.proteins.PDBFileReader;
+import bioinfo.superpos.TMMain;
+import bioinfo.superpos.Transformation;
 
 public class BMCathAndScop {
-	
-	private HashMap<String,char[]> seqlib;
-	private HashMap<String,CathScopEntry> cathscopinfos;
-	private HashMap<String,ArrayList<String>> pairs;
-	
-	//family recognition test
+
+	private HashMap<String, char[]> seqlib;
+	private HashMap<String, CathScopEntry> cathscopinfos;
+	private HashMap<String, ArrayList<String>> pairs;
+
+	private String pdbFolder;
+
+	// family recognition test
 	private int cath_recsamefam;
 	private int cath_recsamesup;
 	private int cath_recsamefold;
@@ -30,8 +35,8 @@ public class BMCathAndScop {
 	private int scop_recsamesup;
 	private int scop_recsamefold;
 	private int scop_recdiffold;
-	
-	//misclassification tests
+
+	// misclassification tests
 	private int cath_missamefam;
 	private int cath_missamesup;
 	private int cath_missamefold;
@@ -44,12 +49,26 @@ public class BMCathAndScop {
 	private int scop_misdiffoldfam;
 	private int scop_misdiffoldsup;
 	private int scop_misdiffoldfold;
-	
+
 	private Aligner gotoh;
-	
-	private BufferedWriter out = null; 
-	
-	public BMCathAndScop(String seqlibpath, String cathscopinfopath, String pairlistpath, String matrixpath,int go,int ge, String mode, String outpath){
+
+	private BufferedWriter out = null;
+	private BufferedWriter FamRecWr = null;
+	private BufferedWriter scopFamMisWr = null;
+	private BufferedWriter scopSupMisWr = null;
+	private BufferedWriter scopFolMisWr = null;
+	private BufferedWriter scopDiffWr = null;
+	private BufferedWriter cathFamMisWr = null;
+	private BufferedWriter cathSupMisWr = null;
+	private BufferedWriter cathFolMisWr = null;
+	private BufferedWriter cathDiffWr = null;
+
+	public BMCathAndScop(String seqlibpath, String cathscopinfopath,
+			String pairlistpath, String matrixpath, int go, int ge,
+			String mode, String outpath, String pdbFolder, String famRecPath,
+			String scopFamMisPath, String scopSupMisPath,
+			String scopFolMisPath, String scopDiffPath, String cathFamMisPath,
+			String cathSupMisPath, String cathFolMisPath, String cathDiffPath) {
 		try {
 			this.out = new BufferedWriter(new FileWriter(outpath));
 		} catch (IOException e) {
@@ -57,9 +76,11 @@ public class BMCathAndScop {
 		}
 		this.seqlib = SeqLibrary.parse(seqlibpath);
 		this.cathscopinfos = CathScopHash.read(cathscopinfopath);
-		this.pairs = HashPairReader.readPairs(pairlistpath+"/cathscop.inpairs", pairlistpath+"/cathscop.outpairs");
+		this.pairs = HashPairReader.readPairs(pairlistpath
+				+ "/cathscop.inpairs", pairlistpath + "/cathscop.outpairs");
 		double[][] scoringmatrix = QuasarMatrix.parseMatrix(matrixpath);
-		
+		this.pdbFolder = pdbFolder;
+
 		this.cath_recdiffold = 0;
 		this.cath_recsamefam = 0;
 		this.cath_recsamefold = 0;
@@ -68,7 +89,7 @@ public class BMCathAndScop {
 		this.scop_recsamefam = 0;
 		this.scop_recsamefold = 0;
 		this.scop_recsamesup = 0;
-		
+
 		this.cath_misdiffoldfam = 0;
 		this.cath_misdiffoldsup = 0;
 		this.cath_misdiffoldfold = 0;
@@ -82,19 +103,36 @@ public class BMCathAndScop {
 		this.scop_missamesup = 0;
 		this.scop_missamefold = 0;
 
-		if(mode.equals("global")){
-			gotoh = new GlobalSequenceGotoh(go,ge,scoringmatrix);
+		if (mode.equals("global")) {
+			gotoh = new GlobalSequenceGotoh(go, ge, scoringmatrix);
+		} else if (mode.equals("local")) {
+			gotoh = new LocalSequenceGotoh(go, ge, scoringmatrix);
+		} else {
+			gotoh = new FreeshiftSequenceGotoh(go, ge, scoringmatrix);
 		}
-		else if(mode.equals("local")){
-			gotoh = new LocalSequenceGotoh(go,ge,scoringmatrix);
+
+		try {
+			FamRecWr = new BufferedWriter(new FileWriter(famRecPath));
+			scopFamMisWr = new BufferedWriter(new FileWriter(scopFamMisPath));
+			scopSupMisWr = new BufferedWriter(new FileWriter(scopSupMisPath));
+			scopFolMisWr = new BufferedWriter(new FileWriter(scopFolMisPath));
+			scopDiffWr = new BufferedWriter(new FileWriter(scopDiffPath));
+			cathFamMisWr = new BufferedWriter(new FileWriter(cathFamMisPath));
+			cathSupMisWr = new BufferedWriter(new FileWriter(cathSupMisPath));
+			cathFolMisWr = new BufferedWriter(new FileWriter(cathFolMisPath));
+			cathDiffWr = new BufferedWriter(new FileWriter(cathDiffPath));
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		else{
-			gotoh = new FreeshiftSequenceGotoh(go,ge,scoringmatrix);
-		}
+
 		benchmark();
 	}
-	
-	public void benchmark(){
+
+	public void benchmark() {
+		PDBFileReader nikoReader = new PDBFileReader();
+		nikoReader.setFolder(pdbFolder);
+		TMMain tmMachine = new TMMain();
+
 		double maxscore;
 		double score;
 		double samefammaxscore_cath;
@@ -105,122 +143,331 @@ public class BMCathAndScop {
 		double samesupmaxscore_scop;
 		double samefoldmaxscore_scop;
 		double diffoldmaxscore_scop;
-		
-		for(Entry<String,ArrayList<String>> query_entry : pairs.entrySet()){
-		CathScopEntry besthit = null;
-		maxscore = Double.MIN_VALUE;
-		samefammaxscore_cath = Double.MIN_VALUE;
-		samesupmaxscore_cath = Double.MIN_VALUE;
-		samefoldmaxscore_cath = Double.MIN_VALUE;
-		diffoldmaxscore_cath = Double.MIN_VALUE;
-		samefammaxscore_scop = Double.MIN_VALUE;
-		samesupmaxscore_scop = Double.MIN_VALUE;
-		samefoldmaxscore_scop = Double.MIN_VALUE;
-		diffoldmaxscore_scop = Double.MIN_VALUE;
-		SequenceAlignment temp;
-		CathScopEntry query = cathscopinfos.get(query_entry.getKey());
-		
-			for(String template : query_entry.getValue()){
-				temp = (SequenceAlignment)gotoh.align(new Sequence(query.getID(),seqlib.get(query.getID())),new Sequence(template,seqlib.get(template)));
+
+		for (Entry<String, ArrayList<String>> query_entry : pairs.entrySet()) {
+			CathScopEntry besthit = null;
+			maxscore = Double.MIN_VALUE;
+			samefammaxscore_cath = Double.MIN_VALUE;
+			samesupmaxscore_cath = Double.MIN_VALUE;
+			samefoldmaxscore_cath = Double.MIN_VALUE;
+			diffoldmaxscore_cath = Double.MIN_VALUE;
+			samefammaxscore_scop = Double.MIN_VALUE;
+			samesupmaxscore_scop = Double.MIN_VALUE;
+			samefoldmaxscore_scop = Double.MIN_VALUE;
+			diffoldmaxscore_scop = Double.MIN_VALUE;
+			SequenceAlignment famRec = null, cathFamMis = null, cathSupMis = null, cathFoldMis = null, cathDifFol = null; // temporary
+																															// placeholders
+																															// for
+																															// max
+																															// scoring
+																															// alignments
+																															// in
+																															// corresponding
+																															// benchmark
+																															// strategies
+			SequenceAlignment scopFamMis = null, scopSupMis = null, scopFoldMis = null, scopDifFol = null;
+			SequenceAlignment temp;
+			CathScopEntry query = cathscopinfos.get(query_entry.getKey());
+
+			for (String template : query_entry.getValue()) {
+				temp = (SequenceAlignment) gotoh.align(
+						new Sequence(query.getID(), seqlib.get(query.getID())),
+						new Sequence(template, seqlib.get(template)));
 				score = temp.getScore();
-				if(score > maxscore){
+				if (score > maxscore) {
 					maxscore = score;
 					besthit = cathscopinfos.get(template);
+					famRec = temp;
 				}
-				//for cath misclassification tests
-				if(query.getCathClazz() == besthit.getCathClazz() && query.getCathFold() == besthit.getCathFold() && query.getCathSupFam() == besthit.getCathSupFam() && query.getCathFam() == besthit.getCathFam()){
-					if(score > samefammaxscore_cath){
+				// for cath misclassification tests
+				if (query.getCathClazz() == besthit.getCathClazz()
+						&& query.getCathFold() == besthit.getCathFold()
+						&& query.getCathSupFam() == besthit.getCathSupFam()
+						&& query.getCathFam() == besthit.getCathFam()) {
+					if (score > samefammaxscore_cath) {
 						samefammaxscore_cath = score;
+						cathFamMis = temp;
 					}
 				}
-				if(query.getCathClazz() == besthit.getCathClazz() && query.getCathFold() == besthit.getCathFold() && query.getCathSupFam() == besthit.getCathSupFam()){
-					if(score > samesupmaxscore_cath){
+				if (query.getCathClazz() == besthit.getCathClazz()
+						&& query.getCathFold() == besthit.getCathFold()
+						&& query.getCathSupFam() == besthit.getCathSupFam()) {
+					if (score > samesupmaxscore_cath) {
 						samesupmaxscore_cath = score;
+						cathSupMis = temp;
 					}
 				}
-				if(query.getCathClazz() == besthit.getCathClazz() && query.getCathFold() == besthit.getCathFold()){
-					if(score > samefoldmaxscore_cath){
+				if (query.getCathClazz() == besthit.getCathClazz()
+						&& query.getCathFold() == besthit.getCathFold()) {
+					if (score > samefoldmaxscore_cath) {
 						samefoldmaxscore_cath = score;
+						cathFoldMis = temp;
 					}
 				}
-				if(query.getCathClazz() != besthit.getCathClazz() || query.getCathFold() != besthit.getCathFold()){
-					if(score > diffoldmaxscore_cath){
+				if (query.getCathClazz() != besthit.getCathClazz()
+						|| query.getCathFold() != besthit.getCathFold()) {
+					if (score > diffoldmaxscore_cath) {
 						diffoldmaxscore_cath = score;
+						cathDifFol = temp;
 					}
 				}
 
-				//for scop misclassification tests
-				if(query.getScopClazz() == besthit.getScopClazz() && query.getScopFold() == besthit.getScopFold() && query.getScopSupFam() == besthit.getScopSupFam() && query.getScopFam() == besthit.getScopFam()){
-					if(score > samefammaxscore_scop){
+				// for scop misclassification tests
+				if (query.getScopClazz() == besthit.getScopClazz()
+						&& query.getScopFold() == besthit.getScopFold()
+						&& query.getScopSupFam() == besthit.getScopSupFam()
+						&& query.getScopFam() == besthit.getScopFam()) {
+					if (score > samefammaxscore_scop) {
 						samefammaxscore_scop = score;
+						scopFamMis = temp;
 					}
 				}
-				if(query.getScopClazz() == besthit.getScopClazz() && query.getScopFold() == besthit.getScopFold() && query.getScopSupFam() == besthit.getScopSupFam()){
-					if(score > samesupmaxscore_scop){
+				if (query.getScopClazz() == besthit.getScopClazz()
+						&& query.getScopFold() == besthit.getScopFold()
+						&& query.getScopSupFam() == besthit.getScopSupFam()) {
+					if (score > samesupmaxscore_scop) {
 						samesupmaxscore_scop = score;
+						scopSupMis = temp;
 					}
 				}
-				if(query.getScopClazz() == besthit.getScopClazz() && query.getScopFold() == besthit.getScopFold()){
-					if(score > samefoldmaxscore_scop){
+				if (query.getScopClazz() == besthit.getScopClazz()
+						&& query.getScopFold() == besthit.getScopFold()) {
+					if (score > samefoldmaxscore_scop) {
 						samefoldmaxscore_scop = score;
+						scopFoldMis = temp;
 					}
 				}
-				if(query.getScopClazz() != besthit.getScopClazz() || query.getScopFold() != besthit.getScopFold()){
-					if(score > diffoldmaxscore_scop){
+				if (query.getScopClazz() != besthit.getScopClazz()
+						|| query.getScopFold() != besthit.getScopFold()) {
+					if (score > diffoldmaxscore_scop) {
 						diffoldmaxscore_scop = score;
+						scopDifFol = temp;
 					}
 				}
 			}
-			
-			//for cath family recognition test
-			if(query.getCathClazz() == besthit.getCathClazz() && query.getCathFold() == besthit.getCathFold() && query.getCathSupFam() == besthit.getCathSupFam() && query.getCathFam() == besthit.getCathFam()){
+
+			// for cath family recognition test
+			if (query.getCathClazz() == besthit.getCathClazz()
+					&& query.getCathFold() == besthit.getCathFold()
+					&& query.getCathSupFam() == besthit.getCathSupFam()
+					&& query.getCathFam() == besthit.getCathFam()) {
 				cath_recsamefam++;
-			}
-			else if(query.getCathClazz() == besthit.getCathClazz() && query.getCathFold() == besthit.getCathFold() && query.getCathSupFam() == besthit.getCathSupFam()){
+			} else if (query.getCathClazz() == besthit.getCathClazz()
+					&& query.getCathFold() == besthit.getCathFold()
+					&& query.getCathSupFam() == besthit.getCathSupFam()) {
 				cath_recsamesup++;
-			}
-			else if(query.getCathClazz() == besthit.getCathClazz() && query.getCathFold() == besthit.getCathFold()){
+			} else if (query.getCathClazz() == besthit.getCathClazz()
+					&& query.getCathFold() == besthit.getCathFold()) {
 				cath_recsamefold++;
-			}
-			else{
+			} else {
 				cath_recdiffold++;
 			}
-			//for scop family recognition test
-			if(query.getScopClazz() == besthit.getScopClazz() && query.getScopFold() == besthit.getScopFold() && query.getScopSupFam() == besthit.getScopSupFam() && query.getScopFam() == besthit.getScopFam()){
+			try {
+				Transformation tr = tmMachine.calculateTransformation(famRec,
+						nikoReader.readFromFolderById(famRec.getComponent(0)
+								.getID()), nikoReader.readFromFolderById(famRec
+								.getComponent(1).getID()));
+				FamRecWr.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			// for scop family recognition test
+			if (query.getScopClazz() == besthit.getScopClazz()
+					&& query.getScopFold() == besthit.getScopFold()
+					&& query.getScopSupFam() == besthit.getScopSupFam()
+					&& query.getScopFam() == besthit.getScopFam()) {
 				scop_recsamefam++;
-			}
-			else if(query.getScopClazz() == besthit.getScopClazz() && query.getScopFold() == besthit.getScopFold() && query.getScopSupFam() == besthit.getScopSupFam()){
+			} else if (query.getScopClazz() == besthit.getScopClazz()
+					&& query.getScopFold() == besthit.getScopFold()
+					&& query.getScopSupFam() == besthit.getScopSupFam()) {
 				scop_recsamesup++;
-			}
-			else if(query.getScopClazz() == besthit.getScopClazz() && query.getScopFold() == besthit.getScopFold()){
+			} else if (query.getScopClazz() == besthit.getScopClazz()
+					&& query.getScopFold() == besthit.getScopFold()) {
 				scop_recsamefold++;
-			}
-			else{
+			} else {
 				scop_recdiffold++;
 			}
-			
-			//cath misclassification test
-			if(samefammaxscore_cath > diffoldmaxscore_cath){
+
+			// cath misclassification test
+			if (samefammaxscore_cath > diffoldmaxscore_cath) {
 				cath_missamefam++;
-			} else {cath_misdiffoldfam++;}
-			if(samesupmaxscore_cath > diffoldmaxscore_cath){
+				try {
+					Transformation tr = tmMachine.calculateTransformation(
+							cathFamMis, nikoReader
+									.readFromFolderById(cathFamMis
+											.getComponent(0).getID()),
+							nikoReader.readFromFolderById(cathFamMis
+									.getComponent(1).getID()));
+					cathFamMisWr.write(tr.getTmscore() + " " + tr.getGdt()
+							+ "\n");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				cath_misdiffoldfam++;
+				try {
+					Transformation tr = tmMachine.calculateTransformation(
+							cathDifFol, nikoReader
+									.readFromFolderById(cathDifFol
+											.getComponent(0).getID()),
+							nikoReader.readFromFolderById(cathDifFol
+									.getComponent(1).getID()));
+					cathDiffWr
+							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if (samesupmaxscore_cath > diffoldmaxscore_cath) {
 				cath_missamesup++;
-			} else {cath_misdiffoldsup++;}
-			if(samefoldmaxscore_cath > diffoldmaxscore_cath){
+				try {
+					Transformation tr = tmMachine.calculateTransformation(
+							cathSupMis, nikoReader
+									.readFromFolderById(cathSupMis
+											.getComponent(0).getID()),
+							nikoReader.readFromFolderById(cathSupMis
+									.getComponent(1).getID()));
+					cathSupMisWr.write(tr.getTmscore() + " " + tr.getGdt()
+							+ "\n");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				cath_misdiffoldsup++;
+				try {
+					Transformation tr = tmMachine.calculateTransformation(
+							cathDifFol, nikoReader
+									.readFromFolderById(cathDifFol
+											.getComponent(0).getID()),
+							nikoReader.readFromFolderById(cathDifFol
+									.getComponent(1).getID()));
+					cathDiffWr
+							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if (samefoldmaxscore_cath > diffoldmaxscore_cath) {
 				cath_missamefold++;
-			} else {cath_misdiffoldfold++;}
-			//scop misclassification test
-			if(samefammaxscore_scop > diffoldmaxscore_scop){
+				try {
+					Transformation tr = tmMachine.calculateTransformation(
+							cathFoldMis, nikoReader
+									.readFromFolderById(cathFoldMis
+											.getComponent(0).getID()),
+							nikoReader.readFromFolderById(cathFoldMis
+									.getComponent(1).getID()));
+					cathFolMisWr.write(tr.getTmscore() + " " + tr.getGdt()
+							+ "\n");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				cath_misdiffoldfold++;
+				try {
+					Transformation tr = tmMachine.calculateTransformation(
+							cathDifFol, nikoReader
+									.readFromFolderById(cathDifFol
+											.getComponent(0).getID()),
+							nikoReader.readFromFolderById(cathDifFol
+									.getComponent(1).getID()));
+					cathDiffWr
+							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			// scop misclassification test
+			if (samefammaxscore_scop > diffoldmaxscore_scop) {
 				scop_missamefam++;
-			} else {scop_misdiffoldfam++;}
-			if(samesupmaxscore_scop > diffoldmaxscore_scop){
+				try {
+					Transformation tr = tmMachine.calculateTransformation(
+							scopFamMis, nikoReader
+									.readFromFolderById(scopFamMis
+											.getComponent(0).getID()),
+							nikoReader.readFromFolderById(scopFamMis
+									.getComponent(1).getID()));
+					scopFamMisWr.write(tr.getTmscore() + " " + tr.getGdt()
+							+ "\n");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				scop_misdiffoldfam++;
+				try {
+					Transformation tr = tmMachine.calculateTransformation(
+							scopDifFol, nikoReader
+									.readFromFolderById(scopDifFol
+											.getComponent(0).getID()),
+							nikoReader.readFromFolderById(scopDifFol
+									.getComponent(1).getID()));
+					scopDiffWr
+							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if (samesupmaxscore_scop > diffoldmaxscore_scop) {
 				scop_missamesup++;
-			} else {scop_misdiffoldsup++;}
-			if(samefoldmaxscore_scop > diffoldmaxscore_scop){
+				try {
+					Transformation tr = tmMachine.calculateTransformation(
+							scopSupMis, nikoReader
+									.readFromFolderById(scopSupMis
+											.getComponent(0).getID()),
+							nikoReader.readFromFolderById(scopSupMis
+									.getComponent(1).getID()));
+					scopSupMisWr.write(tr.getTmscore() + " " + tr.getGdt()
+							+ "\n");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				scop_misdiffoldsup++;
+				try {
+					Transformation tr = tmMachine.calculateTransformation(
+							scopDifFol, nikoReader
+									.readFromFolderById(scopDifFol
+											.getComponent(0).getID()),
+							nikoReader.readFromFolderById(scopDifFol
+									.getComponent(1).getID()));
+					scopDiffWr
+							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if (samefoldmaxscore_scop > diffoldmaxscore_scop) {
 				scop_missamefold++;
-			} else {scop_misdiffoldfold++;}
+				try {
+					Transformation tr = tmMachine.calculateTransformation(
+							scopFoldMis, nikoReader
+									.readFromFolderById(scopFoldMis
+											.getComponent(0).getID()),
+							nikoReader.readFromFolderById(scopFoldMis
+									.getComponent(1).getID()));
+					scopFolMisWr.write(tr.getTmscore() + " " + tr.getGdt()
+							+ "\n");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				scop_misdiffoldfold++;
+				try {
+					Transformation tr = tmMachine.calculateTransformation(
+							scopDifFol, nikoReader
+									.readFromFolderById(scopDifFol
+											.getComponent(0).getID()),
+							nikoReader.readFromFolderById(scopDifFol
+									.getComponent(1).getID()));
+					scopDiffWr
+							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
-		
+
 		try {
 			printResults();
 			out.close();
@@ -228,28 +475,33 @@ public class BMCathAndScop {
 			System.out.println("Cannot write results");
 		}
 	}
-	
-	public void printResults() throws IOException{
-		out.write(cath_recsamefam+"\n"+cath_recsamesup+"\n"+cath_recsamefold+"\n"+cath_recdiffold+"\n");
-		//family misclassification
-		out.write(cath_missamefam+"\n"+cath_misdiffoldfam+"\n");
-		//sup misclassification
-		out.write(cath_missamesup+"\n"+cath_misdiffoldsup+"\n");
-		//fold misclassification
-		out.write(cath_missamefold+"\n"+cath_misdiffoldfold+"\n");
 
-		//scop
-		//family recognition
-		out.write(scop_recsamefam+"\n"+scop_recsamesup+"\n"+scop_recsamefold+"\n"+scop_recdiffold+"\n");
-		//family misclassification
-		out.write(scop_missamefam+"\n"+scop_misdiffoldfam+"\n");
-		//sup misclassification
-		out.write(scop_missamesup+"\n"+scop_misdiffoldsup+"\n");
-		//fold misclassification
-		out.write(scop_missamefold+"\n"+scop_misdiffoldfold+"\n");	
+	public void printResults() throws IOException {
+		out.write(cath_recsamefam + "\n" + cath_recsamesup + "\n"
+				+ cath_recsamefold + "\n" + cath_recdiffold + "\n");
+		// family misclassification
+		out.write(cath_missamefam + "\n" + cath_misdiffoldfam + "\n");
+		// sup misclassification
+		out.write(cath_missamesup + "\n" + cath_misdiffoldsup + "\n");
+		// fold misclassification
+		out.write(cath_missamefold + "\n" + cath_misdiffoldfold + "\n");
+
+		// scop
+		// family recognition
+		out.write(scop_recsamefam + "\n" + scop_recsamesup + "\n"
+				+ scop_recsamefold + "\n" + scop_recdiffold + "\n");
+		// family misclassification
+		out.write(scop_missamefam + "\n" + scop_misdiffoldfam + "\n");
+		// sup misclassification
+		out.write(scop_missamesup + "\n" + scop_misdiffoldsup + "\n");
+		// fold misclassification
+		out.write(scop_missamefold + "\n" + scop_misdiffoldfold + "\n");
 	}
-	
-	public static void main(String[] args){
-		BMCathAndScop benchmark = new BMCathAndScop(args[0], args[1], args[2], args[3], Integer.parseInt(args[4]), Integer.parseInt(args[5]), args[6], args[7]);
+
+	public static void main(String[] args) {
+		BMCathAndScop benchmark = new BMCathAndScop(args[0], args[1], args[2],
+				args[3], Integer.parseInt(args[4]), Integer.parseInt(args[5]),
+				args[6], args[7], args[8], args[9], args[10], args[11],
+				args[12], args[13], args[14], args[15], args[16], args[17]);
 	}
 }
