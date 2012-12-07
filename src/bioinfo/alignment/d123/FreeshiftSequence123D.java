@@ -5,6 +5,7 @@ import bioinfo.alignment.Alignable;
 import bioinfo.alignment.Alignment;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.Gotoh;
+import bioinfo.proteins.SSCCEntry;
 
 /**
  * 
@@ -13,12 +14,12 @@ import bioinfo.alignment.gotoh.Gotoh;
 public class FreeshiftSequence123D extends Gotoh {
 
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
-	private int[][] scoringmatrix;
-	private int[][] weights;
-	private int[][] secStrucPref;
-	private int[] secStruct;
+	private int[] secStruct, localConts, globalConts;
+	private int[][] scoringmatrix, secStrucPref, weights;
+	private int[][][] contactPot;
 
 	/**
+	 * 
 	 * @param weights
 	 *            the weights for sequence, secondary structure and contact
 	 *            potential scores
@@ -29,19 +30,42 @@ public class FreeshiftSequence123D extends Gotoh {
 	 * @param scoringmatrix
 	 *            26x26 matrix containing all scoring values plus some empty
 	 *            lines for faster access
+	 * @param secondaryStructurePreferences
+	 *            a matrix containing secondary structure preference for all
+	 *            amino acids
+	 * @param contactPot
+	 *            the contact potentials of the amino acids
+	 * @param sscc
+	 *            an sscc entry containing the structural information concerning
+	 *            the template structure
 	 */
 	public FreeshiftSequence123D(double[][] scoringmatrix,
-			double[][] secondaryStructurePreferences, double[][] weights) {
+			double[][] secondaryStructurePreferences, double[][] weights,
+			double[][][] contactPot, SSCCEntry sscc) {
 		super(0.0d, 0.0d);
+
+		this.secStruct = sscc.getSecStruct();
+		this.localConts = sscc.getLocalConts();
+		this.globalConts = sscc.getGlobalConts();
+
+		this.contactPot = new int[contactPot.length][contactPot[0].length][contactPot[0][0].length];
+		for (int i = 0; i != contactPot.length; i++) {
+			for (int j = 0; j != contactPot[0].length; j++) {
+				for (int k = 0; k != contactPot[0][0].length; k++) {
+					this.contactPot[i][j][k] = (int) (Gotoh.FACTOR * contactPot[i][j][k]);
+				}
+			}
+		}
+
 		this.secStrucPref = new int[secondaryStructurePreferences.length][secondaryStructurePreferences[0].length];
-		for(int i = 0; i != secondaryStructurePreferences.length; i++) {
-			for(int j = 0; j != secondaryStructurePreferences[0].length; j++) {
+		for (int i = 0; i != secondaryStructurePreferences.length; i++) {
+			for (int j = 0; j != secondaryStructurePreferences[0].length; j++) {
 				this.secStrucPref[i][j] = (int) (Gotoh.FACTOR * secondaryStructurePreferences[i][j]);
 			}
 		}
 		this.weights = new int[weights.length][weights[0].length];
-		for(int i = 0; i != weights.length; i++) {
-			for(int j = 0; j != weights[0].length; j++) {
+		for (int i = 0; i != weights.length; i++) {
+			for (int j = 0; j != weights[0].length; j++) {
 				this.weights[i][j] = (int) (Gotoh.FACTOR * weights[i][j]);
 			}
 		}
@@ -52,25 +76,27 @@ public class FreeshiftSequence123D extends Gotoh {
 			}
 		}
 	}
-	
-	
+
 	/**
-	 * function that calculates the score of a match between amino acids x and y given the secondary structure of y
-	 * @param x amino acid x
-	 * @param y amino acid y
-	 * @param stY the secondary structure of y
+	 * function that calculates the score of a match between amino acids x and y
+	 * given the secondary structure of y
+	 * 
+	 * @param x
+	 *            amino acid x
+	 * @param y
+	 *            amino acid y
+	 * @param stY
+	 *            the secondary structure of y
 	 * @return the score of x matching y
 	 */
-	private double match(char x, char y, int stY) {
-		//TODO: find some way to incorporate contacts information
+	private int match(char x, char y, int stY) {
 		int seqScore = score(x, y);
 		int prefScore = secStrucPref[stY][x - 1];
 		int lcontScore = contactPot[stY][x - 1][localConts[y - 1]];
 		int gcontScore = contactPot[stY][x - 1][globalConts[y - 1]];
-		int result = weights[4][stY] * lcontScore + 
-		weights[5][stY] * gcontScore + 
-		weights[3][stY] * prefScore + 
-		weights[1][stY] * seqScore;
+		int result = weights[4][stY] * lcontScore + weights[5][stY]
+				* gcontScore + weights[3][stY] * prefScore + weights[1][stY]
+				* seqScore;
 		return result;
 	}
 
@@ -88,6 +114,27 @@ public class FreeshiftSequence123D extends Gotoh {
 
 	@Override
 	public boolean check(Alignment alignment) {
+		char[] seq1 = ((Sequence) sequence1).getSequence();
+		char[] seq2 = ((Sequence) sequence2).getSequence();
+
+		int[] gapOpen = new int[3];
+		gapOpen[0] = this.gapOpen * weights[1][0];
+		gapOpen[1] = this.gapOpen * weights[1][1];
+		gapOpen[2] = this.gapOpen * weights[1][2];
+
+		int[] gapExtend = new int[3];
+		gapExtend[0] = this.gapExtend * weights[2][0];
+		gapExtend[1] = this.gapExtend * weights[2][1];
+		gapExtend[2] = this.gapExtend * weights[2][2];
+
+		int[][][] tempScore = new int[sequence1.length()][sequence2.length()][3];
+		for (int i = 1; i <= sequence1.length(); i++) {
+			for (int j = 1; j <= sequence2.length(); j++) {
+				int strY = secStruct[j - 1];
+				tempScore[i][j][strY] = match(seq1[i - 1], seq2[j - 1], strY);
+			}
+		}
+
 		SequenceAlignment ali = (SequenceAlignment) alignment;
 		int score = 0;
 		char[] row0 = ali.getRow(0);
@@ -127,17 +174,17 @@ public class FreeshiftSequence123D extends Gotoh {
 
 		for (i = begin; i <= end; i++) {
 			if (row0[i] == '-' || row1[i] == '-') {
-				score += this.gapOpen;
+				score += gapOpen[secStruct[row1[i]]];
 				while (i <= end && (row0[i] == '-' || row1[i] == '-')) {
-					score += this.gapExtend;
+					score += gapExtend[secStruct[row1[i]]];
 					i++;
 				}
 				i--;
 			} else {
-				score += score(row0[i], row1[i]);
+				score += tempScore[row0[i]][row1[i]][secStruct[row1[0]]];
 			}
 		}
-		if (1.0d * score / Gotoh.FACTOR == ali.getScore()) {
+		if (1.0d * score / (Gotoh.FACTOR * Gotoh.FACTOR)== ali.getScore()) {
 			return true;
 		} else {
 			return false;
@@ -145,7 +192,7 @@ public class FreeshiftSequence123D extends Gotoh {
 	}
 
 	/**
-	 * prepares matrices for global alignment
+	 * prepares matrices for freeshift alignment
 	 * 
 	 */
 	private void prepareMatrices() {
@@ -170,17 +217,40 @@ public class FreeshiftSequence123D extends Gotoh {
 	 * 
 	 */
 	private void calculateMatrices() {
+
+		// getting everything out of the loop as in Gotoh; it seemed to help A
+		// LOT
+		char[] seq1 = ((Sequence) sequence1).getSequence();
+		char[] seq2 = ((Sequence) sequence2).getSequence();
+
+		int[] gapOpen = new int[3];
+		gapOpen[0] = this.gapOpen * weights[1][0];
+		gapOpen[1] = this.gapOpen * weights[1][1];
+		gapOpen[2] = this.gapOpen * weights[1][2];
+
+		int[] gapExtend = new int[3];
+		gapExtend[0] = this.gapExtend * weights[2][0];
+		gapExtend[1] = this.gapExtend * weights[2][1];
+		gapExtend[2] = this.gapExtend * weights[2][2];
+
+		int[][][] tempScore = new int[sequence1.length()][sequence2.length()][3];
 		for (int i = 1; i <= sequence1.length(); i++) {
 			for (int j = 1; j <= sequence2.length(); j++) {
-				D[i][j] = Math.max(M[i][j - 1] + gapOpen + gapExtend,
-						D[i][j - 1] + gapExtend);
-				// System.out.println((M[i][j-1]+gapOpen+gapExtend)+" "+(D[i][j-1]+gapExtend));
-				I[i][j] = Math.max(M[i - 1][j] + gapOpen + gapExtend,
-						I[i - 1][j] + gapExtend);
-				M[i][j] = Math.max(
-						M[i - 1][j - 1]
-								+ score((Character) sequence1.getComp(i - 1),
-										(Character) sequence2.getComp(j - 1)),
+				int strY = secStruct[j - 1];
+				tempScore[i][j][strY] = match(seq1[i - 1], seq2[j - 1], strY);
+			}
+		}
+
+		// now the main loop where stuff is actually computed
+		for (int i = 1; i <= sequence1.length(); i++) {
+			for (int j = 1; j <= sequence2.length(); j++) {
+				int strY = secStruct[j - 1];
+				D[i][j] = Math.max(M[i][j - 1] + gapOpen[strY]
+						+ gapExtend[strY], D[i][j - 1] + gapExtend[strY]);
+				I[i][j] = Math.max(M[i - 1][j] + gapOpen[strY]
+						+ gapExtend[strY], I[i - 1][j] + gapExtend[strY]);
+				M[i][j] = Math.max(M[i - 1][j - 1]
+						+ tempScore[i - 1][j - 1][strY],
 						Math.max(I[i][j], D[i][j]));
 			}
 		}
@@ -196,7 +266,9 @@ public class FreeshiftSequence123D extends Gotoh {
 		int max = INIT_VAL;
 		int x = 0;
 		int y = 0;
+		int strY = -1;
 
+		// find start and end of alignment
 		for (int i = 0; i != M.length; i++) {
 			if (M[i][M[i].length - 1] >= max) {
 				max = M[i][M[i].length - 1];
@@ -219,6 +291,8 @@ public class FreeshiftSequence123D extends Gotoh {
 		char actx;
 		char acty;
 
+		// now cover the regions up until x and y - the gaps at the start and
+		// the end
 		for (int i = M[M.length - 1].length - 1; i > y + 1; i--) {
 			row0 += "-";
 			row1 += sequence2.getComp(i - 1);
@@ -228,19 +302,32 @@ public class FreeshiftSequence123D extends Gotoh {
 			row1 += "-";
 		}
 
+		// difficult stuff ahead
+		int[] gapOpen = new int[3];
+		gapOpen[0] = this.gapOpen * weights[1][0];
+		gapOpen[1] = this.gapOpen * weights[1][1];
+		gapOpen[2] = this.gapOpen * weights[1][2];
+
+		int[] gapExtend = new int[3];
+		gapExtend[0] = this.gapExtend * weights[2][0];
+		gapExtend[1] = this.gapExtend * weights[2][1];
+		gapExtend[2] = this.gapExtend * weights[2][2];
+
 		while (x >= 0 && y >= 0) {
 
 			actScore = M[x + 1][y + 1];
 			actx = (Character) sequence1.getComp(x);
 			acty = (Character) sequence2.getComp(y);
+			strY = secStruct[acty];
 
-			if (actScore == M[x][y] + score(actx, acty)) {
+			if (actScore == M[x][y] + match(actx, acty, strY)) {
 				row0 += actx;
 				row1 += acty;
 				y--;
 				x--;
 			} else if (actScore == D[x + 1][y + 1]) {
-				while (D[x + 1][y + 1] == D[x + 1][y] + gapExtend && y > 0) {
+				while (D[x + 1][y + 1] == D[x + 1][y] + gapExtend[strY]
+						&& y > 0) {
 					row0 += "-";
 					row1 += acty;
 					y--;
@@ -250,7 +337,8 @@ public class FreeshiftSequence123D extends Gotoh {
 				row1 += acty;
 				y--;
 			} else if (actScore == I[x + 1][y + 1]) {
-				while (I[x + 1][y + 1] == I[x][y + 1] + gapExtend && x > 0) {
+				while (I[x + 1][y + 1] == I[x][y + 1] + gapExtend[strY]
+						&& x > 0) {
 					row0 += actx;
 					row1 += "-";
 					x--;
@@ -272,7 +360,7 @@ public class FreeshiftSequence123D extends Gotoh {
 
 		return new SequenceAlignment((Sequence) sequence1,
 				(Sequence) sequence2, flip(row0.toCharArray()),
-				flip(row1.toCharArray()), 1.0d * score / Gotoh.FACTOR);
+				flip(row1.toCharArray()), 1.0d * score / (Gotoh.FACTOR * Gotoh.FACTOR));
 	}
 
 	/**
