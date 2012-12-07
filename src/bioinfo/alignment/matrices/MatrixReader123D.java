@@ -125,6 +125,66 @@ public class MatrixReader123D {
 		}
 		return multiresult;
 	}
+	
+	//potential reader
+	public static double[][][] readPotentials(String helixFilepath, String betaFilepath, String coilFilepath){
+		double[][][] potentials;
+		try {
+			//readin ccpa
+			BufferedReader in = new BufferedReader(new FileReader(helixFilepath));
+			String line;
+			line = in.readLine();
+			String temp[] = line.split("\\s+");
+			potentials = new double[3][temp.length-1][21];
+			while((line = in.readLine()) != null){
+				temp = line.split("\\s+");	
+				
+				if(!temp[0].equals(" ") && !temp[0].equals("")){
+					temp = line.split("\\s+");
+					char c = Bio.codeTranslate(temp[0]);
+					for (int i = 0; i < potentials[0].length; i++) {
+						potentials[0][i][c-65] = Double.parseDouble(temp[i+1]);
+					}
+				}
+			}
+			in.close();
+			
+			//readin ccpb
+			in = new BufferedReader(new FileReader(betaFilepath));
+			while((line = in.readLine()) != null){
+				temp = line.split("\\s+");	
+				
+				if(!temp[0].equals(" ") && !temp[0].equals("")){
+					temp = line.split("\\s+");
+					char c = Bio.codeTranslate(temp[0]);
+					for (int i = 0; i < potentials[0].length; i++) {
+						potentials[0][i][c-65] = Double.parseDouble(temp[i+1]);
+					}
+				}
+			}
+			in.close();
+			
+			//readin ccpo
+			in = new BufferedReader(new FileReader(coilFilepath));
+			while((line = in.readLine()) != null){
+				temp = line.split("\\s+");	
+				
+				if(!temp[0].equals(" ") && !temp[0].equals("")){
+					temp = line.split("\\s+");
+					char c = Bio.codeTranslate(temp[0]);
+					for (int i = 0; i < potentials[0].length; i++) {
+						potentials[0][i][c-65] = Double.parseDouble(temp[i+1]);
+					}
+				}
+			}
+			in.close();
+			return potentials;
+		} catch (IOException e) {
+			System.out.println("Cannot read potential file");
+		}
+		return null;
+	}
+	
 
 	private int[] calcIndices(String[] split) {
 		int[] result = new int[3];
