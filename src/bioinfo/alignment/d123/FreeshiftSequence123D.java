@@ -6,6 +6,7 @@ import bioinfo.alignment.Alignment;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.Gotoh;
 import bioinfo.proteins.SSCCEntry;
+import bioinfo.proteins.SSCCLine;
 
 /**
  * 
@@ -43,10 +44,29 @@ public class FreeshiftSequence123D extends Gotoh {
 			double[][] secondaryStructurePreferences, double[][] weights,
 			double[][][] contactPot, SSCCEntry sscc) {
 		super(0.0d, 0.0d);
-
-		this.secStruct = sscc.getSecStruct();
-		this.localConts = sscc.getLocalConts();
-		this.globalConts = sscc.getGlobalConts();
+		
+		
+		//parse SSCCEntry-----------------------------
+		this.globalConts = new int[sscc.length()];
+		this.localConts = new int[sscc.length()];
+		this.secStruct = new int[sscc.length()];
+		
+		SSCCLine sscctemp;
+		for (int i = 0; i < sscc.length(); i++) {
+			sscctemp = (SSCCLine)sscc.getComp(i);
+			
+			switch (sscctemp.getSecStruct()){
+				case 'a': this.secStruct[i] = 0;break;
+				case 'b': this.secStruct[i] = 1;break;
+				case 'o': this.secStruct[i] = 2;break;
+				default: this.secStruct[i] = 2;
+			}
+			
+			this.localConts[i] = sscctemp.getLocCont();
+			this.globalConts[i] = sscctemp.getGlobCont();
+		}
+		//----------------------------------------------
+		
 
 		this.contactPot = new int[contactPot.length][contactPot[0].length][contactPot[0][0].length];
 		for (int i = 0; i != contactPot.length; i++) {

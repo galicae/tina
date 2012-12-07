@@ -8,23 +8,25 @@ public class SSCCEntry implements Alignable{
 	private int length;
 	private final String id;
 	
+	public SSCCEntry(String id,SSCCLine[] lines){
+		this.id = id;
+		this.lines = lines;
+		this.length = lines.length;
+	}
 
 	@Override
 	public Object getComp(int i) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.lines[i];
 	}
 
 	@Override
 	public int length() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.length;
 	}
 
 	@Override
 	public String getID() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.id;
 	}
 
 }
