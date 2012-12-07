@@ -119,6 +119,7 @@ public class MatrixReader123D {
 			multiresult[2] = ge;
 			multiresult[3] = ssp;
 			multiresult[4] = lccp;
+			multiresult[5] = gccp;
 		} catch (IOException e) {
 			System.out.println("No Input (secondary structure preference)!");
 		}
