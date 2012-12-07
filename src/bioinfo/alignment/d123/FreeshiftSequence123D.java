@@ -15,7 +15,7 @@ import bioinfo.proteins.SSCCLine;
 public class FreeshiftSequence123D extends Gotoh {
 
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
-	private int[] secStruct, localConts, globalConts;
+	private int[] secStruct, localConts, globalConts = null;
 	private int[][] scoringmatrix, secStrucPref, weights;
 	private int[][][] contactPot;
 
@@ -42,32 +42,9 @@ public class FreeshiftSequence123D extends Gotoh {
 	 */
 	public FreeshiftSequence123D(double[][] scoringmatrix,
 			double[][] secondaryStructurePreferences, double[][] weights,
-			double[][][] contactPot, SSCCEntry sscc) {
+			double[][][] contactPot) {
 		super(0.0d, 0.0d);
 		
-		
-		//parse SSCCEntry-----------------------------
-		this.globalConts = new int[sscc.length()];
-		this.localConts = new int[sscc.length()];
-		this.secStruct = new int[sscc.length()];
-		
-		SSCCLine sscctemp;
-		for (int i = 0; i < sscc.length(); i++) {
-			sscctemp = (SSCCLine)sscc.getComp(i);
-			
-			switch (sscctemp.getSecStruct()){
-				case 'a': this.secStruct[i] = 0;break;
-				case 'b': this.secStruct[i] = 1;break;
-				case 'o': this.secStruct[i] = 2;break;
-				default: this.secStruct[i] = 2;
-			}
-			
-			this.localConts[i] = sscctemp.getLocCont();
-			this.globalConts[i] = sscctemp.getGlobCont();
-		}
-		//----------------------------------------------
-		
-
 		this.contactPot = new int[contactPot.length][contactPot[0].length][contactPot[0][0].length];
 		for (int i = 0; i != contactPot.length; i++) {
 			for (int j = 0; j != contactPot[0].length; j++) {
@@ -120,16 +97,48 @@ public class FreeshiftSequence123D extends Gotoh {
 		return result;
 	}
 
+	//take new SSCCEntry for new Alignment
+	public SequenceAlignment align(Alignable sequence1, Alignable sequence2, SSCCEntry sscc){
+		//parse SSCCEntry-----------------------------
+		this.globalConts = new int[sscc.length()];
+		this.localConts = new int[sscc.length()];
+		this.secStruct = new int[sscc.length()];
+		
+		SSCCLine sscctemp;
+		for (int i = 0; i < sscc.length(); i++) {
+			sscctemp = (SSCCLine)sscc.getComp(i);
+			
+			switch (sscctemp.getSecStruct()){
+				case 'a': this.secStruct[i] = 0;break;
+				case 'b': this.secStruct[i] = 1;break;
+				case 'o': this.secStruct[i] = 2;break;
+				default: this.secStruct[i] = 2;
+			}
+			
+			this.localConts[i] = sscctemp.getLocCont();
+			this.globalConts[i] = sscctemp.getGlobCont();
+		}
+		//----------------------------------------------
+		return align(sequence1, sequence2);
+	}
+	
+	
+	//caution: if calling align function without SSCCEntry then return is null
 	@Override
 	public SequenceAlignment align(Alignable sequence1, Alignable sequence2) {
-		this.M = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.I = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.D = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.sequence1 = (Sequence) sequence1;
-		this.sequence2 = (Sequence) sequence2;
-		prepareMatrices();
-		calculateMatrices();
-		return (SequenceAlignment) traceback();
+		if(this.localConts == null || this.globalConts == null || this.secStruct == null){
+			return null;
+		}
+		else{
+			this.M = new int[sequence1.length() + 1][sequence2.length() + 1];
+			this.I = new int[sequence1.length() + 1][sequence2.length() + 1];
+			this.D = new int[sequence1.length() + 1][sequence2.length() + 1];
+			this.sequence1 = (Sequence) sequence1;
+			this.sequence2 = (Sequence) sequence2;
+			prepareMatrices();
+			calculateMatrices();
+			return (SequenceAlignment) traceback();
+		}
 	}
 
 	@Override

@@ -86,27 +86,27 @@ public class MatrixReader123D {
 				if (line.startsWith("#")) {
 					ind = calcIndices(line.split("\\s+"));
 				} else {
-					if (cont[cont.length].equals("go")) {
+					if (cont[cont.length-1].equals("go")) {
 						go[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
 						go[BETA] = Double.parseDouble(cont[ind[BETA]]);
 						go[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
-					} else if (cont[cont.length].equals("ge")) {
+					} else if (cont[cont.length-1].equals("ge")) {
 						ge[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
 						ge[BETA] = Double.parseDouble(cont[ind[BETA]]);
 						ge[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
-					} else if (cont[cont.length].equals("seq")) {
+					} else if (cont[cont.length-1].equals("seq")) {
 						seq[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
 						seq[BETA] = Double.parseDouble(cont[ind[BETA]]);
 						seq[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
-					} else if (cont[cont.length].equals("ssp")) {
+					} else if (cont[cont.length-1].equals("ssp")) {
 						ssp[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
 						ssp[BETA] = Double.parseDouble(cont[ind[BETA]]);
 						ssp[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
-					} else if (cont[cont.length].equals("lccp")) {
+					} else if (cont[cont.length-1].equals("lccp")) {
 						lccp[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
 						lccp[BETA] = Double.parseDouble(cont[ind[BETA]]);
 						lccp[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
-					} else if (cont[cont.length].equals("gccp")) {
+					} else if (cont[cont.length-1].equals("gccp")) {
 						gccp[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
 						gccp[BETA] = Double.parseDouble(cont[ind[BETA]]);
 						gccp[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
@@ -135,7 +135,7 @@ public class MatrixReader123D {
 			String line;
 			line = in.readLine();
 			String temp[] = line.split("\\s+");
-			potentials = new double[3][temp.length-1][21];
+			potentials = new double[3][temp.length-1][26];
 			while((line = in.readLine()) != null){
 				temp = line.split("\\s+");	
 				
