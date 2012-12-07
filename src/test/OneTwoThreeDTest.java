@@ -30,6 +30,7 @@ public class OneTwoThreeDTest {
 		String ssccpath = args[6];
 		FreeshiftSequence123D threader = new FreeshiftSequence123D(scoringmatrix,secstructpref,weights,potentials);
 		
+		System.out.println();
 		
 		//run that shit
 		try{
@@ -41,7 +42,7 @@ public class OneTwoThreeDTest {
 			SequenceAlignment seqalign;
 			SSCCEntry ssccentry;
 			while((line = in.readLine()) != null){
-				temp = line.split("\\s+");
+				temp = line.split("\\s+");	
 				ssccentry = SSCCReader.readSSCC(ssccpath+"/"+temp[1]+".sscc");
 				seq1 = new Sequence(temp[0],seqlib.get(temp[0]));
 				seq2 = new Sequence(temp[1],seqlib.get(temp[1]));

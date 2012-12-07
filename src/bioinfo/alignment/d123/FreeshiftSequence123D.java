@@ -88,9 +88,9 @@ public class FreeshiftSequence123D extends Gotoh {
 	 */
 	private int match(char x, char y, int stY) {
 		int seqScore = score(x, y);
-		int prefScore = secStrucPref[stY][x - 1];
-		int lcontScore = contactPot[stY][x - 1][localConts[y - 1]];
-		int gcontScore = contactPot[stY][x - 1][globalConts[y - 1]];
+		int prefScore = secStrucPref[stY][x - 65];
+		int lcontScore = contactPot[stY][localConts[y - 65]][x - 65];
+		int gcontScore = contactPot[stY][globalConts[y - 65]][x - 65];
 		int result = weights[4][stY] * lcontScore + weights[5][stY]
 				* gcontScore + weights[3][stY] * prefScore + weights[1][stY]
 				* seqScore;
@@ -103,6 +103,8 @@ public class FreeshiftSequence123D extends Gotoh {
 		this.globalConts = new int[sscc.length()];
 		this.localConts = new int[sscc.length()];
 		this.secStruct = new int[sscc.length()];
+		int localtemp;
+		int globaltemp;
 		
 		SSCCLine sscctemp;
 		for (int i = 0; i < sscc.length(); i++) {
@@ -114,9 +116,19 @@ public class FreeshiftSequence123D extends Gotoh {
 				case 'o': this.secStruct[i] = 2;break;
 				default: this.secStruct[i] = 2;
 			}
+			localtemp = sscctemp.getLocCont();
+			globaltemp = sscctemp.getGlobCont();
 			
-			this.localConts[i] = sscctemp.getLocCont();
-			this.globalConts[i] = sscctemp.getGlobCont();
+			if(localtemp > 13){
+				this.localConts[i] = 13;
+			}else{
+				this.localConts[i] = sscctemp.getLocCont();
+			}
+			if(globaltemp > 13){
+				this.globalConts[i] = 13;
+			}else{
+				this.globalConts[i] = sscctemp.getGlobCont();
+			}	
 		}
 		//----------------------------------------------
 		return align(sequence1, sequence2);
@@ -263,17 +275,18 @@ public class FreeshiftSequence123D extends Gotoh {
 		gapExtend[2] = this.gapExtend * weights[2][2];
 
 		int[][][] tempScore = new int[sequence1.length()][sequence2.length()][3];
-		for (int i = 1; i <= sequence1.length(); i++) {
-			for (int j = 1; j <= sequence2.length(); j++) {
-				int strY = secStruct[j - 1];
-				tempScore[i][j][strY] = match(seq1[i - 1], seq2[j - 1], strY);
+		int strY;
+		for (int i = 0; i < sequence1.length(); i++) {
+			for (int j = 0; j < sequence2.length(); j++) {
+				strY = secStruct[j];
+				tempScore[i][j][strY] = match(seq1[i], seq2[j], strY);
 			}
 		}
 
 		// now the main loop where stuff is actually computed
 		for (int i = 1; i <= sequence1.length(); i++) {
 			for (int j = 1; j <= sequence2.length(); j++) {
-				int strY = secStruct[j - 1];
+				strY = secStruct[j - 1];
 				D[i][j] = Math.max(M[i][j - 1] + gapOpen[strY]
 						+ gapExtend[strY], D[i][j - 1] + gapExtend[strY]);
 				I[i][j] = Math.max(M[i - 1][j] + gapOpen[strY]
@@ -347,7 +360,7 @@ public class FreeshiftSequence123D extends Gotoh {
 			actScore = M[x + 1][y + 1];
 			actx = (Character) sequence1.getComp(x);
 			acty = (Character) sequence2.getComp(y);
-			strY = secStruct[acty];
+			strY = secStruct[y];
 
 			if (actScore == M[x][y] + match(actx, acty, strY)) {
 				row0 += actx;
