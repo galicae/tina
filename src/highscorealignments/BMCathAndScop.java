@@ -143,15 +143,15 @@ public class BMCathAndScop {
 
 		for (Entry<String, ArrayList<String>> query_entry : pairs.entrySet()) {
 			CathScopEntry besthit = null;
-			maxscore = Double.MIN_VALUE;
-			samefammaxscore_cath = Double.MIN_VALUE;
-			samesupmaxscore_cath = Double.MIN_VALUE;
-			samefoldmaxscore_cath = Double.MIN_VALUE;
-			diffoldmaxscore_cath = Double.MIN_VALUE;
-			samefammaxscore_scop = Double.MIN_VALUE;
-			samesupmaxscore_scop = Double.MIN_VALUE;
-			samefoldmaxscore_scop = Double.MIN_VALUE;
-			diffoldmaxscore_scop = Double.MIN_VALUE;
+			maxscore = Double.NEGATIVE_INFINITY;
+			samefammaxscore_cath = Double.NEGATIVE_INFINITY;
+			samesupmaxscore_cath = Double.NEGATIVE_INFINITY;
+			samefoldmaxscore_cath = Double.NEGATIVE_INFINITY;
+			diffoldmaxscore_cath = Double.NEGATIVE_INFINITY;
+			samefammaxscore_scop = Double.NEGATIVE_INFINITY;
+			samesupmaxscore_scop = Double.NEGATIVE_INFINITY;
+			samefoldmaxscore_scop = Double.NEGATIVE_INFINITY;
+			diffoldmaxscore_scop = Double.NEGATIVE_INFINITY;
 			SequenceAlignment famRec = null, cathFamMis = null, cathSupMis = null, cathFoldMis = null, cathDifFol = null; // temporary
 																															// placeholders
 																															// for
@@ -176,7 +176,7 @@ public class BMCathAndScop {
 					besthit = cathscopinfos.get(template);
 					famRec = temp;
 				}
-				// for cath misclassification tests
+				// for cath misclassification tests			
 				if (query.getCathClazz() == besthit.getCathClazz()
 						&& query.getCathFold() == besthit.getCathFold()
 						&& query.getCathSupFam() == besthit.getCathSupFam()
