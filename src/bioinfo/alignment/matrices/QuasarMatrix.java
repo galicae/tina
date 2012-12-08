@@ -43,12 +43,11 @@ public class QuasarMatrix {
 		double [][] matrix = new double[26][26];
 		String[] lines = matrixString.split("\n");
 		try{
-//			BufferedReader in = new BufferedReader(new FileReader(filename));
 			String line;
 			int currline = 0;
 			int numrows = 0;
 			char[] aminos = null; 
-			while(currline < lines.length-1){
+			while(currline < lines.length){
 				line=lines[currline];
 				if (line.matches("^(NUMROW)(.)*")){
 					numrows = Integer.parseInt(line.substring(7,9));
@@ -65,14 +64,17 @@ public class QuasarMatrix {
 							matrix[aminos[j-1]-65][aminos[i]-65] = Double.parseDouble(temp[j]);
 						}
 						currline++;
-						line=lines[currline];
+						// TODO: maybe this can be made more efficient?
+						if (currline < lines.length) {
+							line=lines[currline];
+						}
 					}
 				}
 				currline++;
 			}
-//			in.close();
-		} catch(Exception e){
-			System.out.println("No Input (quasarmatrix)!");
+		} catch (Exception e){
+			System.err.println("Apparently a wrong matrix was given! (QuasarMatrix.parseMatrix(String, boolean))");
+			e.printStackTrace();
 		}
 		return matrix;
 	}

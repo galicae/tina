@@ -7,3 +7,9 @@ bin/*
 *.inpairs
 *.outpairs
 *.seqlib
+.settings
+WebContent/WEB-INF/classes
+WebContent/WEB-INF/lib/Jmol.jar
+WebContent/WEB-INF/lib/TMscore.jar
+WebContent/WEB-INF/lib/colt.jar
+WebContent/WEB-INF/lib/concurrent.jar

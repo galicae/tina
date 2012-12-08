@@ -5,18 +5,37 @@
 <![CDATA[//@IMPORT
 	//Import Here, remove this if you don't need it.
 	import org.zkoss.Version;
-	import bioinfo.alignment.matrices.*;
+	import bioinfo.Sequence;
 	import bioinfo.alignment.*;
+	import bioinfo.alignment.matrices.*;
 	import bioinfo.alignment.gotoh.*;
 	]]>
 	<![CDATA[//@DECLARATION
 	//Declaration Here, remove this if you don't need it
-	void doStuff(){
-		double[][] matrix = QuasarMatrix.parseMatrix(txtbxMatrix.value, true);
-		Gotoh gotoh = new FreeshiftSequenceGotoh(-10.0,-2.0,matrix);
-		gotoh.align(txtbxSequenceOne.value, txtbxSequenceTwo.value);
-		String message = "You are running ZK Successfully, The ZK Version is "+
-			("Hello World!");
+	void doStuff(String strMatrix, String strSeq1, String strSeq2){
+		double[][] matrix = QuasarMatrix.parseMatrix(strMatrix, true);
+		FreeshiftSequenceGotoh gotoh = new FreeshiftSequenceGotoh(-10.0,-2.0,matrix);
+		
+//		String result = "(";
+//		for (int row=0; row<matrix.length; row++) {
+//			result += "(";
+//			for (int col=0; col< matrix[row].length-1; col++) {
+//				result +=matrix[row][col] + ",";
+//			}			
+//			result += matrix[row][matrix[row].length-1]+")";
+//		}
+//		result += ")";
+		
+		Sequence seq1 = new Sequence("seq1", strSeq1);
+		Sequence seq2 = new Sequence("seq2", strSeq2);
+		SequenceAlignment ali = null;
+//		try {
+			ali = gotoh.align(seq1, seq2);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		String message = ali.toStringVerbose();
+		
 		alert(message);
 	}
 	]]>
@@ -31,14 +50,17 @@
 
 <window id="wndSubmit"
 		title="submit job" border="normal">
-<label>Sequence to be submitted:</label>
-<textbox id="txtbxSequenceOne"
-		rows="5" cols="80" />
-<textbox id="txtbxSequenceTwo"
-		rows="5" cols="80" />
+<label>paste the Matrix that shall be used here:</label>
 <textbox id="txtbxMatrix"
-		rows="5" cols="80" />
+		rows="5" cols="300" />
+<label>SequenceOne</label>
+<textbox id="txtbxSequenceOne"
+		rows="5" cols="300" />
+<label>SequenceTwo</label>
+<textbox id="txtbxSequenceTwo"
+		rows="5" cols="300" />
+
 <button id="btnSubmit"
-		label="submit" onClick = "doStuff()"/>
+		label="submit" onClick = "doStuff(txtbxMatrix.getValue(),txtbxSequenceOne.getValue(), txtbxSequenceTwo.getValue())"/>
 </window>
 </zk>
