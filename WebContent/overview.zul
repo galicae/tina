@@ -1,0 +1,37 @@
+<?page title="tina - overview" contentType="text/html;charset=UTF-8"?>
+<zk>
+<?init zscript="/scripts/pnlpos.zs" ?>
+
+<portallayout id="ptlOverview"
+		onCreate="initStatus(ptlOverview)" onPortalMove="saveStatus(ptlOverview)">
+		
+	<portalchildren style="padding: 5px" width="30%">
+		<panel id="top-predicts" title="Top 10 Predictions"
+				height="300px" border="normal" style="margin-bottom:10px"
+				collapsible="true" maximizable="true" closable="false">
+			<panelchildren>
+			</panelchildren>
+		</panel>
+	</portalchildren>
+	
+	<portalchildren style="padding: 5px" width="40%">
+		<panel id="last-predicts" title="Last 10 Predictions"
+				height="300px" border="normal" style="margin-bottom:10px"
+				collapsible="true" maximizable="true" closable="false">
+			<panelchildren>
+			</panelchildren>
+		</panel>
+	</portalchildren>
+	
+	<portalchildren style="padding: 5px" width="30%">
+		<panel id="useage" title="Server-Usage"
+				height="400px" border="normal" collapsible="true" maximizable="true" closable="false"
+				style="margin-bottom:10px">
+			<panelchildren>
+			</panelchildren>
+		</panel>
+	</portalchildren>
+	
+</portallayout>
+
+</zk>

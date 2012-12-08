@@ -1,0 +1,6 @@
+<?page title="tina - server" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="tina - server" border="normal">
+New Content Here!
+</window>
+</zk>

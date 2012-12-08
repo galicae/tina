@@ -1,0 +1,39 @@
+<?page title="tina prediction webserver" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+<vbox width="100%">
+<!-- header -->
+<image src="img/logo.png"/>
+<tabbox id="content" orient="vertical" height="900px" width="100%" style="table-layout:fixed">
+	<tabs id="menu" width="90px">
+		<tab id="overview" label="Overview"/>
+		<tab id="team" label="Team"/>
+		<tab id="server" label="Server"/>
+		<tab id="submit" label="Submit Jobs"/>
+		<tab id="view" label="View Jobs"/>
+		<tab id="validation" label="Validation"/>
+	</tabs>
+	
+	<tabpanels>
+		<tabpanel><!-- Overview -->
+			<iframe src="overview.zul" width="80%" height="700px" />
+		</tabpanel>
+		<tabpanel> <!-- team-->
+			<iframe src="team.zul" width="80%" height="700px" />
+		</tabpanel>
+		<tabpanel> <!-- server -->
+			<iframe src="server.zul" width="80%" height="700px" />
+		</tabpanel>
+		<tabpanel> <!-- submit -->
+			<iframe src="submit.zul" width="80%" height="700px" />
+		</tabpanel>
+		<tabpanel> <!-- view -->
+			<iframe src="view.zul" width="80%" height="700px" />
+		</tabpanel>
+		<tabpanel> <!-- validation -->
+			<iframe src="validation.zul" width="80%" height="700px" />
+		</tabpanel>
+	</tabpanels>
+</tabbox>
+</vbox>
+</zk>

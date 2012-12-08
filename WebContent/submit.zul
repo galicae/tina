@@ -1,0 +1,34 @@
+<?page title="tina - submit" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+<zscript>
+<![CDATA[//@IMPORT
+	//Import Here, remove this if you don't need it.
+	import org.zkoss.Version;
+	import test.Test;
+	]]>
+	<![CDATA[//@DECLARATION
+	//Declaration Here, remove this if you don't need it
+	void showMsg(){
+		String message = "You are running ZK Successfully, The ZK Version is "+test.Test.test("Hello World!");
+		alert(message);
+	}
+	]]>
+	<!--
+	<![CDATA[
+	//Other code, remove this if you don't need it
+	//main.setTitle("Hello ZK");
+	//main.setBorder("normal");
+	]]>
+	-->
+</zscript>
+
+<window id="wndSubmit"
+		title="submit job" border="normal">
+<label>Sequence to be submitted:</label>
+<textbox id="txtbxSequence"
+		rows="5" cols="80" />
+<button id="btnSubmit"
+		label="submit" onClick = "showMsg()"/>
+</window>
+</zk>
