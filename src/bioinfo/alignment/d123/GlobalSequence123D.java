@@ -44,9 +44,9 @@ public class GlobalSequence123D extends Gotoh {
 			double[][][] contactPot, SSCCEntry sscc) {
 		super(0.0d, 0.0d);
 
-		this.secStruct = sscc.getSecStruct();
-		this.localConts = sscc.getLocalConts();
-		this.globalConts = sscc.getGlobalConts();
+		//this.secStruct = sscc.getSecStruct();
+		//this.localConts = sscc.getLocalConts();
+		//this.globalConts = sscc.getGlobalConts();
 
 		this.contactPot = new int[contactPot.length][contactPot[0].length][contactPot[0][0].length];
 		for (int i = 0; i != contactPot.length; i++) {
