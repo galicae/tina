@@ -5,62 +5,69 @@
 <![CDATA[//@IMPORT
 	//Import Here, remove this if you don't need it.
 	import org.zkoss.Version;
-	import bioinfo.Sequence;
-	import bioinfo.alignment.*;
-	import bioinfo.alignment.matrices.*;
-	import bioinfo.alignment.gotoh.*;
+	//import bioinfo.Sequence;
+	//import bioinfo.alignment.*;
+	//import bioinfo.alignment.matrices.*;
+	//import bioinfo.alignment.gotoh.*;
+	import webservice.JobCreator;
 	]]>
+	
 	<![CDATA[//@DECLARATION
 	//Declaration Here, remove this if you don't need it
-	void doStuff(String strMatrix, String strSeq1, String strSeq2){
-		double[][] matrix = QuasarMatrix.parseMatrix(strMatrix, true);
-		FreeshiftSequenceGotoh gotoh = new FreeshiftSequenceGotoh(-10.0,-2.0,matrix);
+	void createGotohJob(String strMatrix, String strSeq1, String strSeq2){
+		//double[][] matrix = QuasarMatrix.parseMatrix(strMatrix, true);
+		//FreeshiftSequenceGotoh gotoh = new FreeshiftSequenceGotoh(-10.0,-2.0,matrix);		
+		//Sequence seq1 = new Sequence("seq1", strSeq1);
+		//Sequence seq2 = new Sequence("seq2", strSeq2);
+		//SequenceAlignment ali = null;
+		//	ali = gotoh.align(seq1, seq2);
+		// result = ali.toStringVerbose()
 		
-//		String result = "(";
-//		for (int row=0; row<matrix.length; row++) {
-//			result += "(";
-//			for (int col=0; col< matrix[row].length-1; col++) {
-//				result +=matrix[row][col] + ",";
-//			}			
-//			result += matrix[row][matrix[row].length-1]+")";
-//		}
-//		result += ")";
-		
-		Sequence seq1 = new Sequence("seq1", strSeq1);
-		Sequence seq2 = new Sequence("seq2", strSeq2);
-		SequenceAlignment ali = null;
-//		try {
-			ali = gotoh.align(seq1, seq2);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-		String message = ali.toStringVerbose();
-		
+		String[] args = new String[2];
+		args[0] = JOBS_DIR;
+		args[1] = "gotoh";
+		String message = "Your job was created with the jobID " +
+			String.valueOf(JobCreator.createJob(args)+".\n"+
+			"You can retrieve the result when it's done.");
 		alert(message);
 	}
 	]]>
-	<!--
 	<![CDATA[
 	//Other code, remove this if you don't need it
-	//main.setTitle("Hello ZK");
-	//main.setBorder("normal");
+		String WEBSERVER_HOME = "/home/h/huberste/gobi/webserver";
+		String JOBS_DIR = "/home/h/huberste/gobi/webserver/jobs";
 	]]>
-	-->
 </zscript>
 
-<window id="wndSubmit"
-		title="submit job" border="normal">
-<label>paste the Matrix that shall be used here:</label>
-<textbox id="txtbxMatrix"
-		rows="5" cols="300" />
-<label>SequenceOne</label>
-<textbox id="txtbxSequenceOne"
-		rows="5" cols="300" />
-<label>SequenceTwo</label>
-<textbox id="txtbxSequenceTwo"
-		rows="5" cols="300" />
+<tabbox width="100%">
+<tabs>
+	<tab label="Gotoh"></tab> 
+	<tab label="Coord"></tab>
+	<tab label="123D"></tab>
+	<tab label="kabsch"></tab>
+</tabs>
+<tabpanels>
+	<tabpanel style="overflow:auto"><!-- Gotoh -->
+	<label>paste the Matrix that shall be used here:</label>
+	<textbox id="txtbxMatrix"
+			rows="5" cols="300" />
+	<label>SequenceOne</label>
+	<textbox id="txtbxSequenceOne"
+			rows="5" cols="300" />
+	<label>SequenceTwo</label>
+	<textbox id="txtbxSequenceTwo"
+			rows="5" cols="300" />
+	
+	<button id="btnSubmit"
+			label="submit" onClick = "createGotohJob(txtbxMatrix.getValue(),txtbxSequenceOne.getValue(), txtbxSequenceTwo.getValue())"/>
+	</tabpanel>
+	<tabpanel><!-- Coord -->
+	</tabpanel>
+	<tabpanel><!-- 123D -->
+	</tabpanel>
+	<tabpanel><!-- kabsch -->
+	</tabpanel>
+</tabpanels>
 
-<button id="btnSubmit"
-		label="submit" onClick = "doStuff(txtbxMatrix.getValue(),txtbxSequenceOne.getValue(), txtbxSequenceTwo.getValue())"/>
-</window>
+</tabbox>
 </zk>
