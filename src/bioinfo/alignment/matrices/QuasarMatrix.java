@@ -38,6 +38,45 @@ public class QuasarMatrix {
 		}
 		return matrix;
 	}
+	
+	public static double[][] parseMatrix(String matrixString, boolean arg){
+		double [][] matrix = new double[26][26];
+		String[] lines = matrixString.split("\n");
+		try{
+//			BufferedReader in = new BufferedReader(new FileReader(filename));
+			String line;
+			int currline = 0;
+			int numrows = 0;
+			char[] aminos = null; 
+			while(currline < lines.length-1){
+				line=lines[currline];
+				if (line.matches("^(NUMROW)(.)*")){
+					numrows = Integer.parseInt(line.substring(7,9));
+				}
+				else if (line.matches("^(ROWINDEX)(.)*")){
+					aminos = line.substring(9,numrows+9).toCharArray();
+				}
+				else if(line.matches("^(MATRIX)(.)*")){
+					String temp[];
+					for (int i = 0; i < aminos.length; i++) {
+						temp = line.split("\\s+");
+						for (int j = 1; j < temp.length; j++) {
+							matrix[aminos[i]-65][aminos[j-1]-65] = Double.parseDouble(temp[j]);
+							matrix[aminos[j-1]-65][aminos[i]-65] = Double.parseDouble(temp[j]);
+						}
+						currline++;
+						line=lines[currline];
+					}
+				}
+				currline++;
+			}
+//			in.close();
+		} catch(Exception e){
+			System.out.println("No Input (quasarmatrix)!");
+		}
+		return matrix;
+	}
+	
 //	public static void main(String[] args){
 //		int[][] matrix = QuasarMatrix.parseMatrix(args[0]);
 //		for (int i = 0; i < matrix[0].length; i++) {

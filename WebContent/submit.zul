@@ -5,12 +5,18 @@
 <![CDATA[//@IMPORT
 	//Import Here, remove this if you don't need it.
 	import org.zkoss.Version;
-	import test.Test;
+	import bioinfo.alignment.matrices.*;
+	import bioinfo.alignment.*;
+	import bioinfo.alignment.gotoh.*;
 	]]>
 	<![CDATA[//@DECLARATION
 	//Declaration Here, remove this if you don't need it
-	void showMsg(){
-		String message = "You are running ZK Successfully, The ZK Version is "+test.Test.test("Hello World!");
+	void doStuff(){
+		double[][] matrix = QuasarMatrix.parseMatrix(txtbxMatrix.value, true);
+		Gotoh gotoh = new FreeshiftSequenceGotoh(-10.0,-2.0,matrix);
+		gotoh.align(txtbxSequenceOne.value, txtbxSequenceTwo.value);
+		String message = "You are running ZK Successfully, The ZK Version is "+
+			("Hello World!");
 		alert(message);
 	}
 	]]>
@@ -26,9 +32,13 @@
 <window id="wndSubmit"
 		title="submit job" border="normal">
 <label>Sequence to be submitted:</label>
-<textbox id="txtbxSequence"
+<textbox id="txtbxSequenceOne"
+		rows="5" cols="80" />
+<textbox id="txtbxSequenceTwo"
+		rows="5" cols="80" />
+<textbox id="txtbxMatrix"
 		rows="5" cols="80" />
 <button id="btnSubmit"
-		label="submit" onClick = "showMsg()"/>
+		label="submit" onClick = "doStuff()"/>
 </window>
 </zk>
