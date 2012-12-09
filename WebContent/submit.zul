@@ -23,9 +23,10 @@
 		//	ali = gotoh.align(seq1, seq2);
 		// result = ali.toStringVerbose()
 		
-		String[] args = new String[2];
+		String[] args = new String[3];
 		args[0] = JOBS_DIR;
-		args[1] = "gotoh";
+		args[1] = WEBAPP_HOME; 
+		args[2] = "gotoh";
 		String message = "Your job was created with the jobID " +
 			String.valueOf(JobCreator.createJob(args)+".\n"+
 			"You can retrieve the result when it's done.");
@@ -34,7 +35,7 @@
 	]]>
 	<![CDATA[
 	//Other code, remove this if you don't need it
-		String WEBSERVER_HOME = "/home/h/huberste/gobi/webserver";
+		String WEBAPP_HOME = "/home/h/huberste/gobi/webserver/webapp";
 		String JOBS_DIR = "/home/h/huberste/gobi/webserver/jobs";
 	]]>
 </zscript>

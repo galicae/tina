@@ -25,14 +25,16 @@ public class JobCreator {
 	 * It also checks if there is already a worker running and calls a worker
 	 * if not.
 	 * @param args The first String must be the path to the $JOBS_DIR.
-	 * The second String must be the type of the job ("gotoh", "123D", ...).
+	 * Second String must be the $WEBAPP_HOME.
+	 * Third String must be the type of the job ("gotoh", "123D", ...).
 	 * All following Strings need to be the variables the job needs (e.g.
 	 * sequences, costs, matrixtypes, ...)
 	 * @return the jobID under which the job was created.
 	 */
 	public static int createJob(String[] args) {
-		String JOBS_DIR=args[0];
-		String jobType=args[1];
+		String JOBS_DIR = args[0];
+		String WEBAPP_HOME = args[1];
+		String jobType = args[2];
 		
 		String line = null;
 		int jobID = 99;
@@ -96,18 +98,43 @@ public class JobCreator {
 		}
 		
 		File dir = new File(JOBS_DIR+"/02_working");
+//		String JAVA_HOME = System.getProperty("java.home");
 		// TODO foolproofing: check if dir is directory
 		if (dir.list().length < 1) {
-			// FIXME call worker. Do this as a new process!
 			try {
-				System.out.println("calling: java"+ " webservice.JobWorker " + JOBS_DIR);
-//				ProcessBuilder pb = new ProcessBuilder("java", "webservice.JobWorker " + JOBS_DIR);
-//				pb.start();
-//				System.out.println(pb.command());
-//				Runtime.getRuntime().exec("echo \"hallo\"");
-				Runtime.getRuntime().exec("java webservice.JobWorker "+JOBS_DIR);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				//JAVA_HOME + "/bin/
+				String workingDir = WEBAPP_HOME + "/WEB-INF/classes";
+				String classpath = "\""+WEBAPP_HOME+"/WEB-INF/lib/*\"";
+				String arg1 = "webservice.JobWorker";
+				String arg2 = JOBS_DIR;
+				// debugging
+//				System.out.println("working directory: " +workingDir);
+//				System.out.println("calling: java -cp "+classpath+ " " +arg1 +" "+ arg2);
+//				ProcessBuilder pb = new ProcessBuilder("java", "-cp", classpath, arg1, arg2);
+				ProcessBuilder pb = new ProcessBuilder("java", arg1, arg2);
+				pb.directory(new File(workingDir));
+				pb.start();
+				// debugging
+//				Process proc = pb.start();
+//				BufferedInputStream err = new BufferedInputStream( proc.getErrorStream() );
+//				BufferedInputStream outstr = new BufferedInputStream( proc.getInputStream() );
+//				// print output
+//				byte[] buf = new byte[1024];
+//				int nr = err.read(buf);
+//				while (nr != -1)
+//				{
+//					System.out.write(buf, 0, nr);
+//					nr = err.read(buf);
+//				}
+//				buf = new byte[1024];
+//				nr = outstr.read(buf);
+//				while (nr != -1)
+//				{
+//					System.out.write(buf, 0, nr);
+//					nr = outstr.read(buf);
+//				}
+//				System.out.println("pb.command(): "+pb.command());
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

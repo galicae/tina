@@ -8,6 +8,7 @@ bin/*
 *.outpairs
 *.seqlib
 .settings
+src/test/Test.java
 WebContent/WEB-INF/classes
 WebContent/WEB-INF/lib/Jmol.jar
 WebContent/WEB-INF/lib/TMscore.jar

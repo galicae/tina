@@ -71,6 +71,8 @@ public class JobWorker {
 	 */
 	private void work() {
 		
+		System.out.println("Hello world");
+		
 		String todoFile = JOB_DIR + "/01_todo/"+JOB_ID+".job";
 		String workingFile = JOB_DIR + "/02_working/"+JOB_ID+".job";
 		String doneFile = JOB_DIR + "/03_done/"+JOB_ID+".job";
