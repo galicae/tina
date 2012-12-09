@@ -84,10 +84,23 @@ public class JobCreator {
 			out.write("JOB_TYPE="+jobType+"\n");
 
 			// TODO Write job specific arguments
+			if (jobType.equalsIgnoreCase("tina")) {
+				out.write("SEQUENCE="+args[3]);
+			} else
 			if (jobType.equalsIgnoreCase("gotoh")) {
-				out.write("seq1="+args[3]+"\n");
-				out.write("seq2="+args[4]+"\n");
-				out.write("MATRIX="+args[5]+"\n");
+				out.write("SEQUENCE_ONE="+args[3]+"\n");
+				out.write("SEQUENCE_ONE="+args[4]+"\n");
+				out.write("SHORT_MATRIX="+args[5]+"\n");
+				out.write("MATRIX="+args[6]+"\n");
+			} else
+			if (jobType.equalsIgnoreCase("coord")) {
+				
+			} else
+			if (jobType.equalsIgnoreCase("123d")) {
+				
+			} else
+			if (jobType.equalsIgnoreCase("kabsch")) {
+				
 			}
 			
 		} catch (IOException e) {

@@ -12,6 +12,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import webservice.workers.CoordWorker;
+import webservice.workers.D123Worker;
+import webservice.workers.GotohWorker;
+import webservice.workers.KabschWorker;
+import webservice.workers.TinaWorker;
+import webservice.workers.Worker;
+
 /**
  * The JobWorker works on created jobs.
  * @author gobi_12_4
@@ -32,7 +39,7 @@ public class JobWorker {
 	 */
 	public static void main (String[] args) {
 		
-		System.out.println("Hello World!");
+//		System.out.println("Hello World!");
 		
 		String JOBS_DIR = args[0];
 		JobWorker[] workers = new JobWorker[WORKER_LIMIT];
@@ -71,23 +78,53 @@ public class JobWorker {
 	 */
 	private void work() {
 		
-		System.out.println("Hello world");
-		
 		String todoFile = JOB_DIR + "/01_todo/"+JOB_ID+".job";
 		String workingFile = JOB_DIR + "/02_working/"+JOB_ID+".job";
-		String doneFile = JOB_DIR + "/03_done/"+JOB_ID+".job";
+//		String doneFile = JOB_DIR + "/03_done/"+JOB_ID+".job";
 		
 		// mv $JOB_DIR/01_todo/$JOB_ID.job $JOB_DIR/02_working/$JOB_ID.job
+		// && read JOB_TYPE
+		String jobType = null; 
+		BufferedReader from = null;
+		BufferedWriter to = null;
 		
-		move(todoFile, workingFile);
+		String line = null; 
+		try {
+			from = new BufferedReader(new FileReader(todoFile));
+			to = new BufferedWriter(new FileWriter(workingFile));
+			while((line = from.readLine()) != null) {
+				to.write(line+"\n");
+			}
+		} catch (IOException e) {
+			System.err.println("Error while trying to copy "+todoFile+" to "+workingFile+".");
+			e.printStackTrace();
+		} finally {
+			try {
+				if (from != null) from.close();
+				if (to != null) to.close();
+			} catch (IOException e) {
+				System.err.println("Error while trying close FileStreams");
+				e.printStackTrace();
+			}
+		}
 		
-		// TODO work on $JOB_ID
+		new File(todoFile).delete();
 		
-		// TODO save results in $JOB_DIR/03_done/$JOB_ID.job
-		
-		// TODO rm $JOB_DIR/02_working/$JOB_ID.job
-		
-		move(workingFile, doneFile);
+		Worker worker = null;
+		// TODO add other workers
+		if (jobType.equalsIgnoreCase("tina")) {
+			worker = new TinaWorker(workingFile);
+		} else if (jobType.equalsIgnoreCase("gotoh")) {
+			worker = new GotohWorker(workingFile);
+		} else if (jobType.equalsIgnoreCase("coord")) {
+			worker = new CoordWorker(workingFile);
+		} else if (jobType.equalsIgnoreCase("123d")) {
+			worker = new D123Worker(workingFile);
+		} else if (jobType.equalsIgnoreCase("kabsch")) {
+			worker = new KabschWorker(workingFile);
+		}
+		// Do the actual work
+		worker.work();
 		
 	}
 	

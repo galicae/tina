@@ -10,26 +10,37 @@
 	
 	<![CDATA[//@DECLARATION
 	//Declaration Here, remove this if you don't need it
-	void createGotohJob(String strMatrix, String strSeq1, String strSeq2){
-		//double[][] matrix = QuasarMatrix.parseMatrix(strMatrix, true);
-		//FreeshiftSequenceGotoh gotoh = new FreeshiftSequenceGotoh(-10.0,-2.0,matrix);		
-		//Sequence seq1 = new Sequence("seq1", strSeq1);
-		//Sequence seq2 = new Sequence("seq2", strSeq2);
-		//SequenceAlignment ali = null;
-		//	ali = gotoh.align(seq1, seq2);
-		// result = ali.toStringVerbose()
+	void showMessage(int jobID) {
+		alert ("Your job was created with the jobID " +
+				String.valueOf(jobID)+".\n"+
+				"You can retrieve the result when it's done.");
+	}
+	void createTinaJob(String strSequence){
+		String[] args = new String[4];
+		args[0] = JOBS_DIR;
+		args[1] = WEBAPP_HOME; 
+		args[2] = "tina";
+		args[3] = strSequence;
 		
-		String[] args = new String[6];
+		showMessage(JobCreator.createJob(args));
+	}
+	
+	void createGotohJob(String strSeq1, String strSeq2, String strMatrixSelector, String strMatrix){
+		String[] args = new String[7];
 		args[0] = JOBS_DIR;
 		args[1] = WEBAPP_HOME; 
 		args[2] = "gotoh";
 		args[3] = strSeq1;
 		args[4] = strSeq2;
-		args[5] = strMatrix;
-		String message = "Your job was created with the jobID " +
-			String.valueOf(JobCreator.createJob(args)+".\n"+
-			"You can retrieve the result when it's done.");
-		alert(message);
+		if (strMatrixSelector.equals("use own matrix...")) {
+			args[5] = "false";
+			args[6] = strMatrix;
+		} else {
+			args[5] = "true";
+			args[6] = strMatrixSelector;	
+		}
+		
+		showMessage(JobCreator.createJob(args));
 	}
 	]]>
 	<![CDATA[
@@ -41,25 +52,75 @@
 
 <tabbox width="100%">
 <tabs>
+	<tab label="tina-Predicion"></tab>
 	<tab label="Gotoh"></tab> 
 	<tab label="Coord"></tab>
 	<tab label="123D"></tab>
 	<tab label="kabsch"></tab>
 </tabs>
 <tabpanels>
+	<tabpanel> <!-- tina-Prediction -->
+		<vlayout>
+			<label>Here you can let tina predict the structure of a protein.
+			</label>
+			<label>Please insert the amino acid sequence of the protein you want to predict in the following style:</label>
+			<label>id:sequence</label>
+			<textbox id="txtbxTinaSequence" rows="1" cols="300" />
+			<button id="btnTinaSubmit"
+				label="submit"
+				onClick="createTinaJob(txtbxTinaSequence.getValue())"/>
+		</vlayout>
+	</tabpanel>
 	<tabpanel style="overflow:auto"><!-- Gotoh -->
-	<label>paste the Matrix that shall be used here:</label>
-	<textbox id="txtbxMatrix"
-			rows="5" cols="300" />
-	<label>SequenceOne</label>
-	<textbox id="txtbxSequenceOne"
-			rows="5" cols="300" />
-	<label>SequenceTwo</label>
-	<textbox id="txtbxSequenceTwo"
-			rows="5" cols="300" />
-	
-	<button id="btnSubmit"
-			label="submit" onClick = "createGotohJob(txtbxMatrix.getValue(),txtbxSequenceOne.getValue(), txtbxSequenceTwo.getValue())"/>
+		<vlayout>
+		<label>SequenceOne (id:seq)</label>
+		<textbox id="txtbxSequenceOne"
+				rows="1" cols="300" />
+		<label>SequenceTwo (id:seq)</label>
+		<textbox id="txtbxSequenceTwo"
+				rows="1" cols="300" />
+		<label>Select the matrix that shall be used for the alignment:</label>
+		
+		<combobox id="cmbbxMatrix" readonly="true" autodrop="true" value="dayhoff">
+			<attribute name="onChanging">
+				<![CDATA[
+					if (cmbbxMatrix.getValue().equals("use own matrix...")) {
+						lbltxtbxMatrix.setVisible(true);
+						txtbxMatrix.setVisible(true);
+					} else {
+						lbltxtbxMatrix.setVisible(false);
+						txtbxMatrix.setVisible(false);
+					}
+				]]>
+			</attribute>
+			<attribute name="onSelect">
+				<![CDATA[
+					if (cmbbxMatrix.getValue().equals("use own matrix...")) {
+						lbltxtbxMatrix.setVisible(true);
+						txtbxMatrix.setVisible(true);
+					} else {
+						lbltxtbxMatrix.setVisible(false);
+						txtbxMatrix.setVisible(false);
+					}
+				]]>
+			</attribute>
+			<comboitem label="BlakeCohen" />
+		    <comboitem label="blosum50" />
+		    <comboitem label="dayhoff" />
+		    <comboitem label="pam250" />
+		    <comboitem label="THREADER" />
+		    <comboitem label="use own matrix..." />
+		</combobox>
+		<label id="lbltxtbxMatrix" visible="false">
+			paste the Matrix that shall be used here:
+		</label>
+		<textbox id="txtbxMatrix"
+				rows="5" cols="300" visible="false" />
+		
+		<button id="btnSubmit"
+				label="submit"
+				onClick="createGotohJob(txtbxSequenceOne.getValue(), txtbxSequenceTwo.getValue(), cmbbxMatrix.getValue(), txtbxMatrix.getValue())"/>
+		</vlayout>
 	</tabpanel>
 	<tabpanel><!-- Coord -->
 	</tabpanel>
