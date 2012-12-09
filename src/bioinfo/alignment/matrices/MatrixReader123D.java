@@ -137,44 +137,34 @@ public class MatrixReader123D {
 			String temp[] = line.split("\\s+");
 			potentials = new double[3][temp.length-1][26];
 			while((line = in.readLine()) != null){
-				temp = line.split("\\s+");	
-				
-				if(!temp[0].equals(" ") && !temp[0].equals("")){
-					temp = line.split("\\s+");
-					char c = Bio.codeTranslate(temp[0]);
-					for (int i = 0; i < potentials[0].length; i++) {
-						potentials[0][i][c-65] = Double.parseDouble(temp[i+1]);
-					}
+				temp = line.split("\\s+");
+				char c = Bio.codeTranslate(temp[0]);
+				for (int i = 0; i < potentials[0].length; i++) {
+					potentials[0][i][c-65] = Double.parseDouble(temp[i+1]);
 				}
 			}
 			in.close();
 			
 			//readin ccpb
 			in = new BufferedReader(new FileReader(betaFilepath));
+			line = in.readLine();
 			while((line = in.readLine()) != null){
-				temp = line.split("\\s+");	
-				
-				if(!temp[0].equals(" ") && !temp[0].equals("")){
-					temp = line.split("\\s+");
-					char c = Bio.codeTranslate(temp[0]);
-					for (int i = 0; i < potentials[0].length; i++) {
-						potentials[0][i][c-65] = Double.parseDouble(temp[i+1]);
-					}
+				temp = line.split("\\s+");
+				char c = Bio.codeTranslate(temp[0]);
+				for (int i = 0; i < potentials[0].length; i++) {
+					potentials[1][i][c-65] = Double.parseDouble(temp[i+1]);
 				}
 			}
 			in.close();
 			
 			//readin ccpo
 			in = new BufferedReader(new FileReader(coilFilepath));
+			line = in.readLine();
 			while((line = in.readLine()) != null){
-				temp = line.split("\\s+");	
-				
-				if(!temp[0].equals(" ") && !temp[0].equals("")){
-					temp = line.split("\\s+");
-					char c = Bio.codeTranslate(temp[0]);
-					for (int i = 0; i < potentials[0].length; i++) {
-						potentials[0][i][c-65] = Double.parseDouble(temp[i+1]);
-					}
+				temp = line.split("\\s+");
+				char c = Bio.codeTranslate(temp[0]);
+				for (int i = 0; i < potentials[0].length; i++) {
+					potentials[2][i][c-65] = Double.parseDouble(temp[i+1]);
 				}
 			}
 			in.close();
