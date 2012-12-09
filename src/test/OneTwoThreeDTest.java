@@ -23,10 +23,9 @@ public class OneTwoThreeDTest {
 		BufferedReader in;
 		HashMap<String,char[]> seqlib = SeqLibrary.parse(args[7]);
 		double[][] scoringmatrix = QuasarMatrix.parseMatrix(args[0]);
-		MatrixReader123D prefreader = new MatrixReader123D();
 		double[][][] potentials = MatrixReader123D.readPotentials(args[1], args[2], args[3]);
-		double[][] secstructpref = prefreader.readSecStructPref(args[4]);
-		double[][] weights = prefreader.readWeights(args[5]);
+		double[][] secstructpref = MatrixReader123D.readSecStructPref(args[4]);
+		double[][] weights = MatrixReader123D.readWeights(args[5]);
 		String ssccpath = args[6];
 		FreeshiftSequence123D threader = new FreeshiftSequence123D(scoringmatrix,secstructpref,weights,potentials);
 		

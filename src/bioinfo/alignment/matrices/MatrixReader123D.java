@@ -24,7 +24,7 @@ public class MatrixReader123D {
 	 * @param filename
 	 * @return the secondary structure preference as a double array
 	 */
-	public double[][] readSecStructPref(String filename) {
+	public static double[][] readSecStructPref(String filename) {
 		double[][] matrix = new double[3][27];
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(filename));
@@ -64,7 +64,7 @@ public class MatrixReader123D {
 		return matrix;
 	}
 
-	public double[][] readWeights(String filename) {
+	public static double[][] readWeights(String filename) {
 		int[] ind = new int[3];
 
 		double[] seq = new double[3];
@@ -186,7 +186,7 @@ public class MatrixReader123D {
 	}
 	
 
-	private int[] calcIndices(String[] split) {
+	private static int[] calcIndices(String[] split) {
 		int[] result = new int[3];
 		for (int i = 1; i < split.length; i++) {
 			if (split[i].equals("l"))
