@@ -81,9 +81,14 @@ public class JobCreator {
 		try {
 			out = new BufferedWriter(new FileWriter(todoFile));
 			out.write("JOB_ID="+String.valueOf(jobID)+"\n");
-			out.write("JOB_TYPE="+jobType);
+			out.write("JOB_TYPE="+jobType+"\n");
 
 			// TODO Write job specific arguments
+			if (jobType.equalsIgnoreCase("gotoh")) {
+				out.write("seq1="+args[3]+"\n");
+				out.write("seq2="+args[4]+"\n");
+				out.write("MATRIX="+args[5]+"\n");
+			}
 			
 		} catch (IOException e) {
 			System.err.println("Error while trying to write "+todoFile+".");

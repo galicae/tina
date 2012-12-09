@@ -1,0 +1,7 @@
+<?page title="tina - timeout" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="tina - timeout" border="normal">
+You have had open this window for too long, so a timeout error has occured.
+Please go to <a href="http://tiger:38080/gobi" label="http://tiger:38080/gobi" /> to refresh. 
+</window>
+</zk>

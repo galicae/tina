@@ -5,10 +5,6 @@
 <![CDATA[//@IMPORT
 	//Import Here, remove this if you don't need it.
 	import org.zkoss.Version;
-	//import bioinfo.Sequence;
-	//import bioinfo.alignment.*;
-	//import bioinfo.alignment.matrices.*;
-	//import bioinfo.alignment.gotoh.*;
 	import webservice.JobCreator;
 	]]>
 	
@@ -23,10 +19,13 @@
 		//	ali = gotoh.align(seq1, seq2);
 		// result = ali.toStringVerbose()
 		
-		String[] args = new String[3];
+		String[] args = new String[6];
 		args[0] = JOBS_DIR;
 		args[1] = WEBAPP_HOME; 
 		args[2] = "gotoh";
+		args[3] = strSeq1;
+		args[4] = strSeq2;
+		args[5] = strMatrix;
 		String message = "Your job was created with the jobID " +
 			String.valueOf(JobCreator.createJob(args)+".\n"+
 			"You can retrieve the result when it's done.");
