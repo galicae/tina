@@ -5,6 +5,7 @@
  ******************************************************************************/
 package webservice;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -133,25 +134,25 @@ public class JobCreator {
 				pb.directory(new File(workingDir));
 				pb.start();
 				// debugging
-//				Process proc = pb.start();
-//				BufferedInputStream err = new BufferedInputStream( proc.getErrorStream() );
-//				BufferedInputStream outstr = new BufferedInputStream( proc.getInputStream() );
-//				// print output
-//				byte[] buf = new byte[1024];
-//				int nr = err.read(buf);
-//				while (nr != -1)
-//				{
-//					System.out.write(buf, 0, nr);
-//					nr = err.read(buf);
-//				}
-//				buf = new byte[1024];
-//				nr = outstr.read(buf);
-//				while (nr != -1)
-//				{
-//					System.out.write(buf, 0, nr);
-//					nr = outstr.read(buf);
-//				}
-//				System.out.println("pb.command(): "+pb.command());
+				Process proc = pb.start();
+				BufferedInputStream err = new BufferedInputStream( proc.getErrorStream() );
+				BufferedInputStream outstr = new BufferedInputStream( proc.getInputStream() );
+				// print output
+				byte[] buf = new byte[1024];
+				int nr = err.read(buf);
+				while (nr != -1)
+				{
+					System.out.write(buf, 0, nr);
+					nr = err.read(buf);
+				}
+				buf = new byte[1024];
+				nr = outstr.read(buf);
+				while (nr != -1)
+				{
+					System.out.write(buf, 0, nr);
+					nr = outstr.read(buf);
+				}
+				System.out.println("pb.command(): "+pb.command());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
