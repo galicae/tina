@@ -1,6 +1,24 @@
 <?page title="tina - view" contentType="text/html;charset=UTF-8"?>
 <zk>
-<window title="tina - view" border="normal">
-New Content Here!
-</window>
+<tabbox width="100%">
+<tabs>
+	<tab label="submitted"></tab>
+	<tab label="in progress"></tab> 
+	<tab label="done"></tab>
+</tabs>
+<tabpanels>
+	<tabpanel> <!-- submitted -->
+		<vlayout>
+		</vlayout>
+	</tabpanel>
+	<tabpanel> <!-- in progress -->
+		<vlayout>
+		</vlayout>
+	</tabpanel>
+	<tabpanel>
+		<vlayout> <!-- done -->
+		</vlayout>
+	</tabpanel>
+</tabpanels>
+</tabbox>
 </zk>
