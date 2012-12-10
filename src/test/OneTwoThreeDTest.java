@@ -29,8 +29,6 @@ public class OneTwoThreeDTest {
 		String ssccpath = args[6];
 		FreeshiftSequence123D threader = new FreeshiftSequence123D(scoringmatrix,secstructpref,weights,potentials);
 		
-		System.out.println();
-		
 		//run that shit
 		try{
 			in = new BufferedReader(new FileReader(args[8]));

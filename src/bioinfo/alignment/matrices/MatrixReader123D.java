@@ -25,37 +25,31 @@ public class MatrixReader123D {
 	 * @return the secondary structure preference as a double array
 	 */
 	public static double[][] readSecStructPref(String filename) {
-		double[][] matrix = new double[3][27];
+		double[][] matrix = new double[3][26];
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(filename));
 			String line;
 			String[] content = new String[2];
-			while ((line = in.readLine()) != null) {
-				if (line.contains("ALPHA")) {
-					while (!(line = in.readLine()).startsWith("UNK")
-							&& (line = in.readLine()) != null) {
+			String secstruct = null;
+			char c = 0;
+			while ((line = in.readLine()) != null) {			
+					content = line.split("\\s+");
+					
+					if(content[0].equals("ALPHA") || content[0].equals("BETA") || content[0].equals("OTHER")){
+						secstruct = content[0];
+						line = in.readLine();
 						content = line.split("\\s+");
-						char c = Bio.codeTranslate(content[0]);
+					}
+					c = Bio.codeTranslate(content[0]);
+					if(secstruct.equals("ALPHA")){	
 						matrix[0][c - 65] = Double.parseDouble(content[1]);
 					}
-					matrix[0][26] = 0;
-				} else if (line.contains("BETA")) {
-					while (!(line = in.readLine()).startsWith("UNK")
-							&& (line = in.readLine()) != null) {
-						content = line.split("\\s+");
-						char c = Bio.codeTranslate(content[0]);
+					else if(secstruct.equals("BETA")){
 						matrix[1][c - 65] = Double.parseDouble(content[1]);
 					}
-					matrix[1][26] = 0;
-				} else if (line.contains("OTHER")) {
-					while (!(line = in.readLine()).startsWith("UNK")
-							&& (line = in.readLine()) != null) {
-						content = line.split("\\s+");
-						char c = Bio.codeTranslate(content[0]);
+					else if(secstruct.equals("OTHER")){
 						matrix[2][c - 65] = Double.parseDouble(content[1]);
 					}
-					matrix[2][26] = 0;
-				}
 			}
 			in.close();
 		} catch (IOException e) {
