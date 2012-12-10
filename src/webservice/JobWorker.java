@@ -83,17 +83,23 @@ public class JobWorker {
 //		String doneFile = JOB_DIR + "/03_done/"+JOB_ID+".job";
 		
 		// mv $JOB_DIR/01_todo/$JOB_ID.job $JOB_DIR/02_working/$JOB_ID.job
-		// && read JOB_TYPE
+		// && read $JOB_TYPE
 		String jobType = null; 
 		BufferedReader from = null;
 		BufferedWriter to = null;
 		
+		// copy file to 02_working
 		String line = null; 
 		try {
 			from = new BufferedReader(new FileReader(todoFile));
 			to = new BufferedWriter(new FileWriter(workingFile));
 			while((line = from.readLine()) != null) {
 				to.write(line+"\n");
+				// read $JOB_TYPE
+				if (line.startsWith("JOB_TYPE=")) {
+					jobType=line.substring(9);
+				}
+				
 			}
 		} catch (IOException e) {
 			System.err.println("Error while trying to copy "+todoFile+" to "+workingFile+".");
@@ -107,7 +113,7 @@ public class JobWorker {
 				e.printStackTrace();
 			}
 		}
-		
+		// delete jobfile in 01_todo
 		new File(todoFile).delete();
 		
 		Worker worker = null;
@@ -123,6 +129,7 @@ public class JobWorker {
 		} else if (jobType.equalsIgnoreCase("kabsch")) {
 			worker = new KabschWorker(workingFile);
 		}
+		
 		// Do the actual work
 		worker.work();
 		
