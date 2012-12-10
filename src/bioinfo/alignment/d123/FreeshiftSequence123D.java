@@ -40,11 +40,11 @@ public class FreeshiftSequence123D extends Gotoh {
 	 *            an sscc entry containing the structural information concerning
 	 *            the template structure
 	 */
-	public FreeshiftSequence123D(double[][] scoringmatrix,
+	public FreeshiftSequence123D(double go, double ge, double[][] scoringmatrix,
 			double[][] secondaryStructurePreferences, double[][] weights,
 			double[][][] contactPot) {
-		super(0.0d, 0.0d);
-		
+		super(go, ge);
+
 		this.contactPot = new int[contactPot.length][contactPot[0].length][contactPot[0][0].length];
 		for (int i = 0; i != contactPot.length; i++) {
 			for (int j = 0; j != contactPot[0].length; j++) {
@@ -87,6 +87,8 @@ public class FreeshiftSequence123D extends Gotoh {
 	 * @return the score of x matching y
 	 */
 	private int match(char x, char y, int stY) {
+//		System.out.println("x: "+x);
+//		System.out.println("y: "+y);
 		int seqScore = score(x, y);
 		int prefScore = secStrucPref[stY][x - 65];
 		int lcontScore = contactPot[stY][localConts[y - 65]][x - 65];
@@ -94,6 +96,11 @@ public class FreeshiftSequence123D extends Gotoh {
 		int result = weights[4][stY] * lcontScore + weights[5][stY]
 				* gcontScore + weights[3][stY] * prefScore + weights[1][stY]
 				* seqScore;
+//		System.out.println(seqScore + " "+ weights[1][stY]);
+//		System.out.println(prefScore+ " "+ weights[3][stY]);
+//		System.out.println(lcontScore+ " "+ weights[4][stY]);
+//		System.out.println(gcontScore+ " "+ weights[5][stY]);
+//		System.out.println(result);
 		return result;
 	}
 

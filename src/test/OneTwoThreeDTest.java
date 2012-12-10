@@ -27,7 +27,7 @@ public class OneTwoThreeDTest {
 		double[][] secstructpref = MatrixReader123D.readSecStructPref(args[4]);
 		double[][] weights = MatrixReader123D.readWeights(args[5]);
 		String ssccpath = args[6];
-		FreeshiftSequence123D threader = new FreeshiftSequence123D(scoringmatrix,secstructpref,weights,potentials);
+		FreeshiftSequence123D threader = new FreeshiftSequence123D(-12.0,-1.0,scoringmatrix,secstructpref,weights,potentials);
 		
 		//run that shit
 		try{
@@ -45,6 +45,8 @@ public class OneTwoThreeDTest {
 				seq2 = new Sequence(temp[1],seqlib.get(temp[1]));
 				seqalign = threader.align(seq1, seq2,ssccentry);
 				System.out.println(temp[0]+"\t"+temp[1]+"\t"+seqalign.getScore());
+				System.out.println(temp[0]+": "+seqalign.getRowAsString(0));
+				System.out.println(temp[1]+": "+seqalign.getRowAsString(1));
 			}
 			in.close();
 		} catch(IOException e){
