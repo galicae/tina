@@ -66,26 +66,34 @@ public abstract class Gotoh implements Aligner {
 	 * streams all matrices as tab-separated content
 	 */
 	public void streamMatricesAsTxt(Writer out) throws IOException{
-		out.append("--- score table ---\n\t");
+		out.append("--- score table ---\n\t\t");
 		for(int i = 0; i != sequence1.length(); i++){
 			out.append("  "+sequence1.getComp(i)+"\t");
 		}
 		out.append("\n");
 		for(int i = 0; i != sequence2.length(); i++){
-			out.append(sequence2.getComp(i)+"\t");
+			if(i > 0){
+				out.append(sequence2.getComp(i)+"\t");
+			}else{
+				out.append(" \t");
+			}
 			for(int j = 0; j != sequence1.length(); j++){
 				out.append(M[j][i]+"\t");
 			}
 			out.append("\n");
 		}
 		out.append("\n");
-		out.append("--- deletion table ---\n\t");
+		out.append("--- deletion table ---\n\t\t");
 		for(int i = 0; i != sequence1.length(); i++){
 			out.append("  "+sequence1.getComp(i)+"\t");
 		}
 		out.append("\n");
 		for(int i = 0; i != sequence2.length(); i++){
-			out.append(sequence2.getComp(i)+"\t");
+			if(i > 0){
+				out.append(sequence2.getComp(i)+"\t");
+			}else{
+				out.append(" \t");
+			}
 			for(int j = 0; j != sequence1.length(); j++){
 				out.append(D[j][i]+"\t");
 			}
@@ -98,7 +106,11 @@ public abstract class Gotoh implements Aligner {
 		}
 		out.append("\n");
 		for(int i = 0; i != sequence2.length(); i++){
-			out.append(sequence2.getComp(i)+"\t");
+			if(i > 0){
+				out.append(sequence2.getComp(i)+"\t");
+			}else{
+				out.append(" \t");
+			}
 			for(int j = 0; j != sequence1.length(); j++){
 				out.append(I[j][i]+"\t");
 			}
@@ -112,47 +124,59 @@ public abstract class Gotoh implements Aligner {
 	 * @param out Writer for example BufferedWriter to file or to System.out
 	 * streams all matrices as html-formatted content
 	 */
-	public void streamMatricesAsHtml(Writer out) throws IOException{
+	public void streamMatricesAsHtml(Writer out, int factor) throws IOException{
 		out.append("<table id=\"score\" style=\"text-align:center;\">\n");
-		out.append("<tr><td></td>");
+		out.append("<tr><td></td><td></td>");
 		for(int i = 0; i != sequence1.length(); i++){
 			out.append("<td><b>"+sequence1.getComp(i)+"</b></td>");
 		}
 		out.append("</tr>\n");
-		for(int i = 0; i != sequence2.length(); i++){
-			out.append("<tr><td><b>"+sequence2.getComp(i)+"</b></td>");
-			for(int j = 0; j != sequence1.length(); j++){
-				out.append("<td>"+M[j][i]+"</td>");
+		for(int i = 0; i <= sequence2.length(); i++){
+			if(i > 0){
+				out.append("<tr><td><b>"+sequence2.getComp(i-1)+"</b></td>");
+			}else{
+				out.append("<tr><td></td>");
+			}
+			for(int j = 0; j <= sequence1.length(); j++){
+				out.append("<td>"+String.format("%6.3f", 1.0d*M[j][i]/factor)+"</td>");
 			}
 			out.append("</tr>\n");
 		}
 		out.append("</table>\n");
 
 		out.append("<table id=\"deletion\" style=\"text-align:center;\">\n");
-		out.append("<tr><td></td>");
+		out.append("<tr><td></td><td></td>");
 		for(int i = 0; i != sequence1.length(); i++){
 			out.append("<td><b>"+sequence1.getComp(i)+"</b></td>");
 		}
 		out.append("</tr>\n");
-		for(int i = 0; i != sequence2.length(); i++){
-			out.append("<tr><td><b>"+sequence2.getComp(i)+"</b></td>");
-			for(int j = 0; j != sequence1.length(); j++){
-				out.append("<td>"+D[j][i]+"</td>");
+		for(int i = 0; i <= sequence2.length(); i++){
+			if(i > 0){
+				out.append("<tr><td><b>"+sequence2.getComp(i-1)+"</b></td>");
+			}else{
+				out.append("<tr><td></td>");
+			}
+			for(int j = 0; j <= sequence1.length(); j++){
+				out.append("<td>"+String.format("%6.3f", 1.0d*D[j][i]/factor)+"</td>");
 			}
 			out.append("</tr>\n");
 		}
 		out.append("</table>\n");
 
 		out.append("<table id=\"vertical\" style=\"text-align:center;\">\n");
-		out.append("<tr><td></td>");
+		out.append("<tr><td></td><td></td>");
 		for(int i = 0; i != sequence1.length(); i++){
 			out.append("<td><b>"+sequence1.getComp(i)+"</b></td>");
 		}
 		out.append("</tr>\n");
-		for(int i = 0; i != sequence2.length(); i++){
-			out.append("<tr><td><b>"+sequence2.getComp(i)+"</b></td>");
-			for(int j = 0; j != sequence1.length(); j++){
-				out.append("<td>"+I[j][i]+"</td>");
+		for(int i = 0; i <= sequence2.length(); i++){
+			if(i > 0){
+				out.append("<tr><td><b>"+sequence2.getComp(i-1)+"</b></td>");
+			}else{
+				out.append("<tr><td></td>");
+			}
+			for(int j = 0; j <= sequence1.length(); j++){
+				out.append("<td>"+String.format("%6.3f", 1.0d*I[j][i]/factor)+"</td>");
 			}
 			out.append("</tr>\n");
 		}
