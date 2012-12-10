@@ -281,12 +281,12 @@ public class FreeshiftSequence123D extends Gotoh {
 		gapExtend[1] = this.gapExtend * weights[2][1];
 		gapExtend[2] = this.gapExtend * weights[2][2];
 
-		int[][][] tempScore = new int[sequence1.length()][sequence2.length()][3];
+		int[][] tempScore = new int[sequence1.length()][sequence2.length()];
 		int strY;
 		for (int i = 0; i < sequence1.length(); i++) {
 			for (int j = 0; j < sequence2.length(); j++) {
 				strY = secStruct[j];
-				tempScore[i][j][strY] = match(seq1[i], seq2[j], strY);
+				tempScore[i][j] = match(seq1[i], seq2[j], strY);
 			}
 		}
 
@@ -299,7 +299,7 @@ public class FreeshiftSequence123D extends Gotoh {
 				I[i][j] = Math.max(M[i - 1][j] + gapOpen[strY]
 						+ gapExtend[strY], I[i - 1][j] + gapExtend[strY]);
 				M[i][j] = Math.max(M[i - 1][j - 1]
-						+ tempScore[i - 1][j - 1][strY],
+						+ tempScore[i - 1][j - 1],
 						Math.max(I[i][j], D[i][j]));
 			}
 		}
