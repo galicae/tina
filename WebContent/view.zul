@@ -6,12 +6,45 @@
 	//Import here, remove this if you don't need it.
 	// nothing to do here
 		import org.zkoss.Version;
+		import java.io.File;
 	]]>
 	
 	<![CDATA[//@DECLARATION
 	//Declaration Here, remove this if you don't need it
-	void loadJobs() {
-		submitted_box.insertBefore(submitted_first, new Label("Hallo Wolrd!"));
+	void loadSubmittedJobs() {
+		File dir = new File(JOBS_DIR+"/01_todo");
+		String[] files = dir.list();
+		A[] links = new A[files.length]; 
+		for (int i = 0; i < files.length; i++) {
+			links[i] = new A();
+			links[i].setLabel(files[i]);
+			links[i].setHref("jobs"+"/01_todo/"+files[i]);
+			links[i].setParent(submitted_box);
+		}
+	}
+	
+	void loadProgressJobs() {
+		File dir = new File(JOBS_DIR+"/02_working");
+		String[] files = dir.list();
+		A[] links = new A[files.length]; 
+		for (int i = 0; i < files.length; i++) {
+			links[i] = new A();
+			links[i].setLabel(files[i]);
+			links[i].setHref("jobs"+"/02_working/"+files[i]);
+			links[i].setParent(progress_box);
+		}
+	}
+	
+	void loadDoneJobs() {
+		File dir = new File(JOBS_DIR+"/03_done");
+		String[] files = dir.list();
+		A[] links = new A[files.length]; 
+		for (int i = 0; i < files.length; i++) {
+			links[i] = new A();
+			links[i].setLabel(files[i]);
+			links[i].setHref("jobs"+"/03_done/"+files[i]);
+			links[i].setParent(results_box);
+		}
 	}
 	]]>
 	<![CDATA[
@@ -26,20 +59,20 @@
 	<tab label="in progress"></tab> 
 	<tab label="done"></tab>
 </tabs>
-<tabpanels onCreate="loadJobs()">
+<tabpanels>
 	<tabpanel> <!-- submitted -->
 		<vlayout id="submitted_box">
-		<label id="submitted_first">Here you can see all jobs that have been submitted to tina but the server has not yet had the time for executing them.</label>
+		<label id="submitted_first" onCreate="loadSubmittedJobs()">Here you can see all jobs that have been submitted to tina but the server has not yet had the time for executing them.</label>
 		</vlayout>
 	</tabpanel>
 	<tabpanel> <!-- in progress -->
 		<vlayout id="progress_box">
-		<label id="progress_first">Here you can see all the jobs that tina is working on at the moment.</label>
+		<label id="progress_first"  onCreate="loadProgressJobs()">Here you can see all the jobs that tina is working on at the moment.</label>
 		</vlayout>
 	</tabpanel>
 	<tabpanel>
 		<vlayout id="results_box"> <!-- done -->
-		<label id="results_first">Here you can see all jobs that have been submitted, and tina has already calculated the results.</label>
+		<label id="results_first" onCreate="loadDoneJobs()">Here you can see all jobs that have been submitted, and tina has already calculated the results.</label>
 		</vlayout>
 	</tabpanel>
 </tabpanels>
