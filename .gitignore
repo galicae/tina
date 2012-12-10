@@ -7,7 +7,10 @@ bin/*
 *.inpairs
 *.outpairs
 *.seqlib
-.settings
+*.settings
+ccp*
+*.scores
+*.config
 src/test/Test.java
 WebContent/WEB-INF/classes
 WebContent/WEB-INF/lib/Jmol.jar
