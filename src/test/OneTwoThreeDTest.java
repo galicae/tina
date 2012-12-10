@@ -3,13 +3,16 @@ package test;
 import highscorealignments.SeqLibrary;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.d123.FreeshiftSequence123D;
+import bioinfo.alignment.gotoh.Gotoh;
 import bioinfo.alignment.matrices.MatrixReader123D;
 import bioinfo.alignment.matrices.QuasarMatrix;
 import bioinfo.proteins.SSCCEntry;
@@ -27,7 +30,7 @@ public class OneTwoThreeDTest {
 		double[][] secstructpref = MatrixReader123D.readSecStructPref(args[4]);
 		double[][] weights = MatrixReader123D.readWeights(args[5]);
 		String ssccpath = args[6];
-		FreeshiftSequence123D threader = new FreeshiftSequence123D(-12.0,-1.0,scoringmatrix,secstructpref,weights,potentials);
+		FreeshiftSequence123D threader = new FreeshiftSequence123D(-15.0,-3.0,scoringmatrix,secstructpref,weights,potentials);
 		
 		//run that shit
 		try{
@@ -44,6 +47,7 @@ public class OneTwoThreeDTest {
 				seq1 = new Sequence(temp[0],seqlib.get(temp[0]));
 				seq2 = new Sequence(temp[1],seqlib.get(temp[1]));
 				seqalign = threader.align(seq1, seq2,ssccentry);
+				threader.streamMatricesAsHtml(new BufferedWriter(new FileWriter("/Users/andreseitz/Desktop/matrices.html")),Gotoh.FACTOR*Gotoh.FACTOR);
 				System.out.println(temp[0]+"\t"+temp[1]+"\t"+seqalign.getScore());
 				System.out.println(temp[0]+": "+seqalign.getRowAsString(0));
 				System.out.println(temp[1]+": "+seqalign.getRowAsString(1));
