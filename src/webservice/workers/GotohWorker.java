@@ -35,6 +35,7 @@ public class GotohWorker extends Worker{
 
 	@Override
 	public void work() {
+		// read WORKING job file
 		readFile();
 		
 		// DONE debugging: Check if matrix was given correctly.
@@ -56,31 +57,8 @@ public class GotohWorker extends Worker{
 		// end debugging
 		aliresult = gotoh.align(sequenceOne, sequenceTwo);
 		
-		BufferedReader from = null;
-		BufferedWriter to = null;
-		
-		String line = null; 
-		try {
-			from = new BufferedReader(new FileReader(JOB_FILE));
-			to = new BufferedWriter(new FileWriter(DONE_FILE));
-			while((line = from.readLine()) != null) {
-				to.write(line+"\n");
-			}
-			to.write("RESULT=\n");
-			to.write(aliresult.toStringVerbose());
-		} catch (IOException e) {
-			System.err.println("Error while trying to copy "+JOB_FILE+" to "+DONE_FILE+".");
-			e.printStackTrace();
-		} finally {
-			try {
-				if (from != null) from.close();
-				if (to != null) to.close();
-			} catch (IOException e) {
-				System.err.println("Error while trying close FileStreams");
-				e.printStackTrace();
-			}
-		}
-		new File(JOB_FILE).delete();
+		// Write DONE job file
+		writeResult();
 	}
 
 	@Override
@@ -140,8 +118,31 @@ public class GotohWorker extends Worker{
 
 	@Override
 	protected void writeResult() {
-		// TODO Auto-generated method stub
+		BufferedReader from = null;
+		BufferedWriter to = null;
 		
+		String line = null; 
+		try {
+			from = new BufferedReader(new FileReader(JOB_FILE));
+			to = new BufferedWriter(new FileWriter(DONE_FILE));
+			while((line = from.readLine()) != null) {
+				to.write(line+"\n");
+			}
+			to.write("RESULT=\n");
+			to.write(aliresult.toStringVerbose());
+		} catch (IOException e) {
+			System.err.println("Error while trying to copy "+JOB_FILE+" to "+DONE_FILE+".");
+			e.printStackTrace();
+		} finally {
+			try {
+				if (from != null) from.close();
+				if (to != null) to.close();
+			} catch (IOException e) {
+				System.err.println("Error while trying close FileStreams");
+				e.printStackTrace();
+			}
+		}
+		new File(JOB_FILE).delete();
 	}
 
 }

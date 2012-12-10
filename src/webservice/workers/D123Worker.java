@@ -32,4 +32,10 @@ public class D123Worker extends Worker {
 
 	}
 
+	@Override
+	protected void writeResult() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

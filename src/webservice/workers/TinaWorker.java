@@ -36,4 +36,10 @@ public class TinaWorker extends Worker {
 		
 	}
 
+	@Override
+	protected void writeResult() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

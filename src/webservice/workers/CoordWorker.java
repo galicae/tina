@@ -27,4 +27,10 @@ public class CoordWorker extends Worker {
 		
 	}
 
+	@Override
+	protected void writeResult() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
