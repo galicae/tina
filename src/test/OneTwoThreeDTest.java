@@ -44,9 +44,9 @@ public class OneTwoThreeDTest {
 				seq1 = new Sequence(temp[0],seqlib.get(temp[0]));
 				seq2 = new Sequence(temp[1],seqlib.get(temp[1]));
 				seqalign = threader.align(seq1, seq2,ssccentry);
-				System.out.println(temp[0]+"\t"+temp[1]+"\t"+seqalign.getScore());
-				System.out.println(temp[0]+": "+seqalign.getRowAsString(0));
-				System.out.println(temp[1]+": "+seqalign.getRowAsString(1));
+//				System.out.println(temp[0]+"\t"+temp[1]+"\t"+seqalign.getScore());
+//				System.out.println(temp[0]+": "+seqalign.getRowAsString(0));
+//				System.out.println(temp[1]+": "+seqalign.getRowAsString(1));
 			}
 			in.close();
 		} catch(IOException e){

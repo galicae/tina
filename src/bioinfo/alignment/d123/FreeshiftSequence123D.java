@@ -44,7 +44,7 @@ public class FreeshiftSequence123D extends Gotoh {
 			double[][] secondaryStructurePreferences, double[][] weights,
 			double[][][] contactPot) {
 		super(go, ge);
-
+		
 		this.contactPot = new int[contactPot.length][contactPot[0].length][contactPot[0][0].length];
 		for (int i = 0; i != contactPot.length; i++) {
 			for (int j = 0; j != contactPot[0].length; j++) {
