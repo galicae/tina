@@ -1,12 +1,17 @@
 <?page title="tina - overview" contentType="text/html;charset=UTF-8"?>
 <zk>
 <?init zscript="/scripts/pnlpos.zs" ?>
-
+<window title="under construction" border="normal">
+<vlayout>
+<label>The tina - server is still under construction.</label>
+<label>We thank you for your patience.</label>
+</vlayout>
+</window>
 <portallayout id="ptlOverview"
 		onCreate="initStatus(ptlOverview)" onPortalMove="saveStatus(ptlOverview)">
 		
 	<portalchildren style="padding: 5px" width="30%">
-		<panel id="top-predicts" title="Top 10 Predictions"
+		<panel id="top_predicts" title="Top 10 Predictions"
 				height="300px" border="normal" style="margin-bottom:10px"
 				collapsible="true" maximizable="true" closable="false">
 			<panelchildren>
@@ -15,7 +20,7 @@
 	</portalchildren>
 	
 	<portalchildren style="padding: 5px" width="40%">
-		<panel id="last-predicts" title="Last 10 Predictions"
+		<panel id="last_predicts" title="Last 10 Predictions"
 				height="300px" border="normal" style="margin-bottom:10px"
 				collapsible="true" maximizable="true" closable="false">
 			<panelchildren>

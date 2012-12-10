@@ -1,6 +1,48 @@
 <?page title="tina - team" contentType="text/html;charset=UTF-8"?>
 <zk>
-<window title="tina - team" border="normal">
-New Content Here!
-</window>
+<html>
+<h2>About the Team: "The Beards"</h2>
+<h3>The Name</h3>
+<p>The group name is still subject of discussion and shall be changed in
+time.</p>
+<h3>The Beards</h3>
+<p>The beards are a direct result of the high work load that we have.</p> 
+<h3>The group members</h3>
+<dl>
+	<dt>huberste</dt>
+	<dd>also known as "the one that i never there". He has many other
+	liabilities and thus can't make it to the coding sessions very often. But
+	his	experience in programming, his questioning attitude and his almost
+	infinite supply of sweets (and high spirit)  make him an valuable member of
+	the team.<br />
+	Motto: "If i can do it tomorrow, i won't do it today!"<br />
+	Famous quote: "Guten Morgen liebe Bioinformatiker!"</dd>
+	<dt>kerbs</dt>
+	<dd>is the womanizer of the group. Every group needs an womanizer.
+	Additionally his first gotoh was the fastest of the group, what shows his 
+	skill and engagement. He is a skilled java engineer and has many ideas on
+	the topic.<br />
+	Motto: "I wanna wake up on the right sode of the wrong bed!"<br />
+	Famous quote: "Can someone remeber yesterday night?"</dd>
+	<dt>papadopoulos</dt>
+	<dd>is despite his physical disability (chronic tenosivitis) a valuable
+	member of the team: On his ergonomic keyboard he codes faster than lighning
+	and even if everyone around is totally finished, he still has the energy and
+	trust in god to get everyone up again.<br />
+	Motto: "nothing is impossible!"<br />
+	Famous quote: "There is an XKCD-Comic about that..."</dd>
+	<dt>seitza</dt>
+	<dd>is the intellectual head of the group. His expertise in Java and many
+	other programming languages as well as his fundamental knowledge of linux
+	help the group to get their stuff working.<br />
+	Motto: "Sleep is for the weak!"<br />
+	Famous quote: "Weißer Mann spricht wirre Worte!"</dd>
+</dl>
+<p style="text-align:right;">group 4 - The Beards<br />
+<a href="mailto:huberste@cip.ifi.lmu.de">huberste</a><br />
+<a href="mailto:kerbs@cip.ifi.lmu.de">kerbs</a><br />
+<a href="mailto:papadopoulos@cip.ifi.lmu.de">papadopoulos</a><br />
+<a href="mailto:seitza@cip.ifi.lmu.de">seitza</a>
+</p>
+</html>
 </zk>
