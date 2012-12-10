@@ -90,9 +90,9 @@ public class JobCreator {
 			} else
 			if (jobType.equalsIgnoreCase("gotoh")) {
 				out.write("SEQUENCE_ONE="+args[3]+"\n");
-				out.write("SEQUENCE_ONE="+args[4]+"\n");
+				out.write("SEQUENCE_TWO="+args[4]+"\n");
 				out.write("SHORT_MATRIX="+args[5]+"\n");
-				out.write("MATRIX="+args[6]+"\n");
+				out.write("MATRIX=\n"+args[6]);
 			} else
 			if (jobType.equalsIgnoreCase("coord")) {
 				
@@ -116,43 +116,42 @@ public class JobCreator {
 			}
 		}
 		
+		
+		// start job (if not already working)
 		File dir = new File(JOBS_DIR+"/02_working");
-//		String JAVA_HOME = System.getProperty("java.home");
-		// TODO foolproofing: check if dir is directory
 		if (dir.list().length < 1) {
 			try {
-				//JAVA_HOME + "/bin/
 				String workingDir = WEBAPP_HOME + "/WEB-INF/classes";
-				String classpath = "\""+WEBAPP_HOME+"/WEB-INF/lib/*\"";
 				String arg1 = "webservice.JobWorker";
 				String arg2 = JOBS_DIR;
-				// debugging
-//				System.out.println("working directory: " +workingDir);
-//				System.out.println("calling: java -cp "+classpath+ " " +arg1 +" "+ arg2);
-//				ProcessBuilder pb = new ProcessBuilder("java", "-cp", classpath, arg1, arg2);
+
 				ProcessBuilder pb = new ProcessBuilder("java", arg1, arg2);
 				pb.directory(new File(workingDir));
-				pb.start();
-				// debugging
+				
+				// DONE debugging: what command was called?
+//					System.out.println("New process will be started now: "+pb.command());
+				// end debugging
+				
 				Process proc = pb.start();
-				BufferedInputStream err = new BufferedInputStream( proc.getErrorStream() );
-				BufferedInputStream outstr = new BufferedInputStream( proc.getInputStream() );
-				// print output
-				byte[] buf = new byte[1024];
-				int nr = err.read(buf);
-				while (nr != -1)
-				{
-					System.out.write(buf, 0, nr);
+
+				// TODO debugging: Give error stream! GIVE!
+					BufferedInputStream err = new BufferedInputStream( proc.getErrorStream() );
+					BufferedInputStream outstr = new BufferedInputStream( proc.getInputStream() );
+					// print output
+					byte[] buf = new byte[1024];
+					int nr = outstr.read(buf);
+					while (nr != -1)
+					{
+						System.out.write(buf, 0, nr);
+						nr = outstr.read(buf);
+					}
 					nr = err.read(buf);
-				}
-				buf = new byte[1024];
-				nr = outstr.read(buf);
-				while (nr != -1)
-				{
-					System.out.write(buf, 0, nr);
-					nr = outstr.read(buf);
-				}
-				System.out.println("pb.command(): "+pb.command());
+					while (nr != -1)
+					{
+						System.err.write(buf, 0, nr);
+						nr = err.read(buf);
+					}
+				// end debugging
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

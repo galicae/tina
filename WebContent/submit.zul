@@ -73,6 +73,7 @@
 	</tabpanel>
 	<tabpanel style="overflow:auto"><!-- Gotoh -->
 		<vlayout>
+		<label>Here you can submit two sequences to be aligned by Gotoh. At the moment they are being aligned with free-shift algorithm, gap opening cost of 10 and gap extension cost of 2.</label>
 		<label>SequenceOne (id:seq)</label>
 		<textbox id="txtbxSequenceOne"
 				rows="1" cols="300" />

@@ -32,4 +32,10 @@ public class KabschWorker extends Worker {
 
 	}
 
+	@Override
+	protected void writeResult() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
