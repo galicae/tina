@@ -180,11 +180,11 @@ public class MatrixReader123D {
 		int[] result = new int[3];
 		for (int i = 1; i < split.length; i++) {
 			if (split[i].equals("l"))
-				result[i - 1] = OTHER;
+				result[OTHER] = i - 1;
 			if (split[i].equals("h"))
-				result[i - 1] = ALPHA;
+				result[ALPHA] = i - 1;
 			if (split[i].equals("s"))
-				result[i - 1] = BETA;
+				result[BETA] = i - 1;
 		}
 		return result;
 	}
