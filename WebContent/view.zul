@@ -1,22 +1,45 @@
 <?page title="tina - view" contentType="text/html;charset=UTF-8"?>
+
 <zk>
-<tabbox width="100%">
+<zscript>
+<![CDATA[//@IMPORT
+	//Import here, remove this if you don't need it.
+	// nothing to do here
+		import org.zkoss.Version;
+	]]>
+	
+	<![CDATA[//@DECLARATION
+	//Declaration Here, remove this if you don't need it
+	void loadJobs() {
+		submitted_box.insertBefore(submitted_first, new Label("Hallo Wolrd!"));
+	}
+	]]>
+	<![CDATA[
+	//Other code, remove this if you don't need it
+		String JOBS_DIR = "/home/h/huberste/gobi/webserver/jobs";
+	]]>
+</zscript>
+
+<tabbox width="100%" onCreate="">
 <tabs>
 	<tab label="submitted"></tab>
 	<tab label="in progress"></tab> 
 	<tab label="done"></tab>
 </tabs>
-<tabpanels>
+<tabpanels onCreate="loadJobs()">
 	<tabpanel> <!-- submitted -->
-		<vlayout>
+		<vlayout id="submitted_box">
+		<label id="submitted_first">Here you can see all jobs that have been submitted to tina but the server has not yet had the time for executing them.</label>
 		</vlayout>
 	</tabpanel>
 	<tabpanel> <!-- in progress -->
-		<vlayout>
+		<vlayout id="progress_box">
+		<label id="progress_first">Here you can see all the jobs that tina is working on at the moment.</label>
 		</vlayout>
 	</tabpanel>
 	<tabpanel>
-		<vlayout> <!-- done -->
+		<vlayout id="results_box"> <!-- done -->
+		<label id="results_first">Here you can see all jobs that have been submitted, and tina has already calculated the results.</label>
 		</vlayout>
 	</tabpanel>
 </tabpanels>
