@@ -10,7 +10,7 @@ import bioinfo.proteins.SSCCLine;
 
 /**
  * 
- * @author gruppe_4 Freeshift version of 123D
+ * @author gruppe_4 Local version of 123D
  */
 public class LocalSequence123D extends Gotoh {
 
@@ -179,11 +179,11 @@ public class LocalSequence123D extends Gotoh {
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
 
-		int[][][] tempScore = new int[sequence1.length()][sequence2.length()][3];
+		int[][] tempScore = new int[sequence1.length()][sequence2.length()];
 		for (int i = 1; i <= sequence1.length(); i++) {
 			for (int j = 1; j <= sequence2.length(); j++) {
 				int strY = secStruct[j - 1];
-				tempScore[i][j][strY] = match(seq1[i - 1], seq2[j - 1], strY);
+				tempScore[i][j] = match(seq1[i - 1], seq2[j - 1], strY);
 			}
 		}
 
@@ -233,7 +233,7 @@ public class LocalSequence123D extends Gotoh {
 				}
 				i--;
 			} else {
-				score += tempScore[row0[i]][row1[i]][secStruct[row1[0]]];
+				score += tempScore[row0[i]][row1[i]];
 			}
 		}
 		if (1.0d * score / (Gotoh.FACTOR * Gotoh.FACTOR)== ali.getScore()) {
@@ -244,7 +244,7 @@ public class LocalSequence123D extends Gotoh {
 	}
 
 	/**
-	 * prepares matrices for freeshift alignment
+	 * prepares matrices for local alignment
 	 * 
 	 */
 	private void prepareMatrices() {
@@ -292,7 +292,7 @@ public class LocalSequence123D extends Gotoh {
 				strY = secStruct[j-1];
 				D[i][j] = Math.max(M[i][j-1] + gapOpen[strY] + gapExtend[strY], D[i][j-1] + gapExtend[strY]);
 				I[i][j] = Math.max(M[i-1][j] + gapOpen[strY] + gapExtend[strY], I[i-1][j] + gapExtend[strY]);
-				M[i][j] = Math.max(M[i-1][j-1] + tempScore[i-1][j-1], Math.max(I[i][j], D[i][j]));
+				M[i][j] = Math.max(M[i-1][j-1] + tempScore[i-1][j-1], Math.max(I[i][j], Math.max(0, D[i][j])));
 
 			}
 		}
@@ -312,17 +312,12 @@ public class LocalSequence123D extends Gotoh {
 
 		// find start and end of alignment
 		for (int i = 0; i != M.length; i++) {
-			if (M[i][M[i].length - 1] >= max) {
-				max = M[i][M[i].length - 1];
-				x = i - 1;
-				y = M[i].length - 2;
-			}
-		}
-		for (int i = (M[M.length - 1].length - 1); i >= 0; i--) {
-			if (M[(M.length - 1)][i] > max) {
-				max = M[(M.length - 1)][i];
-				y = i - 1;
-				x = M.length - 2;
+			for (int j = 0; j != M[i].length; j++) {
+				if (max <= M[i][j]) {
+					max = M[i][j];
+					x = i - 1;
+					y = j - 1;
+				}
 			}
 		}
 
@@ -344,7 +339,7 @@ public class LocalSequence123D extends Gotoh {
 			row1 += "-";
 		}
 
-		while (x >= 0 && y >= 0) {
+		while (x >= 0 && y >= 0 && M[x + 1][y + 1] != 0) {
 
 			actScore = M[x + 1][y + 1];
 			actx = (Character) sequence1.getComp(x);

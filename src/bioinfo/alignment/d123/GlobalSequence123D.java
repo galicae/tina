@@ -10,7 +10,7 @@ import bioinfo.proteins.SSCCLine;
 
 /**
  * 
- * @author gruppe_4 Freeshift version of 123D
+ * @author gruppe_4 Global version of 123D
  */
 public class GlobalSequence123D extends Gotoh {
 
