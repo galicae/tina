@@ -181,6 +181,7 @@ public class BMCathAndScop {
 					besthit = cathscopinfos.get(template);
 					famRec = temp;
 				}
+				
 				// for cath misclassification tests			
 				if (query.getCathClazz() == besthit.getCathClazz()
 						&& query.getCathFold() == besthit.getCathFold()
@@ -292,7 +293,7 @@ public class BMCathAndScop {
 			}
 
 			// cath misclassification test
-			if (samefammaxscore_cath > diffoldmaxscore_cath) {
+			if (samefammaxscore_cath >= diffoldmaxscore_cath && diffoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
 				cath_missamefam++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -306,7 +307,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(samefammaxscore_cath < diffoldmaxscore_cath) {
+			} else if(samefammaxscore_cath < diffoldmaxscore_cath && samefammaxscore_cath != Double.NEGATIVE_INFINITY) {
 				cath_misdiffoldfam++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -321,7 +322,7 @@ public class BMCathAndScop {
 					e.printStackTrace();
 				}
 			}
-			if (samesupmaxscore_cath > diffoldmaxscore_cath) {
+			if (samesupmaxscore_cath >= diffoldmaxscore_cath && diffoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
 				cath_missamesup++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -335,7 +336,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(samesupmaxscore_cath < diffoldmaxscore_cath){
+			} else if(samesupmaxscore_cath < diffoldmaxscore_cath && samesupmaxscore_cath != Double.NEGATIVE_INFINITY){
 				cath_misdiffoldsup++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -350,7 +351,7 @@ public class BMCathAndScop {
 					e.printStackTrace();
 				}
 			}
-			if (samefoldmaxscore_cath > diffoldmaxscore_cath) {
+			if (samefoldmaxscore_cath >= diffoldmaxscore_cath && diffoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
 				cath_missamefold++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -364,7 +365,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(samefoldmaxscore_cath < diffoldmaxscore_cath) {
+			} else if(samefoldmaxscore_cath < diffoldmaxscore_cath && samefoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
 				cath_misdiffoldfold++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -381,7 +382,7 @@ public class BMCathAndScop {
 			}
 
 			// scop misclassification test
-			if (samefammaxscore_scop > diffoldmaxscore_scop) {
+			if (samefammaxscore_scop >= diffoldmaxscore_scop && diffoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
 				scop_missamefam++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -395,7 +396,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(samefammaxscore_scop < diffoldmaxscore_scop) {
+			} else if(samefammaxscore_scop < diffoldmaxscore_scop && samefammaxscore_scop != Double.NEGATIVE_INFINITY) {
 				scop_misdiffoldfam++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -410,7 +411,7 @@ public class BMCathAndScop {
 					e.printStackTrace();
 				}
 			}
-			if (samesupmaxscore_scop > diffoldmaxscore_scop) {
+			if (samesupmaxscore_scop >= diffoldmaxscore_scop && diffoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
 				scop_missamesup++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -424,7 +425,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(samesupmaxscore_scop < diffoldmaxscore_scop) {
+			} else if(samesupmaxscore_scop < diffoldmaxscore_scop && samesupmaxscore_scop != Double.NEGATIVE_INFINITY) {
 				scop_misdiffoldsup++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -439,7 +440,7 @@ public class BMCathAndScop {
 					e.printStackTrace();
 				}
 			}
-			if (samefoldmaxscore_scop > diffoldmaxscore_scop) {
+			if (samefoldmaxscore_scop >= diffoldmaxscore_scop && diffoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
 				scop_missamefold++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -453,7 +454,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(samefoldmaxscore_scop < diffoldmaxscore_scop) {
+			} else if(samefoldmaxscore_scop < diffoldmaxscore_scop && samefoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
 				scop_misdiffoldfold++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
