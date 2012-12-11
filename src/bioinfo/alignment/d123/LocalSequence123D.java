@@ -75,7 +75,6 @@ public class LocalSequence123D extends Gotoh {
 				this.scoringmatrix[i][j] = (int) (Gotoh.FACTOR * scoringmatrix[i][j]);
 			}
 		}
-		
 		gapOpen = new int[3];
 		gapOpen[0] = (int)(go * this.weights[1][0]);
 		gapOpen[1] = (int)(go * this.weights[1][1]);
@@ -100,13 +99,22 @@ public class LocalSequence123D extends Gotoh {
 	 * @return the score of x matching y
 	 */
 	private int match(char x, char y, int stY) {
+//		System.out.println("x: "+x);
+//		System.out.println("y: "+y);
 		int seqScore = score(x, y);
 		int prefScore = secStrucPref[stY][x - 65];
 		int lcontScore = contactPot[stY][localConts[y - 65]][x - 65];
 		int gcontScore = contactPot[stY][globalConts[y - 65]][x - 65];
-		int result = weights[4][stY] * lcontScore + weights[5][stY]
-				* gcontScore + weights[3][stY] * prefScore + weights[1][stY]
-				* seqScore;
+		int result = (weights[4][stY] * lcontScore) + 
+					(weights[5][stY] * gcontScore) + 
+					(weights[3][stY] * prefScore) + 
+					(weights[0][stY] * seqScore);
+//		System.out.println(stY+"      "+weights[0][stY]+" "+seqScore+" "+(seqScore*weights[0][stY])+"        "+weights[3][stY]+" "+prefScore+" "+(prefScore*weights[3][stY])+"       "+weights[4][stY]+" "+lcontScore+" "+(weights[4][stY]*lcontScore)+"       "+weights[5][stY]+" "+gcontScore+" "+(weights[5][stY]*gcontScore));
+//		System.out.println(seqScore + " "+ weights[1][stY]);
+//		System.out.println(prefScore+ " "+ weights[3][stY]);
+//		System.out.println(lcontScore+ " "+ weights[4][stY]);
+//		System.out.println(gcontScore+ " "+ weights[5][stY]);
+//		System.out.println(result);
 		return result;
 	}
 
@@ -267,27 +275,25 @@ public class LocalSequence123D extends Gotoh {
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
 
-		int[][][] tempScore = new int[sequence1.length()][sequence2.length()][3];
+		int[][] tempScore = new int[sequence1.length()][sequence2.length()];
 		int strY;
 		for (int i = 0; i < sequence1.length(); i++) {
+			//System.out.println();
 			for (int j = 0; j < sequence2.length(); j++) {
 				strY = secStruct[j];
-				tempScore[i][j][strY] = match(seq1[i], seq2[j], strY);
+				tempScore[i][j] = match(seq1[i], seq2[j], strY);
+				//System.out.print(String.format("%8.3f",(tempScore[i][j]/1000000.0d))+"\t");
 			}
 		}
 
 		// now the main loop where stuff is actually computed
 		for (int i = 1; i <= sequence1.length(); i++) {
 			for (int j = 1; j <= sequence2.length(); j++) {
-				strY = secStruct[j - 1];
-				D[i][j] = Math.max(M[i][j - 1] + gapOpen[strY]
-						+ gapExtend[strY], D[i][j - 1] + gapExtend[strY]);
-				I[i][j] = Math.max(M[i - 1][j] + gapOpen[strY]
-						+ gapExtend[strY], I[i - 1][j] + gapExtend[strY]);				
-				M[i][j] = Math.max(M[i - 1][j - 1]
-						+ tempScore[i - 1][j - 1][strY],
-						Math.max(I[i][j], D[i][j]));
-				M[i][j] = Math.max(M[i][j], 0);
+				strY = secStruct[j-1];
+				D[i][j] = Math.max(M[i][j-1] + gapOpen[strY] + gapExtend[strY], D[i][j-1] + gapExtend[strY]);
+				I[i][j] = Math.max(M[i-1][j] + gapOpen[strY] + gapExtend[strY], I[i-1][j] + gapExtend[strY]);
+				M[i][j] = Math.max(M[i-1][j-1] + tempScore[i-1][j-1], Math.max(I[i][j], D[i][j]));
+
 			}
 		}
 	}
@@ -304,13 +310,19 @@ public class LocalSequence123D extends Gotoh {
 		int y = 0;
 		int strY = -1;
 
+		// find start and end of alignment
 		for (int i = 0; i != M.length; i++) {
-			for (int j = 0; j != M[i].length; j++) {
-				if (max <= M[i][j]) {
-					max = M[i][j];
-					x = i - 1;
-					y = j - 1;
-				}
+			if (M[i][M[i].length - 1] >= max) {
+				max = M[i][M[i].length - 1];
+				x = i - 1;
+				y = M[i].length - 2;
+			}
+		}
+		for (int i = (M[M.length - 1].length - 1); i >= 0; i--) {
+			if (M[(M.length - 1)][i] > max) {
+				max = M[(M.length - 1)][i];
+				y = i - 1;
+				x = M.length - 2;
 			}
 		}
 
@@ -331,8 +343,6 @@ public class LocalSequence123D extends Gotoh {
 			row0 += sequence1.getComp(i - 1);
 			row1 += "-";
 		}
-
-		// difficult stuff ahead
 
 		while (x >= 0 && y >= 0) {
 

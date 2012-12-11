@@ -13,6 +13,7 @@ import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.d123.FreeshiftSequence123D;
 import bioinfo.alignment.d123.GlobalSequence123D;
+import bioinfo.alignment.d123.LocalSequence123D;
 import bioinfo.alignment.gotoh.Gotoh;
 import bioinfo.alignment.matrices.MatrixReader123D;
 import bioinfo.alignment.matrices.QuasarMatrix;
@@ -31,7 +32,7 @@ public class OneTwoThreeDTest {
 		double[][] secstructpref = MatrixReader123D.readSecStructPref(args[4]);
 		double[][] weights = MatrixReader123D.readWeights(args[5]);
 		String ssccpath = args[6];
-		GlobalSequence123D threader = new GlobalSequence123D(-12.0,-1.0,scoringmatrix,secstructpref,weights,potentials);
+		LocalSequence123D threader = new LocalSequence123D(-12.0,-1.0,scoringmatrix,secstructpref,weights,potentials);
 		
 		//run that shit
 		try{
