@@ -5,6 +5,19 @@
  ******************************************************************************/
 package webservice.workers;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import bioinfo.Sequence;
+import bioinfo.alignment.SequenceAlignment;
+import bioinfo.alignment.matrices.QuasarMatrix;
+
 /**
  * TinaWorker is the worker that works on an TINA job.
  * @author huberste
@@ -12,6 +25,13 @@ package webservice.workers;
  * @version alpha
  */
 public class TinaWorker extends Worker {
+	
+	private final static String SEQLIB_FILE = "/home/h/huberste/gobi/webserver/database/domains.seqlib";
+	
+	private Sequence sequence;
+	private LinkedList<Sequence> sequencedb;
+	
+	String result;
 	
 	/**
 	 * 
@@ -22,24 +42,119 @@ public class TinaWorker extends Worker {
 	}
 	
 	/**
-	 * 
+	 * This will make a prediction of the structure.
+	 * The plan is:
+	 * 1) align with freeshiftGotoh against all Sequences in $SEQLIB_FILE.
+	 * 2) take (five?) best alignment(s). for each:
+	 * 3) Thread against these alignments.
 	 */
 	public void work() {
-		// TODO save results in $JOB_DIR/03_done/$JOB_ID.job
+		// Read Sequence Database
+		getSequenceDB();
 		
-		// TODO rm $JOB_DIR/02_working/$JOB_ID.job
+		// TODO 1) Align against all sequences in $SEQLIB_FILE
+		
+		// TODO 2) take five best Alignments
+		
+		// TODO 3) Thread Alignments
+		
+		
+		// save results in $JOB_DIR/03_done/$JOB_ID.job
+		// and rm $JOB_DIR/02_working/$JOB_ID.job
+		writeResult();
 	}
 
+	/**
+	 * Loads the Sequences in the given $SEQLIB_FILE into LinkedList $sequencedb
+	 */
+	private void getSequenceDB() {
+		sequencedb = new LinkedList<Sequence>();
+
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(SEQLIB_FILE));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				// TODO optimization
+				String[] temp= line.split(":");
+				sequencedb.add(new Sequence(temp[0], temp[1].toCharArray()));
+			}
+		} catch (IOException x) {
+			System.err.format("IOException: %s%n", x);
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException x) {
+				System.err.format("IOException: %s%n", x);
+			}
+		}
+	}
+	
 	@Override
 	protected void readFile() {
-		// TODO Auto-generated method stub
+		BufferedReader from = null;
+		
+		String line = null; 
+		try {
+			from = new BufferedReader(new FileReader(JOB_FILE));
+			while((line=from.readLine())!= null) {
+				if (line.startsWith("SEQUENCE=")) {
+					String[] temp = line.substring(13).split(":");
+					// TODO stupid user: 
+					if (temp.length < 2) { // Sequence not given in Format "id:sequence"
+						result = "INPUT ERROR: SEQUENCE ONE WAS NOT GIVEN IN FORMAT \"ID:SEQUENCE\"";
+					}
+					sequence = new Sequence(temp[0], temp[1]);
+					// TODO debugging
+					System.out.println("debugging: sequence = "+sequence.toStringVerbose());
+				}
+			}
+		} catch (IOException e) {
+			System.err.println("Error while trying to read "+JOB_FILE+".");
+			e.printStackTrace();
+		} finally {
+			try {
+				from.close();
+			} catch (IOException e) {
+				System.err.println("Error while trying close "+JOB_FILE+".");
+				e.printStackTrace();
+			}
+		}
 		
 	}
 
+	/**
+	 * Writes the result file.
+	 * Also deletes the working file.
+	 */
 	@Override
 	protected void writeResult() {
-		// TODO Auto-generated method stub
+		BufferedReader from = null;
+		BufferedWriter to = null;
 		
+		String line = null; 
+		try {
+			from = new BufferedReader(new FileReader(JOB_FILE));
+			to = new BufferedWriter(new FileWriter(DONE_FILE));
+			while((line = from.readLine()) != null) {
+				to.write(line+"\n");
+			}
+			to.write("RESULT=\n");
+			to.write(result);
+		} catch (IOException e) {
+			System.err.println("Error while trying to copy "+JOB_FILE+" to "+DONE_FILE+".");
+			e.printStackTrace();
+		} finally {
+			try {
+				if (from != null) from.close();
+				if (to != null) to.close();
+			} catch (IOException e) {
+				System.err.println("Error while trying close FileStreams");
+				e.printStackTrace();
+			}
+		}
+		// rm $JOBS_DIR/02_working/$JOB_ID.job
+		new File(JOB_FILE).delete();
 	}
 
 }
