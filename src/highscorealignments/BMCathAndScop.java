@@ -170,45 +170,49 @@ public class BMCathAndScop {
 			SequenceAlignment scopFamMis = null, scopSupMis = null, scopFoldMis = null, scopDifFol = null;
 			SequenceAlignment temp;
 			CathScopEntry query = cathscopinfos.get(query_entry.getKey());
-
-			for (String template : query_entry.getValue()) {
+			CathScopEntry template;
+			
+			for (String template_id : query_entry.getValue()) {
 				temp = (SequenceAlignment) gotoh.align(
 						new Sequence(query.getID(), seqlib.get(query.getID())),
-						new Sequence(template, seqlib.get(template)));
+						new Sequence(template_id, seqlib.get(template_id)));
+				template = cathscopinfos.get(template_id);
 				score = temp.getScore();
 				if (score > maxscore) {
 					maxscore = score;
-					besthit = cathscopinfos.get(template);
+					besthit = cathscopinfos.get(template_id);
 					famRec = temp;
 				}
 				
 				// for cath misclassification tests			
-				if (query.getCathClazz() == besthit.getCathClazz()
-						&& query.getCathFold() == besthit.getCathFold()
-						&& query.getCathSupFam() == besthit.getCathSupFam()
-						&& query.getCathFam() == besthit.getCathFam()) {
+				if (query.getCathClazz() == template.getCathClazz()
+						&& query.getCathFold() == template.getCathFold()
+						&& query.getCathSupFam() == template.getCathSupFam()
+						&& query.getCathFam() == template.getCathFam()) {
 					if (score > samefammaxscore_cath) {
 						samefammaxscore_cath = score;
 						cathFamMis = temp;
 					}
 				}
-				if (query.getCathClazz() == besthit.getCathClazz()
-						&& query.getCathFold() == besthit.getCathFold()
-						&& query.getCathSupFam() == besthit.getCathSupFam()) {
+				if (query.getCathClazz() == template.getCathClazz()
+						&& query.getCathFold() == template.getCathFold()
+						&& query.getCathSupFam() == template.getCathSupFam() 
+						&& query.getCathFam() != template.getCathFam()) {
 					if (score > samesupmaxscore_cath) {
 						samesupmaxscore_cath = score;
 						cathSupMis = temp;
 					}
 				}
-				if (query.getCathClazz() == besthit.getCathClazz()
-						&& query.getCathFold() == besthit.getCathFold()) {
+				if (query.getCathClazz() == template.getCathClazz()
+						&& query.getCathFold() == template.getCathFold()
+						&& query.getCathSupFam() != template.getCathSupFam()) {
 					if (score > samefoldmaxscore_cath) {
 						samefoldmaxscore_cath = score;
 						cathFoldMis = temp;
 					}
 				}
-				if (query.getCathClazz() != besthit.getCathClazz()
-						|| query.getCathFold() != besthit.getCathFold()) {
+				if (query.getCathClazz() != template.getCathClazz()
+						|| query.getCathFold() != template.getCathFold()) {
 					if (score > diffoldmaxscore_cath) {
 						diffoldmaxscore_cath = score;
 						cathDifFol = temp;
@@ -216,32 +220,34 @@ public class BMCathAndScop {
 				}
 
 				// for scop misclassification tests
-				if (query.getScopClazz() == besthit.getScopClazz()
-						&& query.getScopFold() == besthit.getScopFold()
-						&& query.getScopSupFam() == besthit.getScopSupFam()
-						&& query.getScopFam() == besthit.getScopFam()) {
+				if (query.getScopClazz() == template.getScopClazz()
+						&& query.getScopFold() == template.getScopFold()
+						&& query.getScopSupFam() == template.getScopSupFam()
+						&& query.getScopFam() == template.getScopFam()) {
 					if (score > samefammaxscore_scop) {
 						samefammaxscore_scop = score;
 						scopFamMis = temp;
 					}
 				}
-				if (query.getScopClazz() == besthit.getScopClazz()
-						&& query.getScopFold() == besthit.getScopFold()
-						&& query.getScopSupFam() == besthit.getScopSupFam()) {
+				if (query.getScopClazz() == template.getScopClazz()
+						&& query.getScopFold() == template.getScopFold()
+						&& query.getScopSupFam() == template.getScopSupFam()
+						&& query.getScopFam() != template.getScopFam()) {
 					if (score > samesupmaxscore_scop) {
 						samesupmaxscore_scop = score;
 						scopSupMis = temp;
 					}
 				}
-				if (query.getScopClazz() == besthit.getScopClazz()
-						&& query.getScopFold() == besthit.getScopFold()) {
+				if (query.getScopClazz() == template.getScopClazz()
+						&& query.getScopFold() == template.getScopFold()
+						&& query.getScopSupFam() != template.getScopSupFam()) {
 					if (score > samefoldmaxscore_scop) {
 						samefoldmaxscore_scop = score;
 						scopFoldMis = temp;
 					}
 				}
-				if (query.getScopClazz() != besthit.getScopClazz()
-						|| query.getScopFold() != besthit.getScopFold()) {
+				if (query.getScopClazz() != template.getScopClazz()
+						|| query.getScopFold() != template.getScopFold()) {
 					if (score > diffoldmaxscore_scop) {
 						diffoldmaxscore_scop = score;
 						scopDifFol = temp;
