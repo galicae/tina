@@ -32,7 +32,7 @@ public class OneTwoThreeDTest {
 		double[][] secstructpref = MatrixReader123D.readSecStructPref(args[4]);
 		double[][] weights = MatrixReader123D.readWeights(args[5]);
 		String ssccpath = args[6];
-		LocalSequence123D threader = new LocalSequence123D(-12.0,-1.0,scoringmatrix,secstructpref,weights,potentials);
+		FreeshiftSequence123D threader = new FreeshiftSequence123D(-12.0,-1.0,scoringmatrix,secstructpref,weights,potentials);
 		
 		//run that shit
 		try{
