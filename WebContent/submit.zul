@@ -105,12 +105,12 @@
 					}
 				]]>
 			</attribute>
-			<comboitem label="BlakeCohen" />
-		    <comboitem label="blosum50" />
+			<!-- <comboitem label="BlakeCohen" />
+		    <comboitem label="blosum50" />  -->
 		    <comboitem label="dayhoff" />
-		    <comboitem label="pam250" />
+		    <!-- <comboitem label="pam250" />
 		    <comboitem label="THREADER" />
-		    <comboitem label="use own matrix..." />
+		    <comboitem label="use own matrix..." /> -->
 		</combobox>
 		<label id="lbltxtbxMatrix" visible="false">
 			paste the Matrix that shall be used here:
@@ -124,10 +124,31 @@
 		</vlayout>
 	</tabpanel>
 	<tabpanel><!-- Coord -->
+		<window title="under construction" border="normal">
+		<vlayout>
+		<label>The tina - server is still under construction.</label>
+		<label>The content you want to access is not accessible yet.</label>
+		<label>We thank you for your patience.</label>
+		</vlayout>
+		</window>
 	</tabpanel>
 	<tabpanel><!-- 123D -->
+		<window title="under construction" border="normal">
+		<vlayout>
+		<label>The tina - server is still under construction.</label>
+		<label>The content you want to access is not accessible yet.</label>
+		<label>We thank you for your patience.</label>
+		</vlayout>
+		</window>
 	</tabpanel>
 	<tabpanel><!-- kabsch -->
+		<window title="under construction" border="normal">
+		<vlayout>
+		<label>The tina - server is still under construction.</label>
+		<label>The content you want to access is not accessible yet.</label>
+		<label>We thank you for your patience.</label>
+		</vlayout>
+		</window>
 	</tabpanel>
 </tabpanels>
 
