@@ -28,7 +28,11 @@ public abstract class MysqlWrapper {
 		Statement stmt = connection.createStatement();
 		try{
 			ResultSet res = stmt.executeQuery("select count(*) as size from "+getTablename());
-			return res.getInt("size");
+			if(res.first()){
+				return res.getInt("size");
+			}else{
+				return -1;
+			}
 		} catch(SQLException e){
 			e.printStackTrace();
 			return -1;

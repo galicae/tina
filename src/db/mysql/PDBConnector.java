@@ -15,7 +15,8 @@ public class PDBConnector extends MysqlWrapper{
 
 	private static final String tablename = "pdb";
 	private static final String[] fields = {"id","data"};
-	private static final String byId = "select data from pdb where id == ?";
+	private static final String getById = "select data from pdb where id = ?";
+	private static final String setEntry = "insert into pdb values (?,?)";
 	
 	public PDBConnector(MysqlDBConnection connection) {
 		super(connection);
@@ -32,7 +33,7 @@ public class PDBConnector extends MysqlWrapper{
 	}
 	
 	public PDBEntry getPDB(String id){
-		PreparedStatement stmt = connection.createStatement(byId);
+		PreparedStatement stmt = connection.createStatement(getById);
 		try{
 			stmt.setString(1, id);
 			ResultSet res = stmt.executeQuery();
@@ -59,6 +60,19 @@ public class PDBConnector extends MysqlWrapper{
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	public boolean addEntry(PDBEntry entry){
+		PreparedStatement stmt = connection.createStatement(setEntry);
+		try{
+			stmt.setString(1,entry.getID());
+			stmt.setObject(2, entry);
+			
+			return stmt.execute();
+		}catch(SQLException e){
+			e.printStackTrace();
+			return false;
 		}
 	}
 	

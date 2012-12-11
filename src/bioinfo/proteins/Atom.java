@@ -5,13 +5,14 @@
  ******************************************************************************/
 package bioinfo.proteins;
 
+import java.io.Serializable;
 import java.util.zip.DataFormatException;
 
 /**
  * @author gobi_4
  * @date November 23, 2012
  */
-public class Atom {
+public class Atom implements Serializable{
 
 	private final AtomType type;
 	private double[] position;

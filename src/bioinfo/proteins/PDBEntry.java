@@ -5,6 +5,7 @@
  ******************************************************************************/
 package bioinfo.proteins;
 
+import java.io.Serializable;
 import java.util.List;
 
 import bioinfo.alignment.Alignable;
@@ -13,7 +14,7 @@ import bioinfo.alignment.Alignable;
  * @author gobi_4
  * @date November 24, 2012
  */
-public class PDBEntry implements Alignable{
+public class PDBEntry implements Alignable,Serializable{
 	
 	private final String id;
 	private AminoAcid[] aminoAcids;

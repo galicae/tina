@@ -5,11 +5,13 @@
  ******************************************************************************/
 package bioinfo.proteins;
 
+import java.io.Serializable;
+
 /**
  * @author gobi_4
  * @date November 24, 2012
  */
-public class AminoAcid {
+public class AminoAcid implements Serializable{
 
 	/**
 	 * enum with all the AminoAcidNames. Also contains methods to convert from
