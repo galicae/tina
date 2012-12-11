@@ -140,7 +140,12 @@ public class BMCathAndScop {
 		double samesupmaxscore_scop;
 		double samefoldmaxscore_scop;
 		double diffoldmaxscore_scop;
-
+		
+		int count = 0;
+		for(Entry<String, ArrayList<String>> query_entry : pairs.entrySet()){
+			count += query_entry.getValue().size();
+		}
+		System.out.println(count);
 		for (Entry<String, ArrayList<String>> query_entry : pairs.entrySet()) {
 			CathScopEntry besthit = null;
 			maxscore = Double.NEGATIVE_INFINITY;
