@@ -15,7 +15,7 @@ import bioinfo.proteins.SSCCLine;
 public class LocalSequence123D extends Gotoh {
 
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
-	private int[] secStruct, localConts, globalConts = null;
+	private int[] secStruct, localConts, globalConts, gapOpen, gapExtend = null;
 	private int[][] scoringmatrix, secStrucPref, weights;
 	private int[][][] contactPot;
 
@@ -40,10 +40,13 @@ public class LocalSequence123D extends Gotoh {
 	 *            an sscc entry containing the structural information concerning
 	 *            the template structure
 	 */
-	public LocalSequence123D(double[][] scoringmatrix,
+	public LocalSequence123D(double go, double ge, double[][] scoringmatrix,
 			double[][] secondaryStructurePreferences, double[][] weights,
 			double[][][] contactPot) {
-		super(0.0d, 0.0d);
+		super(go, ge);
+		
+		go = go*Gotoh.FACTOR;
+		ge = ge*Gotoh.FACTOR;
 		
 		this.contactPot = new int[contactPot.length][contactPot[0].length][contactPot[0][0].length];
 		for (int i = 0; i != contactPot.length; i++) {
@@ -72,6 +75,16 @@ public class LocalSequence123D extends Gotoh {
 				this.scoringmatrix[i][j] = (int) (Gotoh.FACTOR * scoringmatrix[i][j]);
 			}
 		}
+		
+		gapOpen = new int[3];
+		gapOpen[0] = (int)(go * this.weights[1][0]);
+		gapOpen[1] = (int)(go * this.weights[1][1]);
+		gapOpen[2] = (int)(go * this.weights[1][2]);
+
+		gapExtend = new int[3];
+		gapExtend[0] = (int)(ge * this.weights[2][0]);
+		gapExtend[1] = (int)(ge * this.weights[2][1]);
+		gapExtend[2] = (int)(ge * this.weights[2][2]);
 	}
 
 	/**
@@ -157,16 +170,6 @@ public class LocalSequence123D extends Gotoh {
 	public boolean check(Alignment alignment) {
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
-
-		int[] gapOpen = new int[3];
-		gapOpen[0] = this.gapOpen * weights[1][0];
-		gapOpen[1] = this.gapOpen * weights[1][1];
-		gapOpen[2] = this.gapOpen * weights[1][2];
-
-		int[] gapExtend = new int[3];
-		gapExtend[0] = this.gapExtend * weights[2][0];
-		gapExtend[1] = this.gapExtend * weights[2][1];
-		gapExtend[2] = this.gapExtend * weights[2][2];
 
 		int[][][] tempScore = new int[sequence1.length()][sequence2.length()][3];
 		for (int i = 1; i <= sequence1.length(); i++) {
@@ -264,16 +267,6 @@ public class LocalSequence123D extends Gotoh {
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
 
-		int[] gapOpen = new int[3];
-		gapOpen[0] = this.gapOpen * weights[1][0];
-		gapOpen[1] = this.gapOpen * weights[1][1];
-		gapOpen[2] = this.gapOpen * weights[1][2];
-
-		int[] gapExtend = new int[3];
-		gapExtend[0] = this.gapExtend * weights[2][0];
-		gapExtend[1] = this.gapExtend * weights[2][1];
-		gapExtend[2] = this.gapExtend * weights[2][2];
-
 		int[][][] tempScore = new int[sequence1.length()][sequence2.length()][3];
 		int strY;
 		for (int i = 0; i < sequence1.length(); i++) {
@@ -340,15 +333,6 @@ public class LocalSequence123D extends Gotoh {
 		}
 
 		// difficult stuff ahead
-		int[] gapOpen = new int[3];
-		gapOpen[0] = this.gapOpen * weights[1][0];
-		gapOpen[1] = this.gapOpen * weights[1][1];
-		gapOpen[2] = this.gapOpen * weights[1][2];
-
-		int[] gapExtend = new int[3];
-		gapExtend[0] = this.gapExtend * weights[2][0];
-		gapExtend[1] = this.gapExtend * weights[2][1];
-		gapExtend[2] = this.gapExtend * weights[2][2];
 
 		while (x >= 0 && y >= 0) {
 

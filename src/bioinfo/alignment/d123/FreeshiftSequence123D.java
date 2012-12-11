@@ -293,9 +293,6 @@ public class FreeshiftSequence123D extends Gotoh {
 				D[i][j] = Math.max(M[i][j-1] + gapOpen[strY] + gapExtend[strY], D[i][j-1] + gapExtend[strY]);
 				I[i][j] = Math.max(M[i-1][j] + gapOpen[strY] + gapExtend[strY], I[i-1][j] + gapExtend[strY]);
 				M[i][j] = Math.max(M[i-1][j-1] + tempScore[i-1][j-1], Math.max(I[i][j], D[i][j]));
-				System.out.println(String.format("%8.3f",((M[i-1][j-1]+tempScore[i-1][j-1])/1000000.0d))+"\t"+
-						String.format("%8.3f",((I[i][j])/1000000.0d))+"\t"+
-						String.format("%8.3f",((D[i][j])/1000000.0d)));
 
 			}
 		}

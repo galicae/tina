@@ -24,7 +24,7 @@ import bioinfo.alignment.Alignment;
 
 public abstract class Gotoh implements Aligner {
 	
-	public static final int FACTOR = 1000;
+	public static final int FACTOR = 100;
 	protected int gapOpen = 0;
 	protected int gapExtend = 0;
 	protected int[][] M;

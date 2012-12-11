@@ -6,6 +6,7 @@ import bioinfo.alignment.Alignment;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.Gotoh;
 import bioinfo.proteins.SSCCEntry;
+import bioinfo.proteins.SSCCLine;
 
 /**
  * 
@@ -14,7 +15,7 @@ import bioinfo.proteins.SSCCEntry;
 public class GlobalSequence123D extends Gotoh {
 
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
-	private int[] secStruct, localConts, globalConts;
+	private int[] secStruct, localConts, globalConts, gapOpen, gapExtend;
 	private int[][] scoringmatrix, secStrucPref, weights;
 	private int[][][] contactPot;
 
@@ -39,10 +40,13 @@ public class GlobalSequence123D extends Gotoh {
 	 *            an sscc entry containing the structural information concerning
 	 *            the template structure
 	 */
-	public GlobalSequence123D(double[][] scoringmatrix,
+	public GlobalSequence123D(double go, double ge, double[][] scoringmatrix,
 			double[][] secondaryStructurePreferences, double[][] weights,
-			double[][][] contactPot, SSCCEntry sscc) {
-		super(0.0d, 0.0d);
+			double[][][] contactPot) {
+		super(go, ge);
+		
+		go = go*Gotoh.FACTOR;
+		ge = ge*Gotoh.FACTOR;
 
 		//this.secStruct = sscc.getSecStruct();
 		//this.localConts = sscc.getLocalConts();
@@ -75,6 +79,16 @@ public class GlobalSequence123D extends Gotoh {
 				this.scoringmatrix[i][j] = (int) (Gotoh.FACTOR * scoringmatrix[i][j]);
 			}
 		}
+		
+		gapOpen = new int[3];
+		gapOpen[0] = (int)(go * this.weights[1][0]);
+		gapOpen[1] = (int)(go * this.weights[1][1]);
+		gapOpen[2] = (int)(go * this.weights[1][2]);
+
+		gapExtend = new int[3];
+		gapExtend[0] = (int)(ge * this.weights[2][0]);
+		gapExtend[1] = (int)(ge * this.weights[2][1]);
+		gapExtend[2] = (int)(ge * this.weights[2][2]);
 	}
 
 	/**
@@ -91,13 +105,59 @@ public class GlobalSequence123D extends Gotoh {
 	 */
 	private int match(char x, char y, int stY) {
 		int seqScore = score(x, y);
-		int prefScore = secStrucPref[stY][x - 1];
-		int lcontScore = contactPot[stY][x - 1][localConts[y - 1]];
-		int gcontScore = contactPot[stY][x - 1][globalConts[y - 1]];
-		int result = weights[4][stY] * lcontScore + weights[5][stY]
-				* gcontScore + weights[3][stY] * prefScore + weights[1][stY]
-				* seqScore;
+		int prefScore = secStrucPref[stY][x - 65];
+		int lcontScore = contactPot[stY][localConts[y - 65]][x - 65];
+		int gcontScore = contactPot[stY][globalConts[y - 65]][x - 65];
+		int result = (weights[4][stY] * lcontScore) + 
+					(weights[5][stY] * gcontScore) + 
+					(weights[3][stY] * prefScore) + 
+					(weights[0][stY] * seqScore);
 		return result;
+	}
+	
+	public SequenceAlignment align(Alignable sequence1, Alignable sequence2,SSCCEntry sscc) {
+		
+		//parse SSCCEntry-----------------------------
+				this.globalConts = new int[sscc.length()];
+				this.localConts = new int[sscc.length()];
+				this.secStruct = new int[sscc.length()];
+				int localtemp;
+				int globaltemp;
+				
+				SSCCLine sscctemp;
+				for (int i = 0; i < sscc.length(); i++) {
+					sscctemp = (SSCCLine)sscc.getComp(i);
+					
+					switch (sscctemp.getSecStruct()){
+						case 'a': this.secStruct[i] = 0;break;
+						case 'b': this.secStruct[i] = 1;break;
+						case 'o': this.secStruct[i] = 2;break;
+						default: this.secStruct[i] = 2;
+					}
+					localtemp = sscctemp.getLocCont();
+					globaltemp = sscctemp.getGlobCont();
+					
+					if(localtemp > 13){
+						this.localConts[i] = 13;
+					}else{
+						this.localConts[i] = sscctemp.getLocCont();
+					}
+					if(globaltemp > 13){
+						this.globalConts[i] = 13;
+					}else{
+						this.globalConts[i] = sscctemp.getGlobCont();
+					}	
+				}
+				//----------------------------------------------
+		
+		this.M = new int[sequence1.length() + 1][sequence2.length() + 1];
+		this.I = new int[sequence1.length() + 1][sequence2.length() + 1];
+		this.D = new int[sequence1.length() + 1][sequence2.length() + 1];
+		this.sequence1 = (Sequence) sequence1;
+		this.sequence2 = (Sequence) sequence2;
+		prepareMatrices();
+		calculateMatrices();
+		return (SequenceAlignment) traceback();
 	}
 
 	@Override
@@ -116,16 +176,6 @@ public class GlobalSequence123D extends Gotoh {
 	public boolean check(Alignment alignment) {
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
-
-		int[] gapOpen = new int[3];
-		gapOpen[0] = this.gapOpen * weights[1][0];
-		gapOpen[1] = this.gapOpen * weights[1][1];
-		gapOpen[2] = this.gapOpen * weights[1][2];
-
-		int[] gapExtend = new int[3];
-		gapExtend[0] = this.gapExtend * weights[2][0];
-		gapExtend[1] = this.gapExtend * weights[2][1];
-		gapExtend[2] = this.gapExtend * weights[2][2];
 
 		int[][][] tempScore = new int[sequence1.length()][sequence2.length()][3];
 		for (int i = 1; i <= sequence1.length(); i++) {
@@ -196,15 +246,6 @@ public class GlobalSequence123D extends Gotoh {
 	 * 
 	 */
 	private void prepareMatrices() {
-		int[] gapOpen = new int[3];
-		gapOpen[0] = this.gapOpen * weights[1][0];
-		gapOpen[1] = this.gapOpen * weights[1][1];
-		gapOpen[2] = this.gapOpen * weights[1][2];
-
-		int[] gapExtend = new int[3];
-		gapExtend[0] = this.gapExtend * weights[2][0];
-		gapExtend[1] = this.gapExtend * weights[2][1];
-		gapExtend[2] = this.gapExtend * weights[2][2];
 		
 		for (int i = 1; i <= sequence1.length(); i++) { // old: hSeq
 			// I[i][0] = 0; //old: vGap
@@ -240,34 +281,27 @@ public class GlobalSequence123D extends Gotoh {
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
 
-		int[] gapOpen = new int[3];
-		gapOpen[0] = this.gapOpen * weights[1][0];
-		gapOpen[1] = this.gapOpen * weights[1][1];
-		gapOpen[2] = this.gapOpen * weights[1][2];
-
-		int[] gapExtend = new int[3];
-		gapExtend[0] = this.gapExtend * weights[2][0];
-		gapExtend[1] = this.gapExtend * weights[2][1];
-		gapExtend[2] = this.gapExtend * weights[2][2];
-
-		int[][][] tempScore = new int[sequence1.length()][sequence2.length()][3];
-		for (int i = 1; i <= sequence1.length(); i++) {
-			for (int j = 1; j <= sequence2.length(); j++) {
-				int strY = secStruct[j - 1];
-				tempScore[i][j][strY] = match(seq1[i - 1], seq2[j - 1], strY);
+		int[][] tempScore = new int[sequence1.length()][sequence2.length()];
+		int strY;
+		for (int i = 0; i < sequence1.length(); i++) {
+			//System.out.println();
+			for (int j = 0; j < sequence2.length(); j++) {
+				strY = secStruct[j];
+				tempScore[i][j] = match(seq1[i], seq2[j], strY);
+				//System.out.print(String.format("%8.3f",(tempScore[i][j]/1000000.0d))+"\t");
 			}
 		}
 
 		// now the main loop where stuff is actually computed
 		for (int i = 1; i <= sequence1.length(); i++) {
 			for (int j = 1; j <= sequence2.length(); j++) {
-				int strY = secStruct[j - 1];
+				strY = secStruct[j - 1];
 				D[i][j] = Math.max(M[i][j - 1] + gapOpen[strY]
 						+ gapExtend[strY], D[i][j - 1] + gapExtend[strY]);
 				I[i][j] = Math.max(M[i - 1][j] + gapOpen[strY]
 						+ gapExtend[strY], I[i - 1][j] + gapExtend[strY]);
 				M[i][j] = Math.max(M[i - 1][j - 1]
-						+ tempScore[i - 1][j - 1][strY],
+						+ tempScore[i - 1][j - 1],
 						Math.max(I[i][j], D[i][j]));
 			}
 		}
@@ -290,22 +324,12 @@ public class GlobalSequence123D extends Gotoh {
 		char actx;
 		char acty;
 		
-		int[] gapOpen = new int[3];
-		gapOpen[0] = this.gapOpen * weights[1][0];
-		gapOpen[1] = this.gapOpen * weights[1][1];
-		gapOpen[2] = this.gapOpen * weights[1][2];
-
-		int[] gapExtend = new int[3];
-		gapExtend[0] = this.gapExtend * weights[2][0];
-		gapExtend[1] = this.gapExtend * weights[2][1];
-		gapExtend[2] = this.gapExtend * weights[2][2];
-		
 		while (x >= 0 && y >= 0) {
 			
 			actScore = M[x + 1][y + 1];
 			actx = (Character) sequence1.getComp(x);
 			acty = (Character) sequence2.getComp(y);
-			strY = secStruct[acty];
+			strY = secStruct[y];
 
 			if (actScore == M[x][y] + score(actx, acty)) {
 				row0 += actx;
