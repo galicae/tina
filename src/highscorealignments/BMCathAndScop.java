@@ -170,44 +170,49 @@ public class BMCathAndScop {
 			SequenceAlignment scopFamMis = null, scopSupMis = null, scopFoldMis = null, scopDifFol = null;
 			SequenceAlignment temp;
 			CathScopEntry query = cathscopinfos.get(query_entry.getKey());
-
-			for (String template : query_entry.getValue()) {
+			CathScopEntry template;
+			
+			for (String template_id : query_entry.getValue()) {
 				temp = (SequenceAlignment) gotoh.align(
 						new Sequence(query.getID(), seqlib.get(query.getID())),
-						new Sequence(template, seqlib.get(template)));
+						new Sequence(template_id, seqlib.get(template_id)));
+				template = cathscopinfos.get(template_id);
 				score = temp.getScore();
 				if (score > maxscore) {
 					maxscore = score;
-					besthit = cathscopinfos.get(template);
+					besthit = cathscopinfos.get(template_id);
 					famRec = temp;
 				}
+				
 				// for cath misclassification tests			
-				if (query.getCathClazz() == besthit.getCathClazz()
-						&& query.getCathFold() == besthit.getCathFold()
-						&& query.getCathSupFam() == besthit.getCathSupFam()
-						&& query.getCathFam() == besthit.getCathFam()) {
+				if (query.getCathClazz() == template.getCathClazz()
+						&& query.getCathFold() == template.getCathFold()
+						&& query.getCathSupFam() == template.getCathSupFam()
+						&& query.getCathFam() == template.getCathFam()) {
 					if (score > samefammaxscore_cath) {
 						samefammaxscore_cath = score;
 						cathFamMis = temp;
 					}
 				}
-				if (query.getCathClazz() == besthit.getCathClazz()
-						&& query.getCathFold() == besthit.getCathFold()
-						&& query.getCathSupFam() == besthit.getCathSupFam()) {
+				if (query.getCathClazz() == template.getCathClazz()
+						&& query.getCathFold() == template.getCathFold()
+						&& query.getCathSupFam() == template.getCathSupFam() 
+						&& query.getCathFam() != template.getCathFam()) {
 					if (score > samesupmaxscore_cath) {
 						samesupmaxscore_cath = score;
 						cathSupMis = temp;
 					}
 				}
-				if (query.getCathClazz() == besthit.getCathClazz()
-						&& query.getCathFold() == besthit.getCathFold()) {
+				if (query.getCathClazz() == template.getCathClazz()
+						&& query.getCathFold() == template.getCathFold()
+						&& query.getCathSupFam() != template.getCathSupFam()) {
 					if (score > samefoldmaxscore_cath) {
 						samefoldmaxscore_cath = score;
 						cathFoldMis = temp;
 					}
 				}
-				if (query.getCathClazz() != besthit.getCathClazz()
-						|| query.getCathFold() != besthit.getCathFold()) {
+				if (query.getCathClazz() != template.getCathClazz()
+						|| query.getCathFold() != template.getCathFold()) {
 					if (score > diffoldmaxscore_cath) {
 						diffoldmaxscore_cath = score;
 						cathDifFol = temp;
@@ -215,32 +220,34 @@ public class BMCathAndScop {
 				}
 
 				// for scop misclassification tests
-				if (query.getScopClazz() == besthit.getScopClazz()
-						&& query.getScopFold() == besthit.getScopFold()
-						&& query.getScopSupFam() == besthit.getScopSupFam()
-						&& query.getScopFam() == besthit.getScopFam()) {
+				if (query.getScopClazz() == template.getScopClazz()
+						&& query.getScopFold() == template.getScopFold()
+						&& query.getScopSupFam() == template.getScopSupFam()
+						&& query.getScopFam() == template.getScopFam()) {
 					if (score > samefammaxscore_scop) {
 						samefammaxscore_scop = score;
 						scopFamMis = temp;
 					}
 				}
-				if (query.getScopClazz() == besthit.getScopClazz()
-						&& query.getScopFold() == besthit.getScopFold()
-						&& query.getScopSupFam() == besthit.getScopSupFam()) {
+				if (query.getScopClazz() == template.getScopClazz()
+						&& query.getScopFold() == template.getScopFold()
+						&& query.getScopSupFam() == template.getScopSupFam()
+						&& query.getScopFam() != template.getScopFam()) {
 					if (score > samesupmaxscore_scop) {
 						samesupmaxscore_scop = score;
 						scopSupMis = temp;
 					}
 				}
-				if (query.getScopClazz() == besthit.getScopClazz()
-						&& query.getScopFold() == besthit.getScopFold()) {
+				if (query.getScopClazz() == template.getScopClazz()
+						&& query.getScopFold() == template.getScopFold()
+						&& query.getScopSupFam() != template.getScopSupFam()) {
 					if (score > samefoldmaxscore_scop) {
 						samefoldmaxscore_scop = score;
 						scopFoldMis = temp;
 					}
 				}
-				if (query.getScopClazz() != besthit.getScopClazz()
-						|| query.getScopFold() != besthit.getScopFold()) {
+				if (query.getScopClazz() != template.getScopClazz()
+						|| query.getScopFold() != template.getScopFold()) {
 					if (score > diffoldmaxscore_scop) {
 						diffoldmaxscore_scop = score;
 						scopDifFol = temp;
@@ -292,7 +299,7 @@ public class BMCathAndScop {
 			}
 
 			// cath misclassification test
-			if (samefammaxscore_cath > diffoldmaxscore_cath) {
+			if (samefammaxscore_cath >= diffoldmaxscore_cath && diffoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
 				cath_missamefam++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -306,7 +313,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(samefammaxscore_cath < diffoldmaxscore_cath) {
+			} else if(samefammaxscore_cath < diffoldmaxscore_cath && samefammaxscore_cath != Double.NEGATIVE_INFINITY) {
 				cath_misdiffoldfam++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -321,7 +328,7 @@ public class BMCathAndScop {
 					e.printStackTrace();
 				}
 			}
-			if (samesupmaxscore_cath > diffoldmaxscore_cath) {
+			if (samesupmaxscore_cath >= diffoldmaxscore_cath && diffoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
 				cath_missamesup++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -335,7 +342,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(samesupmaxscore_cath < diffoldmaxscore_cath){
+			} else if(samesupmaxscore_cath < diffoldmaxscore_cath && samesupmaxscore_cath != Double.NEGATIVE_INFINITY){
 				cath_misdiffoldsup++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -350,7 +357,7 @@ public class BMCathAndScop {
 					e.printStackTrace();
 				}
 			}
-			if (samefoldmaxscore_cath > diffoldmaxscore_cath) {
+			if (samefoldmaxscore_cath >= diffoldmaxscore_cath && diffoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
 				cath_missamefold++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -364,7 +371,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(samefoldmaxscore_cath < diffoldmaxscore_cath) {
+			} else if(samefoldmaxscore_cath < diffoldmaxscore_cath && samefoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
 				cath_misdiffoldfold++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -381,7 +388,7 @@ public class BMCathAndScop {
 			}
 
 			// scop misclassification test
-			if (samefammaxscore_scop > diffoldmaxscore_scop) {
+			if (samefammaxscore_scop >= diffoldmaxscore_scop && diffoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
 				scop_missamefam++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -395,7 +402,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(samefammaxscore_scop < diffoldmaxscore_scop) {
+			} else if(samefammaxscore_scop < diffoldmaxscore_scop && samefammaxscore_scop != Double.NEGATIVE_INFINITY) {
 				scop_misdiffoldfam++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -410,7 +417,7 @@ public class BMCathAndScop {
 					e.printStackTrace();
 				}
 			}
-			if (samesupmaxscore_scop > diffoldmaxscore_scop) {
+			if (samesupmaxscore_scop >= diffoldmaxscore_scop && diffoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
 				scop_missamesup++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -424,7 +431,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(samesupmaxscore_scop < diffoldmaxscore_scop) {
+			} else if(samesupmaxscore_scop < diffoldmaxscore_scop && samesupmaxscore_scop != Double.NEGATIVE_INFINITY) {
 				scop_misdiffoldsup++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -439,7 +446,7 @@ public class BMCathAndScop {
 					e.printStackTrace();
 				}
 			}
-			if (samefoldmaxscore_scop > diffoldmaxscore_scop) {
+			if (samefoldmaxscore_scop >= diffoldmaxscore_scop && diffoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
 				scop_missamefold++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
@@ -453,7 +460,7 @@ public class BMCathAndScop {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(samefoldmaxscore_scop < diffoldmaxscore_scop) {
+			} else if(samefoldmaxscore_scop < diffoldmaxscore_scop && samefoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
 				scop_misdiffoldfold++;
 				try {
 					Transformation tr = tmMachine.calculateTransformation(
