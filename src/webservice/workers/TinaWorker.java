@@ -11,13 +11,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
-
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
-import bioinfo.alignment.matrices.QuasarMatrix;
+import bioinfo.proteins.PDBEntry;
+import bioinfo.proteins.PDBFileReader;
 
 /**
  * TinaWorker is the worker that works on an TINA job.
@@ -65,8 +64,6 @@ public class TinaWorker extends Worker {
 		getSequenceDB();
 		readFile();
 		
-		// TODO get Sequence from somewhere.
-		
 		// DONE 1) Align against all sequences in $SEQLIB_FILE
 		// && DONE 2) take TOP_NUM best Alignments
 		SequenceAlignment[] topAlis = new SequenceAlignment[TOP_NUM];
@@ -107,7 +104,16 @@ public class TinaWorker extends Worker {
 		
 		// TODO 3) Thread Alignments
 		// get PDBFile(s) of top5
+		PDBFileReader pdbReader = new PDBFileReader(PDB_FILE_PATH);
+		PDBEntry[] pdbentries = new PDBEntry[TOP_NUM];
+		for (int i = 0; i < TOP_NUM; i++) {
+			String idi = topAlis[i].getComponent(1).getID().toUpperCase();
+			// Get PDB Files from PDB Server
+			// read Entrys from PDBFiles
+			pdbentries[i] = pdbReader.readFromFolderById(idi);
+		}
 		
+		// TODO Thread topAlis[i] with pdbentries[i]
 		
 		// save results in $JOB_DIR/03_done/$JOB_ID.job
 		// and rm $JOB_DIR/02_working/$JOB_ID.job
@@ -140,6 +146,9 @@ public class TinaWorker extends Worker {
 		}
 	}
 	
+	/**
+	 * reads the jobfile and all important data from it.
+	 */
 	@Override
 	protected void readFile() {
 		BufferedReader from = null;
@@ -206,5 +215,5 @@ public class TinaWorker extends Worker {
 		// rm $JOBS_DIR/02_working/$JOB_ID.job
 		new File(JOB_FILE).delete();
 	}
-
+	
 }

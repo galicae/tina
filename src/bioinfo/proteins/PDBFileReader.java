@@ -50,7 +50,6 @@ public class PDBFileReader {
 	}
 	
 	/**
-	 * 
 	 * @return List of PDBEntries in folder, null if no pdbs are in folder or folder is not set
 	 */
 	public List<PDBEntry> readPdbFolder(){
@@ -116,7 +115,8 @@ public class PDBFileReader {
 		if(folder == null){
 			return null;
 		}
-		String filename = folder+id+".pdb"; 
+		// huberste: PDBFiles normally are named without the ChainID!
+		String filename = folder+id.substring(0, 4)+".pdb"; 
 		BufferedReader br = null;
 		try{
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
@@ -191,7 +191,8 @@ public class PDBFileReader {
 
 	/**
 	 * 
-	 * @param files which shall be read from folder if folder != null or from anywhere in the file system if folder == null
+	 * @param files which shall be read from folder if folder != null or from
+	 * anywhere in the file system if folder == null
 	 * @return true if files were set correctly or false if setFiles failed
 	 */
 	public boolean setFiles(List<String> files) {
@@ -251,8 +252,6 @@ public class PDBFileReader {
 			int lastResSeq = 0;
 			String lastResName = "";
 			
-			
-			
 			while((line = br.readLine()) != null){
 				if(line.startsWith("ATOM")){
 					chainId = line.charAt(21);
@@ -285,8 +284,5 @@ public class PDBFileReader {
 		}
 		return new PDBEntry(pdbId, aminoacids);
 	}
-	
-	
 
-	
 }
