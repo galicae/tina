@@ -58,7 +58,6 @@ public class PDBReduce {
 	}
 
 	/**
-	 * 
 	 * alternative version of reducePDB, after we stopped reading files and
 	 * started using objects instead
 	 * 

@@ -16,6 +16,7 @@ import java.util.LinkedList;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
+import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.matrices.QuasarMatrix;
 
 /**
@@ -27,6 +28,15 @@ import bioinfo.alignment.matrices.QuasarMatrix;
 public class TinaWorker extends Worker {
 	
 	private final static String SEQLIB_FILE = "/home/h/huberste/gobi/webserver/database/domains.seqlib";
+	private final static double GO = -10.0;
+	private final static double GE = -2.0;
+	private final static double[][] MATRIX = bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX;
+	
+	private final static int TOP_NUM = 5;
+	
+	private final static Sequence BAD = new Sequence("id", "A");
+	private final static SequenceAlignment WORST = new
+			SequenceAlignment(BAD, BAD, "A","A", Double.NEGATIVE_INFINITY);
 	
 	private Sequence sequence;
 	private LinkedList<Sequence> sequencedb;
@@ -51,12 +61,50 @@ public class TinaWorker extends Worker {
 	public void work() {
 		// Read Sequence Database
 		getSequenceDB();
+		readFile();
 		
-		// TODO 1) Align against all sequences in $SEQLIB_FILE
+		// TODO get Sequence from somewhere.
 		
-		// TODO 2) take five best Alignments
+		// DONE 1) Align against all sequences in $SEQLIB_FILE
+		// && DONE 2) take TOP_NUM best Alignments
+		SequenceAlignment[] topAlis = new SequenceAlignment[TOP_NUM];
+		for (int i = 0; i < TOP_NUM; i++) {
+			topAlis[i]=WORST;
+		}
+		// smallest score in top TOP_NUM
+		double leastScore = Double.NEGATIVE_INFINITY;
+		// smallest TOP_NUM
+		int leastScoring = 0;
+		FreeshiftSequenceGotoh gotoh = new FreeshiftSequenceGotoh(GO, GE, MATRIX);
+		for (Sequence seq : sequencedb) {
+			// DONE debugging: what are the two sequences???
+//			System.out.println("debugging: work() l. 83: seq = "+seq.toStringVerbose());
+//			System.out.println("debugging: work() l. 83: sequence= "+sequence.toStringVerbose());
+			SequenceAlignment temp = gotoh.align(sequence, seq);
+			// DONE debugging. Am I here?
+//			System.out.println("debugging: work() l. 83: temp = "+temp.toStringVerbose());
+			if (temp.getScore() > leastScore) {
+				topAlis[leastScoring] = temp;
+				// calculate next smallest
+				leastScore = topAlis[0].getScore();
+				leastScoring = 0;
+				for (int i = 0; i < TOP_NUM; i++) {
+					if (topAlis[i].getScore() < leastScore) {
+						leastScore = topAlis[i].getScore();
+						leastScoring = i;
+					}
+				}
+			}
+		}
+		
+		// debugging: Check if works up to here
+		result = "";
+		for (int i = 0; i < TOP_NUM; i++) {
+			result += topAlis[i].toStringVerbose()+"\n";
+		}
 		
 		// TODO 3) Thread Alignments
+		
 		
 		
 		// save results in $JOB_DIR/03_done/$JOB_ID.job
@@ -99,14 +147,14 @@ public class TinaWorker extends Worker {
 			from = new BufferedReader(new FileReader(JOB_FILE));
 			while((line=from.readLine())!= null) {
 				if (line.startsWith("SEQUENCE=")) {
-					String[] temp = line.substring(13).split(":");
+					String[] temp = line.substring(9).split(":");
 					// TODO stupid user: 
 					if (temp.length < 2) { // Sequence not given in Format "id:sequence"
 						result = "INPUT ERROR: SEQUENCE ONE WAS NOT GIVEN IN FORMAT \"ID:SEQUENCE\"";
 					}
 					sequence = new Sequence(temp[0], temp[1]);
 					// TODO debugging
-					System.out.println("debugging: sequence = "+sequence.toStringVerbose());
+					//System.out.println("debugging: sequence = "+sequence.toStringVerbose());
 				}
 			}
 		} catch (IOException e) {
