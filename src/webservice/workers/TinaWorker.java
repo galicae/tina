@@ -27,6 +27,8 @@ import bioinfo.alignment.matrices.QuasarMatrix;
  */
 public class TinaWorker extends Worker {
 	
+	private final static String PDB_FILE_PATH = "/home/h/huberste/gobi/webserver/pdb/";
+	
 	private final static String SEQLIB_FILE = "/home/h/huberste/gobi/webserver/database/domains.seqlib";
 	private final static double GO = -10.0;
 	private final static double GE = -2.0;
@@ -104,7 +106,7 @@ public class TinaWorker extends Worker {
 		}
 		
 		// TODO 3) Thread Alignments
-		
+		// get PDBFile(s) of top5
 		
 		
 		// save results in $JOB_DIR/03_done/$JOB_ID.job
