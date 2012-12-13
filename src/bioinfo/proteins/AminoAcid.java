@@ -139,4 +139,8 @@ public class AminoAcid implements Serializable{
 		return numberOfAtoms;
 	}
 	
+	public AminoAcid copy() {
+		return new AminoAcid(name, atoms.clone());
+	}
+	
 }

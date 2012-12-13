@@ -51,7 +51,6 @@ public class PDBEntry implements Alignable,Serializable{
 	}
 	
 	/**
-	 * 
 	 * @return the ID of the PDBEntry
 	 */
 	@Override
@@ -85,10 +84,13 @@ public class PDBEntry implements Alignable,Serializable{
 	}
 
 	@Override
-	public Object getComp(int i) {
-		return aminoAcids[i];
+	public Object getComp(int n) {
+		return getAminoAcid(n);
 	}
 	
+	/**
+	 * @return all AminoAcids as a (human readable) String
+	 */
 	public String getAtomSectionAsString(){
 		int lineCounter = 0;
 		String out = "";

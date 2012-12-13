@@ -132,25 +132,26 @@ public class JobCreator {
 //					System.out.println("New process will be started now: "+pb.command());
 				// end debugging
 				
-				Process proc = pb.start();
-
-				// TODO debugging: Give error stream! GIVE!
-					BufferedInputStream err = new BufferedInputStream( proc.getErrorStream() );
-					BufferedInputStream outstr = new BufferedInputStream( proc.getInputStream() );
-					// print output
-					byte[] buf = new byte[1024];
-					int nr = outstr.read(buf);
-					while (nr != -1)
-					{
-						System.out.write(buf, 0, nr);
-						nr = outstr.read(buf);
-					}
-					nr = err.read(buf);
-					while (nr != -1)
-					{
-						System.err.write(buf, 0, nr);
-						nr = err.read(buf);
-					}
+				pb.start();
+//				Process proc = pb.start();
+//
+//				// TODO debugging: Give error stream! GIVE!
+//					BufferedInputStream err = new BufferedInputStream( proc.getErrorStream() );
+//					BufferedInputStream outstr = new BufferedInputStream( proc.getInputStream() );
+//					// print output
+//					byte[] buf = new byte[1024];
+//					int nr = outstr.read(buf);
+//					while (nr != -1)
+//					{
+//						System.out.write(buf, 0, nr);
+//						nr = outstr.read(buf);
+//					}
+//					nr = err.read(buf);
+//					while (nr != -1)
+//					{
+//						System.err.write(buf, 0, nr);
+//						nr = err.read(buf);
+//					}
 				// end debugging
 			} catch (Exception e) {
 				e.printStackTrace();

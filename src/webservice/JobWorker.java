@@ -39,8 +39,6 @@ public class JobWorker {
 	 */
 	public static void main (String[] args) {
 		
-//		System.out.println("Hello World!");
-		
 		String JOBS_DIR = args[0];
 		JobWorker[] workers = new JobWorker[WORKER_LIMIT];
 		int workerCount = 0;

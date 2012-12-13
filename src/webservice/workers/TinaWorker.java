@@ -17,6 +17,7 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
+import bioinfo.proteins.structure.SimpleCoordMapper;
 
 /**
  * TinaWorker is the worker that works on an TINA job.
@@ -96,28 +97,70 @@ public class TinaWorker extends Worker {
 			}
 		}
 		
-		// debugging: Check if works up to here
-		result = "";
-		for (int i = 0; i < TOP_NUM; i++) {
-			result += topAlis[i].toStringVerbose()+"\n";
-		}
+		BufferedReader from = null;
+		BufferedWriter to = null;
 		
-		// TODO 3) Thread Alignments
-		// get PDBFile(s) of top5
-		PDBFileReader pdbReader = new PDBFileReader(PDB_FILE_PATH);
-		PDBEntry[] pdbentries = new PDBEntry[TOP_NUM];
-		for (int i = 0; i < TOP_NUM; i++) {
-			String idi = topAlis[i].getComponent(1).getID().toUpperCase();
-			// Get PDB Files from PDB Server
-			// read Entrys from PDBFiles
-			pdbentries[i] = pdbReader.readFromFolderById(idi);
-		}
-		
-		// TODO Thread topAlis[i] with pdbentries[i]
+		String line = null; 
+		try {
+			from = new BufferedReader(new FileReader(JOB_FILE));
+			to = new BufferedWriter(new FileWriter(DONE_FILE));
+			while((line = from.readLine()) != null) {
+				to.write(line+"\n");
+			}
+			to.write("RESULT=\n");
+//			to.write(result);
+			
+			to.write("TOP_ALIGNMENTS=\n");
+			for (int i = 0; i < TOP_NUM; i++) {
+				to.write(topAlis[i].toStringVerbose()+"\n");
+			}
+			
+			// TODO 3) Thread Alignments
+			// get PDBFile(s) of top5
+			PDBFileReader pdbReader = new PDBFileReader(PDB_FILE_PATH);
+			PDBEntry[] pdbentries = new PDBEntry[TOP_NUM];
+			for (int i = 0; i < TOP_NUM; i++) {
+				String idi = topAlis[i].getComponent(1).getID().toUpperCase();
+				// Get PDB Files from PDB Server
+				// read Entrys from PDBFiles
+				pdbentries[i] = pdbReader.readFromFolderById(idi);
+			}
+			
+			// TODO Thread topAlis[i] with pdbentries[i]
+			
+			PDBEntry[] results = new PDBEntry[TOP_NUM];
+			
+			for (int i = 0; i < TOP_NUM; i++) {
+				results[i] = SimpleCoordMapper.map(topAlis[i], pdbentries[i]);
+			}
+			
+			to.write("PDBs=\n");
+			// write results in result String
+			for (int i = 0; i < TOP_NUM; i++) {
+				
+				// TODO write better ToString function!
+				to.write(results[i].toString()+"\n");
+				to.write(results[i].getAtomSectionAsString());
+			}
+			
+			} catch (IOException e) {
+				System.err.println("Error while trying to copy "+JOB_FILE+" to "+DONE_FILE+".");
+				e.printStackTrace();
+			} finally {
+				try {
+					if (from != null) from.close();
+					if (to != null) to.close();
+				} catch (IOException e) {
+					System.err.println("Error while trying close FileStreams");
+					e.printStackTrace();
+				}
+			}
+		// rm $JOBS_DIR/02_working/$JOB_ID.job
+		new File(JOB_FILE).delete();
 		
 		// save results in $JOB_DIR/03_done/$JOB_ID.job
 		// and rm $JOB_DIR/02_working/$JOB_ID.job
-		writeResult();
+//		writeResult();
 	}
 
 	/**
