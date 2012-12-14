@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
+import bioinfo.pdb.PDBFile;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 import bioinfo.proteins.structure.SimpleCoordMapper;
@@ -121,7 +122,8 @@ public class TinaWorker extends Worker {
 			PDBEntry[] pdbentries = new PDBEntry[TOP_NUM];
 			for (int i = 0; i < TOP_NUM; i++) {
 				String idi = topAlis[i].getComponent(1).getID().toUpperCase();
-				// Get PDB Files from PDB Server
+				// TODO Get PDB Files from PDB Server
+				PDBFile.getFile(PDB_FILE_PATH, idi.substring(0, 4));
 				// read Entrys from PDBFiles
 				pdbentries[i] = pdbReader.readFromFolderById(idi);
 			}

@@ -22,7 +22,14 @@ public class SimpleCoordMapper {
 		
 		for (int i = 0; i < map[0].length; i++) {
 			if (map[0][i] != -1) { // this aminoacid is aligned!
-				aalist.add(arg2.getAminoAcid(map[0][i]).copy());
+				//AminoAcid temp = arg2.getAminoAcid(map[0][i]);
+				// TODO debugging: is the PDBEntry given at all?
+				if (arg2 == null) {
+					System.err.println("debugging: The given PDBEntry is null!");
+				}
+				if (arg2.getAminoAcid(map[0][i]) != null) {
+					aalist.add(arg2.getAminoAcid(map[0][i]).copy());
+				}
 			}
 		}
 		

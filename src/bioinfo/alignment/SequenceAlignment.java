@@ -119,7 +119,7 @@ public class SequenceAlignment implements Alignment {
 		result[1] = new int[seq2.length()];
 		int col1 = 0;
 		int col2 = 0;
-		for (int i = 0; i < seq1.length(); i++) {
+		for (int i = 0; i < rows[0].length; i++) {
 			if (rows[0][i] == '-') {	// insertion
 				result[1][col2]=-1;
 				col2++;
