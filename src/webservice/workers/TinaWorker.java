@@ -208,7 +208,7 @@ public class TinaWorker extends Worker {
 					if (temp.length < 2) { // Sequence not given in Format "id:sequence"
 						result = "INPUT ERROR: SEQUENCE ONE WAS NOT GIVEN IN FORMAT \"ID:SEQUENCE\"";
 					}
-					sequence = new Sequence(temp[0], temp[1]);
+					sequence = new Sequence(temp[0].trim(), temp[1].trim());
 					// TODO debugging
 					//System.out.println("debugging: sequence = "+sequence.toStringVerbose());
 				}
