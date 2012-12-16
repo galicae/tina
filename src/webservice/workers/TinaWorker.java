@@ -116,19 +116,19 @@ public class TinaWorker extends Worker {
 				to.write(topAlis[i].toStringVerbose()+"\n");
 			}
 			
-			// TODO 3) Thread Alignments
+			// 3) Thread Alignments
 			// get PDBFile(s) of top5
 			PDBFileReader pdbReader = new PDBFileReader(PDB_FILE_PATH);
 			PDBEntry[] pdbentries = new PDBEntry[TOP_NUM];
 			for (int i = 0; i < TOP_NUM; i++) {
 				String idi = topAlis[i].getComponent(1).getID().toUpperCase();
-				// TODO Get PDB Files from PDB Server
+				// Get PDB Files from PDB Server
 				PDBFile.getFile(PDB_FILE_PATH, idi.substring(0, 4));
 				// read Entrys from PDBFiles
 				pdbentries[i] = pdbReader.readFromFolderById(idi);
 			}
 			
-			// TODO Thread topAlis[i] with pdbentries[i]
+			// Thread topAlis[i] with pdbentries[i]
 			
 			PDBEntry[] results = new PDBEntry[TOP_NUM];
 			
@@ -141,7 +141,7 @@ public class TinaWorker extends Worker {
 			for (int i = 0; i < TOP_NUM; i++) {
 				
 				// TODO write better ToString function!
-				to.write(results[i].toString()+"\n");
+//				to.write(results[i].toString()+"\n");
 				to.write(results[i].getAtomSectionAsString());
 			}
 			
@@ -204,12 +204,12 @@ public class TinaWorker extends Worker {
 			while((line=from.readLine())!= null) {
 				if (line.startsWith("SEQUENCE=")) {
 					String[] temp = line.substring(9).split(":");
-					// TODO stupid user: 
+					// DONE stupid user: 
 					if (temp.length < 2) { // Sequence not given in Format "id:sequence"
 						result = "INPUT ERROR: SEQUENCE ONE WAS NOT GIVEN IN FORMAT \"ID:SEQUENCE\"";
 					}
 					sequence = new Sequence(temp[0].trim(), temp[1].trim());
-					// TODO debugging
+					// DONE debugging
 					//System.out.println("debugging: sequence = "+sequence.toStringVerbose());
 				}
 			}

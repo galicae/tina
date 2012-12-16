@@ -7,6 +7,8 @@ import java.util.LinkedList;
 
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.proteins.AminoAcid;
+import bioinfo.proteins.Atom;
+import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;
 
 /**
@@ -28,7 +30,34 @@ public class SimpleCoordMapper {
 					System.err.println("debugging: The given PDBEntry is null!");
 				}
 				if (arg2.getAminoAcid(map[0][i]) != null) {
-					aalist.add(arg2.getAminoAcid(map[0][i]).copy());
+					// DONE: only map correct CA or Backbone or fitting AAs
+					// momentarily it only maps the backbone
+					AminoAcid fromtemp = arg2.getAminoAcid(map[0][i]);
+					LinkedList<Atom> tempAtoms = new LinkedList<Atom>();
+					
+					// N
+					Atom tempatom = fromtemp.getAtomByType(AtomType.N);
+					if (tempatom != null) {
+						tempAtoms.add(tempatom);
+					}
+					// CA
+					tempatom = fromtemp.getAtomByType(AtomType.CA);
+					if (tempatom != null) {
+						tempAtoms.add(tempatom);
+					}
+					// C
+					tempatom = fromtemp.getAtomByType(AtomType.C);
+					if (tempatom != null) {
+						tempAtoms.add(tempatom);
+					}
+					// O
+					tempatom = fromtemp.getAtomByType(AtomType.O);
+					if (tempatom != null) {
+						tempAtoms.add(tempatom);
+					}
+					
+					AminoAcid temp = new AminoAcid(arg2.getAminoAcid(map[0][i]).getName(), tempAtoms.toArray(new Atom[0]));
+					aalist.add(temp);
 				}
 			}
 		}

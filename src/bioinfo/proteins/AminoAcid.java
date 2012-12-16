@@ -96,7 +96,7 @@ public class AminoAcid implements Serializable{
 			if (atoms[i].getType() == atomtype)
 				return atoms[i];
 		}
-		System.err.println("The given Atom doesn't exist: " + atomtype);
+		//System.err.println("The given Atom doesn't exist: " + atomtype);
 		return null;
 	}
 	
@@ -132,6 +132,7 @@ public class AminoAcid implements Serializable{
 	 * should return all atoms of an amino acid in PDB format
 	 */
 	public String toPDBLineString() {
+		// TODO
 		return " ";
 	}
 	
