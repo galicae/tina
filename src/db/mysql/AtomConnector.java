@@ -9,14 +9,14 @@ import java.util.List;
 
 import bioinfo.proteins.PDBEntry;
 
-public class PDBConnector extends MysqlWrapper{
+public class AtomConnector extends MysqlWrapper{
 
-	private static final String tablename = "pdb";
-	private static final String[] fields = {"id","pdb_id","chain","length"};
-	private static final String getById = "select data from pdb where id = ?";
-	private static final String setEntry = "insert into pdb values (?,?)";
+	private static final String tablename = "atom";
+	private static final String[] fields = {"id","type","x","y","z","aminoacid_id"};
+	private static final String getById = "select data from atom where id = ?";
+	private static final String setEntry = "insert into atom values (?,?)";
 	
-	public PDBConnector(MysqlDBConnection connection) {
+	public AtomConnector(MysqlDBConnection connection) {
 		super(connection);
 	}
 	
