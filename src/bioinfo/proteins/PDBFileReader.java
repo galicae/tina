@@ -116,7 +116,7 @@ public class PDBFileReader {
 			return null;
 		}
 		// huberste: PDBFiles normally are named without the ChainID!
-		String filename = folder+id.substring(0, 4)+".pdb"; 
+		String filename = folder+id.substring(0, 4).toUpperCase()+".pdb"; 
 		BufferedReader br = null;
 		try{
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
@@ -244,13 +244,12 @@ public class PDBFileReader {
 			List<Atom> atoms = new ArrayList<Atom>();
 			
 			String name;
-			String resName;
+			String resName = "";
 			char chainId;
-			int resSeq;
+			int resSeq = 0;
 			double[] coord;
 			
 			int lastResSeq = 0;
-			String lastResName = "";
 			
 			while((line = br.readLine()) != null){
 				if(line.startsWith("ATOM")){
@@ -267,16 +266,15 @@ public class PDBFileReader {
 					coord[2] = Double.parseDouble(line.substring(46,54).trim());
 					
 					if(lastResSeq != resSeq){
-						aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(lastResName),atoms.toArray(new Atom[atoms.size()])));
+						aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(resName),resSeq,atoms.toArray(new Atom[atoms.size()])));
 						atoms.clear();
+						lastResSeq = resSeq;
 					}
-					lastResSeq = resSeq;
-					lastResName = resName;
 					atoms.add(new Atom(name,coord));
 				}
 			}
 			if(atoms != null && atoms.size() != 0){
-				aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(lastResName),atoms.toArray(new Atom[atoms.size()])));
+				aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(resName),resSeq,atoms.toArray(new Atom[atoms.size()])));
 			}
 			br.close();
 		}catch(Exception e){

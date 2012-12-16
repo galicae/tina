@@ -14,7 +14,7 @@ public class AAConnector extends MysqlWrapper{
 	private static final String tablename = "aminoacid";
 	private static final String[] fields = {"id","name","res_index","numberofAtom","pdb_id"};
 	private static final String getById = "select data from aminoacid where id = ?";
-	private static final String setEntry = "insert into aminoacid values (?,?)";
+	private static final String setEntry = "insert into aminoacid ("+fields[1]+","+fields[2]+","+fields[3]+","+fields[4]+") values (?,?,?,?)";
 	
 	public AAConnector(MysqlDBConnection connection) {
 		super(connection);
@@ -64,8 +64,11 @@ public class AAConnector extends MysqlWrapper{
 	public boolean addEntry(PDBEntry entry){
 		PreparedStatement stmt = connection.createStatement(setEntry);
 		try{
-			stmt.setString(1,entry.getID());
-			stmt.setObject(2, entry);
+			for (int i = 0; i < entry.length(); i++) {
+				stmt.setString(1,entry.getAminoAcid(i).toString());
+				stmt.setObject(2, entry.g);
+			}
+			
 			
 			return stmt.execute();
 		}catch(SQLException e){
