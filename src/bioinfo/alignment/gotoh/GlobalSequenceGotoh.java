@@ -6,8 +6,9 @@ import bioinfo.alignment.Alignment;
 import bioinfo.alignment.SequenceAlignment;
 
 /**
+ * Global Alignment of two sequences
  * 
- * @author andreseitz Global Alignment of two sequences
+ * @author andreseitz
  */
 public class GlobalSequenceGotoh extends Gotoh {
 
@@ -23,7 +24,7 @@ public class GlobalSequenceGotoh extends Gotoh {
 	 * @param gapExtend
 	 * @param scoringmatrix
 	 *            26x26 matrix containing all scoring values plus some empty
-	 *            lines due to faster access
+	 *            lines for faster access
 	 */
 	public GlobalSequenceGotoh(double gapOpen, double gapExtend,
 			int[][] scoringmatrix) {
@@ -109,7 +110,7 @@ public class GlobalSequenceGotoh extends Gotoh {
 	}
 
 	/**
-	 * calculates matrices using scoring-function and gap-penalty
+	 * calculates matrices using given scoring function and gap penalty
 	 * 
 	 */
 	private void calculateMatrices() {
@@ -206,6 +207,11 @@ public class GlobalSequenceGotoh extends Gotoh {
 		return scoringmatrix[x - 65][y - 65];
 	}
 
+	/**
+	 * flips a char[] on itself
+	 * @param in the character array in question
+	 * @return the reversed array
+	 */
 	private char[] flip(char[] in) {
 		char[] out = new char[in.length];
 		for (int i = in.length - 1; i >= 0; i--) {

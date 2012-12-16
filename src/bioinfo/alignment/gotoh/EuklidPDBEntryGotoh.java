@@ -88,7 +88,7 @@ public class EuklidPDBEntryGotoh extends Gotoh{
 	}
 	
 	/**
-	 * calculates matrices using scoring-function and gap-penalty
+	 * calculates matrices using given scoring function and gap penalty
 	 * 
 	 */
 	private void calculateMatrices() {

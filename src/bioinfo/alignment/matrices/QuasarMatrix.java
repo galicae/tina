@@ -6,6 +6,9 @@ import java.io.IOException;
 
 public class QuasarMatrix {
 	
+	/**
+	 * hard-coded dayhoff matrix. Hark at this. Proves really useful for testing since it is a default matrix.
+	 */
 	public final static double[][] DAYHOFF_MATRIX =
 		{
 			{1.8, 0.0, -2.0, 0.3, 0.3, -3.5, 1.3, -1.4, -0.5, 0.0, -1.2, -1.9, -1.2, 0.2, 0.0, 1.1, -0.4, -1.6, 1.1, 1.2, 0.0, 0.2, -5.6, 0.0, -3.5, },
@@ -36,6 +39,11 @@ public class QuasarMatrix {
 			{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, }
 		};
 	
+	/**
+	 * parses a substitution matrix. Expects to see a file formatted as a quasar matrix.
+	 * @param filename the matrix input file
+	 * @return the matrix as a double[][] array
+	 */
 	public static double[][] parseMatrix(String filename){
 		double [][] matrix = new double[26][26];
 		try{
@@ -69,6 +77,12 @@ public class QuasarMatrix {
 		return matrix;
 	}
 	
+	/**
+	 * 
+	 * @param matrixString
+	 * @param arg
+	 * @return
+	 */
 	public static double[][] parseMatrix(String matrixString, boolean arg){
 		double [][] matrix = new double[26][26];
 		String[] lines = matrixString.split("\n");

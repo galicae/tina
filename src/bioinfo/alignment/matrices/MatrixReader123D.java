@@ -32,24 +32,23 @@ public class MatrixReader123D {
 			String[] content = new String[2];
 			String secstruct = null;
 			char c = 0;
-			while ((line = in.readLine()) != null) {			
+			while ((line = in.readLine()) != null) {
+				content = line.split("\\s+");
+
+				if (content[0].equals("ALPHA") || content[0].equals("BETA")
+						|| content[0].equals("OTHER")) {
+					secstruct = content[0];
+					line = in.readLine();
 					content = line.split("\\s+");
-					
-					if(content[0].equals("ALPHA") || content[0].equals("BETA") || content[0].equals("OTHER")){
-						secstruct = content[0];
-						line = in.readLine();
-						content = line.split("\\s+");
-					}
-					c = Bio.codeTranslate(content[0]);
-					if(secstruct.equals("ALPHA")){	
-						matrix[0][c - 65] = Double.parseDouble(content[1]);
-					}
-					else if(secstruct.equals("BETA")){
-						matrix[1][c - 65] = Double.parseDouble(content[1]);
-					}
-					else if(secstruct.equals("OTHER")){
-						matrix[2][c - 65] = Double.parseDouble(content[1]);
-					}
+				}
+				c = Bio.codeTranslate(content[0]);
+				if (secstruct.equals("ALPHA")) {
+					matrix[0][c - 65] = Double.parseDouble(content[1]);
+				} else if (secstruct.equals("BETA")) {
+					matrix[1][c - 65] = Double.parseDouble(content[1]);
+				} else if (secstruct.equals("OTHER")) {
+					matrix[2][c - 65] = Double.parseDouble(content[1]);
+				}
 			}
 			in.close();
 		} catch (IOException e) {
@@ -58,6 +57,24 @@ public class MatrixReader123D {
 		return matrix;
 	}
 
+	/**
+	 * reads the weights configuration file. Expects a file like this:
+	 * 
+	 * # x     x     x
+	 * dd.dd dd.dd dd.dd # s
+	 * dd.dd dd.dd dd.dd # s
+	 * dd.dd dd.dd dd.dd # s
+	 * dd.dd dd.dd dd.dd # s
+	 * dd.dd dd.dd dd.dd # s
+	 * dd.dd dd.dd dd.dd # s
+	 * 
+	 * where x in {l, h, s}, d is a digit and s in {seq, go, ge, ssp, lccp, gccp}
+	 * 
+	 * @param filename the name of the file containing this configuration
+	 * @return a double matrix containing the weights. The matrix is of the 
+	 * form [6][3]; the first axis contains seq, go, ge, ssp, lccp, gccp in
+	 * this order. The second axis contains alpha, beta, coil, in this order.
+	 */
 	public static double[][] readWeights(String filename) {
 		int[] ind = new int[3];
 
@@ -71,7 +88,7 @@ public class MatrixReader123D {
 		double[][] multiresult = new double[6][3];
 
 		String[] cont = new String[6];
-		
+
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(filename));
 			String line;
@@ -80,27 +97,27 @@ public class MatrixReader123D {
 				if (line.startsWith("#")) {
 					ind = calcIndices(line.split("\\s+"));
 				} else {
-					if (cont[cont.length-1].equals("go")) {
+					if (cont[cont.length - 1].equals("go")) {
 						go[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
 						go[BETA] = Double.parseDouble(cont[ind[BETA]]);
 						go[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
-					} else if (cont[cont.length-1].equals("ge")) {
+					} else if (cont[cont.length - 1].equals("ge")) {
 						ge[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
 						ge[BETA] = Double.parseDouble(cont[ind[BETA]]);
 						ge[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
-					} else if (cont[cont.length-1].equals("seq")) {
+					} else if (cont[cont.length - 1].equals("seq")) {
 						seq[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
 						seq[BETA] = Double.parseDouble(cont[ind[BETA]]);
 						seq[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
-					} else if (cont[cont.length-1].equals("ssp")) {
+					} else if (cont[cont.length - 1].equals("ssp")) {
 						ssp[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
 						ssp[BETA] = Double.parseDouble(cont[ind[BETA]]);
 						ssp[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
-					} else if (cont[cont.length-1].equals("lccp")) {
+					} else if (cont[cont.length - 1].equals("lccp")) {
 						lccp[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
 						lccp[BETA] = Double.parseDouble(cont[ind[BETA]]);
 						lccp[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
-					} else if (cont[cont.length-1].equals("gccp")) {
+					} else if (cont[cont.length - 1].equals("gccp")) {
 						gccp[ALPHA] = Double.parseDouble(cont[ind[ALPHA]]);
 						gccp[BETA] = Double.parseDouble(cont[ind[BETA]]);
 						gccp[OTHER] = Double.parseDouble(cont[ind[OTHER]]);
@@ -119,46 +136,64 @@ public class MatrixReader123D {
 		}
 		return multiresult;
 	}
-	
-	//potential reader
-	public static double[][][] readPotentials(String helixFilepath, String betaFilepath, String coilFilepath){
+
+
+	/**
+	 * this function reads potentials; they must have the form
+	 *      0	1	2	...	n // n>13 will be ignored later
+	 * AA	d	d	d	...	d
+	 * AA	d	d	d	...	d
+	 * AA	d	d	d	...	d
+	 * ...
+	 * AA	d	d	d	...	d
+	 * 
+	 * for all amino acids.
+	 * 
+	 * @param helixFilepath the file containing ccp for helices
+	 * @param betaFilepath the file containing ccp for beta
+	 * @param coilFilepath the file containing ccp for coils
+	 * @return
+	 */
+	public static double[][][] readPotentials(String helixFilepath,
+			String betaFilepath, String coilFilepath) {
 		double[][][] potentials;
 		try {
-			//readin ccpa
-			BufferedReader in = new BufferedReader(new FileReader(helixFilepath));
+			// readin ccpa
+			BufferedReader in = new BufferedReader(
+					new FileReader(helixFilepath));
 			String line;
 			line = in.readLine();
 			String temp[] = line.split("\\s+");
-			potentials = new double[3][temp.length-1][26];
-			while((line = in.readLine()) != null){
+			potentials = new double[3][temp.length - 1][26];
+			while ((line = in.readLine()) != null) {
 				temp = line.split("\\s+");
 				char c = Bio.codeTranslate(temp[0]);
 				for (int i = 0; i < potentials[0].length; i++) {
-					potentials[0][i][c-65] = Double.parseDouble(temp[i+1]);
+					potentials[0][i][c - 65] = Double.parseDouble(temp[i + 1]);
 				}
 			}
 			in.close();
-			
-			//readin ccpb
+
+			// readin ccpb
 			in = new BufferedReader(new FileReader(betaFilepath));
 			line = in.readLine();
-			while((line = in.readLine()) != null){
+			while ((line = in.readLine()) != null) {
 				temp = line.split("\\s+");
 				char c = Bio.codeTranslate(temp[0]);
 				for (int i = 0; i < potentials[0].length; i++) {
-					potentials[1][i][c-65] = Double.parseDouble(temp[i+1]);
+					potentials[1][i][c - 65] = Double.parseDouble(temp[i + 1]);
 				}
 			}
 			in.close();
-			
-			//readin ccpo
+
+			// readin ccpo
 			in = new BufferedReader(new FileReader(coilFilepath));
 			line = in.readLine();
-			while((line = in.readLine()) != null){
+			while ((line = in.readLine()) != null) {
 				temp = line.split("\\s+");
 				char c = Bio.codeTranslate(temp[0]);
 				for (int i = 0; i < potentials[0].length; i++) {
-					potentials[2][i][c-65] = Double.parseDouble(temp[i+1]);
+					potentials[2][i][c - 65] = Double.parseDouble(temp[i + 1]);
 				}
 			}
 			in.close();
@@ -168,8 +203,18 @@ public class MatrixReader123D {
 		}
 		return null;
 	}
-	
 
+	/**
+	 * function that reads the header of a config file;
+	 * expects a line of the form # x x x, where x is 
+	 * s, l, h. It then arranges its return array so that 
+	 * alpha is at 0, beta at 1 and coil at 2.
+	 * 
+	 * @param split an array of strings. Position 0 should
+	 * be #, positions 1-3 x
+	 * @return the "correct" order; h corresponds to 0, s to 1
+	 * and l to 2
+	 */
 	private static int[] calcIndices(String[] split) {
 		int[] result = new int[3];
 		for (int i = 1; i < split.length; i++) {
