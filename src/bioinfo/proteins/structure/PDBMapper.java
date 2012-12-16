@@ -14,7 +14,7 @@ import bioinfo.proteins.PDBEntry;
  */
 public abstract class PDBMapper {
 
-	public PDBMapper() {
+	public PDBMapper(){
 		
 	}
 	
