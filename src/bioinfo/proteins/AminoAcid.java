@@ -5,11 +5,13 @@
  ******************************************************************************/
 package bioinfo.proteins;
 
+import java.io.Serializable;
+
 /**
  * @author gobi_4
  * @date November 24, 2012
  */
-public class AminoAcid {
+public class AminoAcid implements Serializable{
 
 	/**
 	 * enum with all the AminoAcidNames. Also contains methods to convert from
@@ -94,7 +96,7 @@ public class AminoAcid {
 			if (atoms[i].getType() == atomtype)
 				return atoms[i];
 		}
-		System.err.println("The given Atom doesn't exist: " + atomtype);
+		//System.err.println("The given Atom doesn't exist: " + atomtype);
 		return null;
 	}
 	
@@ -130,11 +132,16 @@ public class AminoAcid {
 	 * should return all atoms of an amino acid in PDB format
 	 */
 	public String toPDBLineString() {
+		// TODO
 		return " ";
 	}
 	
 	public int getAtomNumber() {
 		return numberOfAtoms;
+	}
+	
+	public AminoAcid copy() {
+		return new AminoAcid(name, atoms.clone());
 	}
 	
 }

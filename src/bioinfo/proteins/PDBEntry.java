@@ -5,6 +5,7 @@
  ******************************************************************************/
 package bioinfo.proteins;
 
+import java.io.Serializable;
 import java.util.List;
 
 import bioinfo.alignment.Alignable;
@@ -13,9 +14,11 @@ import bioinfo.alignment.Alignable;
  * @author gobi_4
  * @date November 24, 2012
  */
-public class PDBEntry implements Alignable{
+public class PDBEntry implements Alignable,Serializable{
 	
 	private final String id;
+	private final char chainID;
+	private final int chainIDNum;
 	private AminoAcid[] aminoAcids;
 	private int length;
 	
@@ -24,7 +27,15 @@ public class PDBEntry implements Alignable{
 	 * @param arg1 the id of the PDBEntry
 	 */
 	public PDBEntry(String arg1) {
-		this.id = arg1;
+		if (arg1.length()==4) {
+			this.id = arg1;
+			this.chainID='A';
+			this.chainIDNum=0;
+		} else {
+			this.id = arg1.substring(0, 4);
+			this.chainID=arg1.charAt(4);
+			this.chainIDNum=Integer.valueOf(arg1.substring(5, 7));
+		}
 	}
 	
 	/**
@@ -33,7 +44,15 @@ public class PDBEntry implements Alignable{
 	 * @param arg2 Array of AminoAcids
 	 */
 	public PDBEntry(String arg1, AminoAcid[] arg2) {
-		this.id = arg1;
+		if (arg1.length()==4) {
+			this.id = arg1;
+			this.chainID='A';
+			this.chainIDNum=0;
+		} else {
+			this.id = arg1.substring(0, 4);
+			this.chainID=arg1.charAt(4);
+			this.chainIDNum=Integer.valueOf(arg1.substring(5, 7));
+		}
 		this.aminoAcids = arg2;
 		this.length = arg2.length;
 	}
@@ -44,13 +63,20 @@ public class PDBEntry implements Alignable{
 	 * @param arg2 Array of AminoAcids
 	 */
 	public PDBEntry(String arg1, List<AminoAcid> arg2) {
-		this.id = arg1;
+		if (arg1.length()==4) {
+			this.id = arg1;
+			this.chainID='A';
+			this.chainIDNum=0;
+		} else {
+			this.id = arg1.substring(0, 4);
+			this.chainID=arg1.charAt(4);
+			this.chainIDNum=Integer.valueOf(arg1.substring(5, 7));
+		}
 		this.aminoAcids = arg2.toArray(new AminoAcid[0]);
 		this.length = arg2.size();
 	}
 	
 	/**
-	 * 
 	 * @return the ID of the PDBEntry
 	 */
 	@Override
@@ -58,6 +84,21 @@ public class PDBEntry implements Alignable{
 		return id;
 	}
 	
+	/**
+	 * @return the chainID
+	 */
+	public char getChainID() {
+		return chainID;
+	}
+
+	/**
+	 * @return the chainIDNum
+	 */
+	public int getChainIDNum() {
+		return chainIDNum;
+	}
+	
+
 	/**
 	 * Adds an AminoAcid to the entry. Usage discouraged because very slow.
 	 * Better give the Constructor the full AminoAcid List.
@@ -84,16 +125,21 @@ public class PDBEntry implements Alignable{
 	}
 
 	@Override
-	public Object getComp(int i) {
-		return aminoAcids[i];
+	public Object getComp(int n) {
+		return getAminoAcid(n);
 	}
 	
+	/**
+	 * @return all AminoAcids as a (human readable) String
+	 */
 	public String getAtomSectionAsString(){
 		int lineCounter = 0;
 		String out = "";
 		for(int i = 0; i != aminoAcids.length; i++){
 			for(int j = 0; j != aminoAcids[i].getAtomNumber(); j++){
-				out += aminoAcids[i].getAtom(j).toString(lineCounter++,i,aminoAcids[i].getName().getThreeLetterCode(),id.charAt(4)).trim()+"\n";
+				// TODO Some Entries have no 7-letter ID (1TIMA00) but four letters (1TIM)
+				// ==> make some Method for IDs without chainID!
+				out += aminoAcids[i].getAtom(j).toString(lineCounter++,i,aminoAcids[i].getName().getThreeLetterCode(),chainID).trim()+"\n";
 			}
 		}
 		return out;

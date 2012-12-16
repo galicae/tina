@@ -1,6 +1,8 @@
 package db.mysql;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public abstract class MysqlWrapper {
 	
@@ -22,7 +24,20 @@ public abstract class MysqlWrapper {
 	 * 
 	 * @return size of the table
 	 */
-	abstract int size();
+	public int size() {
+		Statement stmt = connection.createStatement();
+		try{
+			ResultSet res = stmt.executeQuery("select count(*) as size from "+getTablename());
+			if(res.first()){
+				return res.getInt("size");
+			}else{
+				return -1;
+			}
+		} catch(SQLException e){
+			e.printStackTrace();
+			return -1;
+		}
+	}
 	
 	/**
 	 * 

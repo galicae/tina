@@ -118,7 +118,19 @@ public class GlobalSequence123D extends Gotoh {
 		return result;
 	}
 
-	//take new SSCCEntry for new Alignment
+	/**
+	 * this function precedes the actual alignment; here the SSCC file is read
+	 * and the secondary structure saved in secStruct.
+	 * 
+	 * @param sequence1
+	 *            the query sequence
+	 * @param sequence2
+	 *            the template sequence
+	 * @param sscc
+	 *            the SSCC file, containing secondary structure and contacts
+	 *            information concerning the template structure
+	 * @return the result of the align() function
+	 */
 	public SequenceAlignment align(Alignable sequence1, Alignable sequence2, SSCCEntry sscc){
 		//parse SSCCEntry-----------------------------
 		this.globalConts = new int[sscc.length()];
@@ -276,7 +288,7 @@ public class GlobalSequence123D extends Gotoh {
 	}
 
 	/**
-	 * calculates matrices using scoring-function and gap-penalty
+	 * calculates matrices using the given scoring function and gap penalty
 	 * 
 	 */
 	private void calculateMatrices() {
@@ -392,6 +404,11 @@ public class GlobalSequence123D extends Gotoh {
 		return scoringmatrix[x - 65][y - 65];
 	}
 
+	/**
+	 * flips a char[] on itself
+	 * @param in the character array in question
+	 * @return the reversed array
+	 */
 	private char[] flip(char[] in) {
 		char[] out = new char[in.length];
 		for (int i = in.length - 1; i >= 0; i--) {

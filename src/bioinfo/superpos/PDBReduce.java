@@ -10,10 +10,9 @@ import bioinfo.proteins.Atom;
 import bioinfo.proteins.PDBEntry;
 
 /**
- * 
- * @author gobi4 PDBReduce contains only static reducing method which reduces
- *         two PDBs to double[][][] using an sequence-alignment
- * 
+ * PDBReduce contains only static reducing method which reduces
+ * two PDBs to double[][][] using an sequence-alignment
+ * @author gobi4 
  */
 public class PDBReduce {
 
@@ -58,7 +57,6 @@ public class PDBReduce {
 	}
 
 	/**
-	 * 
 	 * alternative version of reducePDB, after we stopped reading files and
 	 * started using objects instead
 	 * 

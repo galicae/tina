@@ -60,6 +60,10 @@ public class Sequence implements Alignable{
 		return seq;
 	}
 	
+	/**
+	 * 
+	 * @return sequence along with its identifier
+	 */
 	public String toStringVerbose(){
 		String seq = "";
 		for(char x: sequence){

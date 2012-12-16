@@ -36,6 +36,7 @@
 	}
 	
 	void loadDoneJobs() {
+		// TODO only list Jobs that are really done!
 		File dir = new File(JOBS_DIR+"/03_done");
 		String[] files = dir.list();
 		A[] links = new A[files.length]; 

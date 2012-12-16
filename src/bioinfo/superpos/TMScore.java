@@ -154,7 +154,8 @@ public class TMScore {
 		if (n_ali < 1) {
 			System.out
 					.println("There is no common residues in the input structures");
-			System.exit(1);
+			double[][] result = new double[5][4];
+			return result;
 		}
 
 		if (nseqB > 15) {

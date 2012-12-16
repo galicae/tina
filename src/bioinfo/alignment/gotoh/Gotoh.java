@@ -14,12 +14,12 @@ import bioinfo.alignment.Alignment;
  * @author gobi4
  * abstract class Gotoh defines interface for alignments
  * if no method is overridden in extending class it performs an 
- * gotoh alignment on Einheits-Matrix with global matrix-preparation
+ * gotoh alignment on identity matrix with global matrix preparation
  * and traceback
  * 
- * for other alignmenttypes the following methods have to be overridden:
- * 		+
- *
+ * for other alignment types the following methods have to be overridden:
+ * 		+ check
+ *		+ align
  */
 
 public abstract class Gotoh implements Aligner {
@@ -34,7 +34,7 @@ public abstract class Gotoh implements Aligner {
 	protected Alignable sequence2;
 	
 	/**
-	 * Constructor initialising Gotoh with
+	 * Constructor initializing Gotoh with
 	 * certain gap-penalties
 	 * @param gap integer defining gap-costs
 	 */

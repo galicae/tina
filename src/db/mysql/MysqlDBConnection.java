@@ -22,9 +22,10 @@ public class MysqlDBConnection {
 		Properties connectionProps = new Properties();
 	    connectionProps.put("user", USER);
 	    connectionProps.put("password", PASS);
+	    connectionProps.put("db", DB);
 	    
 	    try {
-			connection = DriverManager.getConnection("jdbc:mysql://" + HOST + "/", connectionProps);
+			connection = DriverManager.getConnection("jdbc:mysql://" + HOST + "/" + DB , connectionProps);
 		} catch (SQLException e) {
 			System.err.println("Mysql connection fail! user:"+USER+" pass:"+PASS+" host:"+HOST+" db:"+DB);
 			e.printStackTrace();

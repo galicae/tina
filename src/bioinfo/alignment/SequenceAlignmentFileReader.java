@@ -1,7 +1,6 @@
 package bioinfo.alignment;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -11,124 +10,165 @@ import bioinfo.Sequence;
 import bioinfo.alignment.gotoh.Gotoh;
 
 /**
- * SequenceAlignmentFileReader read PDBFile and returns it as internal Alignment
+ * reads PDBFile and returns it as internal Alignment
+ * 
  * @author andreseitz
- *
+ * 
  */
 public class SequenceAlignmentFileReader {
 
 	private String filename = null;
 	private BufferedReader br;
-	
-	public SequenceAlignmentFileReader(){
-		
+
+	public SequenceAlignmentFileReader() {
+
 	}
-	
-	public SequenceAlignmentFileReader(String filename){
+
+	public SequenceAlignmentFileReader(String filename) {
 		this.filename = filename;
 	}
-	
-	public List<SequenceAlignment> readAlignments(){
+
+	public List<SequenceAlignment> readAlignments() {
 		List<SequenceAlignment> alignments = new ArrayList<SequenceAlignment>();
 		BufferedReader br = null;
-		try{
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
-		}catch(Exception e){
+		try {
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(
+					filename)));
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 		String line = null;
-		Sequence seq1;
-		Sequence seq2;
 		String seq1tmp = "";
 		String seq2tmp = "";
 		String ali1tmp;
 		String ali2tmp;
 		String[] tmp = new String[3];
-		try{
+		try {
 			int count = 0;
-			while((line = br.readLine()) != null){
-				tmp[count%3] = line;
+			while ((line = br.readLine()) != null) {
+				tmp[count % 3] = line;
 				count++;
-				if(count%3 == 0){
+				if (count % 3 == 0) {
 					ali1tmp = tmp[1].split(":")[1].trim();
 					ali2tmp = tmp[2].split(":")[1].trim();
-					for(int i = 0; i != ali1tmp.length(); i++){
-						if(ali1tmp.charAt(i) != '-'){
+					for (int i = 0; i != ali1tmp.length(); i++) {
+						if (ali1tmp.charAt(i) != '-') {
 							seq1tmp += ali1tmp.charAt(i);
 						}
-						if(ali2tmp.charAt(i) != '-'){
+						if (ali2tmp.charAt(i) != '-') {
 							seq2tmp += ali2tmp.charAt(i);
 						}
 					}
-					alignments.add(new SequenceAlignment(new Sequence(tmp[1].split(":")[0].trim(),seq1tmp), new Sequence(tmp[2].split(":")[0].trim(),seq2tmp), tmp[1].split(":")[1].trim(), tmp[2].split(":")[1].trim(), (int)(Gotoh.FACTOR*Double.parseDouble(tmp[0].split("\\s")[2].trim()))));
+					alignments.add(new SequenceAlignment(new Sequence(tmp[1]
+							.split(":")[0].trim(), seq1tmp), new Sequence(
+							tmp[2].split(":")[0].trim(), seq2tmp), tmp[1]
+							.split(":")[1].trim(), tmp[2].split(":")[1].trim(),
+							(int) (Gotoh.FACTOR * Double.parseDouble(tmp[0]
+									.split("\\s")[2].trim()))));
 				}
 			}
-		} catch(Exception e){
+			br.close();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return alignments;
 	}
-	
-	public List<SequenceAlignment> readAlignments(String filename){
+
+	/**
+	 * reads a file containing many alignments and returns them as an
+	 * {@link SequenceAlignment} List. Written to read files in the Gotoh output
+	 * format
+	 * 
+	 * @param filename
+	 *            the name of the file to read. Should be a path if the file is
+	 *            not on the same level as Java
+	 * @return a list of {@link SequenceAlignment} objects
+	 */
+	public List<SequenceAlignment> readAlignments(String filename) {
 		this.filename = filename;
 		return readAlignments();
 	}
-	
-	public void initSequentialRead(){
-		if(filename != null && !filename.equals("")){
+
+	public void initSequentialRead() {
+		if (filename != null && !filename.equals("")) {
 			br = null;
 		}
-		try{
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
-		}catch(Exception e){
+		try {
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(
+					filename)));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public void initSequentialRead(String filename){
-		filename = filename;
-		try{
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
-		}catch(Exception e){
+
+	/**
+	 * initialization of the parameters of the class. Needed when an alignment
+	 * file is being read sequentially and not in one go. nextAlignment() should
+	 * be called after this.
+	 * 
+	 * @param filename
+	 *            the name of the file to read. Should be a path if the file is
+	 *            not on the same level as Java
+	 */
+	public void initSequentialRead(String filename) {
+		this.filename = filename;
+		try {
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(
+					filename)));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public SequenceAlignment nextAlignment(){
-		if(br == null){
+
+	/**
+	 * retrieves the next alignment out of a sequence alignment file; called if
+	 * the alignment file would create a list liable to fill the memory and
+	 * considerably slow processes. Makes lots of sense when the alignment is
+	 * somehow processed (intensively) and memory should be free for these
+	 * processes.
+	 * 
+	 * @return the next alignment; this object essentially contains the
+	 *         sequences without gaps, since they are meant to be used in a
+	 *         realignment procedure
+	 */
+	public SequenceAlignment nextAlignment() {
+		if (br == null) {
 			return null;
 		}
 		String tmp[] = new String[3];
 		String line;
-		try{
-			for(int i = 0; i != 3; i++){
-				if((line = br.readLine()) != null){
+		try {
+			for (int i = 0; i != 3; i++) {
+				if ((line = br.readLine()) != null) {
 					tmp[i] = line.trim();
-				}else{
+				} else {
 					return null;
 				}
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 		String ali1tmp = tmp[1].split(":")[1].trim();
 		String ali2tmp = tmp[2].split(":")[1].trim();
 		String seq1tmp = "";
 		String seq2tmp = "";
-		for(int i = 0; i != ali1tmp.length(); i++){
-			if(ali1tmp.charAt(i) != '-'){
+		for (int i = 0; i != ali1tmp.length(); i++) {
+			if (ali1tmp.charAt(i) != '-') {
 				seq1tmp += ali1tmp.charAt(i);
 			}
-			if(ali2tmp.charAt(i) != '-'){
+			if (ali2tmp.charAt(i) != '-') {
 				seq2tmp += ali2tmp.charAt(i);
 			}
 		}
-		return new SequenceAlignment(new Sequence(tmp[1].split(":")[0].trim(),seq1tmp), new Sequence(tmp[2].split(":")[0].trim(),seq2tmp), tmp[1].split(":")[1].trim(), tmp[2].split(":")[1].trim(), (int)(Gotoh.FACTOR*Double.parseDouble(tmp[0].split("\\s")[2].trim())));
+		return new SequenceAlignment(new Sequence(tmp[1].split(":")[0].trim(),
+				seq1tmp), new Sequence(tmp[2].split(":")[0].trim(), seq2tmp),
+				tmp[1].split(":")[1].trim(), tmp[2].split(":")[1].trim(),
+				(int) (Gotoh.FACTOR * Double.parseDouble(tmp[0].split("\\s")[2]
+						.trim())));
 
 	}
-	
-	
+
 }

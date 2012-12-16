@@ -12,12 +12,16 @@ import bioinfo.proteins.PDBEntry;
  * @author gobi_4
  * @date November 24, 2012
  */
+<<<<<<< HEAD
 public abstract class PDBMapper {
 
 	public PDBMapper(){
 		
 	}
+=======
+public interface PDBMapper {
+>>>>>>> branch 'master' of https://github.com/galicae/tina.git
 	
-	public abstract PDBEntry map (SequenceAlignment arg1, PDBEntry arg2);
+	public PDBEntry map (SequenceAlignment arg1, PDBEntry arg2);
 	
 }
