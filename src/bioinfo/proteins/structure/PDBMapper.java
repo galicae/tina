@@ -12,8 +12,8 @@ import bioinfo.proteins.PDBEntry;
  * @author gobi_4
  * @date November 24, 2012
  */
-public interface PDBMapper {
-	
+
+public interface PDBMapper {	
 	public PDBEntry map (SequenceAlignment arg1, PDBEntry arg2);
 	
 }

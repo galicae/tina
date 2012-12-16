@@ -15,7 +15,8 @@ import bioinfo.proteins.SSCCLine;
 public class FreeshiftSequence123D extends Gotoh {
 
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
-	private int[] secStruct, localConts, globalConts, gapOpen, gapExtend = null;
+	private int[] secStruct, localConts, globalConts, gapOpen,
+			gapExtend = null;
 	private int[][] scoringmatrix, secStrucPref, weights;
 	private int[][][] contactPot;
 
@@ -40,14 +41,14 @@ public class FreeshiftSequence123D extends Gotoh {
 	 *            an sscc entry containing the structural information concerning
 	 *            the template structure
 	 */
-	public FreeshiftSequence123D(double go, double ge, double[][] scoringmatrix,
-			double[][] secondaryStructurePreferences, double[][] weights,
-			double[][][] contactPot) {
+	public FreeshiftSequence123D(double go, double ge,
+			double[][] scoringmatrix, double[][] secondaryStructurePreferences,
+			double[][] weights, double[][][] contactPot) {
 		super(go, ge);
-		
-		go = go*Gotoh.FACTOR;
-		ge = ge*Gotoh.FACTOR;
-		
+
+		go = go * Gotoh.FACTOR;
+		ge = ge * Gotoh.FACTOR;
+
 		this.contactPot = new int[contactPot.length][contactPot[0].length][contactPot[0][0].length];
 		for (int i = 0; i != contactPot.length; i++) {
 			for (int j = 0; j != contactPot[0].length; j++) {
@@ -76,14 +77,14 @@ public class FreeshiftSequence123D extends Gotoh {
 			}
 		}
 		gapOpen = new int[3];
-		gapOpen[0] = (int)(go * this.weights[1][0]);
-		gapOpen[1] = (int)(go * this.weights[1][1]);
-		gapOpen[2] = (int)(go * this.weights[1][2]);
+		gapOpen[0] = (int) (go * this.weights[1][0]);
+		gapOpen[1] = (int) (go * this.weights[1][1]);
+		gapOpen[2] = (int) (go * this.weights[1][2]);
 
 		gapExtend = new int[3];
-		gapExtend[0] = (int)(ge * this.weights[2][0]);
-		gapExtend[1] = (int)(ge * this.weights[2][1]);
-		gapExtend[2] = (int)(ge * this.weights[2][2]);
+		gapExtend[0] = (int) (ge * this.weights[2][0]);
+		gapExtend[1] = (int) (ge * this.weights[2][1]);
+		gapExtend[2] = (int) (ge * this.weights[2][2]);
 	}
 
 	/**
@@ -99,70 +100,88 @@ public class FreeshiftSequence123D extends Gotoh {
 	 * @return the score of x matching y
 	 */
 	private int match(char x, char y, int stY) {
-//		System.out.println("x: "+x);
-//		System.out.println("y: "+y);
+		// System.out.println("x: "+x);
+		// System.out.println("y: "+y);
 		int seqScore = score(x, y);
 		int prefScore = secStrucPref[stY][x - 65];
 		int lcontScore = contactPot[stY][localConts[y - 65]][x - 65];
 		int gcontScore = contactPot[stY][globalConts[y - 65]][x - 65];
-		int result = (weights[4][stY] * lcontScore) + 
-					(weights[5][stY] * gcontScore) + 
-					(weights[3][stY] * prefScore) + 
-					(weights[0][stY] * seqScore);
-//		System.out.println(stY+"      "+weights[0][stY]+" "+seqScore+" "+(seqScore*weights[0][stY])+"        "+weights[3][stY]+" "+prefScore+" "+(prefScore*weights[3][stY])+"       "+weights[4][stY]+" "+lcontScore+" "+(weights[4][stY]*lcontScore)+"       "+weights[5][stY]+" "+gcontScore+" "+(weights[5][stY]*gcontScore));
-//		System.out.println(seqScore + " "+ weights[1][stY]);
-//		System.out.println(prefScore+ " "+ weights[3][stY]);
-//		System.out.println(lcontScore+ " "+ weights[4][stY]);
-//		System.out.println(gcontScore+ " "+ weights[5][stY]);
-//		System.out.println(result);
+		int result = (weights[4][stY] * lcontScore)
+				+ (weights[5][stY] * gcontScore)
+				+ (weights[3][stY] * prefScore) + (weights[0][stY] * seqScore);
+		// System.out.println(stY+"      "+weights[0][stY]+" "+seqScore+" "+(seqScore*weights[0][stY])+"        "+weights[3][stY]+" "+prefScore+" "+(prefScore*weights[3][stY])+"       "+weights[4][stY]+" "+lcontScore+" "+(weights[4][stY]*lcontScore)+"       "+weights[5][stY]+" "+gcontScore+" "+(weights[5][stY]*gcontScore));
+		// System.out.println(seqScore + " "+ weights[1][stY]);
+		// System.out.println(prefScore+ " "+ weights[3][stY]);
+		// System.out.println(lcontScore+ " "+ weights[4][stY]);
+		// System.out.println(gcontScore+ " "+ weights[5][stY]);
+		// System.out.println(result);
 		return result;
 	}
 
-	//take new SSCCEntry for new Alignment
-	public SequenceAlignment align(Alignable sequence1, Alignable sequence2, SSCCEntry sscc){
-		//parse SSCCEntry-----------------------------
+	/**
+	 * this function precedes the actual alignment; here the SSCC file is read
+	 * and the secondary structure saved in secStruct.
+	 * 
+	 * @param sequence1
+	 *            the query sequence
+	 * @param sequence2
+	 *            the template sequence
+	 * @param sscc
+	 *            the SSCC file, containing secondary structure and contacts
+	 *            information concerning the template structure
+	 * @return the result of the align() function
+	 */
+	public SequenceAlignment align(Alignable sequence1, Alignable sequence2,
+			SSCCEntry sscc) {
+		// parse SSCCEntry-----------------------------
 		this.globalConts = new int[sscc.length()];
 		this.localConts = new int[sscc.length()];
 		this.secStruct = new int[sscc.length()];
 		int localtemp;
 		int globaltemp;
-		
+
 		SSCCLine sscctemp;
 		for (int i = 0; i < sscc.length(); i++) {
-			sscctemp = (SSCCLine)sscc.getComp(i);
-			
-			switch (sscctemp.getSecStruct()){
-				case 'a': this.secStruct[i] = 0;break;
-				case 'b': this.secStruct[i] = 1;break;
-				case 'o': this.secStruct[i] = 2;break;
-				default: this.secStruct[i] = 2;
+			sscctemp = (SSCCLine) sscc.getComp(i);
+
+			switch (sscctemp.getSecStruct()) {
+			case 'a':
+				this.secStruct[i] = 0;
+				break;
+			case 'b':
+				this.secStruct[i] = 1;
+				break;
+			case 'o':
+				this.secStruct[i] = 2;
+				break;
+			default:
+				this.secStruct[i] = 2;
 			}
 			localtemp = sscctemp.getLocCont();
 			globaltemp = sscctemp.getGlobCont();
-			
-			if(localtemp > 13){
+
+			if (localtemp > 13) {
 				this.localConts[i] = 13;
-			}else{
+			} else {
 				this.localConts[i] = sscctemp.getLocCont();
 			}
-			if(globaltemp > 13){
+			if (globaltemp > 13) {
 				this.globalConts[i] = 13;
-			}else{
+			} else {
 				this.globalConts[i] = sscctemp.getGlobCont();
-			}	
+			}
 		}
-		//----------------------------------------------
+		// ----------------------------------------------
 		return align(sequence1, sequence2);
 	}
-	
-	
-	//caution: if calling align function without SSCCEntry then return is null
+
+	// caution: if calling align function without SSCCEntry then return is null
 	@Override
 	public SequenceAlignment align(Alignable sequence1, Alignable sequence2) {
-		if(this.localConts == null || this.globalConts == null || this.secStruct == null){
+		if (this.localConts == null || this.globalConts == null
+				|| this.secStruct == null) {
 			return null;
-		}
-		else{
+		} else {
 			this.M = new int[sequence1.length() + 1][sequence2.length() + 1];
 			this.I = new int[sequence1.length() + 1][sequence2.length() + 1];
 			this.D = new int[sequence1.length() + 1][sequence2.length() + 1];
@@ -236,7 +255,7 @@ public class FreeshiftSequence123D extends Gotoh {
 				score += tempScore[row0[i]][row1[i]][secStruct[row1[0]]];
 			}
 		}
-		if (1.0d * score / (Gotoh.FACTOR * Gotoh.FACTOR)== ali.getScore()) {
+		if (1.0d * score / (Gotoh.FACTOR * Gotoh.FACTOR) == ali.getScore()) {
 			return true;
 		} else {
 			return false;
@@ -265,7 +284,7 @@ public class FreeshiftSequence123D extends Gotoh {
 	}
 
 	/**
-	 * calculates matrices using scoring-function and gap-penalty
+	 * calculates matrices using the given scoring function and gap penalty
 	 * 
 	 */
 	private void calculateMatrices() {
@@ -278,25 +297,28 @@ public class FreeshiftSequence123D extends Gotoh {
 		int[][] tempScore = new int[sequence1.length()][sequence2.length()];
 		int strY;
 		for (int i = 0; i < sequence1.length(); i++) {
-			//System.out.println();
+			// System.out.println();
 			for (int j = 0; j < sequence2.length(); j++) {
 				strY = secStruct[j];
 				tempScore[i][j] = match(seq1[i], seq2[j], strY);
-				//System.out.print(String.format("%8.3f",(tempScore[i][j]/1000000.0d))+"\t");
+				// System.out.print(String.format("%8.3f",(tempScore[i][j]/1000000.0d))+"\t");
 			}
 		}
 
 		// now the main loop where stuff is actually computed
 		for (int i = 1; i <= sequence1.length(); i++) {
 			for (int j = 1; j <= sequence2.length(); j++) {
-				strY = secStruct[j-1];
-				D[i][j] = Math.max(M[i][j-1] + gapOpen[strY] + gapExtend[strY], D[i][j-1] + gapExtend[strY]);
-				I[i][j] = Math.max(M[i-1][j] + gapOpen[strY] + gapExtend[strY], I[i-1][j] + gapExtend[strY]);
-				M[i][j] = Math.max(M[i-1][j-1] + tempScore[i-1][j-1], Math.max(I[i][j], D[i][j]));
+				strY = secStruct[j - 1];
+				D[i][j] = Math.max(M[i][j - 1] + gapOpen[strY]
+						+ gapExtend[strY], D[i][j - 1] + gapExtend[strY]);
+				I[i][j] = Math.max(M[i - 1][j] + gapOpen[strY]
+						+ gapExtend[strY], I[i - 1][j] + gapExtend[strY]);
+				M[i][j] = Math.max(M[i - 1][j - 1] + tempScore[i - 1][j - 1],
+						Math.max(I[i][j], D[i][j]));
 
-//				System.out.println(String.format("%8.3f",((M[i-1][j-1]+tempScore[i-1][j-1])/1000000.0d))+"\t"+
-//						String.format("%8.3f",((I[i][j])/1000000.0d))+"\t"+
-//						String.format("%8.3f",((D[i][j])/1000000.0d)));
+				// System.out.println(String.format("%8.3f",((M[i-1][j-1]+tempScore[i-1][j-1])/1000000.0d))+"\t"+
+				// String.format("%8.3f",((I[i][j])/1000000.0d))+"\t"+
+				// String.format("%8.3f",((D[i][j])/1000000.0d)));
 
 			}
 		}
@@ -395,7 +417,8 @@ public class FreeshiftSequence123D extends Gotoh {
 
 		return new SequenceAlignment((Sequence) sequence1,
 				(Sequence) sequence2, flip(row0.toCharArray()),
-				flip(row1.toCharArray()), 1.0d * score / (Gotoh.FACTOR * Gotoh.FACTOR));
+				flip(row1.toCharArray()), 1.0d * score
+						/ (Gotoh.FACTOR * Gotoh.FACTOR));
 	}
 
 	/**
@@ -407,6 +430,11 @@ public class FreeshiftSequence123D extends Gotoh {
 		return scoringmatrix[x - 65][y - 65];
 	}
 
+	/**
+	 * flips a char[] on itself
+	 * @param in the character array in question
+	 * @return the reversed array
+	 */
 	private char[] flip(char[] in) {
 		char[] out = new char[in.length];
 		for (int i = in.length - 1; i >= 0; i--) {

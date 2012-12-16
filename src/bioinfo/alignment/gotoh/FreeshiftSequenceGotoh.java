@@ -6,8 +6,9 @@ import bioinfo.alignment.Alignment;
 import bioinfo.alignment.SequenceAlignment;
 
 /**
+ * Freeshift Alignment of two Sequences
  * 
- * @author andreseitz Freeshift Alignment of two Sqeuences
+ * @author andreseitz
  */
 public class FreeshiftSequenceGotoh extends Gotoh {
 
@@ -131,7 +132,7 @@ public class FreeshiftSequenceGotoh extends Gotoh {
 	}
 
 	/**
-	 * calculates matrices using scoring-function and gap-penalty
+	 * calculates matrices using given scoring function and gap penalty
 	 * 
 	 */
 	private void calculateMatrices() {
@@ -152,8 +153,7 @@ public class FreeshiftSequenceGotoh extends Gotoh {
 				// System.out.println((M[i][j-1]+gapOpen+gapExtend)+" "+(D[i][j-1]+gapExtend));
 				I[i][j] = Math.max(M[i - 1][j] + gapOpen + gapExtend,
 						I[i - 1][j] + gapExtend);
-				M[i][j] = Math.max(M[i - 1][j - 1]
-						+ tempScore[i - 1][j - 1],
+				M[i][j] = Math.max(M[i - 1][j - 1] + tempScore[i - 1][j - 1],
 						Math.max(I[i][j], D[i][j]));
 			}
 		}
@@ -257,6 +257,11 @@ public class FreeshiftSequenceGotoh extends Gotoh {
 		return scoringmatrix[x - 65][y - 65];
 	}
 
+	/**
+	 * flips a char[] on itself
+	 * @param in the character array in question
+	 * @return the reversed array
+	 */
 	private char[] flip(char[] in) {
 		char[] out = new char[in.length];
 		for (int i = in.length - 1; i >= 0; i--) {
