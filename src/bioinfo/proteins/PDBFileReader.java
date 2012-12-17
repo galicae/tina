@@ -243,8 +243,11 @@ public class PDBFileReader {
 			String line;
 			List<Atom> atoms = new ArrayList<Atom>();
 			
+			
+			boolean firstflag = true;
 			String name;
 			String resName = "";
+			String lastResName = "";
 			char chainId;
 			int resSeq = 0;
 			double[] coord;
@@ -253,29 +256,39 @@ public class PDBFileReader {
 					
 			while((line = br.readLine()) != null){
 				if(line.startsWith("ATOM")){
-					
-					
-					
+										
 					chainId = line.charAt(21);
 					if(chainId != chain){
 						continue;
 					}
+					
 					resSeq = Integer.parseInt(line.substring(22,26).trim());
-					name = line.substring(12,16).trim();
 					resName = line.substring(17,20).trim();
+					
+					//first residue fix
+					if(firstflag){
+						firstflag = false;
+						lastResSeq = resSeq;
+						lastResName = resName;
+					}
+					
+					
+					name = line.substring(12,16).trim();	
 					coord = new double[3];
 					coord[0] = Double.parseDouble(line.substring(30,38).trim());
 					coord[1] = Double.parseDouble(line.substring(38,46).trim());
 					coord[2] = Double.parseDouble(line.substring(46,54).trim());
 					
 					if(lastResSeq != resSeq){
-						aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(resName),resSeq,atoms.toArray(new Atom[atoms.size()])));
+						aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(lastResName),lastResSeq,atoms.toArray(new Atom[atoms.size()])));
 						atoms.clear();
 						lastResSeq = resSeq;
+						lastResName = resName;
 					}
+					
 					atoms.add(new Atom(name,coord));
 				} else{
-					res
+					
 				}
 			}
 			
