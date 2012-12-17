@@ -11,7 +11,7 @@ public class ImportPDBs {
 		PDBConnector pdbconnector = new PDBConnector(connection);
 		
 		PDBFileReader pdbreader = new PDBFileReader(args[0]);
-		PDBFile.downloadPDB("2ADU", "./");
+		//PDBFile.downloadPDB("2ADU", "./");
 		PDBEntry test = pdbreader.readFromFolderById("1J2xB00");		
 				
 		pdbconnector.addEntry(test);
