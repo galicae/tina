@@ -15,14 +15,7 @@ public class PDBConnector extends MysqlWrapper{
 	private static final String tablename = "pdb";
 	
 	private static final String[] fields = {"id","pdb_id","chain","length"};
-	private static final String setEntry = "insert into "+tablename+" ("+fields[1]+","+fields[2]+","+fields[3]+") values (?,?,?)";
-	
-//	private static final String[] fieldsAA = {"id","name","res_index","numberofAtom","pdb_id"};
-//	private static final String setAA = "insert into "+tableamino+" ("+fieldsAA[1]+","+fieldsAA[2]+","+fieldsAA[3]+","+fieldsAA[4]+") values (?,?,?,?)";
-//	
-//	private static final String[] fieldsatom = {"id","type","x","y","z","aminoacid_id"};
-//	private static final String setAtom = "insert into "+tableatom+" ("+fieldsatom[1]+","+fieldsatom[2]+","+fieldsatom[3]+","+fieldsatom[4]+","+fieldsatom[5]+") values (?,?,?,?,?)";
-	
+	private static final String setEntry = "insert into "+tablename+" ("+fields[1]+","+fields[2]+","+fields[3]+") values (?,?,?)";	
 	private static final String getById = "select * from pdb where pdb_id = ?";
 	
 	public PDBConnector(MysqlDBConnection connection) {
@@ -76,7 +69,8 @@ public class PDBConnector extends MysqlWrapper{
 		ResultSet res;
 		try {
 			res = stmt.executeQuery("Select LAST_INSERT_ID() from "+tablename);
-			lastid = res.getInt(0);
+			res.first();
+			lastid = res.getInt(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
@@ -95,6 +89,7 @@ public class PDBConnector extends MysqlWrapper{
 			stmt.setString(1,entry.getID());
 			stmt.setString(2,String.valueOf(entry.getChainID()));
 			stmt.setInt(3, entry.length());
+			stmt.execute();
 			int pdbid = getLastId();
 			
 			for (int i = 0; i < entry.length(); i++) {
@@ -102,7 +97,8 @@ public class PDBConnector extends MysqlWrapper{
 				amino = entry.getAminoAcid(i);
 				aaconnector.addEntry(amino, pdbid);	
 			}
-			return stmt.execute();
+			return true;
+			
 		}catch(SQLException e){
 			e.printStackTrace();
 			return false;

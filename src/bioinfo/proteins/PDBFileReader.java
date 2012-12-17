@@ -250,9 +250,12 @@ public class PDBFileReader {
 			double[] coord;
 			
 			int lastResSeq = 0;
-			
+					
 			while((line = br.readLine()) != null){
 				if(line.startsWith("ATOM")){
+					
+					
+					
 					chainId = line.charAt(21);
 					if(chainId != chain){
 						continue;
@@ -271,8 +274,12 @@ public class PDBFileReader {
 						lastResSeq = resSeq;
 					}
 					atoms.add(new Atom(name,coord));
+				} else{
+					res
 				}
 			}
+			
+			//lastresidue fix
 			if(atoms != null && atoms.size() != 0){
 				aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(resName),resSeq,atoms.toArray(new Atom[atoms.size()])));
 			}

@@ -16,7 +16,7 @@ public class AAConnector extends MysqlWrapper{
 	private static final String tablename = "aminoacid";
 	private static final String[] fields = {"id","name","res_index","numberofAtom","pdb_id"};
 	private static final String getById = "select data from aminoacid where id = ?";
-	private static final String setEntry = "insert into aminoacid ("+fields[1]+","+fields[2]+","+fields[3]+","+fields[4]+") values (?,?,?,?)";
+	private static final String setEntry = "insert into "+tablename+" ("+fields[1]+","+fields[2]+","+fields[3]+","+fields[4]+") values (?,?,?,?)";
 	
 	public AAConnector(MysqlDBConnection connection) {
 		super(connection);
@@ -69,7 +69,8 @@ public class AAConnector extends MysqlWrapper{
 		ResultSet res;
 		try {
 			res = stmt.executeQuery("Select LAST_INSERT_ID() from "+tablename);
-			lastid = res.getInt(0);
+			res.first();
+			lastid = res.getInt(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
@@ -88,6 +89,7 @@ public class AAConnector extends MysqlWrapper{
 			stmt.setInt(2, entry.getResIndex());
 			stmt.setInt(3, entry.getAtomNumber());
 			stmt.setInt(4, pdbid);
+			stmt.execute();
 			int aminoid = getLastId();
 					
 			for (int i = 0; i < entry.getAtomNumber(); i++) {
@@ -95,7 +97,8 @@ public class AAConnector extends MysqlWrapper{
 				atom = entry.getAtom(i);
 				atomconnector.addEntry(atom, aminoid);	
 			}
-			return stmt.execute();
+			return true;
+			
 		}catch(SQLException e){
 			e.printStackTrace();
 			return false;
