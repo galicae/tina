@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import bioinfo.proteins.AminoAcid;
+import bioinfo.proteins.Atom;
 import bioinfo.proteins.PDBEntry;
 
 public class AAConnector extends MysqlWrapper{
@@ -61,15 +63,38 @@ public class AAConnector extends MysqlWrapper{
 		}
 	}
 	
-	public boolean addEntry(PDBEntry entry){
+	private int getLastId(){
+		int lastid;
+		Statement stmt = connection.createStatement();
+		ResultSet res;
+		try {
+			res = stmt.executeQuery("Select LAST_INSERT_ID() from "+tablename);
+			lastid = res.getInt(0);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}	
+		return lastid;
+	}
+	
+	public boolean addEntry(AminoAcid entry, int pdbid){
+		AtomConnector atomconnector = new AtomConnector(this.connection);
 		PreparedStatement stmt = connection.createStatement(setEntry);
+				
 		try{
-			for (int i = 0; i < entry.length(); i++) {
-				stmt.setString(1,entry.getAminoAcid(i).toString());
-				stmt.setObject(2, entry.g);
+			Atom atom;
+			
+			stmt.setString(1, entry.toString());
+			stmt.setInt(2, entry.getResIndex());
+			stmt.setInt(3, entry.getAtomNumber());
+			stmt.setInt(4, pdbid);
+			int aminoid = getLastId();
+					
+			for (int i = 0; i < entry.getAtomNumber(); i++) {
+				//insert atoms
+				atom = entry.getAtom(i);
+				atomconnector.addEntry(atom, aminoid);	
 			}
-			
-			
 			return stmt.execute();
 		}catch(SQLException e){
 			e.printStackTrace();
