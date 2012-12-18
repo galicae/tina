@@ -1,6 +1,8 @@
 package bioinfo.alignment.thr3ad;
 
 public class HydropathyScores {
+
+	// positive scores are hydrophobic
 	public static final double A = 1.8;
 	public static final double R = -4.5;
 	public static final double N = -3.5;
