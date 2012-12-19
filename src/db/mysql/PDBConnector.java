@@ -48,6 +48,21 @@ public class PDBConnector extends MysqlWrapper{
 		}
 	}
 	
+	public boolean pdbExist(String id){
+		Statement stmt = connection.createStatement();
+		try{
+			ResultSet res = stmt.executeQuery("Select id from "+tablename+" where pdb_id = "+id);
+			if(res.first()){
+				return true;
+			}else{
+				return false;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	public String[] getIDs(){
 		Statement stmt = connection.createStatement();
 		try {
