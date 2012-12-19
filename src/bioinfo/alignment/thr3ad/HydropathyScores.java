@@ -1,5 +1,10 @@
 package bioinfo.alignment.thr3ad;
 
+/**
+ * from Kyte & Doolittle, J Mol Biol 1982 May 5
+ * @author papadopoulos
+ *
+ */
 public class HydropathyScores {
 
 	// positive scores are hydrophobic
