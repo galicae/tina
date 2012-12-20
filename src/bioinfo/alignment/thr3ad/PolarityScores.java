@@ -10,6 +10,7 @@ public class PolarityScores {
 
 	public static double L = 4.92;
 	public static double I = 4.92;
+	public static double P = 4.58;
 	public static double V = 4.04;
 	public static double F = 2.98;
 	public static double M = 2.35;

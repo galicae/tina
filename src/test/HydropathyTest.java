@@ -18,5 +18,6 @@ public class HydropathyTest {
 		double add = (max - min) / 2.0;
 		double[][] matrix = bla.calcGotohInputMatrix(test, mult, add);
 		bla.printMatrix(matrix, test, "polarity");
+
 	}
 }

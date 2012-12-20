@@ -12,8 +12,6 @@ import java.util.HashMap;
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.d123.FreeshiftSequence123D;
-import bioinfo.alignment.d123.GlobalSequence123D;
-import bioinfo.alignment.d123.LocalSequence123D;
 import bioinfo.alignment.gotoh.Gotoh;
 import bioinfo.alignment.matrices.MatrixReader123D;
 import bioinfo.alignment.matrices.QuasarMatrix;

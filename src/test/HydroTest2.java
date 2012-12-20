@@ -6,13 +6,11 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
-import bioinfo.alignment.SequenceAlignmentFileReader;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.matrices.QuasarMatrix;
 import bioinfo.proteins.PDBEntry;
@@ -54,9 +52,10 @@ public class HydroTest2 {
 				
 				trSeq = tmCalculator.calculateTransformation(aliSeq, pdb1, pdb2);
 				trHyd = tmCalculator.calculateTransformation(aliHyd, pdb1, pdb2);
-				out.append(aliSeq.getComponent(0).getID() + " " + aliSeq.getComponent(1).getID() + " ");
-				out.append(trSeq.getTmscore() + "\t" + trHyd.getTmscore() + "\n");
-				System.out.println(aliSeq.getComponent(0).getID() + " " + aliSeq.getComponent(1).getID());
+//				System.out.print(aliSeq.getComponent(0).getID() + " " + aliSeq.getComponent(1).getID() + " ");
+//				System.out.print(trSeq.getTmscore() + "\t" + trHyd.getTmscore() + "\n");
+				System.out.println(aliSeq.toStringVerbose());
+				System.out.println(aliHyd.toStringVerbose());
 				if(trSeq.getTmscore() > trHyd.getTmscore())
 					seq++;
 				else
