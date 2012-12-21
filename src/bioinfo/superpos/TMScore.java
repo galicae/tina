@@ -28,13 +28,10 @@ package bioinfo.superpos;
 //*     2011/01/03: The length of pdb file names were extended to 500.
 //*     2011/01/30: An open source license is attached to the program.
 //*************************************************************************
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.text.DecimalFormat;
 
+import bioinfo.alignment.SequenceAlignment;
 import bioinfo.proteins.AminoAcid;
 import bioinfo.proteins.PDBEntry;
 
@@ -86,7 +83,7 @@ public class TMScore {
 	 * @throws Exception
 	 */
 	public static double[][] doStuff(String argument, PDBEntry pdb1,
-			PDBEntry pdb2) throws Exception {
+			PDBEntry pdb2, SequenceAlignment sqAli) throws Exception {
 		String[] args = argument.split("\\s+");
 		// System.out.println(pdb1.getAtomSectionAsString());
 		// System.out.println();
@@ -96,7 +93,7 @@ public class TMScore {
 		d0_fix = -1;
 		int[] k_ali = new int[nmax];
 		int[] k_ali0 = new int[nmax];
-		String seq1A = "";
+		
 		j = 0;
 		if (args.length < 2) {
 			System.out.println(help());
@@ -120,11 +117,13 @@ public class TMScore {
 				j++;
 			}
 		}
-
+		String seq1A = "";
 		seq1A = readPDB(pdb1, xa, ya, za, nresA);
 		String seq1B = "";
 		seq1B = readPDB(pdb2, xb, yb, zb, nresB);
 
+		seq1A = sqAli.getComponent(0).getSequenceAsString();
+		seq1B = sqAli.getComponent(1).getSequenceAsString();
 //		System.out.println(seq1A);
 //		System.out.println(seq1B);
 
