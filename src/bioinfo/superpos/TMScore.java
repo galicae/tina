@@ -612,7 +612,7 @@ public class TMScore {
 		String seq = "*";
 		int i;
 		i = 0;
-		AminoAcid curAA = new AminoAcid("C");
+		AminoAcid curAA = new AminoAcid("C", -1);
 		for (int c = 0; c < file.length(); c++) {
 			try {
 				curAA = file.getAminoAcid(c);

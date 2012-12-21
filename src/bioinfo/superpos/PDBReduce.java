@@ -10,9 +10,10 @@ import bioinfo.proteins.Atom;
 import bioinfo.proteins.PDBEntry;
 
 /**
- * PDBReduce contains only static reducing method which reduces
- * two PDBs to double[][][] using an sequence-alignment
- * @author gobi4 
+ * PDBReduce contains only static reducing method which reduces two PDBs to
+ * double[][][] using an sequence-alignment
+ * 
+ * @author gobi4
  */
 public class PDBReduce {
 
@@ -90,12 +91,14 @@ public class PDBReduce {
 				try {
 					temp[0] = pdb1.getAminoAcid(i).getAtomByType(CA);
 					AminoAcid aa1 = new AminoAcid(pdb1.getAminoAcid(i)
-							.getName(), temp.clone());
+							.getName(), pdb2.getAminoAcid(calcMap[0][i])
+							.getResIndex(), temp.clone());
 					pdb1List.addLast(aa1);
 					temp[0] = pdb2.getAminoAcid(calcMap[0][i])
 							.getAtomByType(CA);
 					AminoAcid aa2 = new AminoAcid(pdb2.getAminoAcid(
-							calcMap[0][i]).getName(), temp.clone());
+							calcMap[0][i]).getName(), pdb2.getAminoAcid(
+							calcMap[0][i]).getResIndex(), temp.clone());
 					pdb2List.addLast(aa2);
 				} catch (Exception e) {
 					continue;
