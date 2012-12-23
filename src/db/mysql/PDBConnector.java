@@ -8,15 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bioinfo.proteins.AminoAcid;
+import bioinfo.proteins.Atom;
 import bioinfo.proteins.PDBEntry;
 
 public class PDBConnector extends MysqlWrapper{
 
 	private static final String tablename = "pdb";
 	
-	private static final String[] fields = {"id","pdb_id","chain","length"};
-	private static final String setEntry = "insert into "+tablename+" ("+fields[1]+","+fields[2]+","+fields[3]+") values (?,?,?)";	
-	private static final String getById = "select * from pdb where pdb_id = ?";
+	private static final String[] pdbfields = {"id","pdb_id","chain","length"};
+	private static final String[] aafields = {"id","name","res_index","numberofAtom","pdb_id"};
+	private static final String[] atomfields = {"id","type","x","y","z","aminoacid_id"};
+	private static final String setEntry = "insert into "+tablename+" ("+pdbfields[1]+","+pdbfields[2]+","+pdbfields[3]+") values (?,?,?)";	
+	private static final String getById = "select * from pdb where pdb_id = ?" +
+			" join aminoacid on pdb.id = aminoacid.pdb_id join atom on aminoacid.id = atom.aminoacid_id";
 	
 	public PDBConnector(MysqlDBConnection connection) {
 		super(connection);
@@ -29,16 +33,41 @@ public class PDBConnector extends MysqlWrapper{
 
 	@Override
 	String[] getFields() {
-		return fields;
+		return pdbfields;
 	}
 	
 	public PDBEntry getPDB(String id){
 		PreparedStatement stmt = connection.createStatement(getById);
+		AminoAcid[] aminos;
+		List<Atom> atoms = new ArrayList<Atom>();
+		
 		try{
 			stmt.setString(1, id);
 			ResultSet res = stmt.executeQuery();
 			if(res.first()){
-				return (PDBEntry)res.getObject(fields[1]);
+				
+				//create new amino-array
+				int aminoquantity = res.getInt(pdbfields[3]);
+				aminos = new AminoAcid[aminoquantity];
+				int atomquantity;
+				double[] pos_temp = new double[3];
+				
+				//read out aminos and corresponding atoms
+				for (int i = 0; i < aminoquantity; i++) {
+					atomquantity = res.getInt(aafields[3]);
+					for (int j = 0; j < atomquantity; j++) {
+						pos_temp[0] = res.getDouble(atomfields[2]);
+						pos_temp[1] = res.getDouble(atomfields[3]);
+						pos_temp[2] = res.getDouble(atomfields[4]);
+						atoms.add(new Atom(res.getString(atomfields[1]),pos_temp));
+						res.next();
+					}
+					aminos[i] = new AminoAcid(aafields[1],res.getInt(aafields[2]),atoms.toArray(new Atom[atomquantity]));
+					atoms.clear();
+					res.next();
+				}
+
+				return new PDBEntry(id,aminos);
 			}else{
 				return null;
 			}
@@ -69,7 +98,7 @@ public class PDBConnector extends MysqlWrapper{
 			ResultSet res = stmt.executeQuery("select id from "+getTablename());
 			List<String> ids = new ArrayList<String>();
 			while(res.next()){
-				ids.add(res.getString(fields[0]));
+				ids.add(res.getString(pdbfields[0]));
 			}
 			return ids.toArray(new String[ids.size()]);
 		} catch (SQLException e) {
@@ -99,7 +128,7 @@ public class PDBConnector extends MysqlWrapper{
 		
 		try{
 			AminoAcid amino;
-			
+
 			//insert pdbentry
 			stmt.setString(1,entry.getID());
 			stmt.setString(2,String.valueOf(entry.getChainID()));
