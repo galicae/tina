@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bioinfo.proteins.AminoAcid;
+import bioinfo.proteins.AminoAcidName;
 import bioinfo.proteins.Atom;
 import bioinfo.proteins.PDBEntry;
 
@@ -46,24 +47,26 @@ public class PDBConnector extends MysqlWrapper{
 			ResultSet res = stmt.executeQuery();
 			
 			int atomquantity;
-			double[] pos_temp = new double[3];
+			double[] pos_temp;
 					
 			while(res.next()){
 				//read out aminos and corresponding atoms
 				atomquantity = res.getInt(aafields[3]);
+				pos_temp = new double[3];
 				pos_temp[0] = res.getDouble(atomfields[2]);
 				pos_temp[1] = res.getDouble(atomfields[3]);
 				pos_temp[2] = res.getDouble(atomfields[4]);
 				atoms.add(new Atom(res.getString(atomfields[1]),pos_temp));
 				
 				for (int j = 0; j < atomquantity-1; j++) {
+					pos_temp = new double[3];
 					pos_temp[0] = res.getDouble(atomfields[2]);
 					pos_temp[1] = res.getDouble(atomfields[3]);
 					pos_temp[2] = res.getDouble(atomfields[4]);
 					atoms.add(new Atom(res.getString(atomfields[1]),pos_temp));
 					res.next();
 				}
-				aminos.add(new AminoAcid(aafields[1],res.getInt(aafields[2]),atoms.toArray(new Atom[atomquantity])));
+				aminos.add(new AminoAcid(AminoAcidName.getAAFromOLC(aafields[1]),res.getInt(aafields[2]),atoms.toArray(new Atom[atomquantity])));
 				atoms.clear();
 			}
 			return new PDBEntry(id,aminos.toArray(new AminoAcid[aminos.size()]));
