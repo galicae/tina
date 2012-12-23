@@ -16,7 +16,7 @@ public class ImportPDBs {
 		PDBEntry test = pdbreader.readFromFolderById("1J2xB00");		
 				
 		PDBEntry out = pdbconnector.getPDB("1J2X");
-		System.out.println(out.getAminoAcid(3).getAtomByType(AtomType.CA).getPosition()[0]);
+		System.out.println(out.getAminoAcid(7).getAtomByType(AtomType.CA).getPosition()[0]);
 	}
 
 }
