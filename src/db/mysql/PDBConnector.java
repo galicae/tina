@@ -19,8 +19,8 @@ public class PDBConnector extends MysqlWrapper{
 	private static final String[] aafields = {"id","name","res_index","numberofAtom","pdb_id"};
 	private static final String[] atomfields = {"id","type","x","y","z","aminoacid_id"};
 	private static final String setEntry = "insert into "+tablename+" ("+pdbfields[1]+","+pdbfields[2]+","+pdbfields[3]+") values (?,?,?)";	
-	private static final String getById = "select * from pdb where pdb_id = ?" +
-			" join aminoacid on pdb.id = aminoacid.pdb_id join atom on aminoacid.id = atom.aminoacid_id";
+	private static final String getById = "select * from pdb join aminoacid on pdb.id = aminoacid.pdb_id join atom on aminoacid.id = atom.aminoacid_id" +
+			" where pdb.pdb_id = ?";
 	
 	public PDBConnector(MysqlDBConnection connection) {
 		super(connection);
@@ -38,39 +38,35 @@ public class PDBConnector extends MysqlWrapper{
 	
 	public PDBEntry getPDB(String id){
 		PreparedStatement stmt = connection.createStatement(getById);
-		AminoAcid[] aminos;
 		List<Atom> atoms = new ArrayList<Atom>();
+		List<AminoAcid> aminos = new ArrayList<AminoAcid>();
 		
 		try{
 			stmt.setString(1, id);
 			ResultSet res = stmt.executeQuery();
-			if(res.first()){
-				
-				//create new amino-array
-				int aminoquantity = res.getInt(pdbfields[3]);
-				aminos = new AminoAcid[aminoquantity];
-				int atomquantity;
-				double[] pos_temp = new double[3];
-				
+			
+			int atomquantity;
+			double[] pos_temp = new double[3];
+					
+			while(res.next()){
 				//read out aminos and corresponding atoms
-				for (int i = 0; i < aminoquantity; i++) {
-					atomquantity = res.getInt(aafields[3]);
-					for (int j = 0; j < atomquantity; j++) {
-						pos_temp[0] = res.getDouble(atomfields[2]);
-						pos_temp[1] = res.getDouble(atomfields[3]);
-						pos_temp[2] = res.getDouble(atomfields[4]);
-						atoms.add(new Atom(res.getString(atomfields[1]),pos_temp));
-						res.next();
-					}
-					aminos[i] = new AminoAcid(aafields[1],res.getInt(aafields[2]),atoms.toArray(new Atom[atomquantity]));
-					atoms.clear();
+				atomquantity = res.getInt(aafields[3]);
+				pos_temp[0] = res.getDouble(atomfields[2]);
+				pos_temp[1] = res.getDouble(atomfields[3]);
+				pos_temp[2] = res.getDouble(atomfields[4]);
+				atoms.add(new Atom(res.getString(atomfields[1]),pos_temp));
+				
+				for (int j = 0; j < atomquantity-1; j++) {
+					pos_temp[0] = res.getDouble(atomfields[2]);
+					pos_temp[1] = res.getDouble(atomfields[3]);
+					pos_temp[2] = res.getDouble(atomfields[4]);
+					atoms.add(new Atom(res.getString(atomfields[1]),pos_temp));
 					res.next();
 				}
-
-				return new PDBEntry(id,aminos);
-			}else{
-				return null;
+				aminos.add(new AminoAcid(aafields[1],res.getInt(aafields[2]),atoms.toArray(new Atom[atomquantity])));
+				atoms.clear();
 			}
+			return new PDBEntry(id,aminos.toArray(new AminoAcid[aminos.size()]));
 		}catch(SQLException e){
 			e.printStackTrace();
 			return null;
