@@ -59,14 +59,14 @@ public class PDBConnector extends MysqlWrapper{
 				atoms.add(new Atom(res.getString(atomfields[1]),pos_temp));
 				
 				for (int j = 0; j < atomquantity-1; j++) {
+					res.next();
 					pos_temp = new double[3];
 					pos_temp[0] = res.getDouble(atomfields[2]);
 					pos_temp[1] = res.getDouble(atomfields[3]);
 					pos_temp[2] = res.getDouble(atomfields[4]);
 					atoms.add(new Atom(res.getString(atomfields[1]),pos_temp));
-					res.next();
 				}
-				aminos.add(new AminoAcid(AminoAcidName.getAAFromOLC(aafields[1]),res.getInt(aafields[2]),atoms.toArray(new Atom[atomquantity])));
+				aminos.add(new AminoAcid(AminoAcidName.getAAFromOLC(res.getString(aafields[1])),res.getInt(aafields[2]),atoms.toArray(new Atom[atomquantity])));
 				atoms.clear();
 			}
 			return new PDBEntry(id,aminos.toArray(new AminoAcid[aminos.size()]));
