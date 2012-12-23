@@ -13,9 +13,9 @@ public class ImportPDBs {
 		
 		PDBFileReader pdbreader = new PDBFileReader(args[0]);
 		//PDBFile.downloadPDB("2ADU", "./");
-		PDBEntry test = pdbreader.readFromFolderById("1J2xB00");		
-				
-		PDBEntry out = pdbconnector.getPDB("1J2X");
+		PDBEntry test = pdbreader.readFromFolderById("1J2xA00");		
+		pdbconnector.addEntry(test);
+		PDBEntry out = pdbconnector.getPDB("1J2XA00");
 		System.out.println(out.getAminoAcid(7).getAtomByType(AtomType.CA).getPosition()[0]);
 	}
 

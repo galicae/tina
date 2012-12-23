@@ -21,7 +21,7 @@ public class PDBConnector extends MysqlWrapper{
 	private static final String[] atomfields = {"id","type","x","y","z","aminoacid_id"};
 	private static final String setEntry = "insert into "+tablename+" ("+pdbfields[1]+","+pdbfields[2]+","+pdbfields[3]+") values (?,?,?)";	
 	private static final String getById = "select * from pdb join aminoacid on pdb.id = aminoacid.pdb_id join atom on aminoacid.id = atom.aminoacid_id" +
-			" where pdb.pdb_id = ?";
+			" where pdb.pdb_id = ? and pdb.chainID = ? and pdb.chainIDNum = ?";
 	
 	public PDBConnector(MysqlDBConnection connection) {
 		super(connection);
@@ -41,9 +41,23 @@ public class PDBConnector extends MysqlWrapper{
 		PreparedStatement stmt = connection.createStatement(getById);
 		List<Atom> atoms = new ArrayList<Atom>();
 		List<AminoAcid> aminos = new ArrayList<AminoAcid>();
+		String chainID;
+		int chainIDNum;
+		
+		//sets the chain which should be taken from the database (standard 'A00')
+		if (id.length() == 4) {	
+			chainID = "A";
+			chainIDNum = 0;
+		} else {
+			chainID = id.substring(4,5);
+			chainIDNum=Integer.valueOf(id.substring(5, 7));
+			id = id.substring(0, 4);
+		}
 		
 		try{
 			stmt.setString(1, id);
+			stmt.setString(2, chainID);
+			stmt.setInt(3, chainIDNum);
 			ResultSet res = stmt.executeQuery();
 			
 			int atomquantity;
