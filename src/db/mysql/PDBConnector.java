@@ -16,10 +16,10 @@ public class PDBConnector extends MysqlWrapper{
 
 	private static final String tablename = "pdb";
 	
-	private static final String[] pdbfields = {"id","pdb_id","chain","length"};
+	private static final String[] pdbfields = {"id","pdb_id","chainID", "chainIDNum","length"};
 	private static final String[] aafields = {"id","name","res_index","numberofAtom","pdb_id"};
 	private static final String[] atomfields = {"id","type","x","y","z","aminoacid_id"};
-	private static final String setEntry = "insert into "+tablename+" ("+pdbfields[1]+","+pdbfields[2]+","+pdbfields[3]+") values (?,?,?)";	
+	private static final String setEntry = "insert into "+tablename+" ("+pdbfields[1]+","+pdbfields[2]+","+pdbfields[3]+","+pdbfields[4]+") values (?,?,?,?)";	
 	private static final String getById = "select * from pdb join aminoacid on pdb.id = aminoacid.pdb_id join atom on aminoacid.id = atom.aminoacid_id" +
 			" where pdb.pdb_id = ? and pdb.chainID = ? and pdb.chainIDNum = ?";
 	
@@ -145,7 +145,8 @@ public class PDBConnector extends MysqlWrapper{
 			//insert pdbentry
 			stmt.setString(1,entry.getID());
 			stmt.setString(2,String.valueOf(entry.getChainID()));
-			stmt.setInt(3, entry.length());
+			stmt.setInt(3,entry.getChainIDNum());
+			stmt.setInt(4, entry.length());
 			stmt.execute();
 			int pdbid = getLastId();
 			
