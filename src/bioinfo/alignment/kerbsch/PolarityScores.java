@@ -1,4 +1,4 @@
-package bioinfo.alignment.thr3ad;
+package bioinfo.alignment.kerbsch;
 
 /**
  * from Radzicka & Wolfenden, Biochemistry 1988, 27, Table II

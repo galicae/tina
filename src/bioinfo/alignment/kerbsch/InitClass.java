@@ -1,4 +1,4 @@
-package bioinfo.alignment.thr3ad;
+package bioinfo.alignment.kerbsch;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
