@@ -63,33 +63,36 @@ public class Kerbsch extends Gotoh {
 		for (int i = 0; i < substMatrix.length; i++) {
 			for (int j = 0; j < substMatrix[0].length; j++) {
 				this.substMatrix[i][j] = (int) (Gotoh.FACTOR * substMatrix[i][j]);
-				this.hbMatrix[i][j] = (int) (Gotoh.FACTOR * substMatrix[i][j]);
-				this.polMatrix[i][j] = (int) (Gotoh.FACTOR * substMatrix[i][j]);
-				this.secStructMatrix[i][j] = (int) (Gotoh.FACTOR * substMatrix[i][j]);
+				this.hbMatrix[i][j] = (int) (Gotoh.FACTOR * hbMatrix[i][j]);
+				this.polMatrix[i][j] = (int) (Gotoh.FACTOR * polMatrix[i][j]);
+				this.secStructMatrix[i][j] = (int) (Gotoh.FACTOR * secStructMatrix[i][j]);
 			}
 		}
 	}
 
 	public SequenceAlignment align(Alignable sequence1, Alignable sequence2) {
-		this.M = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.I = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.D = new int[sequence1.length() + 1][sequence2.length() + 1];
+		int xsize = sequence1.length() + 1;
+		int ysize = sequence2.length() + 1;
 
-		this.hbM = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.hbI = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.hbD = new int[sequence1.length() + 1][sequence2.length() + 1];
+		this.M = new int[xsize][ysize];
+		this.I = new int[xsize][ysize];
+		this.D = new int[xsize][ysize];
 
-		this.polM = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.polI = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.polD = new int[sequence1.length() + 1][sequence2.length() + 1];
+		this.hbM = new int[xsize][ysize];
+		this.hbI = new int[xsize][ysize];
+		this.hbD = new int[xsize][ysize];
 
-		this.secStructM = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.secStructI = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.secStructD = new int[sequence1.length() + 1][sequence2.length() + 1];
+		this.polM = new int[xsize][ysize];
+		this.polI = new int[xsize][ysize];
+		this.polD = new int[xsize][ysize];
 
-		this.substM = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.substI = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.substD = new int[sequence1.length() + 1][sequence2.length() + 1];
+		this.secStructM = new int[xsize][ysize];
+		this.secStructI = new int[xsize][ysize];
+		this.secStructD = new int[xsize][ysize];
+
+		this.substM = new int[xsize][ysize];
+		this.substI = new int[xsize][ysize];
+		this.substD = new int[xsize][ysize];
 
 		this.sequence1 = (Sequence) sequence1;
 		this.sequence2 = (Sequence) sequence2;
@@ -99,7 +102,9 @@ public class Kerbsch extends Gotoh {
 	}
 
 	private void prepareMatrices() {
-		for (int i = 0; i < sequence1.length(); i++) {
+		int seq1length = sequence1.length();
+		int seq2length = sequence2.length();
+		for (int i = 0; i < seq1length; i++) {
 			D[i][0] = INIT_VAL;
 			hbD[i][0] = INIT_VAL;
 			polD[i][0] = INIT_VAL;
@@ -107,7 +112,7 @@ public class Kerbsch extends Gotoh {
 			substD[i][0] = INIT_VAL;
 		}
 
-		for (int i = 0; i < sequence2.length(); i++) {
+		for (int i = 0; i < seq2length; i++) {
 			I[0][i] = INIT_VAL;
 			hbI[0][i] = INIT_VAL;
 			polI[0][i] = INIT_VAL;
@@ -124,8 +129,8 @@ public class Kerbsch extends Gotoh {
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
 
-		for (int i = 1; i <= sequence1.length(); i++) {
-			for (int j = 1; j <= sequence2.length(); j++) {
+		for (int i = 1; i <= seq1.length; i++) {
+			for (int j = 1; j <= seq2.length; j++) {
 				// substitution gotoh matrices
 				hbD[i][j] = Math.max(hbM[i][j - 1] + hbGapOpen + hbGapExtend,
 						hbD[i][j - 1] + hbGapExtend);
