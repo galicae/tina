@@ -1,0 +1,57 @@
+package bioinfo.proteins.framg3nt;
+
+import java.util.LinkedList;
+
+import bioinfo.superpos.Kabsch;
+import bioinfo.superpos.Transformation;
+
+public class KMeansAllvsAll extends ClusterAlgorithm {
+
+	public KMeansAllvsAll(LinkedList<ProteinFragment> f) {
+		super(f);
+	}
+
+	@Override
+	public void initializeClusters() {
+		double[][][] kabschFood = new double[2][fragments.peek().fragLength][3];
+		double minRMSD = Double.MAX_VALUE;
+		ProteinFragment[] minPair = new ProteinFragment[2];
+		Transformation t;
+
+		// for every fragment pair...
+		for (int i = 0; i < fragments.size(); i++) {
+			for (int j = 0; j < fragments.size(); j++) {
+				// except of course every fragment with itself, that would
+				// explode the experiment
+				if (j == i)
+					continue;
+				// calculate the RMSD...
+				kabschFood[0] = fragments.get(i).getAllResidues();
+				kabschFood[1] = fragments.get(j).getAllResidues();
+				t = Kabsch.calculateTransformation(kabschFood);
+				// and find the pair with the minimal RMSD.
+				if (minRMSD < t.getRmsd()) {
+					minPair[0] = fragments.get(i);
+					minPair[1] = fragments.get(j);
+				}
+			}
+
+			// if one of the two fragments already belongs to a cluster, add the
+			// other fragment to the same cluster
+			if (minPair[1].getClusterIndex() > -1) {
+				clusters.get(minPair[1].getClusterIndex()).add(minPair[0]);
+			} else if (minPair[0].getClusterIndex() > -1) {
+				clusters.get(minPair[0].getClusterIndex()).add(minPair[1]);
+			}
+			// else create a new cluster and shove both fragments in this
+			// cluster.
+			else {
+				clusters.addLast(new FragmentCluster());
+				minPair[0].setClusterIndex(clusters.size() - 1);
+				minPair[1].setClusterIndex(clusters.size() - 1);
+				clusters.getLast().add(minPair[0]);
+				clusters.getLast().add(minPair[1]);
+			}
+		}
+	}
+}
