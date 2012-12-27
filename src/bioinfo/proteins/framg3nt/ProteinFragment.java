@@ -46,4 +46,13 @@ public class ProteinFragment {
 	public int getClusterIndex() {
 		return clustered;
 	}
+	
+	public String toString() {
+		String result = "";
+		result += "Fragment " + id + ", residue length " + fragLength + "\n";
+		for(int i = 0; i < coordinates.length; i++) {
+			result += coordinates[i][0] + " " + coordinates[i][1] + " " + coordinates[i][2] + "\n";
+		}
+		return result;
+	}
 }

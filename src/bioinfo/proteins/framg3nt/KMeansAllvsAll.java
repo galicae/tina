@@ -29,8 +29,13 @@ public class KMeansAllvsAll extends ClusterAlgorithm {
 				kabschFood[0] = fragments.get(i).getAllResidues();
 				kabschFood[1] = fragments.get(j).getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
+				
 				// and find the pair with the minimal RMSD.
-				if (minRMSD < t.getRmsd()) {
+				double temp = t.getRmsd();
+//				if(temp > 0)
+//					System.err.println("here boss");
+				if (minRMSD > temp) {
+					minRMSD = temp;
 					minPair[0] = fragments.get(i);
 					minPair[1] = fragments.get(j);
 				}
@@ -47,11 +52,13 @@ public class KMeansAllvsAll extends ClusterAlgorithm {
 			// cluster.
 			else {
 				clusters.addLast(new FragmentCluster());
+				clusters.getLast().setCentroid(minPair[0]);
 				minPair[0].setClusterIndex(clusters.size() - 1);
 				minPair[1].setClusterIndex(clusters.size() - 1);
 				clusters.getLast().add(minPair[0]);
 				clusters.getLast().add(minPair[1]);
 			}
 		}
+		System.out.println();
 	}
 }

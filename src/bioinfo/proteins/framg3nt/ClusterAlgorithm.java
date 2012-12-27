@@ -2,8 +2,6 @@ package bioinfo.proteins.framg3nt;
 
 import java.util.LinkedList;
 
-import com.sun.org.apache.bcel.internal.generic.LLOAD;
-
 public abstract class ClusterAlgorithm {
 	
 	LinkedList<ProteinFragment> fragments = new LinkedList<ProteinFragment>();
@@ -12,7 +10,7 @@ public abstract class ClusterAlgorithm {
 	
 
 	public ClusterAlgorithm(LinkedList<ProteinFragment> fr) {
-		fragments = (LinkedList<ProteinFragment>)fr.clone();
+		fragments = fr;
 	}
 	
 	

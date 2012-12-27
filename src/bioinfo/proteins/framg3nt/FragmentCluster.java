@@ -2,10 +2,8 @@ package bioinfo.proteins.framg3nt;
 
 import java.util.LinkedList;
 
-import org.zkoss.jsp.zul.FCKeditorTag;
-
 public class FragmentCluster {
-	private LinkedList<ProteinFragment> fragments;
+	private LinkedList<ProteinFragment> fragments = new LinkedList<ProteinFragment>();
 	private String name;
 	private ProteinFragment centroid;
 
@@ -35,6 +33,10 @@ public class FragmentCluster {
 
 	public ProteinFragment getCentroid() {
 		return centroid;
+	}
+	
+	public void setCentroid(ProteinFragment centroid) {
+		this.centroid = centroid;
 	}
 
 	@Override
