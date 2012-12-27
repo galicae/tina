@@ -8,7 +8,7 @@ public class FragmentCluster {
 	private ProteinFragment centroid;
 
 	public void calculateCentroid() {
-		int fragLength = centroid.getFragmentLength();
+		int fragLength = 4 * centroid.getFragmentLength();
 		double[][] newCentroid = new double[fragLength][3];
 		ProteinFragment curFragment;
 		double[] curResidue = new double[3];
@@ -34,14 +34,13 @@ public class FragmentCluster {
 	public ProteinFragment getCentroid() {
 		return centroid;
 	}
-	
+
 	public void setCentroid(ProteinFragment centroid) {
 		this.centroid = centroid;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		FragmentCluster f = (FragmentCluster) o;
+	public boolean equals(FragmentCluster o) {
+		FragmentCluster f = o;
 		if (f.getCentroid().getFragmentLength() != centroid.getFragmentLength())
 			return false;
 		for (int i = 0; i < centroid.getFragmentLength(); i++) {
@@ -53,14 +52,39 @@ public class FragmentCluster {
 		}
 		return true;
 	}
-	
+
 	public void add(ProteinFragment f) {
 		fragments.add(f);
+	}
+
+	public void flush() {
+		while (!fragments.isEmpty()) {
+			fragments.remove();
+		}
 	}
 
 	private static final double epsilon = 0.0001d;
 
 	private static boolean isInEpsilon(double a, double b) {
 		return (a > (b - epsilon)) && (a < (b + epsilon));
+	}
+
+	public String toString() {
+		//TODO: write in PDB format
+		StringBuilder result = new StringBuilder();
+		int i = 0;
+		for (ProteinFragment f : fragments) {
+			result.append("MODEL        " + ++i + "\n");
+			for (int j = 0; j < f.getAllResidues().length; j++) {
+				result.append("ATOM     " + j + "  C   ALA A   "
+						+ ((int) j / 4 + 1) + "     " + f.getResidue(j)[0]
+						+ " " + +f.getResidue(j)[1] + " " + f.getResidue(j)[2]
+						+ "               1.00  0.00           C  " + "\n");
+			}
+			result.append("TER " + f.getAllResidues().length + "\n");
+			result.append("ENDMDL" + "\n");
+		}
+
+		return result.toString();
 	}
 }

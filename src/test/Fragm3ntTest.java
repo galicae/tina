@@ -18,5 +18,10 @@ public class Fragm3ntTest {
 		
 		KMeansAllvsAll clustah = new KMeansAllvsAll(pList);
 		clustah.initializeClusters();
+		System.out.println("initialized clusters");
+		clustah.toTextFiles("init");
+		clustah.update();
+		System.out.println("updated");
+		clustah.toTextFiles("upd");
 	}
 }
