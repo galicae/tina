@@ -62,21 +62,33 @@ public class InitClass {
 	 * calculates a matrix that gotoh can accept as a matrix, based on the
 	 * hydropathy scores
 	 * 
-	 * @param hScore
+	 * @param mScore
 	 *            the hydropathy scores as a sparse double matrix (length 26)
 	 */
-	public double[][] calcGotohInputMatrix(double[] hScore, int mult, double add) {
-		double[][] matrix = new double[hScore.length][hScore.length];
+	public double[][] calcGotohInputMatrix(double[] mScore) {
+		double[][] matrix = new double[mScore.length][mScore.length];
 		double temp = 0;
-		for (int i = 0; i < hScore.length; i++) {
-			if (hScore[i] == 0)
+		double min = 0;
+		double max = 0;
+		for (int i = 0; i < mScore.length; i++) {
+			if (min > mScore[i])
+				min = mScore[i];
+			if (max < mScore[i])
+				max = mScore[i];
+		}
+		double maxscore = (max - min) / 2.0;
+		
+		for (int i = 0; i < mScore.length; i++) {
+			if(mScore[i] == 0.0){
 				continue;
-			for (int j = 0; j < hScore.length; j++) {
-				if (hScore[j] == 0)
+			}
+			for (int j = 0; j < mScore.length; j++) {
+				if(mScore[j] == 0.0){
 					continue;
-				temp = hScore[i] - hScore[j];
-				temp = (1 - Math.abs(temp / mult)) * mult * 1.0 - add;
-				temp = ((int) (temp * 1000)) / 1000.0;
+				}
+				temp = Math.abs(mScore[i] - mScore[j]);
+				temp = maxscore - temp;
+				temp = (Math.round (temp * 100)) / 100.0;
 				matrix[i][j] = temp;
 			}
 		}
