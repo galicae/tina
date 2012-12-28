@@ -42,7 +42,7 @@ public abstract class ClusterAlgorithm {
 	}
 
 	private void flushClusters() {
-		for(FragmentCluster c: clusters) {
+		for (FragmentCluster c : clusters) {
 			c.flush();
 		}
 	}
@@ -52,24 +52,30 @@ public abstract class ClusterAlgorithm {
 		double minRMSD = Double.MAX_VALUE;
 		FragmentCluster tempCluster = new FragmentCluster();
 		Transformation t;
-		
-		for(ProteinFragment f: fragments) {
-			for(FragmentCluster cluster: clusters) {
+		int cur = -1;
+
+		for (ProteinFragment f : fragments) {
+			for (FragmentCluster cluster : clusters) {
 				kabschFood[0] = f.getAllResidues();
 				kabschFood[1] = cluster.getCentroid().getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
-				
+
 				// and find the pair with the minimal RMSD.
 				double temp = t.getRmsd();
-//				if(temp > 0)
-//					System.err.println("here boss");
 				if (minRMSD > temp) {
 					minRMSD = temp;
 					tempCluster = cluster;
 				}
 			}
-			tempCluster.add(f);
+			cur = clusters.indexOf(tempCluster);
+			clusters.get(cur).add(f);
 		}
+
+		for (FragmentCluster c : clusters) {
+			System.out.println("============================");
+			System.out.println(c.getCentroid().toString());
+		}
+		cur++;
 	}
 
 	/**
@@ -83,7 +89,9 @@ public abstract class ClusterAlgorithm {
 		ProteinFragment curCentroid;
 		boolean updated = false;
 		for (FragmentCluster c : clusters) {
-			curCentroid = c.getCentroid();
+			curCentroid = new ProteinFragment(c.getCentroid().getID(), c
+					.getCentroid().getAllResidues(), c.getCentroid()
+					.getStartIndex(), c.getCentroid().getFragmentLength());
 			c.calculateCentroid();
 			if (!updated && c.equals(curCentroid))
 				updated = true;
@@ -118,14 +126,15 @@ public abstract class ClusterAlgorithm {
 			updated = updateClusters();
 		}
 	}
-	
+
 	public void toTextFiles(String prefix) {
-		for(FragmentCluster c: clusters) {
+		for (FragmentCluster c : clusters) {
 			try {
-				BufferedWriter br = new BufferedWriter(new FileWriter(prefix + "_" + c.getCentroid().getID()));
+				BufferedWriter br = new BufferedWriter(new FileWriter(prefix
+						+ "_" + c.getCentroid().getID()));
 				br.write(c.toString());
-			}
-			catch(Exception e) {
+				br.close();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

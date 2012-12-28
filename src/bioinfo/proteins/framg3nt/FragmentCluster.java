@@ -1,8 +1,7 @@
 package bioinfo.proteins.framg3nt;
 
+import java.text.DecimalFormat;
 import java.util.LinkedList;
-
-import bioinfo.proteins.AtomType;
 
 public class FragmentCluster {
 	private LinkedList<ProteinFragment> fragments = new LinkedList<ProteinFragment>();
@@ -76,18 +75,22 @@ public class FragmentCluster {
 		int i = 0;
 		StringBuilder result = new StringBuilder();
 		String tempResult = "";
+		
+		String pattern = "####.###";
+		DecimalFormat myFormatter = new DecimalFormat(pattern);
+		
 		for (ProteinFragment f : fragments) {
 			result.append("MODEL        " + ++i + "\n");
 			for (int j = 0; j < f.getAllResidues().length; j++) {
 				tempResult = "ATOM  ##### aaaa+rrr c****i   xxxxxxxxyyyyyyyyzzzzzzzzooooootttttt          eehh\n";
 				// coordinate strings
-				String xCoord = Double.toString(f.getResidue(j)[0]);
+				String xCoord = myFormatter.format(f.getResidue(j)[0]);
 				while (xCoord.length() < 8)
 					xCoord = " " + xCoord;
-				String yCoord = Double.toString(f.getResidue(j)[1]);
+				String yCoord = myFormatter.format(f.getResidue(j)[1]);
 				while (yCoord.length() < 8)
 					yCoord = " " + yCoord;
-				String zCoord = Double.toString(f.getResidue(j)[2]);
+				String zCoord = myFormatter.format(f.getResidue(j)[2]);
 				while (zCoord.length() < 8)
 					zCoord = " " + zCoord;
 				// atom type
@@ -104,14 +107,16 @@ public class FragmentCluster {
 				tempResult = tempResult.replace("****",
 						String.format("%4d", (int) j / 4));
 				tempResult = tempResult.replace("rrr", "ALA");
-				tempResult = tempResult.replace("#####", String.format("%5d", j));
+				tempResult = tempResult.replace("#####",
+						String.format("%5d", j));
 				tempResult = tempResult.replace("aaaa", atomType);
 				tempResult = tempResult.replace("xxxxxxxx", xCoord);
 				tempResult = tempResult.replace("yyyyyyyy", yCoord);
 				tempResult = tempResult.replace("zzzzzzzz", zCoord);
 				result.append(tempResult);
 			}
-			tempResult = tempResult + ("TER " + (f.getAllResidues().length - 1) + "\n");			
+			tempResult = tempResult
+					+ ("TER " + (f.getAllResidues().length - 1) + "\n");
 			result.append("ENDMDL" + "\n");
 		}
 		return result.toString();

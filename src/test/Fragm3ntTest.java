@@ -2,7 +2,6 @@ package test;
 
 import java.util.LinkedList;
 
-import bioinfo.pdb.PDBFile;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 import bioinfo.proteins.framg3nt.Fragmenter;
@@ -16,7 +15,7 @@ public class Fragm3ntTest {
 
 		LinkedList<ProteinFragment> pList = new LinkedList<ProteinFragment>();
 		Fragmenter.crunch(pdb1, pList, 5);
-		
+
 		KMeansAllvsAll clustah = new KMeansAllvsAll(pList);
 		clustah.initializeClusters();
 		System.out.println("initialized clusters");
