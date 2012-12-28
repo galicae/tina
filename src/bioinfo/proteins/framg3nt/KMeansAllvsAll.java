@@ -59,6 +59,6 @@ public class KMeansAllvsAll extends ClusterAlgorithm {
 				clusters.getLast().add(minPair[1]);
 			}
 		}
-//		System.out.println();
+		System.out.println();
 	}
 }

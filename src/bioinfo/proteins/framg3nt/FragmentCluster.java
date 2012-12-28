@@ -2,6 +2,8 @@ package bioinfo.proteins.framg3nt;
 
 import java.util.LinkedList;
 
+import bioinfo.proteins.AtomType;
+
 public class FragmentCluster {
 	private LinkedList<ProteinFragment> fragments = new LinkedList<ProteinFragment>();
 	private String name;
@@ -69,22 +71,49 @@ public class FragmentCluster {
 		return (a > (b - epsilon)) && (a < (b + epsilon));
 	}
 
+	@Override
 	public String toString() {
-		//TODO: write in PDB format
-		StringBuilder result = new StringBuilder();
 		int i = 0;
+		StringBuilder result = new StringBuilder();
+		String tempResult = "";
 		for (ProteinFragment f : fragments) {
 			result.append("MODEL        " + ++i + "\n");
 			for (int j = 0; j < f.getAllResidues().length; j++) {
-				result.append("ATOM     " + j + "  C   ALA A   "
-						+ ((int) j / 4 + 1) + "     " + f.getResidue(j)[0]
-						+ " " + +f.getResidue(j)[1] + " " + f.getResidue(j)[2]
-						+ "               1.00  0.00           C  " + "\n");
+				tempResult = "ATOM  ##### aaaa+rrr c****i   xxxxxxxxyyyyyyyyzzzzzzzzooooootttttt          eehh\n";
+				// coordinate strings
+				String xCoord = Double.toString(f.getResidue(j)[0]);
+				while (xCoord.length() < 8)
+					xCoord = " " + xCoord;
+				String yCoord = Double.toString(f.getResidue(j)[1]);
+				while (yCoord.length() < 8)
+					yCoord = " " + yCoord;
+				String zCoord = Double.toString(f.getResidue(j)[2]);
+				while (zCoord.length() < 8)
+					zCoord = " " + zCoord;
+				// atom type
+				String atomType = " C  ";
+				String element = " C";
+
+				tempResult = tempResult.replace("oooooo", "  1.00");
+				tempResult = tempResult.replace("tttttt", "  0.00");
+				tempResult = tempResult.replace("h", " ");
+				tempResult = tempResult.replace("c", "A");
+				tempResult = tempResult.replace("+", " ");
+				tempResult = tempResult.replace("i", " ");
+				tempResult = tempResult.replace("ee", element);
+				tempResult = tempResult.replace("****",
+						String.format("%4d", (int) j / 4));
+				tempResult = tempResult.replace("rrr", "ALA");
+				tempResult = tempResult.replace("#####", String.format("%5d", j));
+				tempResult = tempResult.replace("aaaa", atomType);
+				tempResult = tempResult.replace("xxxxxxxx", xCoord);
+				tempResult = tempResult.replace("yyyyyyyy", yCoord);
+				tempResult = tempResult.replace("zzzzzzzz", zCoord);
+				result.append(tempResult);
 			}
-			result.append("TER " + f.getAllResidues().length + "\n");
+			tempResult = tempResult + ("TER " + (f.getAllResidues().length - 1) + "\n");			
 			result.append("ENDMDL" + "\n");
 		}
-
 		return result.toString();
 	}
 }
