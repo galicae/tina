@@ -23,13 +23,18 @@ public class Fragm3ntTest {
 		System.out.println("initialized clusters");
 		clustah.toTextFiles("init");
 		
-		int sumOfFrags = 0;
-		for(FragmentCluster c: clustah.getClusters()) {
-			sumOfFrags += c.getSize();
-		}
-		System.out.format("%d out of %d fragments in %d clusters." , sumOfFrags, initSum, clustah.getClusters().size());
+//		int sumOfFrags = 0;
+//		for(FragmentCluster c: clustah.getClusters()) {
+//			sumOfFrags += c.getSize();
+//		}
+////		System.out.format("%d out of %d fragments in %d clusters.\n" , sumOfFrags, initSum, clustah.getClusters().size());
 //		clustah.update();
+//		sumOfFrags = 0;
+//		for(FragmentCluster c: clustah.getClusters()) {
+//			sumOfFrags += c.getSize();
+//		}
 //		System.out.println("updated");
 //		clustah.toTextFiles("upd");
+//		System.err.format("%d out of %d fragments in %d clusters.\n" , sumOfFrags, initSum, clustah.getClusters().size());
 	}
 }

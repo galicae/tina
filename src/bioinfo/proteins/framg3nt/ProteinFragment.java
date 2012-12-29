@@ -47,6 +47,9 @@ public class ProteinFragment {
 		return clustered;
 	}
 	
+	public void setCoordinates(double[][] nCoord) {
+		this.coordinates = nCoord;
+	}
 	public String toString() {
 		String result = "";
 		result += "Fragment " + id + ", residue length " + fragLength + "\n";

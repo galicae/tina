@@ -16,7 +16,6 @@ public class KMeansAllvsAll extends ClusterAlgorithm {
 		double[][][] kabschFood = new double[2][fragments.peek().fragLength][3];
 		double minRMSD = Double.MAX_VALUE;
 		Transformation t;
-		ProteinFragment tmpFrag;
 		ProteinFragment[] minPair = new ProteinFragment[2];
 
 		// for every fragment pair...
@@ -50,15 +49,23 @@ public class KMeansAllvsAll extends ClusterAlgorithm {
 			// other fragment to the same cluster
 			if (minPair[1].getClusterIndex() > -1) {
 				minPair[0].setClusterIndex(minPair[1].getClusterIndex());
+				kabschFood[0] = clusters.get(minPair[0].getClusterIndex()).getCentroid().getAllResidues();
+				kabschFood[1] = minPair[0].getAllResidues();
+				t = Kabsch.calculateTransformation(kabschFood);
+				minPair[0].setCoordinates(t.transform(minPair[0].getAllResidues()));
 				clusters.get(minPair[1].getClusterIndex()).add(minPair[0]);
 			}
 			// else create a new cluster and shove both fragments in this
 			// cluster.
 			else {
 				clusters.addLast(new FragmentCluster());
-				clusters.getLast().setCentroid(minPair[0]);
+				clusters.getLast().setCentroid(minPair[1]);
 				minPair[0].setClusterIndex(clusters.size() - 1);
 				minPair[1].setClusterIndex(clusters.size() - 1);
+				kabschFood[0] = clusters.get(minPair[0].getClusterIndex()).getCentroid().getAllResidues();
+				kabschFood[1] = minPair[0].getAllResidues();
+				t = Kabsch.calculateTransformation(kabschFood);
+				minPair[0].setCoordinates(t.transform(minPair[0].getAllResidues()));
 				clusters.getLast().add(minPair[0]);
 				clusters.getLast().add(minPair[1]);
 			}

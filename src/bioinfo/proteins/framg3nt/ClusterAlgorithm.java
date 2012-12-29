@@ -56,6 +56,7 @@ public abstract class ClusterAlgorithm {
 
 		for (ProteinFragment f : fragments) {
 			kabschFood[0] = f.getAllResidues();
+			minRMSD = Double.MAX_VALUE;
 			for (FragmentCluster cluster : clusters) {
 				kabschFood[1] = cluster.getCentroid().getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
@@ -67,13 +68,7 @@ public abstract class ClusterAlgorithm {
 					tempCluster = cluster;
 				}
 			}
-			cur = clusters.indexOf(tempCluster);
-			clusters.get(cur).add(f);
-		}
-
-		for (FragmentCluster c : clusters) {
-			System.out.println("============================");
-			System.out.println(c.getCentroid().toString());
+			tempCluster.add(f);
 		}
 		cur++;
 	}
