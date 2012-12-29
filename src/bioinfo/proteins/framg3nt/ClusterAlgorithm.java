@@ -68,9 +68,12 @@ public abstract class ClusterAlgorithm {
 					tempCluster = cluster;
 				}
 			}
+			kabschFood[0] = tempCluster.getCentroid().getAllResidues();
+			kabschFood[1] = f.getAllResidues();
+			t = Kabsch.calculateTransformation(kabschFood);
+			f.setCoordinates(t.transform(f.getAllResidues()));
 			tempCluster.add(f);
 		}
-		cur++;
 	}
 
 	/**
@@ -108,6 +111,11 @@ public abstract class ClusterAlgorithm {
 			if (!updated)
 				break;
 		}
+		
+		for(FragmentCluster f: (LinkedList<FragmentCluster>)clusters.clone()) {
+			if(f.getSize() != 0)
+				System.out.println(f.getCentroid().getClusterIndex());
+		}
 	}
 
 	/**
@@ -119,6 +127,10 @@ public abstract class ClusterAlgorithm {
 		boolean updated = true;
 		while (updated) {
 			updated = updateClusters();
+		}
+		for(FragmentCluster f: (LinkedList<FragmentCluster>)clusters.clone()) {
+			if(f.getSize() == 0)
+				clusters.remove(f);
 		}
 	}
 

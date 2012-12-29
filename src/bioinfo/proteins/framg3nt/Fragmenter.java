@@ -19,7 +19,7 @@ public class Fragmenter {
 	 *            the desired length of protein fragments
 	 * @return the new list of fragments
 	 */
-	public static LinkedList<ProteinFragment> crunch(PDBEntry pdb,
+	public static LinkedList<ProteinFragment> crunchBackboneN(PDBEntry pdb,
 			LinkedList<ProteinFragment> l, int fLength) {
 		for (int i = 0; i < pdb.length() - fLength; i++) {
 			double[][] temp = new double[4 * fLength][3];
@@ -31,6 +31,26 @@ public class Fragmenter {
 				temp[(j-i) * 4 + 2] = pdb.getAminoAcid(j).getAtomByType(AtomType.O)
 						.getPosition();
 				temp[(j-i) * 4 + 3] = pdb.getAminoAcid(j).getAtomByType(AtomType.C)
+						.getPosition();
+			}
+			ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_"
+					+ i, temp, i, fLength);
+			l.add(tempFrag);
+		}
+		return l;
+	}
+	
+	
+	public static LinkedList<ProteinFragment> crunchBackboneC(PDBEntry pdb,
+			LinkedList<ProteinFragment> l, int fLength) {
+		for (int i = 0; i < pdb.length() - fLength; i++) {
+			double[][] temp = new double[3 * fLength][3];
+			for (int j = i; j < i + fLength; j++) {
+				temp[(j-i) * 3 + 0] = pdb.getAminoAcid(j)
+						.getAtomByType(AtomType.N).getPosition();
+				temp[(j-i) * 3 + 1] = pdb.getAminoAcid(j).getAtomByType(AtomType.CA)
+						.getPosition();
+				temp[(j-i) * 3 + 2] = pdb.getAminoAcid(j).getAtomByType(AtomType.C)
 						.getPosition();
 			}
 			ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_"
