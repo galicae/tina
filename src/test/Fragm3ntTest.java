@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
+import bioinfo.proteins.framg3nt.FragmentCluster;
 import bioinfo.proteins.framg3nt.Fragmenter;
 import bioinfo.proteins.framg3nt.KMeansAllvsAll;
 import bioinfo.proteins.framg3nt.ProteinFragment;
@@ -15,13 +16,20 @@ public class Fragm3ntTest {
 
 		LinkedList<ProteinFragment> pList = new LinkedList<ProteinFragment>();
 		Fragmenter.crunch(pdb1, pList, 5);
-
+		int initSum = pList.size();
+		
 		KMeansAllvsAll clustah = new KMeansAllvsAll(pList);
 		clustah.initializeClusters();
 		System.out.println("initialized clusters");
 		clustah.toTextFiles("init");
-		clustah.update();
-		System.out.println("updated");
-		clustah.toTextFiles("upd");
+		
+		int sumOfFrags = 0;
+		for(FragmentCluster c: clustah.getClusters()) {
+			sumOfFrags += c.getSize();
+		}
+		System.out.format("%d out of %d fragments in %d clusters." , sumOfFrags, initSum, clustah.getClusters().size());
+//		clustah.update();
+//		System.out.println("updated");
+//		clustah.toTextFiles("upd");
 	}
 }

@@ -15,11 +15,15 @@ public class KMeansAllvsAll extends ClusterAlgorithm {
 	public void initializeClusters() {
 		double[][][] kabschFood = new double[2][fragments.peek().fragLength][3];
 		double minRMSD = Double.MAX_VALUE;
-		ProteinFragment[] minPair = new ProteinFragment[2];
 		Transformation t;
+		ProteinFragment tmpFrag;
+		ProteinFragment[] minPair = new ProteinFragment[2];
 
 		// for every fragment pair...
 		for (int i = 0; i < fragments.size(); i++) {
+			if(fragments.get(i).getClusterIndex() > -1)
+				continue;
+			minRMSD = Double.MAX_VALUE;
 			for (int j = 0; j < fragments.size(); j++) {
 				// except of course every fragment with itself, that would
 				// explode the experiment
@@ -36,6 +40,7 @@ public class KMeansAllvsAll extends ClusterAlgorithm {
 //					System.err.println("here boss");
 				if (minRMSD > temp) {
 					minRMSD = temp;
+					minPair = new ProteinFragment[2];
 					minPair[0] = fragments.get(i);
 					minPair[1] = fragments.get(j);
 				}
@@ -44,9 +49,8 @@ public class KMeansAllvsAll extends ClusterAlgorithm {
 			// if one of the two fragments already belongs to a cluster, add the
 			// other fragment to the same cluster
 			if (minPair[1].getClusterIndex() > -1) {
+				minPair[0].setClusterIndex(minPair[1].getClusterIndex());
 				clusters.get(minPair[1].getClusterIndex()).add(minPair[0]);
-			} else if (minPair[0].getClusterIndex() > -1) {
-				clusters.get(minPair[0].getClusterIndex()).add(minPair[1]);
 			}
 			// else create a new cluster and shove both fragments in this
 			// cluster.

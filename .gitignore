@@ -18,3 +18,5 @@ WebContent/WEB-INF/lib/TMscore.jar
 WebContent/WEB-INF/lib/colt.jar
 WebContent/WEB-INF/lib/concurrent.jar
 WebContent/jobs
+init*
+upd*

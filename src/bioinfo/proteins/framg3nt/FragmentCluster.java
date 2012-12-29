@@ -2,6 +2,7 @@ package bioinfo.proteins.framg3nt;
 
 import java.text.DecimalFormat;
 import java.util.LinkedList;
+import java.util.Locale;
 
 public class FragmentCluster {
 	private LinkedList<ProteinFragment> fragments = new LinkedList<ProteinFragment>();
@@ -60,6 +61,9 @@ public class FragmentCluster {
 
 	public void flush() {
 		while (!fragments.isEmpty()) {
+			// reset everything
+			fragments.getFirst().setClusterIndex(-1);
+			// then remove it
 			fragments.remove();
 		}
 	}
@@ -75,22 +79,25 @@ public class FragmentCluster {
 		int i = 0;
 		StringBuilder result = new StringBuilder();
 		String tempResult = "";
-		
-		String pattern = "####.###";
-		DecimalFormat myFormatter = new DecimalFormat(pattern);
-		
+
+		// String pattern = "####.###";
+		// DecimalFormat myFormatter = new DecimalFormat(pattern);
+
 		for (ProteinFragment f : fragments) {
 			result.append("MODEL        " + ++i + "\n");
 			for (int j = 0; j < f.getAllResidues().length; j++) {
 				tempResult = "ATOM  ##### aaaa+rrr c****i   xxxxxxxxyyyyyyyyzzzzzzzzooooootttttt          eehh\n";
 				// coordinate strings
-				String xCoord = myFormatter.format(f.getResidue(j)[0]);
+				// String xCoord = myFormatter.format(f.getResidue(j)[0]);
+				String xCoord = String.valueOf(f.getResidue(j)[0]);
 				while (xCoord.length() < 8)
 					xCoord = " " + xCoord;
-				String yCoord = myFormatter.format(f.getResidue(j)[1]);
+				// String yCoord = myFormatter.format(f.getResidue(j)[1]);
+				String yCoord = String.valueOf(f.getResidue(j)[1]);
 				while (yCoord.length() < 8)
 					yCoord = " " + yCoord;
-				String zCoord = myFormatter.format(f.getResidue(j)[2]);
+				// String zCoord = myFormatter.format(f.getResidue(j)[2]);
+				String zCoord = String.valueOf(f.getResidue(j)[2]);
 				while (zCoord.length() < 8)
 					zCoord = " " + zCoord;
 				// atom type
@@ -120,5 +127,9 @@ public class FragmentCluster {
 			result.append("ENDMDL" + "\n");
 		}
 		return result.toString();
+	}
+
+	public int getSize() {
+		return fragments.size();
 	}
 }

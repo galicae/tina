@@ -55,8 +55,8 @@ public abstract class ClusterAlgorithm {
 		int cur = -1;
 
 		for (ProteinFragment f : fragments) {
+			kabschFood[0] = f.getAllResidues();
 			for (FragmentCluster cluster : clusters) {
-				kabschFood[0] = f.getAllResidues();
 				kabschFood[1] = cluster.getCentroid().getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
 
@@ -138,5 +138,9 @@ public abstract class ClusterAlgorithm {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public LinkedList<FragmentCluster> getClusters() {
+		return this.clusters;
 	}
 }
