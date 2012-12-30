@@ -58,4 +58,20 @@ public class ProteinFragment {
 		}
 		return result;
 	}
+	
+	public boolean equals(ProteinFragment other) {
+		for (int i = 0; i < other.getFragmentLength(); i++) {
+			for (int j = 0; j < 3; j++) {
+				if (!isInEpsilon(coordinates[i][j], other.getAllResidues()[i][j]))
+					return false;
+			}
+		}		
+		return true;
+	}
+	
+	private static final double epsilon = 0.0001d;
+
+	private static boolean isInEpsilon(double a, double b) {
+		return (a > (b - epsilon)) && (a < (b + epsilon));
+	}
 }

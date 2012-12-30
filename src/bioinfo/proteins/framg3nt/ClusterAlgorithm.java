@@ -4,8 +4,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.LinkedList;
 
-import org.zkoss.jsp.zul.FCKeditorTag;
-
 import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.Transformation;
 
@@ -34,45 +32,68 @@ public abstract class ClusterAlgorithm {
 	 *         false if not.
 	 */
 	public boolean updateClusters() {
+		System.out.println("starting update...");
 		boolean updated = false;
 		updated = calculateCentroids();
 		flushClusters();
-		assignInstances();
+		assignInstances();		
+		System.out.println("update closed");
 		return updated;
 	}
 
+	/**
+	 * empties clusters from their protein fragments
+	 */
 	private void flushClusters() {
 		for (FragmentCluster c : clusters) {
 			c.flush();
 		}
 	}
 
+	/**
+	 * goes over all protein fragments and assigns them to one of the clusters
+	 * calculated by the init method
+	 */
 	public void assignInstances() {
 		double[][][] kabschFood = new double[2][fragments.peek().fragLength][3];
 		double minRMSD = Double.MAX_VALUE;
 		FragmentCluster tempCluster = new FragmentCluster();
 		Transformation t;
-		int cur = -1;
+		// System.out.println("===================================\nCalling update\n===================================");
+		// System.out.println(clusters.size());
 
 		for (ProteinFragment f : fragments) {
 			kabschFood[0] = f.getAllResidues();
 			minRMSD = Double.MAX_VALUE;
 			for (FragmentCluster cluster : clusters) {
 				kabschFood[1] = cluster.getCentroid().getAllResidues();
+				if(kabschFood[1].length == 5) {
+//					System.out.println(f.getID() + " " + cluster.getCentroid().getID());
+					kabschFood[1] = cluster.getCentroid().getAllResidues();
+				}
 				t = Kabsch.calculateTransformation(kabschFood);
 
 				// and find the pair with the minimal RMSD.
 				double temp = t.getRmsd();
-				if (minRMSD > temp) {
+				if (minRMSD >= temp) {
 					minRMSD = temp;
 					tempCluster = cluster;
 				}
 			}
-			kabschFood[0] = tempCluster.getCentroid().getAllResidues();
-			kabschFood[1] = f.getAllResidues();
-			t = Kabsch.calculateTransformation(kabschFood);
-			f.setCoordinates(t.transform(f.getAllResidues()));
-			tempCluster.add(f);
+			// System.out.println("assign fragment " + f.getID() +
+			// " to cluster " + tempCluster.getCentroid().getID() +
+			// " with RMSD " + minRMSD);
+			if (minRMSD < 2) {
+				kabschFood[0] = tempCluster.getCentroid().getAllResidues();
+				kabschFood[1] = f.getAllResidues();
+				t = Kabsch.calculateTransformation(kabschFood);
+				f.setCoordinates(t.transform(f.getAllResidues()));
+				tempCluster.add(f);
+			} else {
+				clusters.addLast(new FragmentCluster());
+				clusters.getLast().setCentroid(f);
+				clusters.getLast().add(f);
+			}
 		}
 	}
 
@@ -85,14 +106,16 @@ public abstract class ClusterAlgorithm {
 	 */
 	public boolean calculateCentroids() {
 		ProteinFragment curCentroid;
-		boolean updated = false;
+		boolean updated = true;
 		for (FragmentCluster c : clusters) {
 			curCentroid = new ProteinFragment(c.getCentroid().getID(), c
 					.getCentroid().getAllResidues(), c.getCentroid()
 					.getStartIndex(), c.getCentroid().getFragmentLength());
 			c.calculateCentroid();
-			if (!updated && c.equals(curCentroid))
-				updated = true;
+			if (updated && c.getCentroid().equals(curCentroid)) {
+				updated = false;
+				System.out.println("cluster " + c.getCentroid().getID() + " has a new centroid!");
+			}
 		}
 		return updated;
 	}
@@ -111,9 +134,9 @@ public abstract class ClusterAlgorithm {
 			if (!updated)
 				break;
 		}
-		
-		for(FragmentCluster f: (LinkedList<FragmentCluster>)clusters.clone()) {
-			if(f.getSize() != 0)
+
+		for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters.clone()) {
+			if (f.getSize() != 0)
 				System.out.println(f.getCentroid().getClusterIndex());
 		}
 	}
@@ -128,8 +151,8 @@ public abstract class ClusterAlgorithm {
 		while (updated) {
 			updated = updateClusters();
 		}
-		for(FragmentCluster f: (LinkedList<FragmentCluster>)clusters.clone()) {
-			if(f.getSize() == 0)
+		for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters.clone()) {
+			if (f.getSize() == 0)
 				clusters.remove(f);
 		}
 	}
@@ -146,7 +169,7 @@ public abstract class ClusterAlgorithm {
 			}
 		}
 	}
-	
+
 	public LinkedList<FragmentCluster> getClusters() {
 		return this.clusters;
 	}

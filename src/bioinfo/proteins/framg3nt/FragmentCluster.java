@@ -10,27 +10,27 @@ public class FragmentCluster {
 	private ProteinFragment centroid;
 
 	public void calculateCentroid() {
-		int fragLength = 4 * centroid.getFragmentLength();
-		double[][] newCentroid = new double[fragLength][3];
+		int actLength = centroid.getAllResidues().length;
+		double[][] newCentroid = new double[actLength][3];
 		ProteinFragment curFragment;
 		double[] curResidue = new double[3];
 		while (!fragments.isEmpty()) {
 			curFragment = fragments.pop();
-			for (int i = 0; i < fragLength; i++) {
+			for (int i = 0; i < actLength; i++) {
 				curResidue = curFragment.getResidue(i);
 				newCentroid[i][0] += curResidue[0];
 				newCentroid[i][1] += curResidue[1];
 				newCentroid[i][2] += curResidue[2];
 			}
 		}
-		for (int i = 0; i < fragLength; i++) {
-			newCentroid[i][0] /= fragLength * 1.;
-			newCentroid[i][1] /= fragLength * 1.;
-			newCentroid[i][2] /= fragLength * 1.;
+		for (int i = 0; i < actLength; i++) {
+			newCentroid[i][0] /= actLength * 1.;
+			newCentroid[i][1] /= actLength * 1.;
+			newCentroid[i][2] /= actLength * 1.;
 		}
 
 		centroid = new ProteinFragment(centroid.getID(), newCentroid,
-				centroid.getStartIndex(), fragLength);
+				centroid.getStartIndex(), actLength);
 	}
 
 	public ProteinFragment getCentroid() {
