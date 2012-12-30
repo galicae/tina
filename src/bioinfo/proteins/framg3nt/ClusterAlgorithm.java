@@ -32,12 +32,12 @@ public abstract class ClusterAlgorithm {
 	 *         false if not.
 	 */
 	public boolean updateClusters() {
-		System.out.println("starting update...");
+//		System.out.println("starting update...");
 		boolean updated = false;
 		updated = calculateCentroids();
 		flushClusters();
 		assignInstances();		
-		System.out.println("update closed");
+//		System.out.println("update closed");
 		return updated;
 	}
 
@@ -106,18 +106,20 @@ public abstract class ClusterAlgorithm {
 	 */
 	public boolean calculateCentroids() {
 		ProteinFragment curCentroid;
-		boolean updated = true;
+		boolean needMoarUpdate = true;
 		for (FragmentCluster c : clusters) {
 			curCentroid = new ProteinFragment(c.getCentroid().getID(), c
 					.getCentroid().getAllResidues(), c.getCentroid()
 					.getStartIndex(), c.getCentroid().getFragmentLength());
 			c.calculateCentroid();
-			if (updated && c.getCentroid().equals(curCentroid)) {
-				updated = false;
-				System.out.println("cluster " + c.getCentroid().getID() + " has a new centroid!");
+			if (c.getCentroid().equals(curCentroid)) {
+				needMoarUpdate = false;
+				System.out.println("cluster " + c.getCentroid().getID() + " has the same centroid!");
 			}
+			else
+				needMoarUpdate = true;
 		}
-		return updated;
+		return needMoarUpdate;
 	}
 
 	/**
@@ -127,18 +129,18 @@ public abstract class ClusterAlgorithm {
 	 * @param n
 	 *            how many loops to run over the update function
 	 */
+	@Deprecated
 	public void update(int n) {
-		boolean updated = false;
-		for (int i = 0; i < n; i++) {
+		System.out.println("Starting update....");
+		boolean updated = true;
+		for(int i = 0; i < n; i++) {
 			updated = updateClusters();
-			if (!updated)
-				break;
+			for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters.clone()) {
+				if (f.getSize() == 0)
+					clusters.remove(f);
+			}
 		}
-
-		for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters.clone()) {
-			if (f.getSize() != 0)
-				System.out.println(f.getCentroid().getClusterIndex());
-		}
+		
 	}
 
 	/**
@@ -147,13 +149,14 @@ public abstract class ClusterAlgorithm {
 	 * a lot of clusters
 	 */
 	public void update() {
+		System.out.println("Starting update....");
 		boolean updated = true;
 		while (updated) {
 			updated = updateClusters();
-		}
-		for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters.clone()) {
-			if (f.getSize() == 0)
-				clusters.remove(f);
+			for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters.clone()) {
+				if (f.getSize() == 0)
+					clusters.remove(f);
+			}
 		}
 	}
 
