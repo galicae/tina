@@ -1,4 +1,4 @@
-package bioinfo.proteins.framg3nt;
+package bioinfo.proteins.fragm3nt;
 
 import java.util.LinkedList;
 

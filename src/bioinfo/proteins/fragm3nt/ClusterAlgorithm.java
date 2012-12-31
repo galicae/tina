@@ -1,4 +1,4 @@
-package bioinfo.proteins.framg3nt;
+package bioinfo.proteins.fragm3nt;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -134,6 +134,7 @@ public abstract class ClusterAlgorithm {
 		System.out.println("Starting update....");
 		boolean updated = true;
 		for(int i = 0; i < n; i++) {
+			System.out.println("iteration " + i);
 			updated = updateClusters();
 			for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters.clone()) {
 				if (f.getSize() == 0)

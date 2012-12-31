@@ -14,68 +14,76 @@ import bioinfo.alignment.Alignable;
  * @author gobi_4
  * @date November 24, 2012
  */
-public class PDBEntry implements Alignable,Serializable{
-	
+public class PDBEntry implements Alignable, Serializable {
+
 	private final String id;
 	private final char chainID;
 	private final int chainIDNum;
 	private AminoAcid[] aminoAcids;
 	private int length;
-	
+
 	/**
 	 * Constructor for an the PDBEntry
-	 * @param arg1 the id of the PDBEntry
+	 * 
+	 * @param arg1
+	 *            the id of the PDBEntry
 	 */
 	public PDBEntry(String arg1) {
-		if (arg1.length()==4) {
+		if (arg1.length() == 4) {
 			this.id = arg1;
-			this.chainID='A';
-			this.chainIDNum=0;
+			this.chainID = 'A';
+			this.chainIDNum = 0;
 		} else {
 			this.id = arg1.substring(0, 4);
-			this.chainID=arg1.charAt(4);
-			this.chainIDNum=Integer.valueOf(arg1.substring(5, 7));
+			this.chainID = arg1.charAt(4);
+			this.chainIDNum = Integer.valueOf(arg1.substring(5, 7));
 		}
 	}
-	
+
 	/**
 	 * Constructor for an the PDBEntry
-	 * @param arg1 the id of the PDBEntry
-	 * @param arg2 Array of AminoAcids
+	 * 
+	 * @param arg1
+	 *            the id of the PDBEntry
+	 * @param arg2
+	 *            Array of AminoAcids
 	 */
 	public PDBEntry(String arg1, AminoAcid[] arg2) {
-		if (arg1.length()==4) {
+		if (arg1.length() == 4) {
 			this.id = arg1;
-			this.chainID='A';
-			this.chainIDNum=0;
+			this.chainID = 'A';
+			this.chainIDNum = 0;
 		} else {
 			this.id = arg1.substring(0, 4);
-			this.chainID=arg1.charAt(4);
-			this.chainIDNum=Integer.valueOf(arg1.substring(5, 7));
+			this.chainID = arg1.charAt(4);
+			this.chainIDNum = Integer.valueOf(arg1.substring(5, 7));
 		}
 		this.aminoAcids = arg2;
 		this.length = arg2.length;
 	}
-	
+
 	/**
 	 * Constructor for an the PDBEntry
-	 * @param arg1 the id of the PDBEntry
-	 * @param arg2 Array of AminoAcids
+	 * 
+	 * @param arg1
+	 *            the id of the PDBEntry
+	 * @param arg2
+	 *            Array of AminoAcids
 	 */
 	public PDBEntry(String arg1, List<AminoAcid> arg2) {
-		if (arg1.length()==4) {
+		if (arg1.length() == 4) {
 			this.id = arg1;
-			this.chainID='A';
-			this.chainIDNum=0;
+			this.chainID = 'A';
+			this.chainIDNum = 0;
 		} else {
 			this.id = arg1.substring(0, 4);
-			this.chainID=arg1.charAt(4);
-			this.chainIDNum=Integer.valueOf(arg1.substring(5, 7));
+			this.chainID = arg1.charAt(4);
+			this.chainIDNum = Integer.valueOf(arg1.substring(5));
+			this.aminoAcids = arg2.toArray(new AminoAcid[0]);
+			this.length = arg2.size();
 		}
-		this.aminoAcids = arg2.toArray(new AminoAcid[0]);
-		this.length = arg2.size();
 	}
-	
+
 	/**
 	 * @return the ID of the PDBEntry
 	 */
@@ -83,7 +91,7 @@ public class PDBEntry implements Alignable,Serializable{
 	public String getID() {
 		return id;
 	}
-	
+
 	/**
 	 * @return the chainID
 	 */
@@ -97,11 +105,11 @@ public class PDBEntry implements Alignable,Serializable{
 	public int getChainIDNum() {
 		return chainIDNum;
 	}
-	
 
 	/**
 	 * Adds an AminoAcid to the entry. Usage discouraged because very slow.
 	 * Better give the Constructor the full AminoAcid List.
+	 * 
 	 * @deprecated
 	 * @param arg
 	 */
@@ -114,7 +122,7 @@ public class PDBEntry implements Alignable,Serializable{
 		aminoAcids = result;
 		length++;
 	}
-	
+
 	public AminoAcid getAminoAcid(int n) {
 		return aminoAcids[n];
 	}
@@ -128,21 +136,27 @@ public class PDBEntry implements Alignable,Serializable{
 	public Object getComp(int n) {
 		return getAminoAcid(n);
 	}
-	
+
 	/**
 	 * @return all AminoAcids as a (human readable) String
 	 */
-	public String getAtomSectionAsString(){
+	public String getAtomSectionAsString() {
 		int lineCounter = 0;
 		String out = "";
-		for(int i = 0; i != aminoAcids.length; i++){
-			for(int j = 0; j != aminoAcids[i].getAtomNumber(); j++){
-				// TODO Some Entries have no 7-letter ID (1TIMA00) but four letters (1TIM)
+		for (int i = 0; i != aminoAcids.length; i++) {
+			for (int j = 0; j != aminoAcids[i].getAtomNumber(); j++) {
+				// TODO Some Entries have no 7-letter ID (1TIMA00) but four
+				// letters (1TIM)
 				// ==> make some Method for IDs without chainID!
-				out += aminoAcids[i].getAtom(j).toString(lineCounter++,i,aminoAcids[i].getName().getThreeLetterCode(),chainID).trim()+"\n";
+				out += aminoAcids[i]
+						.getAtom(j)
+						.toString(lineCounter++, i,
+								aminoAcids[i].getName().getThreeLetterCode(),
+								chainID).trim()
+						+ "\n";
 			}
 		}
 		return out;
 	}
-	
+
 }
