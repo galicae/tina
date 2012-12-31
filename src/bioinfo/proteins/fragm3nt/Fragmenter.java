@@ -21,9 +21,10 @@ public class Fragmenter {
 	 */
 	public static LinkedList<ProteinFragment> crunchBackboneN(PDBEntry pdb,
 			LinkedList<ProteinFragment> l, int fLength) {
+		try {
 		for (int i = 0; i < pdb.length() - fLength; i++) {
 			double[][] temp = new double[4 * fLength][3];
-			for (int j = i; j < i + fLength; j++) {				
+			for (int j = i; j < i + fLength; j++) {
 				temp[(j-i) * 4 + 0] = pdb.getAminoAcid(j).getAtomByType(AtomType.N)
 						.getPosition();
 				temp[(j-i) * 4 + 1] = pdb.getAminoAcid(j)
@@ -38,6 +39,11 @@ public class Fragmenter {
 			l.add(tempFrag);
 		}
 		return l;
+		}
+		catch(Exception e) {
+			System.out.println("Entry " + pdb.getID() + " probably has incomplete records.");
+		}
+		return null;
 	}
 	
 	

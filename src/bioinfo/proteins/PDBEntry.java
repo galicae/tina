@@ -83,6 +83,28 @@ public class PDBEntry implements Alignable, Serializable {
 			this.length = arg2.size();
 		}
 	}
+	
+	/**
+	 * Constructor for an the PDBEntry
+	 * 
+	 * @param arg1
+	 *            the id of the PDBEntry
+	 * @param arg2
+	 *            Array of AminoAcids
+	 */
+	public PDBEntry(String arg1, List<AminoAcid> arg2, boolean real) {
+		if (arg1.length() == 4) {
+			this.id = arg1;
+			this.chainID = 'A';
+			this.chainIDNum = 0;
+		} else {
+			this.id = arg1.substring(0, 4);
+			this.chainID = arg1.charAt(4);
+			this.chainIDNum = Integer.valueOf(arg1.substring(5));
+			this.aminoAcids = arg2.toArray(new AminoAcid[0]);
+			this.length = arg2.size();
+		}
+	}
 
 	/**
 	 * @return the ID of the PDBEntry

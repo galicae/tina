@@ -43,7 +43,8 @@ public class PDBFile {
 		BufferedInputStream in = null;
 		BufferedOutputStream out = null;
 		try {
-			URL url = new URL(PDB_FILE_URL+pdbID.toUpperCase()+PDB_FILE_ENDING);
+			//TODO: remember to stash
+			URL url = new URL(PDB_FILE_URL+pdbID.substring(0,4).toUpperCase()+PDB_FILE_ENDING);
 			in = new BufferedInputStream(url.openStream());
 			out = new BufferedOutputStream(new FileOutputStream(toPath+pdbID.toUpperCase()+PDB_FILE_ENDING));
 			byte[] buff = new byte[1024];
