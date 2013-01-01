@@ -33,9 +33,9 @@ public class Fragm3ntTest {
 		LinkedList<ProteinFragment> pList = new LinkedList<ProteinFragment>();
 		PDBEntry pdb1 = reader.readPDBFromFile(args[0]);
 		
-		files = reader.readPdbFolder();
+		files.add(pdb1);
 		for(PDBEntry e: files) {
-			Fragmenter.crunchBackboneN(e, pList, 7);
+			Fragmenter.crunchBackboneSeq(e, pList, 7);
 		}
 		int initSum = pList.size();
 		
@@ -49,7 +49,7 @@ public class Fragm3ntTest {
 			sumOfFrags += c.getSize();
 		}
 		System.out.format("%d out of %d fragments in %d clusters.\n" , sumOfFrags, initSum, clustah.getClusters().size());
-		clustah.update(2000);
+		clustah.update(20);
 		sumOfFrags = 0;
 		for(FragmentCluster c: clustah.getClusters()) {
 			sumOfFrags += c.getSize();

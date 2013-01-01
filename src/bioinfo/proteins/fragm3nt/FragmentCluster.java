@@ -84,6 +84,7 @@ public class FragmentCluster {
 		 DecimalFormat myFormatter = new DecimalFormat(pattern);
 
 		for (ProteinFragment f : fragments) {
+			result.append("REMARK 500 " + f.getSequence() + "\n");
 			result.append("MODEL        " + ++i + "\n");
 			for (int j = 0; j < f.getAllResidues().length; j++) {
 				tempResult = "ATOM  ##### aaaa+rrr c****i   xxxxxxxxyyyyyyyyzzzzzzzzooooootttttt          eehh\n";

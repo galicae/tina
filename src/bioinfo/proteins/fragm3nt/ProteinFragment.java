@@ -2,6 +2,7 @@ package bioinfo.proteins.fragm3nt;
 
 public class ProteinFragment {
 	private String id;
+	private String sequence;
 	private double[][] coordinates;
 	private int startIndex;
 	public final int fragLength;
@@ -19,6 +20,16 @@ public class ProteinFragment {
 		this.startIndex = startIndex;
 	}
 
+	public ProteinFragment(String id, String seq, double[][] coordinates, int startIndex,
+			int fragLength) {
+		this.fragLength = fragLength;
+		this.id = id;
+		this.sequence = seq;
+		this.coordinates = new double[fragLength][3];
+		this.coordinates = coordinates;
+		this.startIndex = startIndex;
+	}
+	
 	public double[] getResidue(int i) {
 		return coordinates[i];
 	}
@@ -73,5 +84,9 @@ public class ProteinFragment {
 
 	private static boolean isInEpsilon(double a, double b) {
 		return (a > (b - epsilon)) && (a < (b + epsilon));
+	}
+
+	public String getSequence() {
+		return this.sequence;
 	}
 }
