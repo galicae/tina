@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.Transformation;
 
-public class KMeansAllvsAll extends ClusterAlgorithm {
+public class KMeansAllvsAll extends CentroidClustering {
 
 	public KMeansAllvsAll(LinkedList<ProteinFragment> f) {
 		super(f);
