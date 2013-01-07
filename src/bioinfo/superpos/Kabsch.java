@@ -68,7 +68,7 @@ public class Kabsch {
 		double err = calcErr(S);
 
 		DoubleMatrix2D rotation = algebra.mult(V, tU);
-		// double rmsd1 = calcDefRMSD(p, q);
+		double rmsd1 = calcDefRMSD(p, q);
 		// no point in calculating the definition of the rmsd since no rotation
 		// has been performed
 		double rmsd2 = calcEasyRMSD(err, initError, p);

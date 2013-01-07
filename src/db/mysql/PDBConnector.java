@@ -7,14 +7,21 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import bioinfo.proteins.AminoAcid;
+import bioinfo.proteins.AminoAcidName;
+import bioinfo.proteins.Atom;
 import bioinfo.proteins.PDBEntry;
 
 public class PDBConnector extends MysqlWrapper{
 
 	private static final String tablename = "pdb";
-	private static final String[] fields = {"id","pdb_id","chain","length"};
-	private static final String getById = "select data from pdb where id = ?";
-	private static final String setEntry = "insert into pdb values (?,?)";
+	
+	private static final String[] pdbfields = {"id","pdb_id","chainID", "chainIDNum","length"};
+	private static final String[] aafields = {"id","name","res_index","numberofAtom","pdb_id"};
+	private static final String[] atomfields = {"id","type","x","y","z","aminoacid_id"};
+	private static final String setEntry = "insert into "+tablename+" ("+pdbfields[1]+","+pdbfields[2]+","+pdbfields[3]+","+pdbfields[4]+") values (?,?,?,?)";	
+	private static final String getById = "select * from pdb join aminoacid on pdb.id = aminoacid.pdb_id join atom on aminoacid.id = atom.aminoacid_id" +
+			" where pdb.pdb_id = ? and pdb.chainID = ? and pdb.chainIDNum = ?";
 	
 	public PDBConnector(MysqlDBConnection connection) {
 		super(connection);
@@ -27,22 +34,74 @@ public class PDBConnector extends MysqlWrapper{
 
 	@Override
 	String[] getFields() {
-		return fields;
+		return pdbfields;
 	}
 	
 	public PDBEntry getPDB(String id){
 		PreparedStatement stmt = connection.createStatement(getById);
+		List<Atom> atoms = new ArrayList<Atom>();
+		List<AminoAcid> aminos = new ArrayList<AminoAcid>();
+		String chainID;
+		int chainIDNum;
+		
+		//sets the chain which should be taken from the database (standard 'A00')
+		if (id.length() == 4) {	
+			chainID = "A";
+			chainIDNum = 0;
+		} else {
+			chainID = id.substring(4,5);
+			chainIDNum=Integer.valueOf(id.substring(5, 7));
+			id = id.substring(0, 4);
+		}
+		
 		try{
 			stmt.setString(1, id);
+			stmt.setString(2, chainID);
+			stmt.setInt(3, chainIDNum);
 			ResultSet res = stmt.executeQuery();
-			if(res.first()){
-				return (PDBEntry)res.getObject(fields[1]);
-			}else{
-				return null;
+			
+			int atomquantity;
+			double[] pos_temp;
+					
+			while(res.next()){
+				//read out aminos and corresponding atoms
+				atomquantity = res.getInt(aafields[3]);
+				pos_temp = new double[3];
+				pos_temp[0] = res.getDouble(atomfields[2]);
+				pos_temp[1] = res.getDouble(atomfields[3]);
+				pos_temp[2] = res.getDouble(atomfields[4]);
+				atoms.add(new Atom(res.getString(atomfields[1]),pos_temp));
+				
+				for (int j = 0; j < atomquantity-1; j++) {
+					res.next();
+					pos_temp = new double[3];
+					pos_temp[0] = res.getDouble(atomfields[2]);
+					pos_temp[1] = res.getDouble(atomfields[3]);
+					pos_temp[2] = res.getDouble(atomfields[4]);
+					atoms.add(new Atom(res.getString(atomfields[1]),pos_temp));
+				}
+				aminos.add(new AminoAcid(AminoAcidName.getAAFromOLC(res.getString(aafields[1])),res.getInt(aafields[2]),atoms.toArray(new Atom[atomquantity])));
+				atoms.clear();
 			}
+			return new PDBEntry(id,aminos.toArray(new AminoAcid[aminos.size()]));
 		}catch(SQLException e){
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	public boolean pdbExist(String id){
+		Statement stmt = connection.createStatement();
+		try{
+			ResultSet res = stmt.executeQuery("Select id from "+tablename+" where pdb_id = "+id);
+			if(res.first()){
+				return true;
+			}else{
+				return false;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+			return false;
 		}
 	}
 	
@@ -52,7 +111,7 @@ public class PDBConnector extends MysqlWrapper{
 			ResultSet res = stmt.executeQuery("select id from "+getTablename());
 			List<String> ids = new ArrayList<String>();
 			while(res.next()){
-				ids.add(res.getString(fields[0]));
+				ids.add(res.getString(pdbfields[0]));
 			}
 			return ids.toArray(new String[ids.size()]);
 		} catch (SQLException e) {
@@ -61,13 +120,43 @@ public class PDBConnector extends MysqlWrapper{
 		}
 	}
 	
+	private int getLastId(){
+		int lastid;
+		Statement stmt = connection.createStatement();
+		ResultSet res;
+		try {
+			res = stmt.executeQuery("Select LAST_INSERT_ID() from "+tablename);
+			res.first();
+			lastid = res.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}	
+		return lastid;
+	}
+	
 	public boolean addEntry(PDBEntry entry){
+		AAConnector aaconnector = new AAConnector(this.connection);
 		PreparedStatement stmt = connection.createStatement(setEntry);
+		
 		try{
+			AminoAcid amino;
+
+			//insert pdbentry
 			stmt.setString(1,entry.getID());
-			stmt.setObject(2, entry);
+			stmt.setString(2,String.valueOf(entry.getChainID()));
+			stmt.setInt(3,entry.getChainIDNum());
+			stmt.setInt(4, entry.length());
+			stmt.execute();
+			int pdbid = getLastId();
 			
-			return stmt.execute();
+			for (int i = 0; i < entry.length(); i++) {
+				//insert amino
+				amino = entry.getAminoAcid(i);
+				aaconnector.addEntry(amino, pdbid);	
+			}
+			return true;
+			
 		}catch(SQLException e){
 			e.printStackTrace();
 			return false;

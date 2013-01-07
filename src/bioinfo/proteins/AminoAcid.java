@@ -23,6 +23,7 @@ public class AminoAcid implements Serializable{
 	
 	
 	private final AminoAcidName name;
+	private int resIndex;
 	private int numberOfAtoms;
 	private Atom[] atoms;
 	
@@ -30,8 +31,9 @@ public class AminoAcid implements Serializable{
 	 * Constructor for the AminoAcid Class. Takes the AminoAcidName as arg.
 	 * @param arg
 	 */
-	public AminoAcid(AminoAcidName arg) {
+	public AminoAcid(AminoAcidName arg, int resIndex) {
 		this.name = arg;
+		this.resIndex = resIndex;
 	}
 	
 	/**
@@ -40,8 +42,9 @@ public class AminoAcid implements Serializable{
 	 * @param oneLetterCode
 	 * @param atoms
 	 */
-	public AminoAcid(AminoAcidName arg, Atom[] atoms) {
+	public AminoAcid(AminoAcidName arg, int resIndex, Atom[] atoms) {
 		this.name = arg;
+		this.resIndex = resIndex;
 		this.atoms = atoms;
 		this.numberOfAtoms = atoms.length;
 	}
@@ -51,8 +54,9 @@ public class AminoAcid implements Serializable{
 	 * AminoAcid as arg.
 	 * @param oneLetterCode
 	 */
-	public AminoAcid(String oneLetterCode) {
+	public AminoAcid(String oneLetterCode, int resIndex) {
 		this.name = AminoAcidName.getAAFromOLC(oneLetterCode);
+		this.resIndex = resIndex;
 	}
 	
 	/**
@@ -61,8 +65,9 @@ public class AminoAcid implements Serializable{
 	 * @param oneLetterCode
 	 * @param atoms
 	 */
-	public AminoAcid(String oneLetterCode, Atom[] atoms) {
+	public AminoAcid(String oneLetterCode, int resIndex, Atom[] atoms) {
 		this.name = AminoAcidName.getAAFromOLC(oneLetterCode);
+		this.resIndex = resIndex;
 		this.atoms = atoms;
 		this.numberOfAtoms = atoms.length;
 	}
@@ -73,6 +78,13 @@ public class AminoAcid implements Serializable{
 	 */
 	public AminoAcidName getName() {
 		return name;
+	}
+	/**
+	 * 
+	 * @return the AminoAcidResidueIndex
+	 */
+	public int getResIndex() {
+		return resIndex;
 	}
 	
 	/**
@@ -143,7 +155,7 @@ public class AminoAcid implements Serializable{
 	}
 	
 	public AminoAcid copy() {
-		return new AminoAcid(name, atoms.clone());
+		return new AminoAcid(name, resIndex, atoms.clone());
 	}
 	
 	/**

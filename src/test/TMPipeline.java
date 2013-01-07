@@ -1,32 +1,46 @@
 package test;
 
+import highscorealignments.SeqLibrary;
+
+import java.util.HashMap;
+
+import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
-import bioinfo.alignment.SequenceAlignmentFileReader;
+import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
+import bioinfo.alignment.matrices.QuasarMatrix;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
-import bioinfo.superpos.Kabsch;
-import bioinfo.superpos.PDBReduce;
 import bioinfo.superpos.TMMain;
 import bioinfo.superpos.Transformation;
 
 public class TMPipeline {
 	public static void main(String[] args) throws Exception {
 
+//		1wjfA00 1zr4B03
+		
+		String seq1 = "1wjfA00";
+		String seq2 = "1zr4B03";
+		
+		HashMap<String, char[]> sequences = SeqLibrary.parse("domains.seqlib");
+		double[][] matr = QuasarMatrix.parseMatrix("dayhoff.mat");
+		
 		PDBFileReader reader = new PDBFileReader();
 		PDBEntry pdb1 = reader
-				.readPDBFromFile("C:/Users/nikos/Desktop/STRUCTURES/1muzA00.pdb");
+				.readPDBFromFile("/home/p/papadopoulos/Desktop/STRUCTURES/" + seq1 + ".pdb");
 		PDBEntry pdb2 = reader
-				.readPDBFromFile("C:/Users/nikos/Desktop/STRUCTURES/1k4uS00.pdb");
+				.readPDBFromFile("/home/p/papadopoulos/Desktop/STRUCTURES/" + seq2 + ".pdb");
 
 //		System.out.println(pdb1.getAtomSectionAsString());
-		SequenceAlignmentFileReader aliReader = new SequenceAlignmentFileReader(
-				args[2]);
-		SequenceAlignment alignment = aliReader.readAlignments().get(0);
+		FreeshiftSequenceGotoh gotoh= new FreeshiftSequenceGotoh(-12, -1, matr);
+		Sequence sequence1 = new Sequence(seq1, sequences.get(seq1));
+		Sequence sequence2 = new Sequence(seq2, sequences.get(seq2));
+		
+		SequenceAlignment aliSeq = gotoh.align(sequence1, sequence2);
+		
+		System.out.println(aliSeq.toStringVerbose());
 
 		TMMain main = new TMMain();
-//		Transformation trOr = main.calculateTransformation(args[2],"1muzA00.pdb","1k4uS00.pdb");
-		Transformation tr1 = main.calculateTransformation(alignment, pdb1, pdb2);
-		System.out.println(tr1.getRmsd());
-//		System.out.println(trOr.getTmscore());
+		Transformation tr1 = main.calculateTransformation(aliSeq, pdb1, pdb2);
+		System.out.println(tr1.getTmscore());
 	}
 }

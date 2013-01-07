@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import bioinfo.proteins.AminoAcid;
+import bioinfo.proteins.Atom;
 import bioinfo.proteins.PDBEntry;
 
 public class AAConnector extends MysqlWrapper{
@@ -14,7 +16,7 @@ public class AAConnector extends MysqlWrapper{
 	private static final String tablename = "aminoacid";
 	private static final String[] fields = {"id","name","res_index","numberofAtom","pdb_id"};
 	private static final String getById = "select data from aminoacid where id = ?";
-	private static final String setEntry = "insert into aminoacid values (?,?)";
+	private static final String setEntry = "insert into "+tablename+" ("+fields[1]+","+fields[2]+","+fields[3]+","+fields[4]+") values (?,?,?,?)";
 	
 	public AAConnector(MysqlDBConnection connection) {
 		super(connection);
@@ -61,13 +63,42 @@ public class AAConnector extends MysqlWrapper{
 		}
 	}
 	
-	public boolean addEntry(PDBEntry entry){
+	private int getLastId(){
+		int lastid;
+		Statement stmt = connection.createStatement();
+		ResultSet res;
+		try {
+			res = stmt.executeQuery("Select LAST_INSERT_ID() from "+tablename);
+			res.first();
+			lastid = res.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}	
+		return lastid;
+	}
+	
+	public boolean addEntry(AminoAcid entry, int pdbid){
+		AtomConnector atomconnector = new AtomConnector(this.connection);
 		PreparedStatement stmt = connection.createStatement(setEntry);
+				
 		try{
-			stmt.setString(1,entry.getID());
-			stmt.setObject(2, entry);
+			Atom atom;
 			
-			return stmt.execute();
+			stmt.setString(1, entry.toString());
+			stmt.setInt(2, entry.getResIndex());
+			stmt.setInt(3, entry.getAtomNumber());
+			stmt.setInt(4, pdbid);
+			stmt.execute();
+			int aminoid = getLastId();
+					
+			for (int i = 0; i < entry.getAtomNumber(); i++) {
+				//insert atoms
+				atom = entry.getAtom(i);
+				atomconnector.addEntry(atom, aminoid);	
+			}
+			return true;
+			
 		}catch(SQLException e){
 			e.printStackTrace();
 			return false;

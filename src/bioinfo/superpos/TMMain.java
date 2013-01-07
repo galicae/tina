@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import bioinfo.alignment.Alignment;
+import bioinfo.alignment.SequenceAlignment;
 import bioinfo.proteins.Atom;
 import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;
@@ -79,7 +80,7 @@ public class TMMain {
 
 		// actual calculation of TM score and corresponding rotation matrix
 		double[][] tmResult = TMScore.doStuff("TM" + pFile.getID() + ".pdb"
-				+ " TM" + qFile.getID() + ".pdb", pdbs[0], pdbs[1]);
+				+ " TM" + qFile.getID() + ".pdb", pdbs[0], pdbs[1], (SequenceAlignment)alignment);
 
 		// remember that rmResult is [5][4], and that [i][0] is empty
 		// also [4][0] is the TM score and [4][1] the GDT

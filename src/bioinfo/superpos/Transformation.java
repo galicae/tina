@@ -37,6 +37,8 @@ public class Transformation {
 	}
 
 	/**
+	 * transforms Q so that it matches as good as possible on a previously
+	 * entered P
 	 * 
 	 * @param Q
 	 *            PDBEntry which was used for kabsch calculation an has to be
@@ -56,6 +58,29 @@ public class Transformation {
 				tempRow.assign(translation, Functions.plus);
 				Q.getAminoAcid(i).getAtom(j).setPosition(tempRow.toArray());
 			}
+		}
+		return Q;
+	}
+
+	/**
+	 * transforms Q so that it matches as good as possible on a previously
+	 * entered P
+	 * 
+	 * @param Q
+	 *            double[][] which was used for kabsch calculation an has to be
+	 *            transformed on P now
+	 * @return new double[][] Q which is transformed old Q
+	 */
+	public double[][] transform(double[][] Q) {
+		calculateTranslation();
+		DoubleFactory1D factory = DoubleFactory1D.dense;
+		DoubleMatrix1D tempRow = factory.make(3);
+
+		for (int i = 0; i < Q.length; i++) {
+			tempRow = factory.make(Q[i]);
+			multiply1Dwith2D(tempRow, rotation, tempRow);
+			tempRow.assign(translation, Functions.plus);
+			Q[i] = tempRow.toArray();
 		}
 		return Q;
 	}

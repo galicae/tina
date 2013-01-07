@@ -1,20 +1,22 @@
 package db.mysql;
 
-import bioinfo.proteins.AminoAcid;
-import bioinfo.proteins.AminoAcidName;
+import bioinfo.pdb.PDBFile;
+import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;
+import bioinfo.proteins.PDBFileReader;
 
 public class ImportPDBs {
 
 	public static void main(String[] args) {
 		MysqlDBConnection connection = new MysqlDBConnection();
 		PDBConnector pdbconnector = new PDBConnector(connection);
-		AtomConnector atomconnector = new AtomConnector(connection);
-		AAConnector aaconnector = new AAConnector(connection);
 		
-		AminoAcid[] aminos = {new AminoAcid(AminoAcidName.A),new AminoAcid(AminoAcidName.C)};		
-		PDBEntry pdbentry = new PDBEntry("11asB00",aminos);
-		pdbconnector.addEntry(pdbentry);
+		PDBFileReader pdbreader = new PDBFileReader(args[0]);
+		//PDBFile.downloadPDB("2ADU", "./");
+		//PDBEntry test = pdbreader.readFromFolderById("1J2xA00");		
+		//pdbconnector.addEntry(test);
+		PDBEntry out = pdbconnector.getPDB("1J2XB00");
+		System.out.println(out.getAminoAcid(7).getAtomByType(AtomType.CA).getPosition()[0]);
 	}
 
 }

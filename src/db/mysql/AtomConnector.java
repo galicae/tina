@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import bioinfo.proteins.Atom;
 import bioinfo.proteins.PDBEntry;
 
 public class AtomConnector extends MysqlWrapper{
@@ -14,7 +15,7 @@ public class AtomConnector extends MysqlWrapper{
 	private static final String tablename = "atom";
 	private static final String[] fields = {"id","type","x","y","z","aminoacid_id"};
 	private static final String getById = "select data from atom where id = ?";
-	private static final String setEntry = "insert into atom values (?,?)";
+	private static final String setEntry = "insert into atom ("+fields[1]+","+fields[2]+","+fields[3]+","+fields[4]+","+fields[5]+") values (?,?,?,?,?)";
 	
 	public AtomConnector(MysqlDBConnection connection) {
 		super(connection);
@@ -61,21 +62,20 @@ public class AtomConnector extends MysqlWrapper{
 		}
 	}
 	
-	public boolean addEntry(PDBEntry entry){
+	public boolean addEntry(Atom entry, int aminoid){
 		PreparedStatement stmt = connection.createStatement(setEntry);
+				
 		try{
-			stmt.setString(1,entry.getID());
-			stmt.setObject(2, entry);
-			
+			double[] pos = entry.getPosition();
+			stmt.setString(1, entry.getType().toString());
+			stmt.setDouble(2, pos[0]);
+			stmt.setDouble(3, pos[1]);
+			stmt.setDouble(4, pos[2]);
+			stmt.setInt(5, aminoid);
 			return stmt.execute();
 		}catch(SQLException e){
 			e.printStackTrace();
 			return false;
 		}
 	}
-	
-	
-	
-	
-
 }
