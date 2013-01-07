@@ -1,16 +1,16 @@
 package test;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import bioinfo.pdb.PDBFile;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
+import bioinfo.proteins.fragm3nt.DBScan;
 import bioinfo.proteins.fragm3nt.FragmentCluster;
 import bioinfo.proteins.fragm3nt.Fragmenter;
-import bioinfo.proteins.fragm3nt.KMeansAllvsAll;
 import bioinfo.proteins.fragm3nt.ProteinFragment;
 
 public class Fragm3ntTest {
@@ -27,10 +27,10 @@ public class Fragm3ntTest {
 //			e.printStackTrace();
 //		}
 		
-		PDBFileReader reader = new PDBFileReader("./proteins/");
+		PDBFileReader reader = new PDBFileReader("1TIMA00");
 		
 		List<PDBEntry> files = new LinkedList<PDBEntry>();
-		LinkedList<ProteinFragment> pList = new LinkedList<ProteinFragment>();
+		ArrayList<ProteinFragment> pList = new ArrayList<ProteinFragment>();
 		PDBEntry pdb1 = reader.readPDBFromFile(args[0]);
 		
 		files.add(pdb1);
@@ -39,23 +39,32 @@ public class Fragm3ntTest {
 		}
 		int initSum = pList.size();
 		
-		KMeansAllvsAll clustah = new KMeansAllvsAll(pList);
-		clustah.initializeClusters();
+		DBScan clustah = new DBScan();
+		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
+		clustah.oppaDBStyle(7, 2.0, pList, clusters);
 		System.out.println("initialized clusters");
 //		clustah.toTextFiles("init");
 		
 		int sumOfFrags = 0;
-		for(FragmentCluster c: clustah.getClusters()) {
+		for(FragmentCluster c: clusters) {
 			sumOfFrags += c.getSize();
 		}
-		System.out.format("%d out of %d fragments in %d clusters.\n" , sumOfFrags, initSum, clustah.getClusters().size());
-		clustah.update(20);
-		sumOfFrags = 0;
-		for(FragmentCluster c: clustah.getClusters()) {
-			sumOfFrags += c.getSize();
+		System.out.format("%d out of %d fragments in %d clusters.\n" , sumOfFrags, initSum, clusters.size());
+//		clustah.update(20);
+//		sumOfFrags = 0;
+//		for(FragmentCluster c: clustah.getClusters()) {
+//			sumOfFrags += c.getSize();
+//		}
+		System.err.format("%d out of %d fragments in %d clusters.\n" , sumOfFrags, initSum, clusters.size());
+		
+		for (FragmentCluster c : clusters) {
+			try {
+				BufferedWriter br = new BufferedWriter(new FileWriter("DBS_" + c.getCentroid().getID()));
+				br.write(c.toString());
+				br.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-		System.out.println("updated");
-		clustah.toTextFiles("upd");
-		System.err.format("%d out of %d fragments in %d clusters.\n" , sumOfFrags, initSum, clustah.getClusters().size());
 	}
 }

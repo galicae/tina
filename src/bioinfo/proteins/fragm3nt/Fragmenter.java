@@ -1,6 +1,7 @@
 package bioinfo.proteins.fragm3nt;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import bioinfo.proteins.AminoAcid;
 import bioinfo.proteins.AtomType;
@@ -60,8 +61,8 @@ public class Fragmenter {
 	 *            the desired length of protein fragments
 	 * @return the new list of fragments
 	 */
-	public static LinkedList<ProteinFragment> crunchBackboneSeq(PDBEntry pdb,
-			LinkedList<ProteinFragment> l, int fLength) {
+	public static List<ProteinFragment> crunchBackboneSeq(PDBEntry pdb,
+			List<ProteinFragment> l, int fLength) {
 		try {
 			AminoAcid tempAA = new AminoAcid("ALA", 0);
 			String seq = "";
@@ -90,5 +91,34 @@ public class Fragmenter {
 					+ " probably has incomplete records.");
 		}
 		return null;
+	}
+
+	/**
+	 * for whenever we need to only make sequence fragments
+	 * 
+	 * @param pdb
+	 *            the entry to disassemble
+	 * @param l
+	 *            a list of protein fragments
+	 * @param fLength
+	 *            the desired length of protein fragments
+	 * @return the new list of fragments
+	 */
+	public static LinkedList<char[]> disassemble(PDBEntry pdb,
+			LinkedList<char[]> l, int fragmentLength) {
+		char[] pdbChar = new char[pdb.length()];
+		for (int i = 0; i < pdb.length(); i++) {
+			pdbChar[i] = pdb.getAminoAcid(i).getName().getOneLetterCode()
+					.charAt(0);
+		}
+
+		for (int i = 0; i < pdb.length() - fragmentLength; i++) {
+			char[] temp = new char[fragmentLength];
+			for (int j = 0; j < fragmentLength; j++) {
+				temp[j] = pdbChar[i + j];
+			}
+			l.add(temp);
+		}
+		return l;
 	}
 }

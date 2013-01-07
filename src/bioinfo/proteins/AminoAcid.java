@@ -6,6 +6,8 @@
 package bioinfo.proteins;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author gobi_4
@@ -155,5 +157,29 @@ public class AminoAcid implements Serializable{
 	public AminoAcid copy() {
 		return new AminoAcid(name, resIndex, atoms.clone());
 	}
+	
+	/**
+	 * 
+	 * @return Atom[] containing all existing backbone atoms (best case all 4)
+	 * non-existing atoms are replaced with null and have to be checked in all following methods
+	 */
+	public Atom[] getBackboneAtoms(){
+		Atom[] result = new Atom[4];
+		for(int i = 0; i != atoms.length; i++){
+			if(atoms[i] != null){
+				switch(atoms[i].getType()){
+					case C: result[2] = atoms[i];break;
+					case CA: result[1] = atoms[i];break;
+					case N: result[0] = atoms[i];break;
+					case O: result[3] = atoms[i];break;
+					default: break;
+				}
+			}
+		}
+		return result;
+	}
+	
+	
+	
 	
 }
