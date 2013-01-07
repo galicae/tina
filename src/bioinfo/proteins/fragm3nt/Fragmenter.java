@@ -1,6 +1,7 @@
 package bioinfo.proteins.fragm3nt;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import bioinfo.proteins.AminoAcid;
 import bioinfo.proteins.AtomType;
@@ -60,8 +61,8 @@ public class Fragmenter {
 	 *            the desired length of protein fragments
 	 * @return the new list of fragments
 	 */
-	public static LinkedList<ProteinFragment> crunchBackboneSeq(PDBEntry pdb,
-			LinkedList<ProteinFragment> l, int fLength) {
+	public static List<ProteinFragment> crunchBackboneSeq(PDBEntry pdb,
+			List<ProteinFragment> l, int fLength) {
 		try {
 			AminoAcid tempAA = new AminoAcid("ALA", 0);
 			String seq = "";

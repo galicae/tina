@@ -6,6 +6,8 @@ public class ProteinFragment {
 	private double[][] coordinates;
 	private int startIndex;
 	public final int fragLength;
+	private boolean visited = false;
+	private boolean noise = false;
 	private int clustered = -1; // this should save the position of the cluster
 								// to which the fragment belongs. It will save a
 								// lot of time during the initialization of the
@@ -20,8 +22,8 @@ public class ProteinFragment {
 		this.startIndex = startIndex;
 	}
 
-	public ProteinFragment(String id, String seq, double[][] coordinates, int startIndex,
-			int fragLength) {
+	public ProteinFragment(String id, String seq, double[][] coordinates,
+			int startIndex, int fragLength) {
 		this.fragLength = fragLength;
 		this.id = id;
 		this.sequence = seq;
@@ -29,7 +31,7 @@ public class ProteinFragment {
 		this.coordinates = coordinates;
 		this.startIndex = startIndex;
 	}
-	
+
 	public double[] getResidue(int i) {
 		return coordinates[i];
 	}
@@ -57,29 +59,32 @@ public class ProteinFragment {
 	public int getClusterIndex() {
 		return clustered;
 	}
-	
+
 	public void setCoordinates(double[][] nCoord) {
 		this.coordinates = nCoord;
 	}
+
 	public String toString() {
 		String result = "";
 		result += "Fragment " + id + ", residue length " + fragLength + "\n";
-		for(int i = 0; i < coordinates.length; i++) {
-			result += coordinates[i][0] + " " + coordinates[i][1] + " " + coordinates[i][2] + "\n";
+		for (int i = 0; i < coordinates.length; i++) {
+			result += coordinates[i][0] + " " + coordinates[i][1] + " "
+					+ coordinates[i][2] + "\n";
 		}
 		return result;
 	}
-	
+
 	public boolean equals(ProteinFragment other) {
 		for (int i = 0; i < other.getFragmentLength(); i++) {
 			for (int j = 0; j < 3; j++) {
-				if (!isInEpsilon(coordinates[i][j], other.getAllResidues()[i][j]))
+				if (!isInEpsilon(coordinates[i][j],
+						other.getAllResidues()[i][j]))
 					return false;
 			}
-		}		
+		}
 		return true;
 	}
-	
+
 	private static final double epsilon = 0.0001d;
 
 	private static boolean isInEpsilon(double a, double b) {
@@ -88,5 +93,21 @@ public class ProteinFragment {
 
 	public String getSequence() {
 		return this.sequence;
+	}
+
+	public boolean isVisited() {
+		return visited;
+	}
+
+	public void setVisited(boolean vis) {
+		visited = vis;
+	}
+
+	public boolean isNoise() {
+		return noise;
+	}
+
+	public void setNoise(boolean noise) {
+		this.noise = noise;
 	}
 }
