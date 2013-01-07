@@ -145,4 +145,23 @@ public class PDBEntry implements Alignable,Serializable{
 		return out;
 	}
 	
+	/**
+	 * 
+	 * @return all backbone atoms as Atom[]
+	 * not existing atoms are written as null and have to be checked in all following methods
+	 */
+	public Atom[] getBackboneAtoms(){
+		AminoAcid tmp;
+		Atom[] backbone = new Atom[aminoAcids.length*4];
+		Atom[] temp;
+		for(int i = 0; i != aminoAcids.length; i++){
+			tmp = aminoAcids[i];
+			temp = tmp.getBackboneAtoms();
+			for(int j = 0; j != 4; j++){
+				backbone[i*4+j] = temp[j];
+			}
+		}
+		return backbone;
+	}
+	
 }
