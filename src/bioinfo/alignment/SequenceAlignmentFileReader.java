@@ -28,6 +28,11 @@ public class SequenceAlignmentFileReader {
 		this.filename = filename;
 	}
 
+	/**
+	 * reads alignments from file @filename and returns them in a list
+	 * 
+	 * @return the list of all read alignments
+	 */
 	public List<SequenceAlignment> readAlignments() {
 		List<SequenceAlignment> alignments = new ArrayList<SequenceAlignment>();
 		BufferedReader br = null;

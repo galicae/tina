@@ -60,7 +60,6 @@ public class DBScan {
 		temp++;
 	}
 
-
 	/**
 	 * finds all neighbours of fragment at position 'position', defined by their
 	 * distance to said fragment. If there are more neighbours than the
@@ -117,7 +116,7 @@ public class DBScan {
 	 * @param data
 	 *            the whole fragment library
 	 */
-	public void expandCluster(ProteinFragment p, FragmentCluster c,
+	private void expandCluster(ProteinFragment p, FragmentCluster c,
 			ArrayList<ProteinFragment> neighbours,
 			ArrayList<ProteinFragment> data) {
 		c.add(p);
@@ -143,22 +142,36 @@ public class DBScan {
 			}
 		}
 	}
-	
-	
-	public void oppaDBStyle(int minpts, double eps, ArrayList<ProteinFragment> data, LinkedList<FragmentCluster> clusters) {
+
+	/**
+	 * this function concentrates all functions of the DBSCAN algorithm, and is
+	 * the one that should be visible from outside.
+	 * 
+	 * @param minpts
+	 *            the minimum number of points that constitute a cluster
+	 * @param eps
+	 *            the epsilon, distance cutoff, under which we consider two
+	 *            points to be near each other
+	 * @param data
+	 *            the protein fragments to be categorized in clusters
+	 * @param clusters
+	 *            the cluster list that, sadly, has to exist already
+	 */
+	public void oppaDBStyle(int minpts, double eps,
+			ArrayList<ProteinFragment> data,
+			LinkedList<FragmentCluster> clusters) {
 		MINPTS = minpts;
 		EPS = eps * 1000;
 		ProteinFragment p = new ProteinFragment(null, null, 0, 0);
 		calculateAllDistances(data);
-		for(int i = 0; i < data.size(); i++) {
+		for (int i = 0; i < data.size(); i++) {
 			p = data.get(i);
-			if(!p.isVisited()) {
+			if (!p.isVisited()) {
 				p.setVisited(true);
 				ArrayList<ProteinFragment> pNeighbours = getNeighbours(i, data);
-				if(pNeighbours.size() < MINPTS) {
+				if (pNeighbours.size() < MINPTS) {
 					p.setNoise(true);
-				}
-				else {
+				} else {
 					clusters.addLast(new FragmentCluster());
 					p.setClusterIndex(clusters.size() - 1);
 					clusters.getLast().setCentroid(p);

@@ -17,7 +17,7 @@ public class KMeansAllvsAll extends CentroidClustering {
 		double minRMSD = Double.MAX_VALUE;
 		Transformation t;
 		ProteinFragment[] minPair = new ProteinFragment[2];
-
+		
 		// for every fragment pair...
 		for (int i = 0; i < fragments.size(); i++) {
 			if(fragments.get(i).getClusterIndex() > -1)
@@ -70,6 +70,5 @@ public class KMeansAllvsAll extends CentroidClustering {
 				clusters.getLast().add(minPair[1]);
 			}
 		}
-		System.out.println();
 	}
 }
