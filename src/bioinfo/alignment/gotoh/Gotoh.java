@@ -185,7 +185,10 @@ public abstract class Gotoh implements Aligner {
 
 	}
 	
-	
+	//return M matrix
+	public int[][] getM (){
+		return this.M;
+	}
 	
 	
 }
