@@ -33,6 +33,31 @@ public class InitClass {
 	}
 
 	/**
+	 * this function reads the scores from SecStructScores
+	 * 
+	 * @return the scores from the class (that contains the values for Sheet(S),
+	 *         Helix(H) and Coil(C)
+	 * 
+	 */
+	public double[] calcSecStructScores() {
+		Field[] vars = SecStructScores.class.getFields();
+		double[] secstructScore = new double[26];
+		for (Field f : vars) {
+			char cur = f.getName().charAt(0);
+			try {
+				secstructScore[cur - 65] = f.getDouble(f);
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return secstructScore;
+	}
+
+	/**
 	 * this function reads the scores from HydropathyScores
 	 * 
 	 * @return the scores from the class (that contains alphabetical values as
@@ -57,7 +82,7 @@ public class InitClass {
 		}
 		return polarityScore;
 	}
-	
+
 	/**
 	 * calculates a matrix that gotoh can accept as a matrix, based on the
 	 * hydropathy scores
@@ -77,18 +102,18 @@ public class InitClass {
 				max = mScore[i];
 		}
 		double maxscore = (max - min) / 2.0;
-		
+
 		for (int i = 0; i < mScore.length; i++) {
-			if(mScore[i] == 0.0){
+			if (mScore[i] == 0.0) {
 				continue;
 			}
 			for (int j = 0; j < mScore.length; j++) {
-				if(mScore[j] == 0.0){
+				if (mScore[j] == 0.0) {
 					continue;
 				}
 				temp = Math.abs(mScore[i] - mScore[j]);
 				temp = maxscore - temp;
-				temp = (Math.round (temp * 100)) / 100.0;
+				temp = (Math.round(temp * 100)) / 100.0;
 				matrix[i][j] = temp;
 			}
 		}
