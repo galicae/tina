@@ -12,6 +12,8 @@ import bioinfo.proteins.fragm3nt.DBScan;
 import bioinfo.proteins.fragm3nt.FragmentCluster;
 import bioinfo.proteins.fragm3nt.Fragmenter;
 import bioinfo.proteins.fragm3nt.ProteinFragment;
+import bioinfo.superpos.Kabsch;
+import bioinfo.superpos.Transformation;
 
 public class Fragm3ntTest {
 	public static void main(String[] args) {
@@ -27,22 +29,21 @@ public class Fragm3ntTest {
 //			e.printStackTrace();
 //		}
 		
-		PDBFileReader reader = new PDBFileReader("1TIMA00");
+		PDBFileReader reader = new PDBFileReader();
 		
 		List<PDBEntry> files = new LinkedList<PDBEntry>();
 		ArrayList<ProteinFragment> pList = new ArrayList<ProteinFragment>();
-		PDBEntry pdb1 = reader.readPDBFromFile(args[0]);
+		PDBEntry pdb1 = reader.readPDBFromFile("1x2tA00.pdb");
 		
 		files.add(pdb1);
 		for(PDBEntry e: files) {
-			Fragmenter.crunchBackboneSeq(e, pList, 7);
+			Fragmenter.crunchBackboneSeq(e, pList, 5);
 		}
 		int initSum = pList.size();
 		
 		DBScan clustah = new DBScan();
 		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
-		clustah.oppaDBStyle(7, 2.0, pList, clusters);
-		System.out.println("initialized clusters");
+		clustah.oppaDBStyle(4, 1.0, pList, clusters);
 //		clustah.toTextFiles("init");
 		
 		int sumOfFrags = 0;
@@ -55,7 +56,6 @@ public class Fragm3ntTest {
 //		for(FragmentCluster c: clustah.getClusters()) {
 //			sumOfFrags += c.getSize();
 //		}
-		System.err.format("%d out of %d fragments in %d clusters.\n" , sumOfFrags, initSum, clusters.size());
 		
 		for (FragmentCluster c : clusters) {
 			try {

@@ -10,7 +10,7 @@ import bioinfo.superpos.Transformation;
  * an implementation of the DBSCAN (density-based clustering) algorithm
  * described in
  * "A density-based algorithm for discovering clusters in large spatial databases with noise"
- * by Martin Ester, Hans-Peter Kriegel, Jörg Sander, Xiaowei Xu (1996-)
+ * by Martin Ester, Hans-Peter Kriegel, Jï¿½rg Sander, Xiaowei Xu (1996-)
  * 
  * mostly based on the wikipedia pseudocode of the algorithm
  * 
@@ -57,6 +57,7 @@ public class DBScan {
 				distance[((j * (j - 1)) / 2) + i] = temp;
 			}
 		}
+		temp++;
 	}
 
 
@@ -120,7 +121,9 @@ public class DBScan {
 			ArrayList<ProteinFragment> neighbours,
 			ArrayList<ProteinFragment> data) {
 		c.add(p);
-		for (ProteinFragment f: neighbours) {			
+		ProteinFragment f = new ProteinFragment(null, null, 0, 0);
+		for (int i = 0; i < neighbours.size(); i++) {
+			f = neighbours.get(i);
 			if (!f.isVisited()) {
 				f.setVisited(true);
 				ArrayList<ProteinFragment> fNeighbours = getNeighbours(
@@ -130,6 +133,12 @@ public class DBScan {
 			}
 			if (f.getClusterIndex() == -1) {
 				f.setClusterIndex(c.getCentroid().getClusterIndex());
+				double[][][] kabschFood = new double[2][data.get(0).fragLength][3];
+				Transformation t;
+				kabschFood[0] = c.getCentroid().getAllResidues();
+				kabschFood[1] = f.getAllResidues();
+				t = Kabsch.calculateTransformation(kabschFood);
+				f.setCoordinates(t.transform(f.getAllResidues()));
 				c.add(f);
 			}
 		}
@@ -138,8 +147,9 @@ public class DBScan {
 	
 	public void oppaDBStyle(int minpts, double eps, ArrayList<ProteinFragment> data, LinkedList<FragmentCluster> clusters) {
 		MINPTS = minpts;
-		EPS = eps;
+		EPS = eps * 1000;
 		ProteinFragment p = new ProteinFragment(null, null, 0, 0);
+		calculateAllDistances(data);
 		for(int i = 0; i < data.size(); i++) {
 			p = data.get(i);
 			if(!p.isVisited()) {
