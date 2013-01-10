@@ -9,6 +9,7 @@ import bioinfo.proteins.PDBFileReader;
 import bioinfo.proteins.fragm3nt.DBScan;
 import bioinfo.proteins.fragm3nt.FragmentCluster;
 import bioinfo.proteins.fragm3nt.Fragmenter;
+import bioinfo.proteins.fragm3nt.KMeansAllvsAll;
 import bioinfo.proteins.fragm3nt.ProteinFragment;
 
 public class Fr4gmentTest {
@@ -16,15 +17,18 @@ public class Fr4gmentTest {
 	public static void main(String[] args) {
 		PDBFileReader reader = new PDBFileReader();
 		List<PDBEntry> files = new LinkedList<PDBEntry>();
-		ArrayList<ProteinFragment> pList = new ArrayList<ProteinFragment>();
+		LinkedList<ProteinFragment> pList = new LinkedList<ProteinFragment>();
 		PDBEntry pdb1 = reader.readPDBFromFile("1x2tA00.pdb");
 		files.add(pdb1);
 		for (PDBEntry e : files) {
 			Fragmenter.crunchBackboneSeq(e, pList, 5);
 		}
-		DBScan clustah = new DBScan();
+		KMeansAllvsAll clustah = new KMeansAllvsAll(pList);
 		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
-		clustah.oppaDBStyle(4, 1.0, pList, clusters);
+		clustah.initializeClusters();
+		clustah.update(200);
+		
+		clusters = clustah.getClusters();
 		
 		LinkedList<ProteinFragment> curFrags = new LinkedList<ProteinFragment>();
 		int fragLength = clusters.getFirst().getFragments().getFirst().fragLength;
@@ -41,7 +45,19 @@ public class Fr4gmentTest {
 			}
 			fr.setPssm(pssm);
 		}
-
+		
+		// assembly?
+		String query = "DCPSGWSSYEGHCYKPFKLYKTWDDAERFCTEQAKGGHLVSIESAGEADFVAQLVTENIQNTKSYVWIGLRVQGKEKQCSSEWSDGSSVSYENWIEAESKTCLGLEKETGFRKWVNIYCGQQNPFVCEA";
+		String curSub = query.substring(0, 5);
+		
+		for(int i = 2; i < query.length(); i += 3) {
+			
+		}
+	}
+	
+	public ProteinFragment findFragment(String query, FragmentCluster cluster) {
+		
+		return null;
 	}
 
 }

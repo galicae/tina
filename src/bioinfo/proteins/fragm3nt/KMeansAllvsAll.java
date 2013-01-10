@@ -59,6 +59,7 @@ public class KMeansAllvsAll extends CentroidClustering {
 			// cluster.
 			else {
 				clusters.addLast(new FragmentCluster());
+//				minPair[1].correctCoordinates(minPair[1].getAllResidues()[0]);
 				clusters.getLast().setCentroid(minPair[1]);
 				minPair[0].setClusterIndex(clusters.size() - 1);
 				minPair[1].setClusterIndex(clusters.size() - 1);

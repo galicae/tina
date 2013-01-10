@@ -3,6 +3,7 @@ package bioinfo.proteins.fragm3nt;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import bioinfo.proteins.Atom;
 import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.Transformation;
 
@@ -120,7 +121,7 @@ public class DBScan {
 			ArrayList<ProteinFragment> neighbours,
 			ArrayList<ProteinFragment> data) {
 		c.add(p);
-		ProteinFragment f = new ProteinFragment(null, null, 0, 0);
+		ProteinFragment f = new ProteinFragment(null, new double[1][1], 0, 0);
 		for (int i = 0; i < neighbours.size(); i++) {
 			f = neighbours.get(i);
 			if (!f.isVisited()) {
@@ -162,8 +163,9 @@ public class DBScan {
 			LinkedList<FragmentCluster> clusters) {
 		MINPTS = minpts;
 		EPS = eps * 1000;
-		ProteinFragment p = new ProteinFragment(null, null, 0, 0);
+		ProteinFragment p = new ProteinFragment(null, new double[1][1], 0, 0);
 		calculateAllDistances(data);
+		System.out.println("calculated all distances");
 		for (int i = 0; i < data.size(); i++) {
 			p = data.get(i);
 			if (!p.isVisited()) {

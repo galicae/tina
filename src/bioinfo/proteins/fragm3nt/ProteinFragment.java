@@ -1,9 +1,13 @@
 package bioinfo.proteins.fragm3nt;
 
+import bioinfo.proteins.Atom;
+import bioinfo.proteins.AtomType;
+
 public class ProteinFragment {
 	private String id;
 	private String sequence;
 	private double[][] coordinates;
+	private Atom[] atoms;
 	private int startIndex;
 	public final int fragLength;
 	private boolean visited = false;
@@ -13,23 +17,39 @@ public class ProteinFragment {
 								// lot of time during the initialization of the
 								// clusters.
 
-	public ProteinFragment(String id, double[][] coordinates, int startIndex,
+	public ProteinFragment(String id, Atom[] atoms, int startIndex,
+			int fragLength) {
+		this.atoms = atoms;
+		this.fragLength = fragLength;
+		this.id = id;
+		this.coordinates = new double[atoms.length][3];
+		this.startIndex = startIndex;
+		for(int i = 0; i < atoms.length; i++) {
+			coordinates[i] = atoms[i].getPosition();
+		}
+	}
+
+	// centroid constructor
+	public ProteinFragment(String id, double[][] atoms, int startIndex,
 			int fragLength) {
 		this.fragLength = fragLength;
 		this.id = id;
-		this.coordinates = new double[fragLength][3];
-		this.coordinates = coordinates;
+		this.coordinates = new double[atoms.length][3];
+		this.coordinates = atoms;
 		this.startIndex = startIndex;
 	}
-
-	public ProteinFragment(String id, String seq, double[][] coordinates,
+	
+	public ProteinFragment(String id, String seq, Atom[] atoms,
 			int startIndex, int fragLength) {
+		this.atoms = atoms;
 		this.fragLength = fragLength;
 		this.id = id;
 		this.sequence = seq;
-		this.coordinates = new double[fragLength][3];
-		this.coordinates = coordinates;
+		this.coordinates = new double[atoms.length][3];
 		this.startIndex = startIndex;
+		for(int i = 0; i < atoms.length; i++) {
+			coordinates[i] = atoms[i].getPosition();
+		}
 	}
 
 	public double[] getResidue(int i) {
@@ -62,6 +82,9 @@ public class ProteinFragment {
 
 	public void setCoordinates(double[][] nCoord) {
 		this.coordinates = nCoord;
+		for(int i = 0; i < nCoord.length; i++) {
+			atoms[i].setPosition(nCoord[i]);
+		}
 	}
 
 	public String toString() {
@@ -72,6 +95,22 @@ public class ProteinFragment {
 					+ coordinates[i][2] + "\n";
 		}
 		return result;
+	}
+	
+	public String getCanonicalRepresentation() {
+		StringBuilder sb = new StringBuilder();
+		Atom a = new Atom(AtomType.C, new double[2]);
+		for(int i = 0; i < atoms.length; i++) {
+			a = atoms[i];
+			sb.append(a.toString(i, (i/4), String.valueOf(sequence.charAt(i/4)), 'A') + "\n");
+		}
+		
+//		int i = atoms.length;
+//		String term = atoms[atoms.length - 1].toString(i, (i-1)/4, String.valueOf(sequence.charAt((i-1)/4)), 'A');
+//		term = term.replace("ATOM", "TER ");
+//		term = term.substring(0, 11) + "      " + term.substring(17, 25);
+//		sb.append(term + "\n");
+		return sb.toString();
 	}
 
 	public boolean equals(ProteinFragment other) {
@@ -109,5 +148,17 @@ public class ProteinFragment {
 
 	public void setNoise(boolean noise) {
 		this.noise = noise;
+	}
+	
+	public Atom[] getAtoms() {
+		return this.atoms;
+	}
+	
+	public void correctCoordinates(double[] correction) {
+		for(int i = 0; i < coordinates.length; i++) {
+			for(int j = 0; j < coordinates[0].length; j++) {
+				coordinates[i][j] -= correction[j];
+			}
+		}
 	}
 }
