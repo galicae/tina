@@ -8,6 +8,7 @@ public class FragmentCluster {
 	private LinkedList<ProteinFragment> fragments = new LinkedList<ProteinFragment>();
 	private String name;
 	private ProteinFragment centroid;
+	public double[][] pssm;
 
 	public void calculateCentroid() {
 		int actLength = centroid.getAllResidues().length;
@@ -132,5 +133,13 @@ public class FragmentCluster {
 
 	public int getSize() {
 		return fragments.size();
+	}
+	
+	public LinkedList<ProteinFragment> getFragments() {
+		return this.fragments;
+	}
+	
+	public void setPssm(double[][] matrix) {
+		pssm = matrix;
 	}
 }

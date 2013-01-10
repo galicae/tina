@@ -49,7 +49,7 @@ public class Fragm3ntTest {
 		// write out clusters
 		for (FragmentCluster c : clusters) {
 			try {
-				BufferedWriter br = new BufferedWriter(new FileWriter("/home/p/papadopoulos/Desktop/results/KM/" + c.getCentroid().getID()));
+				BufferedWriter br = new BufferedWriter(new FileWriter(c.getCentroid().getID()));
 				br.write(c.toString());
 				br.close();
 			} catch (Exception e) {

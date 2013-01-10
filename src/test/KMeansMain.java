@@ -29,7 +29,7 @@ public class KMeansMain {
 				+ args[1] + " and " + args[0] + " update cycles.");
 
 		readTime = System.currentTimeMillis();
-		System.err.println("reading /home/p/papadopoulos/workspace/tina/proteins...");
+		System.out.println("reading /home/p/papadopoulos/workspace/tina/proteins...");
 		files = reader.readPdbFolder();
 		crunchTime = System.currentTimeMillis();
 
@@ -37,7 +37,7 @@ public class KMeansMain {
 				+ (crunchTime - readTime));
 
 		LinkedList<ProteinFragment> pList = new LinkedList<ProteinFragment>();
-		System.err.println("crunching records...");
+		System.out.println("crunching records...");
 		for (PDBEntry e : files) {
 			Fragmenter.crunchBackboneSeq(e, pList, Integer.parseInt(args[1]));
 		}
@@ -47,7 +47,7 @@ public class KMeansMain {
 				+ (initTime - crunchTime));
 
 		KMeansAllvsAll clusterAlgorithm = new KMeansAllvsAll(pList);
-		System.err.println("initializing clusters...");
+		System.out.println("initializing clusters...");
 		clusterAlgorithm.initializeClusters();
 		updateTime = System.currentTimeMillis();
 
