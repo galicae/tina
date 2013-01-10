@@ -12,7 +12,7 @@ import highscorealignments.SeqLibrary;
 import bioinfo.Sequence;
 import bioinfo.alignment.Aligner;
 import bioinfo.alignment.SequenceAlignment;
-import bioinfo.alignment.gotoh.LocalSequenceGotoh;
+import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.kerbsch.InitClass;
 
 public class AlignmentBenchmarker {
@@ -56,6 +56,17 @@ public class AlignmentBenchmarker {
 	private int scop_misdiffoldfam;
 	private int scop_misdiffoldsup;
 	private int scop_misdiffoldfold;
+	
+	//tempscores for statistic method
+	private double maxscore = Double.NEGATIVE_INFINITY;
+	private double samefammaxscore_cath = Double.NEGATIVE_INFINITY;
+	private double samesupmaxscore_cath = Double.NEGATIVE_INFINITY;
+	private double samefoldmaxscore_cath = Double.NEGATIVE_INFINITY;
+	private double diffoldmaxscore_cath = Double.NEGATIVE_INFINITY;
+	private double samefammaxscore_scop = Double.NEGATIVE_INFINITY;
+	private double samesupmaxscore_scop = Double.NEGATIVE_INFINITY;
+	private double samefoldmaxscore_scop = Double.NEGATIVE_INFINITY;
+	private double diffoldmaxscore_scop = Double.NEGATIVE_INFINITY;
 
 	public AlignmentBenchmarker(String args[]) {
 		go = Double.parseDouble(args[0]);
@@ -70,7 +81,7 @@ public class AlignmentBenchmarker {
 			substMatrix = matrices.calcGotohInputMatrix(matrices
 					.calcHydropathyScores());
 		}
-		gotoh = new LocalSequenceGotoh(go, ge, substMatrix);
+		gotoh = new FreeshiftSequenceGotoh(go, ge, substMatrix);
 
 		seqlib = SeqLibrary.parse(args[3]);
 		pairs = PairReader.parse(args[4]);
@@ -92,20 +103,108 @@ public class AlignmentBenchmarker {
 			}
 		}
 	}
+	
+	private void statistic(CathScopEntry besthit, CathScopEntry query){
+		if(besthit != null){
+			// for cath family recognition test
+			if (query.getCathClazz() == besthit.getCathClazz()
+					&& query.getCathFold() == besthit.getCathFold()
+					&& query.getCathSupFam() == besthit.getCathSupFam()
+					&& query.getCathFam() == besthit.getCathFam()) {
+				cath_recsamefam++;
+			} else if (query.getCathClazz() == besthit.getCathClazz()
+					&& query.getCathFold() == besthit.getCathFold()
+					&& query.getCathSupFam() == besthit.getCathSupFam()) {
+				cath_recsamesup++;
+			} else if (query.getCathClazz() == besthit.getCathClazz()
+					&& query.getCathFold() == besthit.getCathFold()) {
+				cath_recsamefold++;
+			} else {
+				cath_recdiffold++;
+			}
+	
+			// for scop family recognition test
+			if (query.getScopClazz() == besthit.getScopClazz()
+					&& query.getScopFold() == besthit.getScopFold()
+					&& query.getScopSupFam() == besthit.getScopSupFam()
+					&& query.getScopFam() == besthit.getScopFam()) {
+				scop_recsamefam++;
+			} else if (query.getScopClazz() == besthit.getScopClazz()
+					&& query.getScopFold() == besthit.getScopFold()
+					&& query.getScopSupFam() == besthit.getScopSupFam()) {
+				scop_recsamesup++;
+			} else if (query.getScopClazz() == besthit.getScopClazz()
+					&& query.getScopFold() == besthit.getScopFold()) {
+				scop_recsamefold++;
+			} else {
+				scop_recdiffold++;
+			}
+		}
+		
+		// cath misclassification test
+		if (samefammaxscore_cath >= diffoldmaxscore_cath
+				&& diffoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
+			cath_missamefam++;
+		} else if (samefammaxscore_cath < diffoldmaxscore_cath
+				&& samefammaxscore_cath != Double.NEGATIVE_INFINITY) {
+			cath_misdiffoldfam++;
+		}
+		if (samesupmaxscore_cath >= diffoldmaxscore_cath
+				&& diffoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
+			cath_missamesup++;
+		} else if (samesupmaxscore_cath < diffoldmaxscore_cath
+				&& samesupmaxscore_cath != Double.NEGATIVE_INFINITY) {
+			cath_misdiffoldsup++;
+		}
+		if (samefoldmaxscore_cath >= diffoldmaxscore_cath
+				&& diffoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
+			cath_missamefold++;
+		} else if (samefoldmaxscore_cath < diffoldmaxscore_cath
+				&& samefoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
+			cath_misdiffoldfold++;
+		}
+	
+		// scop misclassification test
+		if (samefammaxscore_scop >= diffoldmaxscore_scop
+				&& diffoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
+			scop_missamefam++;
+		} else if (samefammaxscore_scop < diffoldmaxscore_scop
+				&& samefammaxscore_scop != Double.NEGATIVE_INFINITY) {
+			scop_misdiffoldfam++;
+		}
+		if (samesupmaxscore_scop >= diffoldmaxscore_scop
+				&& diffoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
+			scop_missamesup++;
+		} else if (samesupmaxscore_scop < diffoldmaxscore_scop
+				&& samesupmaxscore_scop != Double.NEGATIVE_INFINITY) {
+			scop_misdiffoldsup++;
+		}
+		if (samefoldmaxscore_scop >= diffoldmaxscore_scop
+				&& diffoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
+			scop_missamefold++;
+		} else if (samefoldmaxscore_scop < diffoldmaxscore_scop
+				&& samefoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
+			scop_misdiffoldfold++;
+		}
+	}
+	
+	private void resetScores(){
+		maxscore = Double.NEGATIVE_INFINITY;
+		samefammaxscore_cath = Double.NEGATIVE_INFINITY;
+		samesupmaxscore_cath = Double.NEGATIVE_INFINITY;
+		samefoldmaxscore_cath = Double.NEGATIVE_INFINITY;
+		diffoldmaxscore_cath = Double.NEGATIVE_INFINITY;
+		samefammaxscore_scop = Double.NEGATIVE_INFINITY;
+		samesupmaxscore_scop = Double.NEGATIVE_INFINITY;
+		samefoldmaxscore_scop = Double.NEGATIVE_INFINITY;
+		diffoldmaxscore_scop = Double.NEGATIVE_INFINITY;
+	}
 
 	public void benchmark() {
-		double maxscore = Double.NEGATIVE_INFINITY;
 		double score = Double.NEGATIVE_INFINITY;
-		double samefammaxscore_cath = Double.NEGATIVE_INFINITY;
-		double samesupmaxscore_cath = Double.NEGATIVE_INFINITY;
-		double samefoldmaxscore_cath = Double.NEGATIVE_INFINITY;
-		double diffoldmaxscore_cath = Double.NEGATIVE_INFINITY;
-		double samefammaxscore_scop = Double.NEGATIVE_INFINITY;
-		double samesupmaxscore_scop = Double.NEGATIVE_INFINITY;
-		double samefoldmaxscore_scop = Double.NEGATIVE_INFINITY;
-		double diffoldmaxscore_scop = Double.NEGATIVE_INFINITY;
+		resetScores();
+		
 		String lastquery = "";
-
 		SequenceAlignment temp;
 		CathScopEntry query = null;
 		CathScopEntry template;
@@ -129,71 +228,19 @@ public class AlignmentBenchmarker {
 			}
 
 			// here comes a new target to thread
-			if (!pair[0].equals(lastquery)) {
+			if (!pair[0].equals(lastquery)) {		
+				statistic(besthit,query);
+				resetScores();
 				besthit = null;
-				maxscore = Double.NEGATIVE_INFINITY;
-				samefammaxscore_cath = Double.NEGATIVE_INFINITY;
-				samesupmaxscore_cath = Double.NEGATIVE_INFINITY;
-				samefoldmaxscore_cath = Double.NEGATIVE_INFINITY;
-				diffoldmaxscore_cath = Double.NEGATIVE_INFINITY;
-				samefammaxscore_scop = Double.NEGATIVE_INFINITY;
-				samesupmaxscore_scop = Double.NEGATIVE_INFINITY;
-				samefoldmaxscore_scop = Double.NEGATIVE_INFINITY;
-				diffoldmaxscore_scop = Double.NEGATIVE_INFINITY;
 				query = cathscopinfo.get(pair[0]);
 				lastquery = pair[0];
-
-				// cath misclassification test
-				if (samefammaxscore_cath >= diffoldmaxscore_cath
-						&& diffoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
-					cath_missamefam++;
-				} else if (samefammaxscore_cath < diffoldmaxscore_cath
-						&& samefammaxscore_cath != Double.NEGATIVE_INFINITY) {
-					cath_misdiffoldfam++;
-				}
-				if (samesupmaxscore_cath >= diffoldmaxscore_cath
-						&& diffoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
-					cath_missamesup++;
-				} else if (samesupmaxscore_cath < diffoldmaxscore_cath
-						&& samesupmaxscore_cath != Double.NEGATIVE_INFINITY) {
-					cath_misdiffoldsup++;
-				}
-				if (samefoldmaxscore_cath >= diffoldmaxscore_cath
-						&& diffoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
-					cath_missamefold++;
-				} else if (samefoldmaxscore_cath < diffoldmaxscore_cath
-						&& samefoldmaxscore_cath != Double.NEGATIVE_INFINITY) {
-					cath_misdiffoldfold++;
-				}
-
-				// scop misclassification test
-				if (samefammaxscore_scop >= diffoldmaxscore_scop
-						&& diffoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
-					scop_missamefam++;
-				} else if (samefammaxscore_scop < diffoldmaxscore_scop
-						&& samefammaxscore_scop != Double.NEGATIVE_INFINITY) {
-					scop_misdiffoldfam++;
-				}
-				if (samesupmaxscore_scop >= diffoldmaxscore_scop
-						&& diffoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
-					scop_missamesup++;
-				} else if (samesupmaxscore_scop < diffoldmaxscore_scop
-						&& samesupmaxscore_scop != Double.NEGATIVE_INFINITY) {
-					scop_misdiffoldsup++;
-				}
-				if (samefoldmaxscore_scop >= diffoldmaxscore_scop
-						&& diffoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
-					scop_missamefold++;
-				} else if (samefoldmaxscore_scop < diffoldmaxscore_scop
-						&& samefoldmaxscore_scop != Double.NEGATIVE_INFINITY) {
-					scop_misdiffoldfold++;
-				}
+				System.out.println("found max");
 			}
 			template = cathscopinfo.get(pair[1]);
 			
 			// make Alignment and check for besthit
 			id1 = idToIndex.get(pair[0]);
-			id2 = idToIndex.get(pair[2]);
+			id2 = idToIndex.get(pair[1]);
 			if (alignments[id1][id2] == Double.NEGATIVE_INFINITY) {
 				temp = (SequenceAlignment) gotoh.align(new Sequence(pair[0],
 						seqlib.get(pair[0])),
@@ -272,41 +319,8 @@ public class AlignmentBenchmarker {
 					diffoldmaxscore_scop = score;
 				}
 			}
-
-			// for cath family recognition test
-			if (query.getCathClazz() == besthit.getCathClazz()
-					&& query.getCathFold() == besthit.getCathFold()
-					&& query.getCathSupFam() == besthit.getCathSupFam()
-					&& query.getCathFam() == besthit.getCathFam()) {
-				cath_recsamefam++;
-			} else if (query.getCathClazz() == besthit.getCathClazz()
-					&& query.getCathFold() == besthit.getCathFold()
-					&& query.getCathSupFam() == besthit.getCathSupFam()) {
-				cath_recsamesup++;
-			} else if (query.getCathClazz() == besthit.getCathClazz()
-					&& query.getCathFold() == besthit.getCathFold()) {
-				cath_recsamefold++;
-			} else {
-				cath_recdiffold++;
-			}
-
-			// for scop family recognition test
-			if (query.getScopClazz() == besthit.getScopClazz()
-					&& query.getScopFold() == besthit.getScopFold()
-					&& query.getScopSupFam() == besthit.getScopSupFam()
-					&& query.getScopFam() == besthit.getScopFam()) {
-				scop_recsamefam++;
-			} else if (query.getScopClazz() == besthit.getScopClazz()
-					&& query.getScopFold() == besthit.getScopFold()
-					&& query.getScopSupFam() == besthit.getScopSupFam()) {
-				scop_recsamesup++;
-			} else if (query.getScopClazz() == besthit.getScopClazz()
-					&& query.getScopFold() == besthit.getScopFold()) {
-				scop_recsamefold++;
-			} else {
-				scop_recdiffold++;
-			}
 		}
+		statistic(besthit,query);
 	}
 
 	public void printResults() throws IOException {
@@ -329,6 +343,7 @@ public class AlignmentBenchmarker {
 		out.write(scop_missamesup + "\n" + scop_misdiffoldsup + "\n");
 		// fold misclassification
 		out.write(scop_missamefold + "\n" + scop_misdiffoldfold + "\n");
+		out.close();
 	}
 
 	public static void main(String[] args) {
