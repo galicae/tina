@@ -136,7 +136,6 @@ public abstract class CentroidClustering {
 	 * @param n
 	 *            how many loops to run over the update function
 	 */
-	@Deprecated
 	public void update(int n) {
 		System.out.println("Starting update....");
 		boolean updated = true;

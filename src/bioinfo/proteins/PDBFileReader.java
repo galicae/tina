@@ -308,10 +308,10 @@ public class PDBFileReader {
 		String newPdbId = pdbId;
 		try{
 			char chain;
-			if((pdbId.replace("_", "")).length() == 4)
-				chain = 'A';
+			if(pdbId.length() == 6)
+				chain = pdbId.charAt(5);
 			else
-				chain = pdbId.charAt(4);
+				chain = 'A';
 			String line;
 			List<Atom> atoms = new ArrayList<Atom>();
 			
@@ -361,13 +361,8 @@ public class PDBFileReader {
 					
 				}
 			}
-			newPdbId = pdbId.substring(0, 4) + chain;
-			if(pdbId.charAt(5) == '_') {
-				newPdbId += '0';
-			}
-			else
-				newPdbId += pdbId.charAt(5);
-			//lastresidue fix
+			newPdbId = pdbId.substring(0, 4) + chain + '0';
+			//last residue fix
 			if(atoms != null && atoms.size() != 0){
 				aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(resName),resSeq,atoms.toArray(new Atom[atoms.size()])));
 			}

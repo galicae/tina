@@ -3,6 +3,7 @@ package bioinfo.proteins.fragm3nt;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import bioinfo.proteins.Atom;
 import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.Transformation;
 
@@ -10,7 +11,7 @@ import bioinfo.superpos.Transformation;
  * an implementation of the DBSCAN (density-based clustering) algorithm
  * described in
  * "A density-based algorithm for discovering clusters in large spatial databases with noise"
- * by Martin Ester, Hans-Peter Kriegel, Jörg Sander, Xiaowei Xu (1996-)
+ * by Martin Ester, Hans-Peter Kriegel, Jï¿½rg Sander, Xiaowei Xu (1996-)
  * 
  * mostly based on the wikipedia pseudocode of the algorithm
  * 
@@ -57,8 +58,8 @@ public class DBScan {
 				distance[((j * (j - 1)) / 2) + i] = temp;
 			}
 		}
+		temp++;
 	}
-
 
 	/**
 	 * finds all neighbours of fragment at position 'position', defined by their
@@ -116,11 +117,13 @@ public class DBScan {
 	 * @param data
 	 *            the whole fragment library
 	 */
-	public void expandCluster(ProteinFragment p, FragmentCluster c,
+	private void expandCluster(ProteinFragment p, FragmentCluster c,
 			ArrayList<ProteinFragment> neighbours,
 			ArrayList<ProteinFragment> data) {
 		c.add(p);
-		for (ProteinFragment f: neighbours) {			
+		ProteinFragment f = new ProteinFragment(null, new double[1][1], 0, 0);
+		for (int i = 0; i < neighbours.size(); i++) {
+			f = neighbours.get(i);
 			if (!f.isVisited()) {
 				f.setVisited(true);
 				ArrayList<ProteinFragment> fNeighbours = getNeighbours(
@@ -130,25 +133,47 @@ public class DBScan {
 			}
 			if (f.getClusterIndex() == -1) {
 				f.setClusterIndex(c.getCentroid().getClusterIndex());
+				double[][][] kabschFood = new double[2][data.get(0).fragLength][3];
+				Transformation t;
+				kabschFood[0] = c.getCentroid().getAllResidues();
+				kabschFood[1] = f.getAllResidues();
+				t = Kabsch.calculateTransformation(kabschFood);
+				f.setCoordinates(t.transform(f.getAllResidues()));
 				c.add(f);
 			}
 		}
 	}
-	
-	
-	public void oppaDBStyle(int minpts, double eps, ArrayList<ProteinFragment> data, LinkedList<FragmentCluster> clusters) {
+
+	/**
+	 * this function concentrates all functions of the DBSCAN algorithm, and is
+	 * the one that should be visible from outside.
+	 * 
+	 * @param minpts
+	 *            the minimum number of points that constitute a cluster
+	 * @param eps
+	 *            the epsilon, distance cutoff, under which we consider two
+	 *            points to be near each other
+	 * @param data
+	 *            the protein fragments to be categorized in clusters
+	 * @param clusters
+	 *            the cluster list that, sadly, has to exist already
+	 */
+	public void oppaDBStyle(int minpts, double eps,
+			ArrayList<ProteinFragment> data,
+			LinkedList<FragmentCluster> clusters) {
 		MINPTS = minpts;
-		EPS = eps;
-		ProteinFragment p = new ProteinFragment(null, null, 0, 0);
-		for(int i = 0; i < data.size(); i++) {
+		EPS = eps * 1000;
+		ProteinFragment p = new ProteinFragment(null, new double[1][1], 0, 0);
+		calculateAllDistances(data);
+		System.out.println("calculated all distances");
+		for (int i = 0; i < data.size(); i++) {
 			p = data.get(i);
-			if(!p.isVisited()) {
+			if (!p.isVisited()) {
 				p.setVisited(true);
 				ArrayList<ProteinFragment> pNeighbours = getNeighbours(i, data);
-				if(pNeighbours.size() < MINPTS) {
+				if (pNeighbours.size() < MINPTS) {
 					p.setNoise(true);
-				}
-				else {
+				} else {
 					clusters.addLast(new FragmentCluster());
 					p.setClusterIndex(clusters.size() - 1);
 					clusters.getLast().setCentroid(p);
