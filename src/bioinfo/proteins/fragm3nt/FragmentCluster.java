@@ -77,58 +77,16 @@ public class FragmentCluster {
 
 	@Override
 	public String toString() {
-		int i = 0;
 		StringBuilder result = new StringBuilder();
-		String tempResult = "";
-
-		 String pattern = "####.###";
-		 DecimalFormat myFormatter = new DecimalFormat(pattern);
-
-		for (ProteinFragment f : fragments) {
-			result.append("REMARK 500 " + f.getSequence() + "\n");
-			result.append("MODEL        " + ++i + "\n");
-			for (int j = 0; j < f.getAllResidues().length; j++) {
-				tempResult = "ATOM  ##### aaaa+rrr c****i   xxxxxxxxyyyyyyyyzzzzzzzzooooootttttt          eehh\n";
-				// coordinate strings
-				 String xCoord = myFormatter.format(f.getResidue(j)[0]);
-//				String xCoord = String.valueOf(f.getResidue(j)[0]);
-				while (xCoord.length() < 8)
-					xCoord = " " + xCoord;
-				 String yCoord = myFormatter.format(f.getResidue(j)[1]);
-//				String yCoord = String.valueOf(f.getResidue(j)[1]);
-				while (yCoord.length() < 8)
-					yCoord = " " + yCoord;
-				 String zCoord = myFormatter.format(f.getResidue(j)[2]);
-//				String zCoord = String.valueOf(f.getResidue(j)[2]);
-				while (zCoord.length() < 8)
-					zCoord = " " + zCoord;
-				// atom type
-				String atomType = " C  ";
-				String element = " C";
-
-				tempResult = tempResult.replace("oooooo", "  1.00");
-				tempResult = tempResult.replace("tttttt", "  0.00");
-				tempResult = tempResult.replace("h", " ");
-				tempResult = tempResult.replace("c", "A");
-				tempResult = tempResult.replace("+", " ");
-				tempResult = tempResult.replace("i", " ");
-				tempResult = tempResult.replace("ee", element);
-				tempResult = tempResult.replace("****",
-						String.format("%4d", (int) j / 4));
-				tempResult = tempResult.replace("rrr", "ALA");
-				tempResult = tempResult.replace("#####",
-						String.format("%5d", j));
-				tempResult = tempResult.replace("aaaa", atomType);
-				tempResult = tempResult.replace("xxxxxxxx", xCoord);
-				tempResult = tempResult.replace("yyyyyyyy", yCoord);
-				tempResult = tempResult.replace("zzzzzzzz", zCoord);
-				result.append(tempResult);
-			}
-			tempResult = tempResult
-					+ ("TER " + (f.getAllResidues().length - 1) + "\n");
-			result.append("ENDMDL" + "\n");
+		ProteinFragment f = new ProteinFragment(null, new double[1][1], 0, 0);
+		for(int i = 0; i < fragments.size(); i++) {
+			f = fragments.get(i);
+			result.append("REMARK " + f.getSequence() + "\n");
+			result.append("MODEL        " + (i+1) + "\n");
+			result.append(f.getCanonicalRepresentation());
+			result.append("ENDMDL\n");
 		}
-		return result.toString().replace(",", ".");
+		return result.toString();
 	}
 
 	public int getSize() {

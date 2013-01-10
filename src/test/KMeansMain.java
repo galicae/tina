@@ -14,6 +14,10 @@ import bioinfo.proteins.fragm3nt.ProteinFragment;
 
 public class KMeansMain {
 	public static void main(String[] args) {
+		int updCycles = Integer.parseInt(args[0]);
+		int fragLength = Integer.parseInt(args[1]);
+		String pre = args[2];
+		
 		long startTime = System.currentTimeMillis();
 		long readTime = 0;
 		long crunchTime = 0;
@@ -26,7 +30,7 @@ public class KMeansMain {
 
 		System.out.println("=========================================================");
 		System.out.println("KMeans clustering with fragment length of "
-				+ args[1] + " and " + args[0] + " update cycles.");
+				+ fragLength + " and " + updCycles + " update cycles.");
 
 		readTime = System.currentTimeMillis();
 		System.out.println("reading /home/p/papadopoulos/workspace/tina/proteins...");
@@ -39,7 +43,7 @@ public class KMeansMain {
 		LinkedList<ProteinFragment> pList = new LinkedList<ProteinFragment>();
 		System.out.println("crunching records...");
 		for (PDBEntry e : files) {
-			Fragmenter.crunchBackboneSeq(e, pList, Integer.parseInt(args[1]));
+			Fragmenter.crunchBackboneSeq(e, pList, fragLength);
 		}
 		initTime = System.currentTimeMillis();
 
@@ -54,13 +58,15 @@ public class KMeansMain {
 		System.out.println("Cluster initialization in (ms) "
 				+ (updateTime - initTime));
 		System.out.println("updating " + clusterAlgorithm.getClusters().size() + " clusters...");
-		clusterAlgorithm.update(Integer.parseInt(args[0]));
+		clusterAlgorithm.update(updCycles);
 		writeTime = System.currentTimeMillis();
-		System.out.println("Updated " + args[0] + " times in (ms) " + (writeTime - updateTime));
+		System.out.println("Updated " + updCycles + " times in (ms) " + (writeTime - updateTime));
+		
+//		System.out.println(clusterAlgorithm.getClusters().getFirst().toString());
 		
 		for (FragmentCluster c : clusterAlgorithm.getClusters()) {
 			try {
-				BufferedWriter br = new BufferedWriter(new FileWriter("/home/p/papadopoulos/Desktop/results/KM/" + c.getCentroid().getID()));
+				BufferedWriter br = new BufferedWriter(new FileWriter("/home/p/papadopoulos/Desktop/results/KM/" + pre + "_" + c.getCentroid().getID()));
 				br.write(c.toString());
 				br.close();
 			} catch (Exception e) {

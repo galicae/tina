@@ -86,12 +86,18 @@ public class Atom implements Serializable{
 		String xCoord = Double.toString(position[0]);
 		while (xCoord.length() < 8)
 			xCoord = " " + xCoord;
+		if(xCoord.length() > 8)
+			xCoord = xCoord.substring(0, 8);
 		String yCoord = Double.toString(position[1]);
 		while (yCoord.length() < 8)
 			yCoord = " " + yCoord;
+		if(yCoord.length() > 8)
+			yCoord = yCoord.substring(0, 8);
 		String zCoord = Double.toString(position[2]);
 		while (zCoord.length() < 8)
 			zCoord = " " + zCoord;
+		if(zCoord.length() > 8)
+			zCoord = zCoord.substring(0, 8);
 		// atom type
 		String atomType = type.toString();
 		while (atomType.length() < 4)
@@ -108,9 +114,12 @@ public class Atom implements Serializable{
 			element = Character.toString(atomType.charAt(0));
 		while (element.length() < 2)
 			element = " " + element;
-
-		result = result.replace("o", " ");
-		result = result.replace("t", " ");
+		
+		if(resName.length() == 1) {
+			resName = AminoAcidName.getThreeLetterCode(resName);
+		}
+		result = result.replace("oooooo", "  1.00");
+		result = result.replace("tttttt", "  0.00");
 		result = result.replace("h", " ");
 		result = result.replace("c", chain + "");
 		result = result.replace("+", " ");
@@ -126,6 +135,7 @@ public class Atom implements Serializable{
 		return result;
 	}
 
+	
 	/**
 	 * this function is the same as the toString function, although without the
 	 * extra information. It uses placeholders instead, making the creation of a

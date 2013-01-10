@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import bioinfo.proteins.AminoAcid;
+import bioinfo.proteins.Atom;
 import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;
 
@@ -26,17 +27,13 @@ public class Fragmenter {
 		try {
 			AminoAcid tempAA = new AminoAcid("ALA", 0);
 			for (int i = 0; i < pdb.length() - fLength; i++) {
-				double[][] temp = new double[4 * fLength][3];
+				Atom[] temp = new Atom[4 * fLength];
 				for (int j = i; j < i + fLength; j++) {
 					tempAA = pdb.getAminoAcid(j);
-					temp[(j - i) * 4 + 0] = tempAA.getAtomByType(AtomType.N)
-							.getPosition();
-					temp[(j - i) * 4 + 1] = tempAA.getAtomByType(AtomType.CA)
-							.getPosition();
-					temp[(j - i) * 4 + 2] = tempAA.getAtomByType(AtomType.O)
-							.getPosition();
-					temp[(j - i) * 4 + 3] = tempAA.getAtomByType(AtomType.C)
-							.getPosition();
+					temp[(j - i) * 4 + 0] = tempAA.getAtomByType(AtomType.N);
+					temp[(j - i) * 4 + 1] = tempAA.getAtomByType(AtomType.CA);
+					temp[(j - i) * 4 + 2] = tempAA.getAtomByType(AtomType.C);
+					temp[(j - i) * 4 + 3] = tempAA.getAtomByType(AtomType.O);
 				}
 				ProteinFragment tempFrag = new ProteinFragment(pdb.getID()
 						+ "_" + i, temp, i, fLength);
@@ -67,19 +64,15 @@ public class Fragmenter {
 			AminoAcid tempAA = new AminoAcid("ALA", 0);
 			String seq = "";
 			for (int i = 0; i < pdb.length() - fLength; i++) {
-				double[][] temp = new double[4 * fLength][3];
+				Atom[] temp = new Atom[4 * fLength];
 				seq = "";
 				for (int j = i; j < i + fLength; j++) {
 					tempAA = pdb.getAminoAcid(j);
 					seq += tempAA.getName().getOneLetterCode();
-					temp[(j - i) * 4 + 0] = tempAA.getAtomByType(AtomType.N)
-							.getPosition();
-					temp[(j - i) * 4 + 1] = tempAA.getAtomByType(AtomType.CA)
-							.getPosition();
-					temp[(j - i) * 4 + 2] = tempAA.getAtomByType(AtomType.O)
-							.getPosition();
-					temp[(j - i) * 4 + 3] = tempAA.getAtomByType(AtomType.C)
-							.getPosition();
+					temp[(j - i) * 4 + 0] = tempAA.getAtomByType(AtomType.N);
+					temp[(j - i) * 4 + 1] = tempAA.getAtomByType(AtomType.CA);
+					temp[(j - i) * 4 + 2] = tempAA.getAtomByType(AtomType.C);
+					temp[(j - i) * 4 + 3] = tempAA.getAtomByType(AtomType.O);
 				}
 				ProteinFragment tempFrag = new ProteinFragment(pdb.getID()
 						+ "_" + i, seq, temp, i, fLength);
@@ -89,6 +82,7 @@ public class Fragmenter {
 		} catch (Exception e) {
 			System.out.println("Entry " + pdb.getID()
 					+ " probably has incomplete records.");
+			e.printStackTrace();
 		}
 		return null;
 	}
