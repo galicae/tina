@@ -2,13 +2,16 @@ package bioinfo.proteins.fragm3nt;
 
 import java.text.DecimalFormat;
 import java.util.LinkedList;
-import java.util.Locale;
+import java.util.List;
+
+import bioinfo.proteins.*;
+import bioinfo.proteins.AtomType;
 
 public class FragmentCluster {
 	private LinkedList<ProteinFragment> fragments = new LinkedList<ProteinFragment>();
 	private String name;
 	private ProteinFragment centroid;
-	public double[][] pssm;
+	private double[][] pssm;
 
 	public void calculateCentroid() {
 		int actLength = centroid.getAllResidues().length;
@@ -77,14 +80,13 @@ public class FragmentCluster {
 
 	@Override
 	public String toString() {
+		int i = 0;
 		StringBuilder result = new StringBuilder();
-		ProteinFragment f = new ProteinFragment(null, new double[1][1], 0, 0);
-		for(int i = 0; i < fragments.size(); i++) {
-			f = fragments.get(i);
-			result.append("REMARK " + f.getSequence() + "\n");
-			result.append("MODEL        " + (i+1) + "\n");
-			result.append(f.getCanonicalRepresentation());
-			result.append("ENDMDL\n");
+		for (ProteinFragment f : fragments) {
+			result.append("REMARK 500 " + f.getSequence() + "\n");
+			result.append("MODEL        " + ++i + "\n");
+			result.append(f.toString());
+			result.append("ENDMDL" + "\n");
 		}
 		return result.toString();
 	}
@@ -94,9 +96,13 @@ public class FragmentCluster {
 	}
 	
 	public LinkedList<ProteinFragment> getFragments() {
-		return this.fragments;
+		return fragments;
 	}
 	
+	public double[][] getPssm() {
+		return pssm;
+	}
+
 	public void setPssm(double[][] matrix) {
 		pssm = matrix;
 	}

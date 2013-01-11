@@ -6,7 +6,7 @@
 package bioinfo.proteins;
 
 import java.io.Serializable;
-import java.util.zip.DataFormatException;
+import java.text.DecimalFormat;
 
 /**
  * @author gobi_4
@@ -83,21 +83,16 @@ public class Atom implements Serializable{
 		String result = "ATOM  ##### aaaa+rrr c****i   xxxxxxxxyyyyyyyyzzzzzzzzooooootttttt          eehh";
 
 		// coordinate strings
-		String xCoord = Double.toString(position[0]);
+		DecimalFormat df = new DecimalFormat("####.###");
+		String xCoord = df.format(position[0]).replace(",", ".");
 		while (xCoord.length() < 8)
 			xCoord = " " + xCoord;
-		if(xCoord.length() > 8)
-			xCoord = xCoord.substring(0, 8);
-		String yCoord = Double.toString(position[1]);
+		String yCoord = df.format(position[1]).replace(",", ".");
 		while (yCoord.length() < 8)
 			yCoord = " " + yCoord;
-		if(yCoord.length() > 8)
-			yCoord = yCoord.substring(0, 8);
-		String zCoord = Double.toString(position[2]);
+		String zCoord = df.format(position[2]).replace(",", ".");
 		while (zCoord.length() < 8)
 			zCoord = " " + zCoord;
-		if(zCoord.length() > 8)
-			zCoord = zCoord.substring(0, 8);
 		// atom type
 		String atomType = type.toString();
 		while (atomType.length() < 4)

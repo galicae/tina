@@ -1,6 +1,6 @@
 webserver:
-	alignments linebrak after 80 chars
-	session: jobfile vision needs back button or something similiar
+	alignments linebreak after 80 chars
+	session: jobfile vision needs back button or something similar
 
 database:
 	

@@ -17,7 +17,7 @@ public class KMeansAllvsAll extends CentroidClustering {
 		double minRMSD = Double.MAX_VALUE;
 		Transformation t;
 		ProteinFragment[] minPair = new ProteinFragment[2];
-		
+
 		// for every fragment pair...
 		for (int i = 0; i < fragments.size(); i++) {
 			if(fragments.get(i).getClusterIndex() > -1)
@@ -32,7 +32,7 @@ public class KMeansAllvsAll extends CentroidClustering {
 				kabschFood[0] = fragments.get(i).getAllResidues();
 				kabschFood[1] = fragments.get(j).getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
-				
+
 				// and find the pair with the minimal RMSD.
 				double temp = t.getRmsd();
 //				if(temp > 0)
@@ -59,7 +59,6 @@ public class KMeansAllvsAll extends CentroidClustering {
 			// cluster.
 			else {
 				clusters.addLast(new FragmentCluster());
-//				minPair[1].correctCoordinates(minPair[1].getAllResidues()[0]);
 				clusters.getLast().setCentroid(minPair[1]);
 				minPair[0].setClusterIndex(clusters.size() - 1);
 				minPair[1].setClusterIndex(clusters.size() - 1);

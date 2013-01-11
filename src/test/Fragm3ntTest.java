@@ -18,13 +18,12 @@ import bioinfo.superpos.Transformation;
 public class Fragm3ntTest {
 	public static void main(String[] args) {
 		// first read everything there is to read
-		PDBFileReader reader = new PDBFileReader();
+		PDBFileReader reader = new PDBFileReader("./proteins/");
 		// and save it in a files list
 		List<PDBEntry> files = new LinkedList<PDBEntry>();
 		ArrayList<ProteinFragment> pList = new ArrayList<ProteinFragment>();
-		PDBEntry pdb1 = reader.readPDBFromFile("1x2tA00.pdb");
 		
-		files.add(pdb1);
+		files = reader.readPdbFolder();
 		
 		// next make fragments out of all PDBs and save them in pList
 		for(PDBEntry e: files) {

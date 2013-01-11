@@ -25,7 +25,7 @@ public class KMeansMain {
 		long updateTime = 0;
 		long writeTime = 0;
 		long finishTime = 0;
-		PDBFileReader reader = new PDBFileReader("/home/p/papadopoulos/workspace/tina/proteins");
+		PDBFileReader reader = new PDBFileReader("./proteins");
 		List<PDBEntry> files = new LinkedList<PDBEntry>();
 
 		System.out.println("=========================================================");
@@ -33,7 +33,7 @@ public class KMeansMain {
 				+ fragLength + " and " + updCycles + " update cycles.");
 
 		readTime = System.currentTimeMillis();
-		System.out.println("reading /home/p/papadopoulos/workspace/tina/proteins...");
+		System.out.println("reading ./proteins...");
 		files = reader.readPdbFolder();
 		crunchTime = System.currentTimeMillis();
 
@@ -53,6 +53,20 @@ public class KMeansMain {
 		KMeansAllvsAll clusterAlgorithm = new KMeansAllvsAll(pList);
 		System.out.println("initializing clusters...");
 		clusterAlgorithm.initializeClusters();
+//		for (FragmentCluster c : clusterAlgorithm.getClusters()) {
+//			for(ProteinFragment f: c.getFragments()) {
+//				for(int i = 0; i < f.getAtoms().length; i++) {
+//					f.getAtoms()[i].setPosition(f.getAllResidues()[i]);
+//				}
+//			}
+//			try {
+//				BufferedWriter br = new BufferedWriter(new FileWriter("./" + "init" + "_" + c.getCentroid().getID()));
+//				br.write(c.toString());
+//				br.close();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
 		updateTime = System.currentTimeMillis();
 
 		System.out.println("Cluster initialization in (ms) "
@@ -66,7 +80,7 @@ public class KMeansMain {
 		
 		for (FragmentCluster c : clusterAlgorithm.getClusters()) {
 			try {
-				BufferedWriter br = new BufferedWriter(new FileWriter("/home/p/papadopoulos/Desktop/results/KM/" + pre + "_" + c.getCentroid().getID()));
+				BufferedWriter br = new BufferedWriter(new FileWriter("./" + pre + "_" + c.getCentroid().getID()));
 				br.write(c.toString());
 				br.close();
 			} catch (Exception e) {
