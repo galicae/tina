@@ -14,7 +14,7 @@ public class PairReader {
 			String line;
 			while((line = in.readLine()) != null){
 				String[] temp = line.split("\\s");
-				pairs.add(temp);
+				pairs.add(new String[]{temp[0],temp[1]});
 			}
 			in.close();
 		} catch(IOException e){

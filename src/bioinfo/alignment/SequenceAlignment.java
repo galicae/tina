@@ -6,7 +6,6 @@
 package bioinfo.alignment;
 
 import java.text.DecimalFormat;
-import java.util.Locale;
 
 import bioinfo.Sequence;
 
@@ -32,6 +31,10 @@ public class SequenceAlignment implements Alignment {
 	 */
 	private final char[][] rows;
 	/**
+	 * The indices of the aligned residues
+	 */
+	private final int[][] map;
+	/**
 	 * The score of the Alignment
 	 */
 	private final double score;
@@ -53,12 +56,13 @@ public class SequenceAlignment implements Alignment {
 	 *            the score of the Alignment
 	 */
 	public SequenceAlignment(Sequence seq1, Sequence seq2, char[][] rows,
-			double score) {
+			double score, int[][] map) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.rows = rows;
 		this.score = score;
 		this.length = calcLength();
+		this.map = map;
 	}
 
 	/**
@@ -77,7 +81,7 @@ public class SequenceAlignment implements Alignment {
 	 *            the score of the Alignment
 	 */
 	public SequenceAlignment(Sequence seq1, Sequence seq2, char[] row1,
-			char[] row2, double score) {
+			char[] row2, double score, int[][] map) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.score = score;
@@ -86,6 +90,7 @@ public class SequenceAlignment implements Alignment {
 		temp[1] = row2;
 		this.rows = temp;
 		this.length = row1.length;
+		this.map = map;
 	}
 
 	/**
@@ -104,7 +109,7 @@ public class SequenceAlignment implements Alignment {
 	 *            the score of the Alignment
 	 */
 	public SequenceAlignment(Sequence seq1, Sequence seq2, String row1,
-			String row2, double score) {
+			String row2, double score, int[][] map) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.score = score;
@@ -113,6 +118,7 @@ public class SequenceAlignment implements Alignment {
 		temp[1] = row2.toCharArray();
 		this.rows = temp;
 		this.length = row1.length();
+		this.map = map;
 	}
 
 	/**
@@ -122,6 +128,11 @@ public class SequenceAlignment implements Alignment {
 	 */
 	private int calcLength() {
 		return rows[0].length;
+	}
+	
+	//return aligned indices
+	public int[][] getMap(){
+		return this.map;
 	}
 
 	/**
@@ -211,7 +222,7 @@ public class SequenceAlignment implements Alignment {
 	 * essentially copies the current alignment
 	 */
 	public SequenceAlignment duplicate() {
-		return new SequenceAlignment(seq1, seq2, rows, score);
+		return new SequenceAlignment(seq1, seq2, rows, score, map);
 	}
 
 }
