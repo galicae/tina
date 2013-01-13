@@ -1,4 +1,4 @@
-package test;
+package bioinfo.alignment.kerbsch;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

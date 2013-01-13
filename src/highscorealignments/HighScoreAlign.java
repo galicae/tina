@@ -14,6 +14,7 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
 import bioinfo.alignment.gotoh.LocalSequenceGotoh;
+import bioinfo.alignment.kerbsch.SeqLibrary;
 import bioinfo.alignment.matrices.QuasarMatrix;
 
 public class HighScoreAlign {
@@ -28,7 +29,7 @@ public class HighScoreAlign {
 	
 	public HighScoreAlign(String inpairs, String outpairs, String seqlibpath){
 		this.pairs = HashPairReader.readPairs(inpairs, outpairs);
-		this.seqlib = SeqLibrary.parse(seqlibpath);
+		this.seqlib = SeqLibrary.read(seqlibpath);
 	}
 	
 	public void calculation(String matrixpath, int go, int ge, String mode, String outpath){

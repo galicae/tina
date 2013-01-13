@@ -7,8 +7,8 @@ import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.kerbsch.InitClass;
+import bioinfo.alignment.kerbsch.SeqLibrary;
 
-import highscorealignments.SeqLibrary;
 
 public class aligntest {
 

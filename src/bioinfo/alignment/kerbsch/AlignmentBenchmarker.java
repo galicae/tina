@@ -1,4 +1,4 @@
-package test;
+package bioinfo.alignment.kerbsch;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -6,14 +6,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 import highscorealignments.CathScopEntry;
 import highscorealignments.CathScopHash;
-import highscorealignments.SeqLibrary;
 import bioinfo.Sequence;
 import bioinfo.alignment.Aligner;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
-import bioinfo.alignment.kerbsch.InitClass;
 
 public class AlignmentBenchmarker {
 
@@ -68,7 +67,7 @@ public class AlignmentBenchmarker {
 	private double samefoldmaxscore_scop = Double.NEGATIVE_INFINITY;
 	private double diffoldmaxscore_scop = Double.NEGATIVE_INFINITY;
 
-	public AlignmentBenchmarker(String args[]) {
+	public AlignmentBenchmarker(String args[], HashMap<String,char[]> sl) {
 		go = Double.parseDouble(args[0]);
 		ge = Double.parseDouble(args[1]);
 		if (args[2].equals("polarity")) {
@@ -83,7 +82,7 @@ public class AlignmentBenchmarker {
 		}
 		gotoh = new FreeshiftSequenceGotoh(go, ge, substMatrix);
 
-		seqlib = SeqLibrary.parse(args[3]);
+		seqlib = sl;
 		pairs = PairReader.parse(args[4]);
 		cathscopinfo = CathScopHash.read(args[5]);
 		alignments = new double[seqlib.size()][seqlib.size()];
@@ -344,15 +343,5 @@ public class AlignmentBenchmarker {
 		// fold misclassification
 		out.write(scop_missamefold + "\n" + scop_misdiffoldfold + "\n");
 		out.close();
-	}
-
-	public static void main(String[] args) {
-		AlignmentBenchmarker ab = new AlignmentBenchmarker(args);
-		ab.benchmark();
-		try {
-			ab.printResults();
-		} catch (IOException e) {
-			System.out.println("cannot write output! (Benchmarker)");
-		}
 	}
 }
