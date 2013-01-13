@@ -1,6 +1,5 @@
 package test;
 
-import highscorealignments.SeqLibrary;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,6 +13,7 @@ import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.SequenceAlignmentFileReader;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
+import bioinfo.alignment.kerbsch.SeqLibrary;
 import bioinfo.alignment.matrices.QuasarMatrix;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
@@ -33,7 +33,7 @@ public class aufg1Test2 {
 		
 		double[][] matrix = QuasarMatrix.parseMatrix(args[2]);
 		
-		HashMap<String, char[]> sequences = SeqLibrary.parse(args[0]);
+		HashMap<String, char[]> sequences = SeqLibrary.read(args[0]);
 		
 		while ((line = br.readLine()) != null) {
 			if(line.startsWith(">")) {

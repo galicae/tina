@@ -9,7 +9,6 @@ import java.util.HashMap;
 
 import highscorealignments.CathScopEntry;
 import highscorealignments.CathScopHash;
-import highscorealignments.SeqLibrary;
 import bioinfo.Sequence;
 import bioinfo.alignment.Aligner;
 import bioinfo.alignment.SequenceAlignment;

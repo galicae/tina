@@ -1,12 +1,12 @@
 package test;
 
-import highscorealignments.SeqLibrary;
 
 import java.util.HashMap;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
+import bioinfo.alignment.kerbsch.SeqLibrary;
 import bioinfo.alignment.matrices.QuasarMatrix;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
@@ -21,7 +21,7 @@ public class TMPipeline {
 		String seq1 = "1wjfA00";
 		String seq2 = "1zr4B03";
 		
-		HashMap<String, char[]> sequences = SeqLibrary.parse("domains.seqlib");
+		HashMap<String, char[]> sequences = SeqLibrary.read("domains.seqlib");
 		double[][] matr = QuasarMatrix.parseMatrix("dayhoff.mat");
 		
 		PDBFileReader reader = new PDBFileReader();

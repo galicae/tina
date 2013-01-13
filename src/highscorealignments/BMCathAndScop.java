@@ -13,6 +13,7 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
 import bioinfo.alignment.gotoh.LocalSequenceGotoh;
+import bioinfo.alignment.kerbsch.SeqLibrary;
 import bioinfo.alignment.matrices.QuasarMatrix;
 import bioinfo.proteins.PDBFileReader;
 import bioinfo.superpos.TMMain;
@@ -73,7 +74,7 @@ public class BMCathAndScop {
 		} catch (IOException e) {
 			System.out.println("geht nischt");
 		}
-		this.seqlib = SeqLibrary.parse(seqlibpath);
+		this.seqlib = SeqLibrary.read(seqlibpath);
 		this.cathscopinfos = CathScopHash.read(cathscopinfopath);
 		this.pairs = HashPairReader.readPairs(pairlistpath
 				+ "/cathscop.inpairs", pairlistpath + "/cathscop.outpairs");

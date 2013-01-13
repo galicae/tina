@@ -1,6 +1,5 @@
 package test;
 
-import highscorealignments.SeqLibrary;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -10,6 +9,7 @@ import java.util.HashMap;
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
+import bioinfo.alignment.kerbsch.SeqLibrary;
 import bioinfo.alignment.matrices.QuasarMatrix;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
@@ -36,7 +36,7 @@ public class GapOptimizer {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		HashMap<String, char[]> sequences = SeqLibrary.parse(args[0]);
+		HashMap<String, char[]> sequences = SeqLibrary.read(args[0]);
 		double[][] hydMat = QuasarMatrix.parseMatrix(args[2]);
 		int go = Integer.parseInt(args[3]);
 		int ge = Integer.parseInt(args[4]);

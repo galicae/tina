@@ -1,4 +1,4 @@
-package highscorealignments;
+package bioinfo.alignment.kerbsch;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -7,13 +7,14 @@ import java.util.HashMap;
 
 public class SeqLibrary {
 			
-	public static HashMap<String, char[]> parse(String filename){
+	public static HashMap<String, char[]> read(String filename){
 		HashMap<String, char[]> sequences = new HashMap<String, char[]>();
 		try{
 			BufferedReader in = new BufferedReader(new FileReader(filename));
 			String line;
+			String[] temp;
 			while((line = in.readLine()) != null){
-				String[] temp = line.split(":");
+				temp = line.split(":");
 				sequences.put(temp[0], temp[1].toCharArray());
 			}
 			in.close();

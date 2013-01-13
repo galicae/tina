@@ -1,6 +1,5 @@
 package test;
 
-import highscorealignments.SeqLibrary;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,6 +12,7 @@ import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.d123.FreeshiftSequence123D;
 import bioinfo.alignment.gotoh.Gotoh;
+import bioinfo.alignment.kerbsch.SeqLibrary;
 import bioinfo.alignment.matrices.MatrixReader123D;
 import bioinfo.alignment.matrices.QuasarMatrix;
 import bioinfo.proteins.SSCCEntry;
@@ -24,7 +24,7 @@ public class OneTwoThreeDTest {
 		
 		//initialize
 		BufferedReader in;
-		HashMap<String,char[]> seqlib = SeqLibrary.parse(args[7]);
+		HashMap<String,char[]> seqlib = SeqLibrary.read(args[7]);
 		double[][] scoringmatrix = QuasarMatrix.parseMatrix(args[0]);
 		double[][][] potentials = MatrixReader123D.readPotentials(args[1], args[2], args[3]);
 		double[][] secstructpref = MatrixReader123D.readSecStructPref(args[4]);
