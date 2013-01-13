@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import test.PairReader;
 
 import highscorealignments.CathScopEntry;
 import highscorealignments.CathScopHash;
@@ -246,6 +245,7 @@ public class AlignmentBenchmarker {
 				temp = (SequenceAlignment) gotoh.align(new Sequence(pair[0],
 						seqlib.get(pair[0])),
 						new Sequence(pair[1], seqlib.get(pair[1])));
+				System.out.println(temp.toStringVerbose());
 				score = temp.getScore()/temp.getMap().length;
 				alignments[id1][id2] = score;
 				alignments[id2][id1] = score;

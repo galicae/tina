@@ -22,13 +22,13 @@ public class SecStructReader {
 			String id = f.getName().split("\\.")[0];
 			index = 0;
 			try{
-				BufferedReader in = new BufferedReader(new FileReader(folderpath));
+				BufferedReader in = new BufferedReader(new FileReader(f));
 				String line;
 				while((line = in.readLine()) != null){
 					
 					//find number of residues
-					if(line.contains("NUMBER OF RESIDUES")){
-						rescount = Integer.parseInt(line.split("\\s")[0]);
+					if(line.contains("TOTAL NUMBER OF RESIDUES")){
+						rescount = Integer.parseInt(line.split("\\s+")[1]);
 						struct = new char[rescount];
 					}
 					
