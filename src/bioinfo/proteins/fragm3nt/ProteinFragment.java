@@ -67,18 +67,69 @@ public class ProteinFragment {
 		this.coordinates = nCoord;
 	}
 
+	/**
+	 * override the normal toString() so that we get PDB Atom lines with correct
+	 * spacing and amino acid names
+	 */
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < coordinates.length; i++) {
 			AtomType type = AtomType.C;
-			switch(i%4) {
-			case 0: type = AtomType.N; break;
-			case 1: type = AtomType.CA; break;
-			case 2: type = AtomType.O; break;
-			case 3: type = AtomType.C; break;
+			switch (i % 4) {
+			case 0:
+				type = AtomType.N;
+				break;
+			case 1:
+				type = AtomType.CA;
+				break;
+			case 2:
+				type = AtomType.O;
+				break;
+			case 3:
+				type = AtomType.C;
+				break;
 			}
 			Atom cur = new Atom(type, coordinates[i]);
-			result.append(cur.toString(i, (i/4), String.valueOf(sequence.charAt(i/4)), 'A') + "\n");
+			result.append(cur.toString(i, (i / 4),
+					String.valueOf(sequence.charAt(i / 4)), 'A')
+					+ "\n");
+		}
+		return result.toString();
+	}
+
+	/**
+	 * parameterized toString function, for when we only need part of the atoms
+	 * 
+	 * @param start
+	 *            the point from which to start in the array
+	 * @return PDB atom lines with the coordinates and the correct amino acid
+	 *         names and spacing
+	 */
+	public String toString(int start, int position) {
+		if (start < 0)
+			start = 0;
+		StringBuilder result = new StringBuilder();
+		for (int i = start; i < coordinates.length; i++) {
+			int corr = 0;
+			AtomType type = AtomType.C;
+			switch (i % 4) {
+			case 0:
+				type = AtomType.N;
+				break;
+			case 1:
+				type = AtomType.CA;
+				break;
+			case 2:
+				type = AtomType.O;
+				break;
+			case 3:
+				type = AtomType.C;
+				break;
+			}
+			Atom cur = new Atom(type, coordinates[i]);
+			result.append(cur.toString(corr + i, ( (corr + i) / 4),
+					String.valueOf(sequence.charAt(i / 4)), 'A')
+					+ "\n");
 		}
 		return result.toString();
 	}
@@ -115,11 +166,11 @@ public class ProteinFragment {
 	public boolean isNoise() {
 		return noise;
 	}
-	
+
 	public void setSequence(String seq) {
 		sequence = seq;
 	}
-	
+
 	public void setStartIndex(int i) {
 		startIndex = i;
 	}
@@ -127,10 +178,11 @@ public class ProteinFragment {
 	public void setNoise(boolean noise) {
 		this.noise = noise;
 	}
-	
+
 	@Override
 	public ProteinFragment clone() {
-		ProteinFragment result = new ProteinFragment(id, sequence, coordinates, startIndex, fragLength);
+		ProteinFragment result = new ProteinFragment(id, sequence, coordinates,
+				startIndex, fragLength);
 		return result;
 	}
 }
