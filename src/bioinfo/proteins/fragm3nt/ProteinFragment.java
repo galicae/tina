@@ -115,8 +115,22 @@ public class ProteinFragment {
 	public boolean isNoise() {
 		return noise;
 	}
+	
+	public void setSequence(String seq) {
+		sequence = seq;
+	}
+	
+	public void setStartIndex(int i) {
+		startIndex = i;
+	}
 
 	public void setNoise(boolean noise) {
 		this.noise = noise;
+	}
+	
+	@Override
+	public ProteinFragment clone() {
+		ProteinFragment result = new ProteinFragment(id, sequence, coordinates, startIndex, fragLength);
+		return result;
 	}
 }
