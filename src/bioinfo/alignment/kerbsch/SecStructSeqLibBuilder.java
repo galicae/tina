@@ -24,7 +24,7 @@ public class SecStructSeqLibBuilder {
 	}
 	
 	public static void main(String[] args){
-		HashMap<String,char[]> seqlib = SecStructReader.read("../GoBi/DSSP");
+		HashMap<String,char[]> seqlib = SSReaderFromDir.read("../GoBi/DSSP");
 		SecStructSeqLibBuilder.build(seqlib,"secstruct.seqlib");
 	}
 }

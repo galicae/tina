@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class SecStructReader {
+public class SSReaderFromDir {
 	
 	public static HashMap<String,char[]> read(String folderpath){
 		HashMap<String,char[]> secstruct = new HashMap<String,char[]>();
