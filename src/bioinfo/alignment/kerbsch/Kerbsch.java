@@ -1,5 +1,8 @@
 package bioinfo.alignment.kerbsch;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import bioinfo.Sequence;
 import bioinfo.alignment.Alignable;
 import bioinfo.alignment.Alignment;
@@ -21,12 +24,12 @@ public class Kerbsch extends Gotoh {
 	private int[][] substMatrix;
 
 	// gapopens, gapextends for substitution matrices
-	private int hbGapOpen = -400;
-	private int polGapOpen = -400;
-	private int secStructGapOpen = -100;
+	private int hbGapOpen = -800;
+	private int polGapOpen = -1500;
+	private int secStructGapOpen = -1000;
 	private int hbGapExtend = -100;
 	private int polGapExtend = -100;
-	private int secStructGapExtend = -50;
+	private int secStructGapExtend = -100;
 
 	// gotoh matrices
 	private int[][] hbM;
@@ -208,7 +211,8 @@ public class Kerbsch extends Gotoh {
 	}
 
 	private Alignment traceback() {
-
+		List<int[]> map = new ArrayList<int[]>();
+		
 		int max = INIT_VAL;
 		int x = 0;
 		int y = 0;
@@ -254,6 +258,7 @@ public class Kerbsch extends Gotoh {
 					+ secStructM[x][y] + score(substMatrix,actx,acty)) {
 				row0 += actx;
 				row1 += acty;
+				map.add(new int[]{x,y}); //store aligned indices of the two sequences
 				y--;
 				x--;
 			} else if (actScore == D[x + 1][y + 1]) {
@@ -289,7 +294,7 @@ public class Kerbsch extends Gotoh {
 
 		return new SequenceAlignment((Sequence) sequence1,
 				(Sequence) sequence2, flip(row0.toCharArray()),
-				flip(row1.toCharArray()), 1.0d * score / Gotoh.FACTOR);
+				flip(row1.toCharArray()), 1.0d * score / Gotoh.FACTOR, map.toArray(new int[map.size()][]));
 	}
 
 	/**
