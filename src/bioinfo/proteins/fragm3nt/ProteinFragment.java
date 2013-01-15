@@ -109,7 +109,7 @@ public class ProteinFragment {
 		if (start < 0)
 			start = 0;
 		StringBuilder result = new StringBuilder();
-		for (int i = start; i < coordinates.length; i++) {
+		for (int i = start * 4; i < coordinates.length; i++) {
 			int corr = 0;
 			AtomType type = AtomType.C;
 			switch (i % 4) {
@@ -184,5 +184,18 @@ public class ProteinFragment {
 		ProteinFragment result = new ProteinFragment(id, sequence, coordinates,
 				startIndex, fragLength);
 		return result;
+	}
+	
+	public void correctCoordinates() {
+		String coord = String.valueOf(coordinates[0][0]);
+		if(coord.length() > 7) {
+			double corr = coordinates[0][0];
+			for(int i = 0; i < coordinates.length; i++) {
+				for(int j = 0; j < coordinates[0].length; j++) {
+					coordinates[i][j] -= corr;
+				}
+			}
+		}
+		
 	}
 }
