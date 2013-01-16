@@ -31,11 +31,11 @@ public class aligntest {
 		System.out.println(alignment.toStringVerbose());
 		System.out.println(alignment.countAlignedResidues());
 		for (int i = 0; i < alignment.countAlignedResidues(); i++) {
-			System.out.print(alignment.getAlignedResidues()[i][0] + "\t");
+			System.out.print(alignment.getAlignedResidues()[0][i] + "\t");
 		}
 		System.out.println();
 		for (int i = 0; i < alignment.countAlignedResidues(); i++) {
-			System.out.print(alignment.getAlignedResidues()[i][1] + "\t");
+			System.out.print(alignment.getAlignedResidues()[1][i] + "\t");
 		}
 		
 	}
