@@ -13,6 +13,8 @@ import bioinfo.Sequence;
 import bioinfo.alignment.Aligner;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
+import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
+import bioinfo.alignment.gotoh.LocalSequenceGotoh;
 import bioinfo.alignment.matrices.QuasarMatrix;
 
 public class AlignmentBenchmarker {
@@ -71,27 +73,34 @@ public class AlignmentBenchmarker {
 	public AlignmentBenchmarker(String args[], HashMap<String,char[]> sl) {
 		go = Double.parseDouble(args[0]);
 		ge = Double.parseDouble(args[1]);
-		if (args[2].equals("polarity")) {
+		if (args[3].equals("polarity")) {
 			substMatrix = matrices.calcGotohInputMatrix(matrices
 					.calcPolarityScores());
-		} else if (args[2].equals("hydrophob")) {
+		} else if (args[3].equals("hydrophob")) {
 			substMatrix = matrices.calcGotohInputMatrix(matrices
 					.calcHydropathyScores());
-		} else if (args[2].equals("secstruct")) {
+		} else if (args[3].equals("secstruct")) {
 			substMatrix = SecStructScores.matrix;
-		} else if (args[2].equals("sequence")) {
+		} else if (args[3].equals("sequence")) {
 			substMatrix = QuasarMatrix.DAYHOFF_MATRIX;
 		}
-		gotoh = new FreeshiftSequenceGotoh(go, ge, substMatrix);
-
+		if(args[2].equals("freeshift")){
+			gotoh = new FreeshiftSequenceGotoh(go, ge, substMatrix);
+		}
+		else if(args[2].equals("local")){
+			gotoh = new LocalSequenceGotoh(go, ge, substMatrix);
+		}
+		else{
+			gotoh = new GlobalSequenceGotoh(go, ge, substMatrix);
+		}
 		seqlib = sl;
-		pairs = PairReader.parse(args[4]);
-		cathscopinfo = CathScopHash.read(args[5]);
+		pairs = PairReader.parse(args[5]);
+		cathscopinfo = CathScopHash.read(args[6]);
 		alignments = new double[seqlib.size()][seqlib.size()];
 		init();
 		
 		try {
-			out = new BufferedWriter(new FileWriter(args[6]));
+			out = new BufferedWriter(new FileWriter(args[7]));
 		} catch (IOException e) {
 			System.out.println("cannot initialize writer! (Benchmarker)");
 		}	
@@ -108,6 +117,7 @@ public class AlignmentBenchmarker {
 	private void statistic(CathScopEntry besthit, CathScopEntry query){
 		if(besthit != null){
 			System.out.println("found max");
+			System.out.println(besthit.getID());
 			// for cath family recognition test
 			if (query.getCathClazz() == besthit.getCathClazz()
 					&& query.getCathFold() == besthit.getCathFold()
@@ -249,6 +259,8 @@ public class AlignmentBenchmarker {
 				score = temp.getScore();
 				alignments[id1][id2] = score;
 				alignments[id2][id1] = score;
+				System.out.println(temp.toStringVerbose());
+				System.out.println(temp.getScore()/temp.countAlignedResidues());
 			}
 			//else get score from alignment matrix
 			else{

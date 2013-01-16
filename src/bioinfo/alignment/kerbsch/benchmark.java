@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class benchmark {
 	public static void main(String[] args) {
-		HashMap<String,char[]> seqlib = SeqLibrary.read(args[3]);
+		HashMap<String,char[]> seqlib = SeqLibrary.read(args[4]);
 		AlignmentBenchmarker ab = new AlignmentBenchmarker(args,seqlib);
 		ab.benchmark();
 		try {
