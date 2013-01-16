@@ -244,7 +244,7 @@ public class AlignmentBenchmarker {
 				temp = (SequenceAlignment) gotoh.align(new Sequence(pair[0],
 						seqlib.get(pair[0])),
 						new Sequence(pair[1], seqlib.get(pair[1])));
-				score = temp.getScore()/temp.getAlignedResidues().length;
+				score = temp.getScore()/temp.countAlignedResidues();
 				alignments[id1][id2] = score;
 				alignments[id2][id1] = score;
 			}

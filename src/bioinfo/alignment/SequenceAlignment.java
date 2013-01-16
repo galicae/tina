@@ -6,8 +6,6 @@
 package bioinfo.alignment;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import bioinfo.Sequence;
 
@@ -33,11 +31,12 @@ public class SequenceAlignment implements Alignment {
 	 */
 	private final char[][] rows;
 	/**
-	 * The indices of the aligned residues, used by Paul
-	 * format: alignedResidues is an array of arrays whereas the first dimension just differs between sequence 1 or 2
-	 * 			the scd dimension is an array of length n or m referring to the length n or m of the sequences 1 or 2
-	 * 			every position in the scd dimension of the arrays contains a variable holding the position in the alignment 
-	 * 			where the sequence position referred to is aligned with the other sequence
+	 * The indices of the aligned residues, used by Paul format: map is an array
+	 * of arrays whereas the first dimension just differs between sequence 1 or
+	 * 2 the scd dimension is an array of length n or m referring to the length
+	 * n or m of the sequences 1 or 2. every position in the scd dimension of the
+	 * arrays contains the index of the residue from the other sequence it is
+	 * aligned to
 	 * 
 	 */
 	private final int[][] map;
@@ -143,36 +142,25 @@ public class SequenceAlignment implements Alignment {
 		return rows[0].length;
 	}
 	
-	//return aligned indices
-	public int[][] getAlignedResidues(){
-		List<int[]> alignedIndices = new ArrayList<int[]>();
-		int x = 0, y = 0;
-		for (int i = 0; i < rows[0].length; i++) {
-			if(rows[0][i] != '-'){
-				x++;
-				if(rows[1][i] != '-'){
-					y++;
-					alignedIndices.add(new int[]{x,y}); //store aligned indices of the two sequences
-					continue;
-				}
-			}
-			if(rows[1][i] != '-'){
-				y++;
-				if(rows[0][i] != '-'){
-					x++;
-					alignedIndices.add(new int[]{x,y}); //store aligned indices of the two sequences
-					continue;
-				}
+	//get an array with indices of only alignedResidues
+	public int[][] getAlignedResidues() {
+		int[][] result = new int[2][countAlignedResidues()];
+		int temp = 0;
+		for (int i = 0; i < map[0].length; i++) {
+			if(map[0][i] != -1){
+				result[0][temp] = i;
+				result[1][temp] = map[0][i];
+				temp++;
 			}
 		}
-		return alignedIndices.toArray(new int[alignedIndices.size()][]);
+		return result;
 	}
 	
 	//calc aligned indices
 	public int countAlignedResidues(){
 		int result = 0;
-		for (int i = 0; i < map.length; i++) {
-			if(map[0][i] != -1 && map[1][i] != -1){
+		for (int i = 0; i < map[0].length; i++) {
+			if(map[0][i] != -1){
 				result++;
 			}
 		}
