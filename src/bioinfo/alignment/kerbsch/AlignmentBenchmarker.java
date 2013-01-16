@@ -77,8 +77,7 @@ public class AlignmentBenchmarker {
 			substMatrix = matrices.calcGotohInputMatrix(matrices
 					.calcHydropathyScores());
 		} else if (args[2].equals("secstruct")) {
-			substMatrix = matrices.calcGotohInputMatrix(matrices
-					.calcHydropathyScores());
+			substMatrix = SecStructScores.matrix;
 		}
 		gotoh = new FreeshiftSequenceGotoh(go, ge, substMatrix);
 
