@@ -92,7 +92,67 @@ public class SequenceAlignment implements Alignment {
 		this.length = row1.length;
 		this.map = map;
 	}
-
+	
+	/**
+	 * Constructs an Alignment of seq1 and seq2 with the given alignment rows
+	 * and score.
+	 * 
+	 * @param seq1
+	 *            the 1st Sequence
+	 * @param seq2
+	 *            the 2nd Sequence
+	 * @param row1
+	 *            the first row of the Alignment
+	 * @param row2
+	 *            the second row of the Alignment
+	 * @param score
+	 *            the score of the Alignment
+	 * @param map
+	 * 			  the mapping from sequence to aligned sequence positions
+	 */
+	public SequenceAlignment(Sequence seq1, Sequence seq2, char[] row1,
+			char[] row2, double score) {
+		this.seq1 = seq1;
+		this.seq2 = seq2;
+		this.score = score;
+		char[][] temp = new char[2][];
+		temp[0] = row1;
+		temp[1] = row2;
+		this.rows = temp;
+		this.length = row1.length;
+		this.map = calcMap();
+	}
+	
+	/**
+	 * Constructs an Alignment of seq1 and seq2 with the given alignment rows
+	 * and score.
+	 * 
+	 * @param seq1
+	 *            the 1st Sequence
+	 * @param seq2
+	 *            the 2nd Sequence
+	 * @param row1
+	 *            the first row of the Alignment
+	 * @param row2
+	 *            the second row of the Alignment
+	 * @param score
+	 *            the score of the Alignment
+	 * @param map
+	 * 			  the mapping from sequence to aligned sequence
+	 */
+	public SequenceAlignment(Sequence seq1, Sequence seq2, String row1,
+			String row2, double score, int[][] map) {
+		this.seq1 = seq1;
+		this.seq2 = seq2;
+		this.score = score;
+		char[][] temp = new char[2][];
+		temp[0] = row1.toCharArray();
+		temp[1] = row2.toCharArray();
+		this.rows = temp;
+		this.length = row1.length();
+		this.map = map;
+	}
+	
 	/**
 	 * Constructs an Alignment of seq1 and seq2 with the given alignment rows
 	 * and score.
@@ -109,7 +169,7 @@ public class SequenceAlignment implements Alignment {
 	 *            the score of the Alignment
 	 */
 	public SequenceAlignment(Sequence seq1, Sequence seq2, String row1,
-			String row2, double score, int[][] map) {
+			String row2, double score) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.score = score;
@@ -118,7 +178,7 @@ public class SequenceAlignment implements Alignment {
 		temp[1] = row2.toCharArray();
 		this.rows = temp;
 		this.length = row1.length();
-		this.map = map;
+		this.map = calcMap();
 	}
 
 	/**
@@ -142,7 +202,7 @@ public class SequenceAlignment implements Alignment {
 	 * 
 	 * @return the map between seq1 and seq2
 	 */
-	public int[][] calcMap() {
+	private int[][] calcMap() {
 		int[][] result = new int[2][];
 		result[0] = new int[seq1.length()];
 		result[1] = new int[seq2.length()];

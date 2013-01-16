@@ -197,4 +197,9 @@ public class StructureAlignment implements Alignment{
 	public StructureAlignment duplicate(){
 		return new StructureAlignment(seq1, seq2, rows, score);
 	}
+
+	@Override
+	public int[][] getMap() {
+		return calcMap();
+	}
 }
