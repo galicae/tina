@@ -2,7 +2,7 @@ package bioinfo.alignment;
 
 public interface Alignment {
 	
-	int[][] calcMap();
+	int[][] getMap();
 	int length();
 	double getScore();
 	String toString();

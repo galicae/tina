@@ -19,7 +19,7 @@ public class SimpleCoordMapper {
 
 	public static PDBEntry map(SequenceAlignment arg1, PDBEntry arg2) {
 
-		int[][] map = arg1.calcMap();
+		int[][] map = arg1.getMap();
 		LinkedList<AminoAcid> aalist = new LinkedList<AminoAcid>();
 
 		for (int i = 0; i < map[0].length; i++) {
