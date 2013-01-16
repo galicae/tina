@@ -1,8 +1,5 @@
 package bioinfo.alignment.gotoh;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import bioinfo.Sequence;
 import bioinfo.alignment.Alignable;
 import bioinfo.alignment.Alignment;
@@ -146,7 +143,6 @@ public class GlobalSequenceGotoh extends Gotoh {
 	 * @return Alignment of the two given Alignables
 	 */
 	private Alignment traceback() {
-		List<int[]> map = new ArrayList<int[]>();
 		
 		int x = sequence1.length() - 1;
 		int y = sequence2.length() - 1;
@@ -165,7 +161,6 @@ public class GlobalSequenceGotoh extends Gotoh {
 			if (actScore == M[x][y] + score(actx, acty)) {
 				row0 += actx;
 				row1 += acty;
-				map.add(new int[]{x,y}); //store aligned indices of the two sequences
 				y--;
 				x--;
 			} else if (actScore == D[x + 1][y + 1]) {
@@ -201,7 +196,7 @@ public class GlobalSequenceGotoh extends Gotoh {
 
 		return new SequenceAlignment((Sequence) sequence1,
 				(Sequence) sequence2, flip(row0.toCharArray()),
-				flip(row1.toCharArray()), 1.0d * score / Gotoh.FACTOR, map.toArray(new int[map.size()][]));
+				flip(row1.toCharArray()), 1.0d * score / Gotoh.FACTOR);
 	}
 
 	/**

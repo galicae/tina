@@ -1,6 +1,7 @@
 package bioinfo.alignment;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import bioinfo.proteins.AminoAcid;
@@ -45,7 +46,7 @@ public class StructureAlignment implements Alignment{
 	 * 			where the sequence position referred to is aligned with the other sequence
 	 * 
 	 */
-	private final int[][] alignedResidues;
+	private final int[][] map;
 	
 	/**
 	 * Constructs an Alignment of seq1 and seq2 with the given map and score.
@@ -54,13 +55,13 @@ public class StructureAlignment implements Alignment{
 	 * @param rows the two rows of the alignment
 	 * @param score the score of the Alignment
 	 */
-	public StructureAlignment(PDBEntry seq1, PDBEntry seq2, AminoAcid[][] rows, double score,int[][] alignedResidues) {
+	public StructureAlignment(PDBEntry seq1, PDBEntry seq2, AminoAcid[][] rows, double score) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.rows = rows;
 		this.score=score;
 		this.length = calcLength();
-		this.alignedResidues = alignedResidues;
+		this.map = calcMap();
 	}
 	
 	/**
@@ -74,7 +75,7 @@ public class StructureAlignment implements Alignment{
 	 */
 	
 	public StructureAlignment
-		(PDBEntry seq1, PDBEntry seq2, AminoAcid[] row1, AminoAcid[] row2, double score, int[][] alignedResidues)
+		(PDBEntry seq1, PDBEntry seq2, AminoAcid[] row1, AminoAcid[] row2, double score)
 	{
 		this.seq1 = seq1;
 		this.seq2 = seq2;
@@ -84,7 +85,7 @@ public class StructureAlignment implements Alignment{
 		temp[1] = row2;
 		this.rows = temp;
 		this.length = row1.length;
-		this.alignedResidues = alignedResidues;
+		this.map = calcMap();
 	}
 	
 	/**
@@ -97,7 +98,7 @@ public class StructureAlignment implements Alignment{
 	 * @param score the score of the Alignment
 	 */
 	public StructureAlignment
-		(PDBEntry seq1, PDBEntry seq2, List<AminoAcid> row1, List<AminoAcid> row2, double score, int[][] alignedResidues)
+		(PDBEntry seq1, PDBEntry seq2, List<AminoAcid> row1, List<AminoAcid> row2, double score)
 	{
 		this.seq1 = seq1;
 		this.seq2 = seq2;
@@ -107,7 +108,7 @@ public class StructureAlignment implements Alignment{
 		temp[1] = row2.toArray(new AminoAcid[row2.size()]);
 		this.rows = temp;
 		this.length = row1.size();
-		this.alignedResidues = alignedResidues;
+		this.map = calcMap();
 	}
 	
 	/**
@@ -126,11 +127,11 @@ public class StructureAlignment implements Alignment{
 	 */
 	public int[][] calcMap() {
 		int[][] result = new int[2][];
-		result[0] = new int[seq1.length()];
-		result[1] = new int[seq2.length()];
+		result[0] = new int[rows[0].length];
+		result[1] = new int[rows[1].length];
 		int col1 = 0;
 		int col2 = 0;
-		for (int i = 0; i < seq1.length(); i++) {
+		for (int i = 0; i < rows[0].length; i++) {
 			if (rows[0][i] == null) {	// insertion
 				result[1][col2]=-1;
 				col2++;
@@ -207,11 +208,42 @@ public class StructureAlignment implements Alignment{
 	}
 	
 	public StructureAlignment duplicate(){
-		return new StructureAlignment(seq1, seq2, rows, score, alignedResidues);
+		return new StructureAlignment(seq1, seq2, rows, score);
 	}
 
 	@Override
 	public int[][] getAlignedResidues() {
-		return this.alignedResidues;
+		List<int[]> alignedIndices = new ArrayList<int[]>();
+		int x = 0, y = 0;
+		for (int i = 0; i < map[0].length; i++) {
+			if(map[0][i] != -1){
+				x++;
+				if(map[1][i] != -1){
+					y++;
+					alignedIndices.add(new int[]{x,y}); //store aligned indices of the two sequences
+					continue;
+				}
+			}
+			if(map[1][i] != -1){
+				y++;
+				if(map[0][i] != -1){
+					x++;
+					alignedIndices.add(new int[]{x,y}); //store aligned indices of the two sequences
+					continue;
+				}
+			}
+		}
+		return alignedIndices.toArray(new int[alignedIndices.size()][]);
+	}
+	
+	//calc aligned indices
+	public int countAlignedResidues(){
+		int result = 0;
+		for (int i = 0; i < map.length; i++) {
+			if(map[0][i] != -1 && map[1][i] != -1){
+				result++;
+			}
+		}
+		return result;
 	}
 }

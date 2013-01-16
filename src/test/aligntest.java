@@ -1,13 +1,10 @@
 package test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.kerbsch.InitClass;
-import bioinfo.alignment.kerbsch.SeqLibrary;
 
 
 public class aligntest {
@@ -32,13 +29,13 @@ public class aligntest {
 //			System.out.println(alignment.toStringVerbose());
 //		}
 		System.out.println(alignment.toStringVerbose());
-		System.out.println(alignment.getMap().length);
-		for (int i = 0; i < alignment.getMap().length; i++) {
-			System.out.print(alignment.getMap()[i][0] + "\t");
+		System.out.println(alignment.countAlignedResidues());
+		for (int i = 0; i < alignment.countAlignedResidues(); i++) {
+			System.out.print(alignment.getAlignedResidues()[i][0] + "\t");
 		}
 		System.out.println();
-		for (int i = 0; i < alignment.getMap().length; i++) {
-			System.out.print(alignment.getMap()[i][1] + "\t");
+		for (int i = 0; i < alignment.countAlignedResidues(); i++) {
+			System.out.print(alignment.getAlignedResidues()[i][1] + "\t");
 		}
 		
 	}

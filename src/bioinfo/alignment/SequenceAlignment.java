@@ -6,6 +6,8 @@
 package bioinfo.alignment;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import bioinfo.Sequence;
 
@@ -38,7 +40,7 @@ public class SequenceAlignment implements Alignment {
 	 * 			where the sequence position referred to is aligned with the other sequence
 	 * 
 	 */
-	private final int[][] alignedResidues;
+	private final int[][] map;
 	/**
 	 * The score of the Alignment
 	 */
@@ -61,13 +63,13 @@ public class SequenceAlignment implements Alignment {
 	 *            the score of the Alignment
 	 */
 	public SequenceAlignment(Sequence seq1, Sequence seq2, char[][] rows,
-			double score, int[][] alignedResidues) {
+			double score) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.rows = rows;
 		this.score = score;
 		this.length = calcLength();
-		this.alignedResidues = alignedResidues;
+		map = calcMap();
 	}
 
 	/**
@@ -89,7 +91,7 @@ public class SequenceAlignment implements Alignment {
 
 	 */
 	public SequenceAlignment(Sequence seq1, Sequence seq2, char[] row1,
-			char[] row2, double score, int[][] alignedResidues) {
+			char[] row2, double score) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.score = score;
@@ -98,7 +100,7 @@ public class SequenceAlignment implements Alignment {
 		temp[1] = row2;
 		this.rows = temp;
 		this.length = row1.length;
-		this.alignedResidues = alignedResidues;
+		map = calcMap();
 	}
 
 	
@@ -120,7 +122,7 @@ public class SequenceAlignment implements Alignment {
 	 * 			  the mapping from sequence to aligned sequence positions, see javadoc of alignedResidues
 	 */
 	public SequenceAlignment(Sequence seq1, Sequence seq2, String row1,
-			String row2, double score, int[][] alignedResidues) {
+			String row2, double score) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.score = score;
@@ -129,7 +131,7 @@ public class SequenceAlignment implements Alignment {
 		temp[1] = row2.toCharArray();
 		this.rows = temp;
 		this.length = row1.length();
-		this.alignedResidues = alignedResidues;
+		map = calcMap();
 	}
 
 	/**
@@ -143,7 +145,38 @@ public class SequenceAlignment implements Alignment {
 	
 	//return aligned indices
 	public int[][] getAlignedResidues(){
-		return this.alignedResidues;
+		List<int[]> alignedIndices = new ArrayList<int[]>();
+		int x = 0, y = 0;
+		for (int i = 0; i < rows[0].length; i++) {
+			if(rows[0][i] != '-'){
+				x++;
+				if(rows[1][i] != '-'){
+					y++;
+					alignedIndices.add(new int[]{x,y}); //store aligned indices of the two sequences
+					continue;
+				}
+			}
+			if(rows[1][i] != '-'){
+				y++;
+				if(rows[0][i] != '-'){
+					x++;
+					alignedIndices.add(new int[]{x,y}); //store aligned indices of the two sequences
+					continue;
+				}
+			}
+		}
+		return alignedIndices.toArray(new int[alignedIndices.size()][]);
+	}
+	
+	//calc aligned indices
+	public int countAlignedResidues(){
+		int result = 0;
+		for (int i = 0; i < map.length; i++) {
+			if(map[0][i] != -1 && map[1][i] != -1){
+				result++;
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -233,7 +266,7 @@ public class SequenceAlignment implements Alignment {
 	 * essentially copies the current alignment
 	 */
 	public SequenceAlignment duplicate() {
-		return new SequenceAlignment(seq1, seq2, rows, score, alignedResidues);
+		return new SequenceAlignment(seq1, seq2, rows, score);
 	}
 
 }

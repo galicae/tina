@@ -34,7 +34,6 @@ public class SequenceAlignmentFileReader {
 	 * @return the list of all read alignments
 	 */
 	public List<SequenceAlignment> readAlignments() {
-		List<int[]> map = new ArrayList<int[]>();
 		List<SequenceAlignment> alignments = new ArrayList<SequenceAlignment>();
 		BufferedReader br = null;
 		try {
@@ -67,32 +66,12 @@ public class SequenceAlignmentFileReader {
 						}
 					}
 					
-					//calculate map
-					int x = 0, y = 0;
-					for (int i = 0; i < ali1tmp.length(); i++) {
-						if(ali1tmp.charAt(i) != '-'){
-							x++;
-							if(ali2tmp.charAt(i) != '-'){
-								y++;
-								map.add(new int[]{x,y}); //store aligned indices of the two sequences
-								continue;
-							}
-						}
-						if(ali2tmp.charAt(i) != '-'){
-							y++;
-							if(ali1tmp.charAt(i) != '-'){
-								x++;
-								map.add(new int[]{x,y}); //store aligned indices of the two sequences
-								continue;
-							}
-						}
-					}
 					alignments.add(new SequenceAlignment(new Sequence(tmp[1]
 							.split(":")[0].trim(), seq1tmp), new Sequence(
 							tmp[2].split(":")[0].trim(), seq2tmp), tmp[1]
 							.split(":")[1].trim(), tmp[2].split(":")[1].trim(),
 							(int) (Gotoh.FACTOR * Double.parseDouble(tmp[0]
-									.split("\\s")[2].trim())), map.toArray(new int[map.size()][])));
+									.split("\\s")[2].trim()))));
 				}
 			}
 			br.close();
@@ -159,9 +138,7 @@ public class SequenceAlignmentFileReader {
 	 *         sequences without gaps, since they are meant to be used in a
 	 *         realignment procedure
 	 */
-	public SequenceAlignment nextAlignment() {
-		List<int[]> map = new ArrayList<int[]>();
-		
+	public SequenceAlignment nextAlignment() {		
 		if (br == null) {
 			return null;
 		}
@@ -192,32 +169,12 @@ public class SequenceAlignmentFileReader {
 				seq2tmp += ali2tmp.charAt(i);
 			}
 		}
-		
-		//calculate map
-		int x = 0, y = 0;
-		for (int i = 0; i < ali1tmp.length(); i++) {
-			if(ali1tmp.charAt(i) != '-'){
-				x++;
-				if(ali2tmp.charAt(i) != '-'){
-					y++;
-					map.add(new int[]{x,y}); //store aligned indices of the two sequences
-					continue;
-				}
-			}
-			if(ali2tmp.charAt(i) != '-'){
-				y++;
-				if(ali1tmp.charAt(i) != '-'){
-					x++;
-					map.add(new int[]{x,y}); //store aligned indices of the two sequences
-					continue;
-				}
-			}
-		}
+
 		return new SequenceAlignment(new Sequence(tmp[1].split(":")[0].trim(),
 				seq1tmp), new Sequence(tmp[2].split(":")[0].trim(), seq2tmp),
 				tmp[1].split(":")[1].trim(), tmp[2].split(":")[1].trim(),
 				(int) (Gotoh.FACTOR * Double.parseDouble(tmp[0].split("\\s")[2]
-						.trim())), map.toArray(new int[map.size()][]));
+						.trim())));
 
 	}
 
