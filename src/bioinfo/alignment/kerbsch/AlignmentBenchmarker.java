@@ -108,12 +108,6 @@ public class AlignmentBenchmarker {
 	private void statistic(CathScopEntry besthit, CathScopEntry query){
 		if(besthit != null){
 			System.out.println("found max");
-			try {
-				printResultList(besthit,query);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			// for cath family recognition test
 			if (query.getCathClazz() == besthit.getCathClazz()
 					&& query.getCathFold() == besthit.getCathFold()
@@ -328,20 +322,14 @@ public class AlignmentBenchmarker {
 			}
 		}
 		statistic(besthit,query);
-		try {
-			out.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
-	private void printResultList(CathScopEntry besthit, CathScopEntry query) throws IOException {
-		out.append(query.getID()+"\t"+query.getCathClazz()+"."+query.getCathFold()+"."+query.getCathSupFam()+"."+query.getCathFam()+"\t");
-		out.append(query.getScopClazz()+"."+query.getScopFold()+"."+query.getScopSupFam()+"."+query.getScopFam()+"\t");
-		out.append(besthit.getID()+"\t"+besthit.getCathClazz()+"."+besthit.getCathFold()+"."+besthit.getCathSupFam()+"."+besthit.getCathFam()+"\t");
-		out.append(besthit.getScopClazz()+"."+besthit.getScopFold()+"."+besthit.getScopSupFam()+"."+besthit.getScopFam()+"\t"+alignments[idToIndex.get(query.getID())][idToIndex.get(besthit.getID())]);
-	}
+//	private void printResultList(CathScopEntry besthit, CathScopEntry query) throws IOException {
+//		out.append(query.getID()+"\t"+query.getCathClazz()+"."+query.getCathFold()+"."+query.getCathSupFam()+"."+query.getCathFam()+"\t");
+//		out.append(query.getScopClazz()+"."+query.getScopFold()+"."+query.getScopSupFam()+"."+query.getScopFam()+"\t");
+//		out.append(besthit.getID()+"\t"+besthit.getCathClazz()+"."+besthit.getCathFold()+"."+besthit.getCathSupFam()+"."+besthit.getCathFam()+"\t");
+//		out.append(besthit.getScopClazz()+"."+besthit.getScopFold()+"."+besthit.getScopSupFam()+"."+besthit.getScopFam()+"\t"+alignments[idToIndex.get(query.getID())][idToIndex.get(besthit.getID())]+"\n");
+//	}
 
 	public void printResults() throws IOException {
 		out.write(cath_recsamefam + "\n" + cath_recsamesup + "\n"
