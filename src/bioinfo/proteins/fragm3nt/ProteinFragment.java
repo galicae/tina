@@ -186,16 +186,28 @@ public class ProteinFragment {
 		return result;
 	}
 	
+	
 	public void correctCoordinates() {
 		String coord = String.valueOf(coordinates[0][0]);
 		if(coord.length() > 7) {
-			double corr = coordinates[0][0];
+			double[] corr = new double[3];
+			corr[0] = coordinates[0][0];
+			corr[1] = coordinates[0][1];
+			corr[2] = coordinates[0][2];
 			for(int i = 0; i < coordinates.length; i++) {
 				for(int j = 0; j < coordinates[0].length; j++) {
-					coordinates[i][j] -= corr;
+					coordinates[i][j] -= corr[j];
 				}
 			}
 		}
 		
+	}
+
+	public void translateCoordinates(double[] correct) {
+		for(int i = 0; i < coordinates.length; i++) {
+			for(int j = 0; j < coordinates[0].length; j++) {
+				coordinates[i][j] -= correct[j];
+			}
+		}
 	}
 }

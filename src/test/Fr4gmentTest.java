@@ -85,7 +85,7 @@ public class Fr4gmentTest {
 		}
 		
 		try {
-			BufferedWriter w = new BufferedWriter(new FileWriter("9pap_test.pdb"));
+			BufferedWriter w = new BufferedWriter(new FileWriter("/home/p/papadopoulos/Desktop/test.pdb"));
 			w.write(sb.toString());
 			w.close();
 		}
