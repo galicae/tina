@@ -13,6 +13,7 @@ import bioinfo.Sequence;
 import bioinfo.alignment.Aligner;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
+import bioinfo.alignment.matrices.QuasarMatrix;
 
 public class AlignmentBenchmarker {
 
@@ -78,6 +79,8 @@ public class AlignmentBenchmarker {
 					.calcHydropathyScores());
 		} else if (args[2].equals("secstruct")) {
 			substMatrix = SecStructScores.matrix;
+		} else if (args[2].equals("sequence")) {
+			substMatrix = QuasarMatrix.DAYHOFF_MATRIX;
 		}
 		gotoh = new FreeshiftSequenceGotoh(go, ge, substMatrix);
 
@@ -104,6 +107,13 @@ public class AlignmentBenchmarker {
 	
 	private void statistic(CathScopEntry besthit, CathScopEntry query){
 		if(besthit != null){
+			System.out.println("found max");
+			try {
+				printResultList(besthit,query);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			// for cath family recognition test
 			if (query.getCathClazz() == besthit.getCathClazz()
 					&& query.getCathFold() == besthit.getCathFold()
@@ -186,7 +196,7 @@ public class AlignmentBenchmarker {
 		}
 	}
 	
-	private void resetScores(){
+	private void resetStatistic(){
 		maxscore = Double.NEGATIVE_INFINITY;
 		samefammaxscore_cath = Double.NEGATIVE_INFINITY;
 		samesupmaxscore_cath = Double.NEGATIVE_INFINITY;
@@ -200,10 +210,10 @@ public class AlignmentBenchmarker {
 
 	public void benchmark() {
 		double score = Double.NEGATIVE_INFINITY;
-		resetScores();
+		resetStatistic();
 		
 		String lastquery = "";
-		SequenceAlignment temp;
+		SequenceAlignment temp = null;
 		CathScopEntry query = null;
 		CathScopEntry template;
 		CathScopEntry besthit = null;
@@ -226,13 +236,12 @@ public class AlignmentBenchmarker {
 			}
 
 			// here comes a new target to thread
-			if (!pair[0].equals(lastquery)) {		
+			if (!pair[0].equals(lastquery)) {
 				statistic(besthit,query);
-				resetScores();
+				resetStatistic();
 				besthit = null;
-				query = cathscopinfo.get(pair[0]);
 				lastquery = pair[0];
-				System.out.println("found max");
+				query = cathscopinfo.get(pair[0]);
 			}
 			template = cathscopinfo.get(pair[1]);
 			
@@ -243,7 +252,7 @@ public class AlignmentBenchmarker {
 				temp = (SequenceAlignment) gotoh.align(new Sequence(pair[0],
 						seqlib.get(pair[0])),
 						new Sequence(pair[1], seqlib.get(pair[1])));
-				score = temp.getScore()/temp.countAlignedResidues();
+				score = temp.getScore();
 				alignments[id1][id2] = score;
 				alignments[id2][id1] = score;
 			}
@@ -319,6 +328,19 @@ public class AlignmentBenchmarker {
 			}
 		}
 		statistic(besthit,query);
+		try {
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void printResultList(CathScopEntry besthit, CathScopEntry query) throws IOException {
+		out.append(query.getID()+"\t"+query.getCathClazz()+"."+query.getCathFold()+"."+query.getCathSupFam()+"."+query.getCathFam()+"\t");
+		out.append(query.getScopClazz()+"."+query.getScopFold()+"."+query.getScopSupFam()+"."+query.getScopFam()+"\t");
+		out.append(besthit.getID()+"\t"+besthit.getCathClazz()+"."+besthit.getCathFold()+"."+besthit.getCathSupFam()+"."+besthit.getCathFam()+"\t");
+		out.append(besthit.getScopClazz()+"."+besthit.getScopFold()+"."+besthit.getScopSupFam()+"."+besthit.getScopFam()+"\t"+alignments[idToIndex.get(query.getID())][idToIndex.get(besthit.getID())]);
 	}
 
 	public void printResults() throws IOException {
