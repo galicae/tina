@@ -1,5 +1,8 @@
 package bioinfo.alignment.d123;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import bioinfo.Sequence;
 import bioinfo.alignment.Alignable;
 import bioinfo.alignment.Alignment;
@@ -330,7 +333,8 @@ public class FreeshiftSequence123D extends Gotoh {
 	 * @return Alignment of the two given Alignables
 	 */
 	private Alignment traceback() {
-
+		List<int[]> map = new ArrayList<int[]>();
+		
 		int max = INIT_VAL;
 		int x = 0;
 		int y = 0;
@@ -380,6 +384,7 @@ public class FreeshiftSequence123D extends Gotoh {
 			if (actScore == M[x][y] + match(actx, acty, strY)) {
 				row0 += actx;
 				row1 += acty;
+				map.add(new int[]{x,y}); //store aligned indices of the two sequences
 				y--;
 				x--;
 			} else if (actScore == D[x + 1][y + 1]) {
@@ -418,7 +423,7 @@ public class FreeshiftSequence123D extends Gotoh {
 		return new SequenceAlignment((Sequence) sequence1,
 				(Sequence) sequence2, flip(row0.toCharArray()),
 				flip(row1.toCharArray()), 1.0d * score
-						/ (Gotoh.FACTOR * Gotoh.FACTOR));
+						/ (Gotoh.FACTOR * Gotoh.FACTOR), map.toArray(new int[map.size()][]));
 	}
 
 	/**
