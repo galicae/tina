@@ -115,9 +115,7 @@ public abstract class CentroidClustering {
 		ProteinFragment curCentroid;
 		boolean needMoarUpdate = true;
 		for (FragmentCluster c : clusters) {
-			curCentroid = new ProteinFragment(c.getCentroid().getID(), c
-					.getCentroid().getAllResidues(), c.getCentroid()
-					.getStartIndex(), c.getCentroid().getFragmentLength());
+			curCentroid = c.getCentroid().clone();
 			c.calculateCentroid();
 			if (c.getCentroid().equals(curCentroid)) {
 				needMoarUpdate = false;
@@ -138,10 +136,9 @@ public abstract class CentroidClustering {
 	 */
 	public void update(int n) {
 		System.out.println("Starting update....");
-		boolean updated = true;
 		for (int i = 0; i < n; i++) {
 			System.out.println("iteration " + i);
-			updated = updateClusters();
+			updateClusters();
 			for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters
 					.clone()) {
 				if (f.getSize() == 0)
@@ -169,6 +166,15 @@ public abstract class CentroidClustering {
 		}
 	}
 
+	/**
+	 * this function writes the clusters in text files, using their toString
+	 * functions and adding a prefix that should be unique for the clustering
+	 * algorithm run
+	 * 
+	 * @param prefix
+	 *            the unique prefix of the run; should distinct the results of
+	 *            the clustering algorithm from others
+	 */
 	public void toTextFiles(String prefix) {
 		for (FragmentCluster c : clusters) {
 			try {
