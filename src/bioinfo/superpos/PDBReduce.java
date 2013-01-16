@@ -29,7 +29,7 @@ public class PDBReduce {
 			PDBEntry pdb2) {
 		// first find out how many residues are aligned
 		int alignmentLength = 0;
-		int[][] calcMap = alignment.getMap();
+		int[][] calcMap = alignment.calcMap();
 		for (int i = 0; i < calcMap[0].length; i++) {
 			if (calcMap[0][i] > 0) {
 				alignmentLength++;
@@ -73,7 +73,7 @@ public class PDBReduce {
 			PDBEntry pdb2) {
 		// first find out how many residues are aligned
 		int alignmentLength = 0;
-		int[][] calcMap = alignment.getMap();
+		int[][] calcMap = alignment.calcMap();
 		for (int i = 0; i < calcMap[0].length; i++) {
 			if (calcMap[0][i] >= 0) {
 				alignmentLength++;

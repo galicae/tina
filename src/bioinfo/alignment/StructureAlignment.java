@@ -36,7 +36,16 @@ public class StructureAlignment implements Alignment{
 	/**
 	 * The length of the Alignment
 	 */
-	private final int length;
+	private final int length;	
+	/**
+	 * The indices of the aligned residues, used by Paul
+	 * format: alignedResidues is an array of arrays whereas the first dimension just differs between sequence 1 or 2
+	 * 			the scd dimension is an array of length n or m referring to the length n or m of the sequences 1 or 2
+	 * 			every position in the scd dimension of the arrays contains a variable holding the position in the alignment 
+	 * 			where the sequence position referred to is aligned with the other sequence
+	 * 
+	 */
+	private final int[][] alignedResidues;
 	
 	/**
 	 * Constructs an Alignment of seq1 and seq2 with the given map and score.
@@ -45,12 +54,13 @@ public class StructureAlignment implements Alignment{
 	 * @param rows the two rows of the alignment
 	 * @param score the score of the Alignment
 	 */
-	public StructureAlignment(PDBEntry seq1, PDBEntry seq2, AminoAcid[][] rows, double score) {
+	public StructureAlignment(PDBEntry seq1, PDBEntry seq2, AminoAcid[][] rows, double score,int[][] alignedResidues) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		this.rows = rows;
 		this.score=score;
 		this.length = calcLength();
+		this.alignedResidues = alignedResidues;
 	}
 	
 	/**
@@ -64,7 +74,7 @@ public class StructureAlignment implements Alignment{
 	 */
 	
 	public StructureAlignment
-		(PDBEntry seq1, PDBEntry seq2, AminoAcid[] row1, AminoAcid[] row2, double score)
+		(PDBEntry seq1, PDBEntry seq2, AminoAcid[] row1, AminoAcid[] row2, double score, int[][] alignedResidues)
 	{
 		this.seq1 = seq1;
 		this.seq2 = seq2;
@@ -74,6 +84,7 @@ public class StructureAlignment implements Alignment{
 		temp[1] = row2;
 		this.rows = temp;
 		this.length = row1.length;
+		this.alignedResidues = alignedResidues;
 	}
 	
 	/**
@@ -86,7 +97,7 @@ public class StructureAlignment implements Alignment{
 	 * @param score the score of the Alignment
 	 */
 	public StructureAlignment
-		(PDBEntry seq1, PDBEntry seq2, List<AminoAcid> row1, List<AminoAcid> row2, double score)
+		(PDBEntry seq1, PDBEntry seq2, List<AminoAcid> row1, List<AminoAcid> row2, double score, int[][] alignedResidues)
 	{
 		this.seq1 = seq1;
 		this.seq2 = seq2;
@@ -96,6 +107,7 @@ public class StructureAlignment implements Alignment{
 		temp[1] = row2.toArray(new AminoAcid[row2.size()]);
 		this.rows = temp;
 		this.length = row1.size();
+		this.alignedResidues = alignedResidues;
 	}
 	
 	/**
@@ -195,11 +207,11 @@ public class StructureAlignment implements Alignment{
 	}
 	
 	public StructureAlignment duplicate(){
-		return new StructureAlignment(seq1, seq2, rows, score);
+		return new StructureAlignment(seq1, seq2, rows, score, alignedResidues);
 	}
 
 	@Override
-	public int[][] getMap() {
-		return calcMap();
+	public int[][] getAlignedResidues() {
+		return this.alignedResidues;
 	}
 }

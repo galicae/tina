@@ -14,7 +14,7 @@ import bioinfo.proteins.PDBEntry;
 /**
  * 
  * @author andreseitz
- * Freeshift Alignment of two PDBEntries by Eukliadian Distances
+ * Freeshift Alignment of two PDBEntries by Euklidian Distances
  */
 public class EuklidPDBEntryGotoh extends Gotoh{
 
