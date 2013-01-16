@@ -15,6 +15,7 @@ public class FragmentCluster {
 
 	public void calculateCentroid() {
 		int actLength = centroid.getAllResidues().length;
+		
 		double[][] newCentroid = new double[actLength][3];
 		ProteinFragment curFragment;
 		double[] curResidue = new double[3];
@@ -105,5 +106,9 @@ public class FragmentCluster {
 
 	public void setPssm(double[][] matrix) {
 		pssm = matrix;
+	}
+	
+	public String getID() {
+		return name;
 	}
 }

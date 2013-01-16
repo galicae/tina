@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import bioinfo.alignment.matrices.QuasarMatrix;
+import bioinfo.proteins.Atom;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 import bioinfo.proteins.fragm3nt.FragmentCluster;
@@ -27,18 +28,19 @@ public class Fr4gmentTest {
 		for (PDBEntry e : files) {
 			Fragmenter.crunchBackboneSeq(e, pList, 5);
 		}
+		System.out.println("crunched");
 		KMeansAllvsAll clustah = new KMeansAllvsAll(pList);
 		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
 		clustah.initializeClusters();
-		clustah.update(100);
+		clustah.update(200);
 
 		clusters = clustah.getClusters();
 		
-		for(FragmentCluster fc: clusters) {
-			for(ProteinFragment p: fc.getFragments()) {
-				p.correctCoordinates();
-			}
-		}
+//		for(FragmentCluster fc: clusters) {
+//			for(ProteinFragment p: fc.getFragments()) {
+//				p.correctCoordinates();
+//			}
+//		}
 
 		LinkedList<ProteinFragment> curFrags = new LinkedList<ProteinFragment>();
 		double[][] pssm = new double[fragLength][26];
@@ -75,18 +77,17 @@ public class Fr4gmentTest {
 		curSub = null;
 		curFrag = null;
 		
-		StringBuilder sb = new StringBuilder();
-		sb.append(result.get(0).toString());
-//		sb.append(result.get(1).toString());
-		String temp = "";
-		for(int i = 1; i < result.size(); i++) {
-			temp = alignFragments(result.get(i - 1), result.get(i), 2, 5 + 3*i);
-			sb.append(temp.toString());
+		ProteinFragment resultFragment = new ProteinFragment("res", new double[1][1], 0, fragLength);
+		resultFragment = result.get(0).clone();
+		
+		for(int i = 1; i < 2; i++) {
+			alignFragments(resultFragment, result.get(i), 2);
+//			resultFragment.append(result.get(i).getAllResidues(), result.get(i).getSequence());
 		}
 		
 		try {
 			BufferedWriter w = new BufferedWriter(new FileWriter("/home/p/papadopoulos/Desktop/test.pdb"));
-			w.write(sb.toString());
+			w.write(resultFragment.toString());
 			w.close();
 		}
 		catch(Exception e) {
@@ -96,8 +97,7 @@ public class Fr4gmentTest {
 
 	public static ProteinFragment findFragment(String query,
 			LinkedList<FragmentCluster> clusters) {
-		ProteinFragment curFrag = new ProteinFragment("dada", new double[1][1],
-				0, 1);
+		ProteinFragment curFrag = new ProteinFragment("dada", new double[1][1], 0, 1);
 		double tempScore = - Double.MAX_VALUE;
 		double temp = 0;
 		double[][] matrix = new double[1][1];
@@ -105,7 +105,7 @@ public class Fr4gmentTest {
 		
 		for (FragmentCluster c : clusters) {
 			temp = 0;
-			for (int i = 0; i < fragLength / 4; i++) {
+			for (int i = 0; i < fragLength; i++) {
 				int y = query.charAt(i) - 65;
 				temp += matrix[i][y] * c.getPssm()[i][y];
 			}
@@ -118,29 +118,38 @@ public class Fr4gmentTest {
 		return curFrag;
 	}
 	
-	public static String alignFragments(ProteinFragment stable, ProteinFragment move, int extent, int position) {
-		double[][][] kabschFood = new double[2][extent * 4][3];
-		int shove = (fragLength - extent) * 4;
-		for (int i = 0; i < extent * 4; i++) {
+	public static void alignFragments(ProteinFragment stable, ProteinFragment move, int extent) {
+		double[][][] kabschFood = new double[2][extent][3];
+		int shove = stable.getAllResidues().length - extent;
+		for (int i = 0; i < extent; i++) {
 			kabschFood[0][i] = stable.getResidue(shove + i);
 			kabschFood[1][i] = move.getResidue(i);
 		}
 		Transformation t = Kabsch.calculateTransformation(kabschFood);
 		move.setCoordinates(t.transform(move.getAllResidues()));
-		matchCoordinates(stable, move, extent, position);
-		return move.toString(extent, position);
+		matchCoordinates(stable, move, extent);
+		
+		double[][] moveCoordinates = new double[(fragLength - extent)][3];
+		double[][] allResidues = move.getAllResidues();
+		for(int i = 0; i < moveCoordinates.length; i++) {
+			moveCoordinates[i][0] = allResidues[extent + i][0];
+			moveCoordinates[i][1] = allResidues[extent + i][1];
+			moveCoordinates[i][2] = allResidues[extent + i][2];
+		}
+		String moveSeq = move.getSequence().substring(extent);
+		
+		stable.append(moveCoordinates, moveSeq);
 	}
 
-	private static void matchCoordinates(ProteinFragment stable,
-			ProteinFragment move, int extent, int position) {
+	private static void matchCoordinates(ProteinFragment stable, ProteinFragment move, int extent) {
 		int last = stable.getAllResidues().length - 1;
 		double[] correct = new double[3];
 		double[] lastStable = stable.getAllResidues()[last];
-		double[] firstMove = move.getAllResidues()[extent * 4 - 1];
+		double[] firstMove = move.getAllResidues()[extent - 1];
 		for(int i = 0; i < 3; i++) {
 			correct[i] = lastStable[i] - firstMove[i];
 		}
-//		firstMove = move.getAllResidues()[extent * 4 - 1];
+//		firstMove = move.getAllResidues()[extent - 1];
 //		System.err.println(firstMove[0] + "\t" + firstMove[1] + "\t" + firstMove[2] + "\t");
 		move.translateCoordinates(correct);
 //		System.err.println(firstMove[0] + "\t" + firstMove[1] + "\t" + firstMove[2] + "\t");

@@ -4,14 +4,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import bioinfo.proteins.AminoAcid;
+import bioinfo.proteins.Atom;
 import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;
 
 public class Fragmenter {
 
 	/**
-	 * goes through a PDB Entry and reads protein fragments using the backbone
-	 * atoms
+	 * goes through a PDB Entry and reads protein fragments using the CA atoms
 	 * 
 	 * @param pdb
 	 *            the entry to crunch
@@ -24,22 +24,12 @@ public class Fragmenter {
 	public static LinkedList<ProteinFragment> crunchBackboneN(PDBEntry pdb,
 			LinkedList<ProteinFragment> l, int fLength) {
 		try {
-			AminoAcid tempAA = new AminoAcid("ALA", 0);
 			for (int i = 0; i < pdb.length() - fLength; i++) {
-				double[][] temp = new double[4 * fLength][3];
+				Atom[] temp = new Atom[fLength];
 				for (int j = i; j < i + fLength; j++) {
-					tempAA = pdb.getAminoAcid(j);
-					temp[(j - i) * 4 + 0] = tempAA.getAtomByType(AtomType.N)
-							.getPosition();
-					temp[(j - i) * 4 + 1] = tempAA.getAtomByType(AtomType.CA)
-							.getPosition();
-					temp[(j - i) * 4 + 2] = tempAA.getAtomByType(AtomType.C)
-							.getPosition();
-					temp[(j - i) * 4 + 3] = tempAA.getAtomByType(AtomType.O)
-							.getPosition();
+					temp[j - i] = pdb.getAminoAcid(j).getAtomByType(AtomType.CA);
 				}
-				ProteinFragment tempFrag = new ProteinFragment(pdb.getID()
-						+ "_" + i, temp, i, fLength);
+				ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_" + i, temp, i, fLength);
 				l.add(tempFrag);
 			}
 			return l;
@@ -65,30 +55,24 @@ public class Fragmenter {
 			List<ProteinFragment> l, int fLength) {
 		try {
 			AminoAcid tempAA = new AminoAcid("ALA", 0);
-			String seq = "";
+			StringBuilder seq = new StringBuilder();
 			for (int i = 0; i < pdb.length() - fLength; i++) {
-				double[][] temp = new double[4 * fLength][3];
-				seq = "";
+				Atom[] temp = new Atom[fLength];
+				seq.delete(0, fLength);
 				for (int j = i; j < i + fLength; j++) {
 					tempAA = pdb.getAminoAcid(j);
-					seq += tempAA.getName().getOneLetterCode();
-					temp[(j - i) * 4 + 0] = tempAA.getAtomByType(AtomType.N)
-							.getPosition();
-					temp[(j - i) * 4 + 1] = tempAA.getAtomByType(AtomType.CA)
-							.getPosition();
-					temp[(j - i) * 4 + 2] = tempAA.getAtomByType(AtomType.O)
-							.getPosition();
-					temp[(j - i) * 4 + 3] = tempAA.getAtomByType(AtomType.C)
-							.getPosition();
+					
+					seq.append(tempAA.getName().getOneLetterCode());
+					temp[j - i] = tempAA.getAtomByType(AtomType.CA);
 				}
-				ProteinFragment tempFrag = new ProteinFragment(pdb.getID()
-						+ "_" + i, seq, temp, i, fLength);
+				ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_" + i, seq.toString(), temp, i, fLength);
 				l.add(tempFrag);
 			}
 			return l;
 		} catch (Exception e) {
 			System.out.println("Entry " + pdb.getID()
 					+ " probably has incomplete records.");
+			e.printStackTrace();
 		}
 		return null;
 	}

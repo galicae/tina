@@ -108,9 +108,7 @@ public abstract class ClusterAlgorithm {
 		ProteinFragment curCentroid;
 		boolean needMoarUpdate = true;
 		for (FragmentCluster c : clusters) {
-			curCentroid = new ProteinFragment(c.getCentroid().getID(), c
-					.getCentroid().getAllResidues(), c.getCentroid()
-					.getStartIndex(), c.getCentroid().getFragmentLength());
+			curCentroid = c.getCentroid().clone();
 			c.calculateCentroid();
 			if (c.getCentroid().equals(curCentroid)) {
 				needMoarUpdate = false;
