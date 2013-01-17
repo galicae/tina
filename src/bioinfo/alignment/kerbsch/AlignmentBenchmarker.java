@@ -31,7 +31,7 @@ public class AlignmentBenchmarker {
 	ArrayList<String[]> pairs;
 	HashMap<String, CathScopEntry> cathscopinfo;
 	HashMap<String, Integer> idToIndex = new HashMap<String, Integer>();
-	double[][] alignments;
+	double[][] alignments; 
 	Aligner gotoh;
 	BufferedWriter out = null;
 
@@ -117,7 +117,6 @@ public class AlignmentBenchmarker {
 	private void statistic(CathScopEntry besthit, CathScopEntry query){
 		if(besthit != null){
 			System.out.println("found max");
-			System.out.println(besthit.getID());
 			// for cath family recognition test
 			if (query.getCathClazz() == besthit.getCathClazz()
 					&& query.getCathFold() == besthit.getCathFold()
@@ -256,11 +255,9 @@ public class AlignmentBenchmarker {
 				temp = (SequenceAlignment) gotoh.align(new Sequence(pair[0],
 						seqlib.get(pair[0])),
 						new Sequence(pair[1], seqlib.get(pair[1])));
-				score = temp.getScore();
+				score = temp.getScore()/temp.countAlignedResidues();
 				alignments[id1][id2] = score;
 				alignments[id2][id1] = score;
-				System.out.println(temp.toStringVerbose());
-				System.out.println(temp.getScore()/temp.countAlignedResidues());
 			}
 			//else get score from alignment matrix
 			else{
