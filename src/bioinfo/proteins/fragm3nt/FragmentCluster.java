@@ -1,11 +1,11 @@
 package bioinfo.proteins.fragm3nt;
 
-import java.text.DecimalFormat;
+//import java.text.DecimalFormat;
 import java.util.LinkedList;
-import java.util.List;
+//import java.util.List;
 
-import bioinfo.proteins.*;
-import bioinfo.proteins.AtomType;
+//import bioinfo.proteins.*;
+//import bioinfo.proteins.AtomType;
 
 public class FragmentCluster {
 	private LinkedList<ProteinFragment> fragments = new LinkedList<ProteinFragment>();

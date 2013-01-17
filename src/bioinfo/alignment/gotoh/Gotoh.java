@@ -2,9 +2,9 @@ package bioinfo.alignment.gotoh;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Locale;
+//import java.util.Locale;
 
-import bioinfo.Sequence;
+//import bioinfo.Sequence;
 import bioinfo.alignment.Alignable;
 import bioinfo.alignment.Aligner;
 import bioinfo.alignment.Alignment;

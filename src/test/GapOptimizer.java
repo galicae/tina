@@ -67,6 +67,7 @@ public class GapOptimizer {
 			tr= tmCalculator.calculateTransformation(aliHyd, pdb1, pdb2);
 			System.out.println(tr.getTmscore());
 		}
+		br.close();
 		
 	}
 }

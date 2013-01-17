@@ -4,18 +4,18 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
-import java.awt.event.HierarchyBoundsListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+//import java.awt.event.ComponentEvent;
+//import java.awt.event.ComponentListener;
+//import java.awt.event.ContainerEvent;
+//import java.awt.event.ContainerListener;
+//import java.awt.event.HierarchyBoundsListener;
+//import java.awt.event.HierarchyEvent;
+//import java.awt.event.MouseEvent;
+//import java.awt.event.MouseListener;
+//import java.awt.event.WindowEvent;
+//import java.awt.event.WindowListener;
+//import java.beans.PropertyChangeEvent;
+//import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 
 
@@ -25,8 +25,8 @@ import javax.swing.JPanel;
 import org.jmol.adapter.smarter.SmarterJmolAdapter;
 import org.jmol.api.JmolAdapter;
 import org.jmol.api.JmolSimpleViewer;
-import org.openscience.jmol.app.Jmol;
-import org.openscience.jmol.app.jmolpanel.JmolPanel;
+//import org.openscience.jmol.app.Jmol;
+//import org.openscience.jmol.app.jmolpanel.JmolPanel;
 
 import bioinfo.proteins.PDBEntry;
 
@@ -41,7 +41,7 @@ public class JMolView {
 
 	public JMolView() {
 		frame = new JFrame();
-		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		Container contentPane = frame.getContentPane();
 		jmolPanel = new JmolPanel();
