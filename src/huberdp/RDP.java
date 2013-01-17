@@ -1,5 +1,5 @@
 /******************************************************************************
- * hubeRDP is a RDP implementation for the GoBi 2012/13.                      *
+ * rdp is the interface for rdp implementations.                              *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -8,10 +8,20 @@ package huberdp;
 
 /**
  * @author huberste
- * @lastchange 2013-01-10
+ * @lastchange 2013-01-17
+ *
  */
-public class huberdp {
-
+public interface RDP {
+	
+	public void initialize();
+	
+	/**
+	 * 
+	 * @param t solutionTree
+	 * @param pq 
+	 */
+	public void rdp();
+	
 }
 
 /******************************************************************************

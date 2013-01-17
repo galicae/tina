@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import bioinfo.alignment.Alignment;
 import bioinfo.alignment.SequenceAlignment;
-import bioinfo.proteins.Atom;
+//import bioinfo.proteins.Atom;
 import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;
 import cern.colt.matrix.DoubleFactory1D;

@@ -536,7 +536,7 @@ ali_while:while (true) {
 	public static String readPDB(String file, double[] x, double[] y,double[] z, int[] nres){
 		String seq = "*";
 		String line = "";
-		BufferedReader br;
+		BufferedReader br = null;
 		int i;
 		i = 0;
 		try {
@@ -561,6 +561,12 @@ ali_while:while (true) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return seq;
 	}

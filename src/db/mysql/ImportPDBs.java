@@ -1,6 +1,6 @@
 package db.mysql;
 
-import bioinfo.pdb.PDBFile;
+//import bioinfo.pdb.PDBFile;
 import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
