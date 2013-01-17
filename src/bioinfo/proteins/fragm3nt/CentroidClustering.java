@@ -41,9 +41,12 @@ public abstract class CentroidClustering {
 		// System.out.println("starting update...");
 		boolean updated = false;
 		updated = calculateCentroids();
+//		checkClusters();
 		flushClusters();
+//		checkClusters();
 		assignInstances();
-		// System.out.println("update closed");
+		checkClusters();
+		System.out.println( clusters.size() + " clusters");
 		return updated;
 	}
 
@@ -65,17 +68,12 @@ public abstract class CentroidClustering {
 		double minRMSD = Double.MAX_VALUE;
 		FragmentCluster tempCluster = new FragmentCluster();
 		Transformation t;
-		// System.out.println("===================================\nCalling update\n===================================");
-		// System.out.println(clusters.size());
-
 		for (ProteinFragment f : fragments) {
 			kabschFood[0] = f.getAllResidues();
 			minRMSD = Double.MAX_VALUE;
 			for (FragmentCluster cluster : clusters) {
 				kabschFood[1] = cluster.getCentroid().getAllResidues();
 				if (kabschFood[1].length == 5) {
-					// System.out.println(f.getID() + " " +
-					// cluster.getCentroid().getID());
 					kabschFood[1] = cluster.getCentroid().getAllResidues();
 				}
 				t = Kabsch.calculateTransformation(kabschFood);
@@ -87,10 +85,7 @@ public abstract class CentroidClustering {
 					tempCluster = cluster;
 				}
 			}
-			// System.out.println("assign fragment " + f.getID() +
-			// " to cluster " + tempCluster.getCentroid().getID() +
-			// " with RMSD " + minRMSD);
-			if (minRMSD < 2) {
+			if (minRMSD < 0.5) {
 				kabschFood[0] = tempCluster.getCentroid().getAllResidues();
 				kabschFood[1] = f.getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
@@ -119,8 +114,6 @@ public abstract class CentroidClustering {
 			c.calculateCentroid();
 			if (c.getCentroid().equals(curCentroid)) {
 				needMoarUpdate = false;
-				System.out.println("cluster " + c.getCentroid().getID()
-						+ " has the same centroid!");
 			} else
 				needMoarUpdate = true;
 		}
@@ -139,6 +132,7 @@ public abstract class CentroidClustering {
 		for (int i = 0; i < n; i++) {
 			System.out.println("iteration " + i);
 			updateClusters();
+			checkClusters();
 			for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters
 					.clone()) {
 				if (f.getSize() == 0)
@@ -190,5 +184,52 @@ public abstract class CentroidClustering {
 
 	public LinkedList<FragmentCluster> getClusters() {
 		return this.clusters;
+	}
+	
+	public void checkClusters() {
+		double dist = 0;
+		for(FragmentCluster c: clusters) {
+			for(int i = 1; i < c.getCentroid().fragLength; i++) {
+				ProteinFragment f = c.getCentroid();
+				dist = distance(f.getResidue(i - 1), f.getResidue(i));
+				if(dist < 3.0 || dist > 4.0)
+					System.out.println("FALSE");
+			}
+			for(ProteinFragment f: c.getFragments()) {
+				for(int i = 1; i < f.fragLength; i++) {
+					dist = distance(f.getResidue(i - 1), f.getResidue(i));
+					if(dist < 3.0 || dist > 4.0)
+						System.out.println("FALSE");
+				}
+			}
+		}
+	}
+	
+	
+	public void checkFragments() {
+		double dist = 0;
+		for(FragmentCluster c: clusters) {
+			for(int i = 1; i < c.getCentroid().fragLength; i++) {
+				ProteinFragment f = c.getCentroid();
+				dist = distance(f.getResidue(i - 1), f.getResidue(i));
+				if(dist < 3.0 || dist > 4.0)
+					System.out.println("FALSE");
+			}
+			for(ProteinFragment f: c.getFragments()) {
+				for(int i = 1; i < f.fragLength; i++) {
+					dist = distance(f.getResidue(i - 1), f.getResidue(i));
+					if(dist < 3.0 || dist > 4.0)
+						System.out.println("FALSE");
+				}
+			}
+		}
+	}
+	
+	public double distance(double[] a, double[] b) {
+		double sum = 0;
+		for(int i = 0; i < a.length; i++) {
+			sum += Math.pow(a[i] - b[i], 2);
+		}
+		return Math.sqrt(sum);
 	}
 }

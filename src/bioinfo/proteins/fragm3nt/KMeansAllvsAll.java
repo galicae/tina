@@ -17,19 +17,20 @@ public class KMeansAllvsAll extends CentroidClustering {
 		double minRMSD = Double.MAX_VALUE;
 		Transformation t;
 		ProteinFragment[] minPair = new ProteinFragment[2];
-
+		
 		// for every fragment pair...
 		for (int i = 0; i < fragments.size(); i++) {
 			if(fragments.get(i).getClusterIndex() > -1)
 				continue;
 			minRMSD = Double.MAX_VALUE;
+			kabschFood[0] = fragments.get(i).getAllResidues();
 			for (int j = 0; j < fragments.size(); j++) {
 				// except of course every fragment with itself, that would
 				// explode the experiment
 				if (j == i)
 					continue;
 				// calculate the RMSD...
-				kabschFood[0] = fragments.get(i).getAllResidues();
+				
 				kabschFood[1] = fragments.get(j).getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
 
@@ -40,8 +41,8 @@ public class KMeansAllvsAll extends CentroidClustering {
 				if (minRMSD > temp) {
 					minRMSD = temp;
 					minPair = new ProteinFragment[2];
-					minPair[0] = fragments.get(i);
-					minPair[1] = fragments.get(j);
+					minPair[0] = fragments.get(i).clone();
+					minPair[1] = fragments.get(j).clone();
 				}
 			}
 
@@ -62,7 +63,7 @@ public class KMeansAllvsAll extends CentroidClustering {
 				clusters.getLast().setCentroid(minPair[1]);
 				minPair[0].setClusterIndex(clusters.size() - 1);
 				minPair[1].setClusterIndex(clusters.size() - 1);
-				kabschFood[0] = clusters.get(minPair[0].getClusterIndex()).getCentroid().getAllResidues();
+				kabschFood[0] = minPair[1].getAllResidues();
 				kabschFood[1] = minPair[0].getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
 				minPair[0].setCoordinates(t.transform(minPair[0].getAllResidues()));

@@ -1,11 +1,6 @@
 package bioinfo.proteins.fragm3nt;
 
-import java.text.DecimalFormat;
 import java.util.LinkedList;
-import java.util.List;
-
-import bioinfo.proteins.*;
-import bioinfo.proteins.AtomType;
 
 public class FragmentCluster {
 	private LinkedList<ProteinFragment> fragments = new LinkedList<ProteinFragment>();
@@ -14,28 +9,27 @@ public class FragmentCluster {
 	private double[][] pssm;
 
 	public void calculateCentroid() {
-		int actLength = centroid.getAllResidues().length;
-		
-		double[][] newCentroid = new double[actLength][3];
+		int clusterSize = fragments.size();
+
+		double[][] newCentroid = new double[centroid.fragLength][3];
 		ProteinFragment curFragment;
 		double[] curResidue = new double[3];
-		while (!fragments.isEmpty()) {
-			curFragment = fragments.pop();
-			for (int i = 0; i < actLength; i++) {
+		for(int j = 0; j < clusterSize; j++) {
+			curFragment = fragments.get(j);
+			for (int i = 0; i < curFragment.fragLength; i++) {
 				curResidue = curFragment.getResidue(i);
 				newCentroid[i][0] += curResidue[0];
 				newCentroid[i][1] += curResidue[1];
 				newCentroid[i][2] += curResidue[2];
 			}
 		}
-		for (int i = 0; i < actLength; i++) {
-			newCentroid[i][0] /= actLength * 1.;
-			newCentroid[i][1] /= actLength * 1.;
-			newCentroid[i][2] /= actLength * 1.;
+		for (int i = 0; i < newCentroid.length; i++) {
+			newCentroid[i][0] /= clusterSize * 1.;
+			newCentroid[i][1] /= clusterSize * 1.;
+			newCentroid[i][2] /= clusterSize * 1.;
 		}
 
-		centroid = new ProteinFragment(centroid.getID(), newCentroid,
-				centroid.getStartIndex(), actLength);
+		centroid.setCoordinates(newCentroid);
 	}
 
 	public ProteinFragment getCentroid() {
@@ -83,23 +77,29 @@ public class FragmentCluster {
 	public String toString() {
 		int i = 0;
 		StringBuilder result = new StringBuilder();
-		for (ProteinFragment f : fragments) {
-			result.append("REMARK 500 " + f.getSequence() + "\n");
-			result.append("MODEL        " + ++i + "\n");
-			result.append(f.toString());
-			result.append("ENDMDL" + "\n");
+		try {
+			for (ProteinFragment f : fragments) {
+				result.append("REMARK 500 " + f.getSequence() + "\n");
+				result.append("MODEL        " + ++i + "\n");
+				result.append(f.toString());
+				result.append("ENDMDL" + "\n");
+			}
+			return result.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return result.toString();
+		return "problem printing";
+
 	}
 
 	public int getSize() {
 		return fragments.size();
 	}
-	
+
 	public LinkedList<ProteinFragment> getFragments() {
 		return fragments;
 	}
-	
+
 	public double[][] getPssm() {
 		return pssm;
 	}
@@ -107,7 +107,7 @@ public class FragmentCluster {
 	public void setPssm(double[][] matrix) {
 		pssm = matrix;
 	}
-	
+
 	public String getID() {
 		return name;
 	}

@@ -83,7 +83,7 @@ public abstract class ClusterAlgorithm {
 			// System.out.println("assign fragment " + f.getID() +
 			// " to cluster " + tempCluster.getCentroid().getID() +
 			// " with RMSD " + minRMSD);
-			if (minRMSD < 2) {
+			if (minRMSD < 1.0) {
 				kabschFood[0] = tempCluster.getCentroid().getAllResidues();
 				kabschFood[1] = f.getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
@@ -127,11 +127,12 @@ public abstract class ClusterAlgorithm {
 	 * @param n
 	 *            how many loops to run over the update function
 	 */
-	@Deprecated
 	public void update(int n) {
 		System.out.println("Starting update....");
 		boolean updated = true;
 		for(int i = 0; i < n; i++) {
+			if(!updated)
+				break;
 			System.out.println("iteration " + i);
 			updated = updateClusters();
 			for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters.clone()) {

@@ -53,26 +53,14 @@ public class KMeansMain {
 		KMeansAllvsAll clusterAlgorithm = new KMeansAllvsAll(pList);
 		System.out.println("initializing clusters...");
 		clusterAlgorithm.initializeClusters();
-//		for (FragmentCluster c : clusterAlgorithm.getClusters()) {
-//			for(ProteinFragment f: c.getFragments()) {
-//				for(int i = 0; i < f.getAtoms().length; i++) {
-//					f.getAtoms()[i].setPosition(f.getAllResidues()[i]);
-//				}
-//			}
-//			try {
-//				BufferedWriter br = new BufferedWriter(new FileWriter("./" + "init" + "_" + c.getCentroid().getID()));
-//				br.write(c.toString());
-//				br.close();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
+		clusterAlgorithm.checkClusters();
 		updateTime = System.currentTimeMillis();
 
 		System.out.println("Cluster initialization in (ms) "
 				+ (updateTime - initTime));
 		System.out.println("updating " + clusterAlgorithm.getClusters().size() + " clusters...");
 		clusterAlgorithm.update(updCycles);
+		clusterAlgorithm.checkClusters();
 		writeTime = System.currentTimeMillis();
 		System.out.println("Updated " + updCycles + " times in (ms) " + (writeTime - updateTime));
 		
