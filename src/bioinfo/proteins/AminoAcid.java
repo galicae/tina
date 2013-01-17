@@ -6,8 +6,8 @@
 package bioinfo.proteins;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+//import java.util.ArrayList;
+//import java.util.List;
 
 /**
  * @author gobi_4

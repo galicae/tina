@@ -11,7 +11,7 @@ import bioinfo.superpos.Transformation;
  * an implementation of the DBSCAN (density-based clustering) algorithm
  * described in
  * "A density-based algorithm for discovering clusters in large spatial databases with noise"
- * by Martin Ester, Hans-Peter Kriegel, J�rg Sander, Xiaowei Xu (1996-)
+ * by Martin Ester, Hans-Peter Kriegel, Joerg Sander, Xiaowei Xu (1996-)
  * 
  * mostly based on the wikipedia pseudocode of the algorithm
  * 

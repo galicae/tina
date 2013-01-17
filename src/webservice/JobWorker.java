@@ -168,12 +168,12 @@ public class JobWorker {
 	}
 	
 	/**
-	 * Moves a File in a very, very inefficient way
+	 * Moves a file in a very, very inefficient way
 	 * @param fromFile
 	 * @param toFile
 	 * @return false if failed, else true
 	 */
-	private static boolean move(String fromFile, String toFile) {
+	static boolean move(String fromFile, String toFile) {
 		
 		boolean result = (copy(fromFile, toFile) && (new File(fromFile).delete()));
 		return result;

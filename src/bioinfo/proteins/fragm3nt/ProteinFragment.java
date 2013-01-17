@@ -190,28 +190,33 @@ public class ProteinFragment {
 
 	@Override
 	public ProteinFragment clone() {
+		String id = this.id;
+		String sequence = this.sequence;
+		Atom[] atoms = new Atom[this.atoms.length];
+		for(int i = 0; i < atoms.length; i++) {
+			atoms[i] = new Atom(this.atoms[i].getType(), coordinates[i]);
+		}
 		ProteinFragment result = new ProteinFragment(id, sequence, atoms,
 				startIndex, fragLength);
 		return result;
 	}
 	
 	
-	public void correctCoordinates() {
-		String coord = String.valueOf(coordinates[0][0]);
-		if(coord.length() > 7) {
-			double[] corr = new double[3];
-			corr[0] = coordinates[0][0];
-			corr[1] = coordinates[0][1];
-			corr[2] = coordinates[0][2];
-			for(int i = 0; i < coordinates.length; i++) {
-				for(int j = 0; j < coordinates[0].length; j++) {
-					coordinates[i][j] -= corr[j];
-				}
-				atoms[i].setPosition(coordinates[i]);
-			}
-		}
-		
-	}
+//	public void correctCoordinates() {
+//		String coord = String.valueOf(coordinates[0][0]);
+//		if(coord.length() > 7) {
+//			double[] corr = new double[3];
+//			corr[0] = coordinates[0][0];
+//			corr[1] = coordinates[0][1];
+//			corr[2] = coordinates[0][2];
+//			for(int i = 0; i < coordinates.length; i++) {
+//				for(int j = 0; j < coordinates[0].length; j++) {
+//					coordinates[i][j] -= corr[j];
+//				}
+//				atoms[i].setPosition(coordinates[i]);
+//			}
+//		}
+//	}
 
 	public void translateCoordinates(double[] correct) {
 		for(int i = 0; i < coordinates.length; i++) {

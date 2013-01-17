@@ -62,6 +62,7 @@ public class HydroTest2 {
 					hyd++;
 //			}
 		}
+		br.close();
 		out.flush();
 		out.close();
 		System.err.println(seq + " " + hyd);
