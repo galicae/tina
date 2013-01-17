@@ -8,12 +8,19 @@ package huberdp;
 
 /**
  * @author huberste
- * @lastchange 2013-01-10
+ * @lastchange 2013-01-17
  *
  */
-public interface rdp {
+public interface RDP {
 	
+	public void initialize();
 	
+	/**
+	 * 
+	 * @param t solutionTree
+	 * @param pq 
+	 */
+	public void rdp();
 	
 }
 
