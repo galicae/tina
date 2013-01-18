@@ -41,12 +41,12 @@ public abstract class CentroidClustering {
 		// System.out.println("starting update...");
 		boolean updated = false;
 		updated = calculateCentroids();
-//		checkClusters();
+		// checkClusters();
 		flushClusters();
-//		checkClusters();
+		// checkClusters();
 		assignInstances();
-		checkClusters();
-		System.out.println( clusters.size() + " clusters");
+//		checkAllFragments();
+		System.out.println(clusters.size() + " clusters");
 		return updated;
 	}
 
@@ -69,13 +69,12 @@ public abstract class CentroidClustering {
 		FragmentCluster tempCluster = new FragmentCluster();
 		Transformation t;
 		for (ProteinFragment f : fragments) {
+			if (f.getSequence().equals("CYKWP"))
+				System.out.println();
 			kabschFood[0] = f.getAllResidues();
 			minRMSD = Double.MAX_VALUE;
 			for (FragmentCluster cluster : clusters) {
 				kabschFood[1] = cluster.getCentroid().getAllResidues();
-				if (kabschFood[1].length == 5) {
-					kabschFood[1] = cluster.getCentroid().getAllResidues();
-				}
 				t = Kabsch.calculateTransformation(kabschFood);
 
 				// and find the pair with the minimal RMSD.
@@ -85,12 +84,14 @@ public abstract class CentroidClustering {
 					tempCluster = cluster;
 				}
 			}
-			if (minRMSD < 0.5) {
+			if (minRMSD < 2) {
 				kabschFood[0] = tempCluster.getCentroid().getAllResidues();
 				kabschFood[1] = f.getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
-				f.setCoordinates(t.transform(f.getAllResidues()));
-				tempCluster.add(f);
+				ProteinFragment test = new ProteinFragment(null, new double[1][1], 0, 5);
+				test = f.clone();
+				test.setCoordinates(t.transform(f.getAllResidues()));
+				tempCluster.add(test);
 			} else {
 				clusters.addLast(new FragmentCluster());
 				clusters.getLast().setCentroid(f);
@@ -129,10 +130,13 @@ public abstract class CentroidClustering {
 	 */
 	public void update(int n) {
 		System.out.println("Starting update....");
+		boolean updated = true;
 		for (int i = 0; i < n; i++) {
+			if(!updated)
+				break;
 			System.out.println("iteration " + i);
 			updateClusters();
-			checkClusters();
+//			checkAllFragments();
 			for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters
 					.clone()) {
 				if (f.getSize() == 0)
@@ -185,50 +189,32 @@ public abstract class CentroidClustering {
 	public LinkedList<FragmentCluster> getClusters() {
 		return this.clusters;
 	}
-	
-	public void checkClusters() {
+
+	public void checkAllFragments() {
+		boolean frag = true;
+		for (ProteinFragment f : fragments) {
+			frag = checkFragment(f);
+			if (!frag)
+				System.out.println(f.getSequence());
+		}
+
+	}
+
+	public boolean checkFragment(ProteinFragment f) {
 		double dist = 0;
-		for(FragmentCluster c: clusters) {
-			for(int i = 1; i < c.getCentroid().fragLength; i++) {
-				ProteinFragment f = c.getCentroid();
-				dist = distance(f.getResidue(i - 1), f.getResidue(i));
-				if(dist < 3.0 || dist > 4.0)
-					System.out.println("FALSE");
-			}
-			for(ProteinFragment f: c.getFragments()) {
-				for(int i = 1; i < f.fragLength; i++) {
-					dist = distance(f.getResidue(i - 1), f.getResidue(i));
-					if(dist < 3.0 || dist > 4.0)
-						System.out.println("FALSE");
-				}
+		for (int i = 1; i < f.fragLength; i++) {
+			dist = distance(f.getResidue(i - 1), f.getResidue(i));
+			if (dist < 3.5 || dist > 4.0) {
+				return false;
 			}
 		}
+		return true;
 	}
-	
-	
-	public void checkFragments() {
-		double dist = 0;
-		for(FragmentCluster c: clusters) {
-			for(int i = 1; i < c.getCentroid().fragLength; i++) {
-				ProteinFragment f = c.getCentroid();
-				dist = distance(f.getResidue(i - 1), f.getResidue(i));
-				if(dist < 3.0 || dist > 4.0)
-					System.out.println("FALSE");
-			}
-			for(ProteinFragment f: c.getFragments()) {
-				for(int i = 1; i < f.fragLength; i++) {
-					dist = distance(f.getResidue(i - 1), f.getResidue(i));
-					if(dist < 3.0 || dist > 4.0)
-						System.out.println("FALSE");
-				}
-			}
-		}
-	}
-	
+
 	public double distance(double[] a, double[] b) {
 		double sum = 0;
-		for(int i = 0; i < a.length; i++) {
-			sum += Math.pow(a[i] - b[i], 2);
+		for (int i = 0; i < a.length; i++) {
+			sum += (a[i] - b[i]) * (a[i] - b[i]);
 		}
 		return Math.sqrt(sum);
 	}

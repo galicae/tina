@@ -86,7 +86,7 @@ public class Fr4gmentTest {
 		}
 		
 		try {
-			BufferedWriter w = new BufferedWriter(new FileWriter("/home/p/papadopoulos/Desktop/test.pdb"));
+			BufferedWriter w = new BufferedWriter(new FileWriter("C:/users/nikos/Desktop/test.pdb"));
 			w.write(resultFragment.toString());
 			w.close();
 		}

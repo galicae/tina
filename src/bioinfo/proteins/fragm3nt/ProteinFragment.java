@@ -84,8 +84,9 @@ public class ProteinFragment {
 	}
 
 	public void setCoordinates(double[][] nCoord) {
-		this.coordinates = nCoord;
+//		this.coordinates = nCoord;
 		for(int i = 0; i < nCoord.length; i++) {
+			coordinates[i] = nCoord[i];
 			atoms[i].setPosition(nCoord[i]);
 		}
 	}

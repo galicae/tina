@@ -18,6 +18,21 @@ public class KMeansAllvsAll extends CentroidClustering {
 		Transformation t;
 		ProteinFragment[] minPair = new ProteinFragment[2];
 		
+		// error filtering
+		LinkedList<ProteinFragment> correctList = new LinkedList<ProteinFragment>();
+		LinkedList<ProteinFragment> wrongList = new LinkedList<ProteinFragment>();
+		for(ProteinFragment f: fragments) {
+			if(checkFragment(f))
+				correctList.add(f);
+			else
+				wrongList.add(f);
+		}
+		
+		fragments = correctList;
+		
+		for(ProteinFragment f: wrongList) {
+			f.getSequence();
+		}
 		// for every fragment pair...
 		for (int i = 0; i < fragments.size(); i++) {
 			if(fragments.get(i).getClusterIndex() > -1)
