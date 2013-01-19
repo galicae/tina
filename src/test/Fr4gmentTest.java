@@ -80,7 +80,7 @@ public class Fr4gmentTest {
 		ProteinFragment resultFragment = new ProteinFragment("res", new double[1][1], 0, fragLength);
 		resultFragment = result.get(0).clone();
 		
-		for(int i = 1; i < 2; i++) {
+		for(int i = 1; i < result.size(); i++) {
 			alignFragments(resultFragment, result.get(i), 2);
 //			resultFragment.append(result.get(i).getAllResidues(), result.get(i).getSequence());
 		}

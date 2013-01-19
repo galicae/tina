@@ -45,7 +45,7 @@ public abstract class CentroidClustering {
 		flushClusters();
 		// checkClusters();
 		assignInstances();
-//		checkAllFragments();
+		// checkAllFragments();
 		System.out.println(clusters.size() + " clusters");
 		return updated;
 	}
@@ -56,6 +56,11 @@ public abstract class CentroidClustering {
 	private void flushClusters() {
 		for (FragmentCluster c : clusters) {
 			c.flush();
+		}
+		// I think changing the index in the cluster flush function doesn't mean
+		// anything, since I now clone objects before adding them
+		for (ProteinFragment f : fragments) {
+			f.setClusterIndex(-1);
 		}
 	}
 
@@ -88,7 +93,8 @@ public abstract class CentroidClustering {
 				kabschFood[0] = tempCluster.getCentroid().getAllResidues();
 				kabschFood[1] = f.getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
-				ProteinFragment test = new ProteinFragment(null, new double[1][1], 0, 5);
+				ProteinFragment test = new ProteinFragment(null,
+						new double[1][1], 0, 5);
 				test = f.clone();
 				test.setCoordinates(t.transform(f.getAllResidues()));
 				tempCluster.add(test);
@@ -132,11 +138,11 @@ public abstract class CentroidClustering {
 		System.out.println("Starting update....");
 		boolean updated = true;
 		for (int i = 0; i < n; i++) {
-			if(!updated)
+			if (!updated)
 				break;
 			System.out.println("iteration " + i);
 			updateClusters();
-//			checkAllFragments();
+			// checkAllFragments();
 			for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters
 					.clone()) {
 				if (f.getSize() == 0)
