@@ -92,6 +92,17 @@ public class FragmentCluster {
 		// from phantom functions. We still don't know what was wrong there, but
 		// apparently we fixed it.
 	}
+	
+	public void calculatePssm() {
+		pssm = new double[fragments.getFirst().fragLength][26];
+		char c = 'a';
+		for (ProteinFragment f : fragments) {
+			for (int i = 0; i < f.getSequence().length(); i++) {
+				c = f.getSequence().charAt(i);
+				pssm[i][c - 65] += (1.0 / fragments.size());
+			}
+		}
+	}
 
 	public int getSize() {
 		return fragments.size();
@@ -127,5 +138,6 @@ public class FragmentCluster {
 
 	public void add(ProteinFragment f) {
 		fragments.add(f);
+		calculatePssm();
 	}
 }

@@ -1,19 +1,27 @@
 package test;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+
+import bioinfo.pdb.PDBFile;
 import bioinfo.proteins.PDBEntry;
-import bioinfo.proteins.PDBFileReader;
 
 public class toStringTest {
 
 	public static void main(String[] args) {
-		PDBFileReader re = new PDBFileReader();
-		PDBEntry ne = re.readPDBFromFile("C:/Users/nikos/Desktop/STRUCTURES/1a0aA00.pdb");
-
-		char c = 65;
-		System.out.println(ne.getAminoAcid(0).getAtom(0).toTMString());
-		System.out.println(ne.getAminoAcid(0).getAtom(1).toString(0, 0, "ALA", c));
-		System.out.println(ne.getAminoAcid(0).getAtom(2).toTMString());
-		System.out.println(ne.getAminoAcid(0).getAtom(3).toTMString());
-		System.out.println(ne.getAminoAcid(0).getAtom(4).toTMString());
+		try {
+			BufferedReader br = new BufferedReader(new FileReader("prot_list"));
+			String line;
+			while((line = br.readLine()) != null) {
+				PDBFile.downloadPDB(line, "./proteins/");
+				System.out.println("got " + line);
+			}
+			br.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+//		PDBFile.downloadPDB("1BMV", "./proteins/");
 	}
 }
