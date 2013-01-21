@@ -8,7 +8,6 @@ public class ProteinFragment {
 	private String sequence;
 	private double[][] coordinates;
 	private Atom[] atoms;
-	private int startIndex;
 	public final int fragLength;
 	private boolean visited = false;
 	private boolean noise = false;
@@ -17,11 +16,10 @@ public class ProteinFragment {
 								// lot of time during the initialization of the
 								// clusters.
 
-	public ProteinFragment(String id, Atom[] atoms, int startIndex,
+	public ProteinFragment(String id, Atom[] atoms,
 			int fragLength) {
 		this.fragLength = fragLength;
 		this.id = id;
-		this.startIndex = startIndex;
 		this.atoms = atoms;
 		coordinates = new double[atoms.length][3];
 		for(int i = 0; i < atoms.length; i++) {
@@ -29,8 +27,7 @@ public class ProteinFragment {
 		}
 	}
 
-	public ProteinFragment(String id, String seq, Atom[] atoms,
-			int startIndex, int fragLength) {
+	public ProteinFragment(String id, String seq, Atom[] atoms, int fragLength) {
 		this.fragLength = fragLength;
 		this.id = id;
 		this.sequence = seq;
@@ -39,10 +36,9 @@ public class ProteinFragment {
 		for(int i = 0; i < atoms.length; i++) {
 			coordinates[i] = atoms[i].getPosition();
 		}
-		this.startIndex = startIndex;
 	}
 
-	public ProteinFragment(String id, double[][] newCentroid, int startIndex,
+	public ProteinFragment(String id, double[][] newCentroid,
 			int fragLength) {
 		this.fragLength = fragLength;
 		this.id = id;
@@ -52,7 +48,6 @@ public class ProteinFragment {
 			atoms[i] = new Atom(AtomType.CA, newCentroid[i]);
 			coordinates[i] = newCentroid[i];
 		}
-		this.startIndex = startIndex;
 	}
 
 	public double[] getResidue(int i) {
@@ -69,10 +64,6 @@ public class ProteinFragment {
 
 	public String getID() {
 		return id;
-	}
-
-	public int getStartIndex() {
-		return startIndex;
 	}
 
 	public void setClusterIndex(int i) {
@@ -181,9 +172,6 @@ public class ProteinFragment {
 		sequence = seq;
 	}
 
-	public void setStartIndex(int i) {
-		startIndex = i;
-	}
 
 	public void setNoise(boolean noise) {
 		this.noise = noise;
@@ -197,8 +185,7 @@ public class ProteinFragment {
 		for(int i = 0; i < atoms.length; i++) {
 			atoms[i] = new Atom(this.atoms[i].getType(), coordinates[i]);
 		}
-		ProteinFragment result = new ProteinFragment(id, sequence, atoms,
-				startIndex, fragLength);
+		ProteinFragment result = new ProteinFragment(id, sequence, atoms, fragLength);
 		return result;
 	}
 	

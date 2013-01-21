@@ -94,7 +94,7 @@ public abstract class CentroidClustering {
 				kabschFood[1] = f.getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
 				ProteinFragment test = new ProteinFragment(null,
-						new double[1][1], 0, 5);
+						new double[1][1], 5);
 				test = f.clone();
 				test.setCoordinates(t.transform(f.getAllResidues()));
 				tempCluster.add(test);

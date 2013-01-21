@@ -29,7 +29,7 @@ public class Fragmenter {
 				for (int j = i; j < i + fLength; j++) {
 					temp[j - i] = pdb.getAminoAcid(j).getAtomByType(AtomType.CA);
 				}
-				ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_" + i, temp, i, fLength);
+				ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_" + i, temp, fLength);
 				l.add(tempFrag);
 			}
 			return l;
@@ -65,7 +65,7 @@ public class Fragmenter {
 					seq.append(tempAA.getName().getOneLetterCode());
 					temp[j - i] = tempAA.getAtomByType(AtomType.CA);
 				}
-				ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_" + i, seq.toString(), temp, i, fLength);
+				ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_" + i, seq.toString(), temp, fLength);
 				l.add(tempFrag);
 			}
 			return l;

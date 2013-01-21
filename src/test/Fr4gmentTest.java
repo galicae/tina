@@ -77,7 +77,7 @@ public class Fr4gmentTest {
 		curSub = null;
 		curFrag = null;
 		
-		ProteinFragment resultFragment = new ProteinFragment("res", new double[1][1], 0, fragLength);
+		ProteinFragment resultFragment = new ProteinFragment("res", new double[1][1], fragLength);
 		resultFragment = result.get(0).clone();
 		
 		for(int i = 1; i < result.size(); i++) {
@@ -97,7 +97,7 @@ public class Fr4gmentTest {
 
 	public static ProteinFragment findFragment(String query,
 			LinkedList<FragmentCluster> clusters) {
-		ProteinFragment curFrag = new ProteinFragment("dada", new double[1][1], 0, 1);
+		ProteinFragment curFrag = new ProteinFragment("dada", new double[1][1], 1);
 		double tempScore = - Double.MAX_VALUE;
 		double temp = 0;
 		double[][] matrix = new double[1][1];

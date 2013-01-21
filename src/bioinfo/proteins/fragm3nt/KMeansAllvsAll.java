@@ -27,7 +27,7 @@ public class KMeansAllvsAll extends CentroidClustering {
 			else
 				wrongList.add(f);
 		}
-
+//		System.out.println("Sorted fragments in good and bad");
 		fragments = correctList;
 
 		for (ProteinFragment f : wrongList) {
