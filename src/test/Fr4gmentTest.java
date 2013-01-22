@@ -23,7 +23,7 @@ public class Fr4gmentTest {
 		// files.add(pdb1);
 		PDBEntry pdb1 = files.get(0);
 		for (PDBEntry e : files) {
-			Fragmenter.crunchBackboneSeq(e, pList, 5);
+			Fragmenter.crunchBackboneSeq(e, pList, fragLength);
 		}
 		System.out.println("crunched");
 		KMeansAllvsAll clustah = new KMeansAllvsAll(pList);
