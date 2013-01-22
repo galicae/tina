@@ -36,7 +36,7 @@ public class Fr4gmentTest {
 		// assembly?
 		Assembler ass = new Assembler(fragLength);
 		String query = ass.readSequence(pdb1);
-		ProteinFragment resultFragment = ass.predictStructure(query, clusters);
+		ProteinFragment resultFragment = ass.predictStructure(query, clusters, 2);
 		
 		try {
 			BufferedWriter w = new BufferedWriter(new FileWriter("/home/p/papadopoulos/Desktop/test.pdb"));
