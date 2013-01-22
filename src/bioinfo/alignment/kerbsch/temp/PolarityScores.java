@@ -1,4 +1,4 @@
-package bioinfo.alignment.kerbsch;
+package bioinfo.alignment.kerbsch.temp;
 
 /**
  * from Radzicka & Wolfenden, Biochemistry 1988, 27, Table II

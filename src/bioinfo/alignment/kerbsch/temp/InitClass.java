@@ -1,8 +1,10 @@
-package bioinfo.alignment.kerbsch;
+package bioinfo.alignment.kerbsch.temp;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.lang.reflect.Field;
+
+import bioinfo.alignment.kerbsch.HydropathyScores;
 
 public class InitClass {
 

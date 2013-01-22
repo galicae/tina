@@ -1,4 +1,4 @@
-package bioinfo.alignment.kerbsch;
+package bioinfo.alignment.kerbsch.temp;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public class DihedralAngleReader {
+public class DihedralAngles {
 
 	public static void calc(String folderpath){
 		HashMap<Character,HashMap<String,double[]>> angles = new HashMap<Character,HashMap<String,double[]>>();
@@ -61,7 +61,7 @@ public class DihedralAngleReader {
 		char follower;
 		double psi = 0.0;
 		double phi = 0.0;
-		StringBuilder key = new StringBuilder();
+		String key = null;
 				
 		File dir = new File(folderpath);
 		File[] files = dir.listFiles();
@@ -80,7 +80,8 @@ public class DihedralAngleReader {
 					
 					//read angles for every residue except of first and last residue
 					//and store them in HashMap
-					else if(line.trim().contains("#")){
+					else if(line.trim().startsWith("#")){
+						System.out.println(f.getName());
 						
 						//init steps
 						line = in.readLine();						
@@ -122,16 +123,15 @@ public class DihedralAngleReader {
 							follower = 0;
 						}
 						if(precursor != 0 && residue != 0 && follower != 0){
-							key.append(precursor).append(follower);
+							key = "" + precursor + follower;
 							if(!angles.get(residue).containsKey(key)){
-								angles.get(residue).put(key.toString(), new double[] {phi,psi});
-								anglecounts.get(residue).put(key.toString(),new Integer(1));
+								angles.get(residue).put(key, new double[] {phi,psi});
+								anglecounts.get(residue).put(key,new Integer(1));
 							}else{
 								angles.get(residue).get(key)[0] += phi;
 								angles.get(residue).get(key)[1] += psi;
-								anglecounts.get(residue).put(key.toString(), anglecounts.get(residue).get(key) + 1);
+								anglecounts.get(residue).put(key, anglecounts.get(residue).get(key) + 1);
 							}
-							key.delete(0, 3);
 							precursor = residue;
 							residue = follower;
 							phi = Double.parseDouble(line.substring(103,109));
@@ -149,16 +149,15 @@ public class DihedralAngleReader {
 								}
 								
 								if(precursor != 0 && residue != 0){
-									key.append(precursor).append(follower);
+									key = "" + precursor + follower;
 									if(!angles.get(residue).containsKey(key)){
-										angles.get(residue).put(key.toString(), new double[] {phi,psi});
-										anglecounts.get(residue).put(key.toString(),new Integer(1));
+										angles.get(residue).put(key, new double[] {phi,psi});
+										anglecounts.get(residue).put(key,new Integer(1));
 									}else{
 										angles.get(residue).get(key)[0] += phi;
 										angles.get(residue).get(key)[1] += psi;
-										anglecounts.get(residue).put(key.toString(), anglecounts.get(residue).get(key) + 1);
+										anglecounts.get(residue).put(key, anglecounts.get(residue).get(key) + 1);
 									}
-									key.delete(0, 3);
 									precursor = residue;
 									residue = follower;
 									phi = Double.parseDouble(line.substring(103,109));
@@ -181,11 +180,14 @@ public class DihedralAngleReader {
 		double phi_out;
 		double psi_out;
 		for (Entry<Character,HashMap<String,double[]>> amino: angles.entrySet()) {
+//			System.out.println(amino.getKey()+": ______________");
 			try{
 				BufferedWriter out = new BufferedWriter(new FileWriter("angles/"+amino.getKey()+".angles"));
-				for(Entry<String,double[]> pre_foll : amino.getValue().entrySet()){
+				for(Entry<String,double[]> pre_foll : amino.getValue().entrySet()){	
 					phi_out = pre_foll.getValue()[0]/anglecounts.get(amino.getKey()).get(pre_foll.getKey());
 					psi_out = pre_foll.getValue()[1]/anglecounts.get(amino.getKey()).get(pre_foll.getKey());
+//					System.out.println(pre_foll.getKey() + ": " + pre_foll.getValue()[0] + " \\ " + anglecounts.get(amino.getKey()).get(pre_foll.getKey()));
+//					System.out.println(pre_foll.getKey() + ": " + pre_foll.getValue()[1] + " \\ " + anglecounts.get(amino.getKey()).get(pre_foll.getKey()));
 					out.append(pre_foll.getKey()+"\t"+phi_out+"\t"+psi_out+"\n");
 				}
 				out.close();
@@ -195,9 +197,37 @@ public class DihedralAngleReader {
 		}
 	}
 	
+	public static HashMap<Character,HashMap<String,double[]>> read(String folderpath){
+		BufferedReader in;
+		HashMap<Character,HashMap<String,double[]>> angles = new HashMap<Character,HashMap<String,double[]>>();
+		
+		File dir = new File(folderpath);
+		File[] files = dir.listFiles();
+		
+		char amino;
+		String line = null;
+		String[] temp;
+		
+		for(File f : files){
+			try {
+				in = new BufferedReader(new FileReader(f));
+				amino = (f.getName()).charAt(0);
+				angles.put(amino, new HashMap<String,double[]>());
+				
+				while((line = in.readLine()) != null){
+					temp = line.split("\\s+");
+					angles.get(amino).put(temp[0], new double[]{Double.parseDouble(temp[1]),Double.parseDouble(temp[2])});
+				}
+				in.close();
+			} catch (IOException e) {
+				System.out.println("cannot read angles");
+			}
+		}
+		return angles;
+	}
+	
 	public static void main(String[] args) {
-		DihedralAngleReader.calc("DSSP");
-
+		DihedralAngles.calc("DSSP");
 	}
 
 }

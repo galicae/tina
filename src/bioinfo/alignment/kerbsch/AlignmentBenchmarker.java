@@ -15,6 +15,9 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
 import bioinfo.alignment.gotoh.LocalSequenceGotoh;
+import bioinfo.alignment.kerbsch.temp.InitClass;
+import bioinfo.alignment.kerbsch.temp.PairReader;
+import bioinfo.alignment.kerbsch.temp.SecStructScores;
 import bioinfo.alignment.matrices.QuasarMatrix;
 
 public class AlignmentBenchmarker {

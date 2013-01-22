@@ -3,6 +3,8 @@ package bioinfo.alignment.kerbsch;
 import java.io.IOException;
 import java.util.HashMap;
 
+import bioinfo.alignment.kerbsch.temp.SeqLibrary;
+
 
 public class benchmark {
 	public static void main(String[] args) {

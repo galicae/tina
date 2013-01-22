@@ -1,4 +1,4 @@
-package bioinfo.alignment.kerbsch;
+package bioinfo.alignment.kerbsch.temp;
 
 public class SecStructScores {
 

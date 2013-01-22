@@ -12,7 +12,7 @@ import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 //import bioinfo.alignment.SequenceAlignmentFileReader;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
-import bioinfo.alignment.kerbsch.SeqLibrary;
+import bioinfo.alignment.kerbsch.temp.SeqLibrary;
 import bioinfo.alignment.matrices.QuasarMatrix;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;

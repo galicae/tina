@@ -1,6 +1,6 @@
 package test;
 
-import bioinfo.alignment.kerbsch.InitClass;
+import bioinfo.alignment.kerbsch.temp.InitClass;
 
 public class HydropathyTest {
 	public static void main(String[] args) throws ClassNotFoundException {

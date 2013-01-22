@@ -1,6 +1,6 @@
 package test;
 
-import bioinfo.alignment.kerbsch.SecStructScores;
+import bioinfo.alignment.kerbsch.temp.SecStructScores;
 
 public class secStructMatrixTest {
 

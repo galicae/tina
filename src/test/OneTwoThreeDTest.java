@@ -12,7 +12,7 @@ import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.d123.FreeshiftSequence123D;
 import bioinfo.alignment.gotoh.Gotoh;
-import bioinfo.alignment.kerbsch.SeqLibrary;
+import bioinfo.alignment.kerbsch.temp.SeqLibrary;
 import bioinfo.alignment.matrices.MatrixReader123D;
 import bioinfo.alignment.matrices.QuasarMatrix;
 import bioinfo.proteins.SSCCEntry;
