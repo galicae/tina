@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import bioinfo.proteins.AminoAcid;
@@ -90,5 +91,4 @@ public class ClusterAnalysis {
 		
 		return null;
 	}
-
 }

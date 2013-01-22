@@ -25,7 +25,7 @@ public class KMeansMain {
 		long updateTime = 0;
 		long writeTime = 0;
 		long finishTime = 0;
-		PDBFileReader reader = new PDBFileReader("./proteins");
+		PDBFileReader reader = new PDBFileReader("/home/p/papadopoulos/Desktop/proteins");
 		List<PDBEntry> files = new LinkedList<PDBEntry>();
 
 		System.out.println("=========================================================");
