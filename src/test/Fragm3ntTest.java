@@ -20,7 +20,7 @@ public class Fragm3ntTest {
 	public static void main(String[] args) {
 		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
 		CollectiveClustering db = new CollectiveClustering(5, "./proteins2");
-		clusters = db.runKmeans(20);
+		clusters = db.runDBScan(4, 0.5);
 		
 		int sumOfFrags = 0;
 		for(FragmentCluster c: clusters) {

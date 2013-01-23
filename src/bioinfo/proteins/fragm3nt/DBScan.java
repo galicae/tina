@@ -138,8 +138,9 @@ public class DBScan {
 				kabschFood[0] = c.getCentroid().getAllResidues();
 				kabschFood[1] = f.getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
-				f.setCoordinates(t.transform(f.getAllResidues()));
-				c.add(f);
+				ProteinFragment addFr = f.clone();
+				addFr.setCoordinates(t.transform(f.getAllResidues()));
+				c.add(addFr);
 			}
 		}
 	}

@@ -26,8 +26,6 @@ public class ClusterAnalysis {
 	public ClusterAnalysis(String folder) {
 		this.clusters = new ArrayList<FragmentCluster>();
 		BufferedReader br = null;
-		String id;
-		int l = 0;
 		try {
 			if (folder == null) {
 				System.err.println("null folder - no clusters read");
@@ -39,9 +37,7 @@ public class ClusterAnalysis {
 			for (File file : files) {
 				br = new BufferedReader(new InputStreamReader(
 						new FileInputStream(file)));
-				l = file.getName().split("_").length;
-				id = file.getName().split("_")[l - 1];
-				clusters.add(parseCluster(br, id));
+				clusters.add(parseCluster(br, file.getName()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -50,7 +46,9 @@ public class ClusterAnalysis {
 	
 	private FragmentCluster parseCluster(BufferedReader br, String clusterId) {
 		try {
+			String tempId = clusterId;
 			FragmentCluster result = new FragmentCluster();
+			result.setName(clusterId);
 			String line = br.readLine();
 			String seq = "";
 			int fragLength = 0;
@@ -62,7 +60,7 @@ public class ClusterAnalysis {
 					seq = line.split(" ")[2];
 				}
 				else if(line.startsWith("MODEL")) {
-					clusterId += line.split("\\s+")[1];
+					tempId += "_" + line.split("\\s+")[1];
 				}
 				else if(line.startsWith("ATOM")) {
 					name = line.substring(12,16).trim();
@@ -70,25 +68,36 @@ public class ClusterAnalysis {
 					coord[1] = Double.parseDouble(line.substring(38,46).trim());
 					coord[2] = Double.parseDouble(line.substring(46,54).trim());
 					atoms.add(new Atom(name,coord));
+					name = "";
+					coord = new double[3];
 				}
 				else if(line.startsWith("ENDMDL")) {
+					fragLength = atoms.size();
 					Atom[] atomArray = new Atom[atoms.size()];
 					for(int i = 0; i < atoms.size(); i++) {
 						Atom tempAt = atoms.get(i);
 						atomArray[i] = new Atom(tempAt.getType(), tempAt.getPosition());
 					}
-					ProteinFragment heyIJustMetYou = new ProteinFragment(clusterId, seq, atomArray, fragLength);
+					ProteinFragment heyIJustMetYou = new ProteinFragment(tempId, seq, atomArray, fragLength);
+//					result.add(heyIJustMetYou);
 					result.add(heyIJustMetYou);
-					result.add(heyIJustMetYou);
+					tempId = clusterId;
+					atoms.clear();
 				}
 				
 				line = br.readLine();
 			}
+			result.calculateCentroid();
+			return result;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		return null;
+	}
+	
+	public ArrayList<FragmentCluster> getClusters() {
+		return this.clusters;
 	}
 }
