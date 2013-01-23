@@ -20,7 +20,8 @@ public enum AminoAcidName {
 	T("T", "THR", "Threonine"), 
 	W("W", "TRP", "Tryptophane"), 
 	Y("Y", "TYR", "Tyrosine"), 
-	V("V", "VAL", "Valine");
+	V("V", "VAL", "Valine"),
+	U("U", "UKN", "Unknown");
 
 	private final String oneLetterCode;
 	private final String threeLetterCode;

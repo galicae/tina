@@ -11,6 +11,16 @@ public class KMeansAllvsAll extends CentroidClustering {
 		super(f);
 	}
 
+	/**
+	 * this function initializes clusters to use the k-means clustering
+	 * algorithm. The distance function here is the RMSD of the fragments to one
+	 * another, or to a cluster centroid. This initialization function is a
+	 * slight modification of the classical k-means algorithm, in that it
+	 * doesn't assign a fixed number of clusters but rather puts each fragment
+	 * in a cluster with its closest neighbor. This is a definite overestimation
+	 * of the number of clusters, but nevertheless beats the assignment of k,
+	 * where k=random.
+	 */
 	@Override
 	public void initializeClusters() {
 		double[][][] kabschFood = new double[2][fragments.peek().fragLength][3];
@@ -27,7 +37,7 @@ public class KMeansAllvsAll extends CentroidClustering {
 			else
 				wrongList.add(f);
 		}
-//		System.out.println("Sorted fragments in good and bad");
+		// System.out.println("Sorted fragments in good and bad");
 		fragments = correctList;
 
 		for (ProteinFragment f : wrongList) {
@@ -67,7 +77,7 @@ public class KMeansAllvsAll extends CentroidClustering {
 				minPair[0] = minPair[0].clone();
 				minPair[1] = minPair[1].clone();
 				minPair[0].setClusterIndex(minPair[1].getClusterIndex());
-				
+
 				kabschFood[0] = clusters.get(minPair[0].getClusterIndex())
 						.getCentroid().getAllResidues();
 				kabschFood[1] = minPair[0].getAllResidues();
@@ -95,4 +105,5 @@ public class KMeansAllvsAll extends CentroidClustering {
 			}
 		}
 	}
+
 }

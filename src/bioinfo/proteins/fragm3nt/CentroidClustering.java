@@ -9,7 +9,7 @@ import bioinfo.superpos.Transformation;
 
 /**
  * a class for centroid-based clustering methods, such as k-means and its
- * variations
+ * variations. Based on the wikipedia description of the algorithm
  * 
  * @author nikos
  * 
