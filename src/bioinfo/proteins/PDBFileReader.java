@@ -116,10 +116,10 @@ public class PDBFileReader {
 			return null;
 		}
 		// huberste: PDBFiles normally are named without the ChainID!
-		String filename = folder+id.substring(0, 4).toUpperCase()+".pdb"; 
+		//String filename = folder+id.substring(0, 4).toUpperCase()+".pdb"; 
 		BufferedReader br = null;
 		try{
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(folder+id+".pdb")));
 		}catch(Exception e){
 			return null;
 		}

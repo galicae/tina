@@ -15,6 +15,8 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
 import bioinfo.alignment.gotoh.LocalSequenceGotoh;
+import bioinfo.alignment.kerbsch.temp.DihedralAngles;
+import bioinfo.alignment.kerbsch.temp.GlobalAngleAligner;
 import bioinfo.alignment.kerbsch.temp.InitClass;
 import bioinfo.alignment.kerbsch.temp.PairReader;
 import bioinfo.alignment.kerbsch.temp.SecStructScores;
@@ -23,20 +25,20 @@ import bioinfo.alignment.matrices.QuasarMatrix;
 public class AlignmentBenchmarker {
 
 	// different shit
-	double go;
-	double ge;
-	String seqlibfile;
-	String pairfile;
-	String cathscoplib;
-	InitClass matrices = new InitClass();
-	double[][] substMatrix;
-	HashMap<String, char[]> seqlib;
-	ArrayList<String[]> pairs;
-	HashMap<String, CathScopEntry> cathscopinfo;
-	HashMap<String, Integer> idToIndex = new HashMap<String, Integer>();
-	double[][] alignments; 
-	Aligner gotoh;
-	BufferedWriter out = null;
+	private double go;
+	private double ge;
+	private String seqlibfile;
+	private String pairfile;
+	private String cathscoplib;
+	private InitClass matrices = new InitClass();
+	private double[][] substMatrix;
+	private HashMap<String, char[]> seqlib;
+	private ArrayList<String[]> pairs;
+	private HashMap<String, CathScopEntry> cathscopinfo;
+	private HashMap<String, Integer> idToIndex = new HashMap<String, Integer>();
+	private double[][] alignments; 
+	private Aligner gotoh;
+	private BufferedWriter out = null;
 
 	// family recognition test
 	private int cath_recsamefam;
@@ -86,15 +88,18 @@ public class AlignmentBenchmarker {
 			substMatrix = SecStructScores.matrix;
 		} else if (args[3].equals("sequence")) {
 			substMatrix = QuasarMatrix.DAYHOFF_MATRIX;
-		}
+		} 
+		
 		if(args[2].equals("freeshift")){
 			gotoh = new FreeshiftSequenceGotoh(go, ge, substMatrix);
 		}
 		else if(args[2].equals("local")){
 			gotoh = new LocalSequenceGotoh(go, ge, substMatrix);
 		}
-		else{
+		else if(args[2].equals("global")){
 			gotoh = new GlobalSequenceGotoh(go, ge, substMatrix);
+		} else {
+			gotoh = new GlobalAngleAligner(go,ge,"angles","../GoBi_old/DSSP");
 		}
 		seqlib = sl;
 		pairs = PairReader.parse(args[5]);
