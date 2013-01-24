@@ -5,13 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
-import bioinfo.proteins.AminoAcid;
-import bioinfo.proteins.AminoAcidName;
 import bioinfo.proteins.Atom;
-import bioinfo.proteins.PDBEntry;
 import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.Transformation;
 
@@ -127,7 +122,7 @@ public class ClusterAnalysis {
 		return this.clusters;
 	}
 
-
+	
 	public double calcClusterRMSD(FragmentCluster c) {
 		double[][][] kabschFood = new double[2][c.getFragmentLength()][3];
 		Transformation t;
