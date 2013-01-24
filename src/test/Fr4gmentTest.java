@@ -21,12 +21,12 @@ public class Fr4gmentTest {
 		LinkedList<ProteinFragment> pList = new LinkedList<ProteinFragment>();
 		files = reader.readPdbFolder();
 		// files.add(pdb1);
-		PDBEntry pdb1 = files.get(0);
+		PDBEntry pdb1 = files.get(1);
 		for (PDBEntry e : files) {
 			Fragmenter.crunchBackboneSeq(e, pList, fragLength);
 		}
 		System.out.println("crunched");
-		KMeansAllvsAll clustah = new KMeansAllvsAll(pList);
+		KMeansAllvsAll clustah = new KMeansAllvsAll(pList, 1);
 		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
 		clustah.initializeClusters();
 		clustah.update(20);

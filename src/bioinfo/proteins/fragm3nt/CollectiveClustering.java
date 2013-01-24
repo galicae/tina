@@ -21,7 +21,7 @@ public class CollectiveClustering {
 	 * @param update
 	 * @return
 	 */
-	public LinkedList<FragmentCluster> runKmeans(int update) {
+	public LinkedList<FragmentCluster> runKmeans(int update, double acc) {
 		PDBFileReader reader = new PDBFileReader(proteins);
 		List<PDBEntry> files = new LinkedList<PDBEntry>();
 		LinkedList<ProteinFragment> pList = new LinkedList<ProteinFragment>();
@@ -30,12 +30,17 @@ public class CollectiveClustering {
 		for (PDBEntry e : files) {
 			Fragmenter.crunchBackboneSeq(e, pList, fragLength);
 		}
-		KMeansAllvsAll clustah = new KMeansAllvsAll(pList);
+		KMeansAllvsAll clustah = new KMeansAllvsAll(pList, acc);
 		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
 		clustah.initializeClusters();
 		clustah.update(update);
 
 		clusters = clustah.getClusters();
+		for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters
+				.clone()) {
+			if (f.getSize() <= 1)
+				clusters.remove(f);
+		}
 		return clusters;
 	}
 	
@@ -54,6 +59,11 @@ public class CollectiveClustering {
 		DBScan clustah = new DBScan();
 		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
 		clustah.oppaDBStyle(minpts, eps, pList, clusters);
+		for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters
+				.clone()) {
+			if (f.getSize() <= 1)
+				clusters.remove(f);
+		}
 		return clusters;
 	}
 }

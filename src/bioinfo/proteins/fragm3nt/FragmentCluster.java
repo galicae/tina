@@ -148,4 +148,8 @@ public class FragmentCluster {
 	public void setName(String clusterId) {
 		this.name = clusterId;
 	}
+
+	public int getFragmentLength() {
+		return fragments.get(0).fragLength;
+	}
 }

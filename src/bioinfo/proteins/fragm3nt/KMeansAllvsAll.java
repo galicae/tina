@@ -7,8 +7,8 @@ import bioinfo.superpos.Transformation;
 
 public class KMeansAllvsAll extends CentroidClustering {
 
-	public KMeansAllvsAll(LinkedList<ProteinFragment> f) {
-		super(f);
+	public KMeansAllvsAll(LinkedList<ProteinFragment> f, double accuracy) {
+		super(f, accuracy);
 	}
 
 	/**

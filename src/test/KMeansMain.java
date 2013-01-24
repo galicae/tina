@@ -16,7 +16,8 @@ public class KMeansMain {
 	public static void main(String[] args) {
 		int updCycles = Integer.parseInt(args[0]);
 		int fragLength = Integer.parseInt(args[1]);
-		String pre = args[2];
+		double acc = Double.parseDouble(args[2]);
+		String pre = args[3];
 		
 		long startTime = System.currentTimeMillis();
 		long readTime = 0;
@@ -50,7 +51,7 @@ public class KMeansMain {
 		System.out.println("Crunched fragments in (ms) "
 				+ (initTime - crunchTime));
 
-		KMeansAllvsAll clusterAlgorithm = new KMeansAllvsAll(pList);
+		KMeansAllvsAll clusterAlgorithm = new KMeansAllvsAll(pList, acc);
 		System.out.println("initializing clusters...");
 		clusterAlgorithm.initializeClusters();
 //		clusterAlgorithm.checkAllFragments();

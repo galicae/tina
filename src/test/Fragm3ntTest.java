@@ -20,7 +20,8 @@ public class Fragm3ntTest {
 	public static void main(String[] args) {
 		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
 		CollectiveClustering db = new CollectiveClustering(5, "./proteins2");
-		clusters = db.runDBScan(4, 0.5);
+		clusters = db.runKmeans(50, 0.5);
+//		clusters = db.runDBScan(4, 1.0);
 		
 		int sumOfFrags = 0;
 		for(FragmentCluster c: clusters) {
@@ -33,7 +34,7 @@ public class Fragm3ntTest {
 		// write out clusters
 		for (FragmentCluster c : clusters) {
 			try {
-				BufferedWriter br = new BufferedWriter(new FileWriter(c.getCentroid().getID()));
+				BufferedWriter br = new BufferedWriter(new FileWriter("./clusters/k" + c.getCentroid().getID()));
 				br.write(c.toString());
 				br.close();
 			} catch (Exception e) {
@@ -42,3 +43,4 @@ public class Fragm3ntTest {
 		}
 	}
 }
+

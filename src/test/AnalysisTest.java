@@ -12,7 +12,12 @@ public class AnalysisTest {
 		ArrayList<FragmentCluster> clusters = new ArrayList<FragmentCluster>();
 		
 		clusters = ccl.getClusters();
-		System.out.println();
+		double tempRMSD = 0;
+		for(FragmentCluster c: clusters) {
+			tempRMSD += ccl.calcClusterRMSD(c);
+		}
+		
+		System.out.println("mean RMSD of kmeans: " + tempRMSD / clusters.size() + " in " + clusters.size() + " clusters");
 	}
 
 }
