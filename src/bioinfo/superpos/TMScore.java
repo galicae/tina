@@ -122,7 +122,11 @@ public class TMScore {
 		String seq1B = "";
 		seq1B = readPDB(pdb2, xb, yb, zb, nresB);
 
-		seq1A = sqAli.getComponent(0).getSequenceAsString();
+/* 		TODO: here is the difference: comment in the following
+ *  	go back to how the file was at the 23rd of January 2013,
+ *  	aka the false state.
+ */
+//		seq1A = sqAli.getComponent(0).getSequenceAsString();
 		seq1B = sqAli.getComponent(1).getSequenceAsString();
 //		System.out.println(seq1A);
 //		System.out.println(seq1B);

@@ -15,12 +15,13 @@ public class FragmentCluster {
 	 */
 	public void calculateCentroid() {
 		int clusterSize = fragments.size();
-		double[][] newCentroid = new double[centroid.fragLength][3];
+		int fragLength = fragments.getFirst().fragLength;
+		double[][] newCentroid = new double[fragLength][3];
 		ProteinFragment curFragment;
 		double[] curResidue = new double[3];
 		for (int j = 0; j < clusterSize; j++) {
 			curFragment = fragments.get(j);
-			for (int i = 0; i < curFragment.fragLength; i++) {
+			for (int i = 0; i < fragLength; i++) {
 				curResidue = curFragment.getResidue(i);
 				newCentroid[i][0] += curResidue[0];
 				newCentroid[i][1] += curResidue[1];
@@ -33,7 +34,10 @@ public class FragmentCluster {
 			newCentroid[i][2] /= clusterSize * 1.;
 		}
 
-		centroid.setCoordinates(newCentroid);
+		if(centroid != null)
+			centroid.setCoordinates(newCentroid);
+		else
+			centroid = new ProteinFragment(name, newCentroid, fragLength);
 	}
 
 	/**
@@ -94,7 +98,7 @@ public class FragmentCluster {
 	}
 	
 	public void calculatePssm() {
-		pssm = new double[fragments.getFirst().fragLength][26];
+		pssm = new double[fragments.get(0).fragLength][26];
 		char c = 'a';
 		for (ProteinFragment f : fragments) {
 			for (int i = 0; i < f.getSequence().length(); i++) {
@@ -139,5 +143,13 @@ public class FragmentCluster {
 	public void add(ProteinFragment f) {
 		fragments.add(f);
 		calculatePssm();
+	}
+
+	public void setName(String clusterId) {
+		this.name = clusterId;
+	}
+
+	public int getFragmentLength() {
+		return fragments.get(0).fragLength;
 	}
 }

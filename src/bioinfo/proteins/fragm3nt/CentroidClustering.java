@@ -9,7 +9,7 @@ import bioinfo.superpos.Transformation;
 
 /**
  * a class for centroid-based clustering methods, such as k-means and its
- * variations
+ * variations. Based on the wikipedia description of the algorithm
  * 
  * @author nikos
  * 
@@ -17,9 +17,11 @@ import bioinfo.superpos.Transformation;
 public abstract class CentroidClustering {
 	LinkedList<ProteinFragment> fragments = new LinkedList<ProteinFragment>();
 	LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
+	double accuracy;
 
-	public CentroidClustering(LinkedList<ProteinFragment> fr) {
+	public CentroidClustering(LinkedList<ProteinFragment> fr, double accuracy) {
 		fragments = fr;
+		this.accuracy = accuracy;
 	}
 
 	/**
@@ -89,7 +91,7 @@ public abstract class CentroidClustering {
 					tempCluster = cluster;
 				}
 			}
-			if (minRMSD < 2) {
+			if (minRMSD < accuracy) {
 				kabschFood[0] = tempCluster.getCentroid().getAllResidues();
 				kabschFood[1] = f.getAllResidues();
 				t = Kabsch.calculateTransformation(kabschFood);
@@ -140,12 +142,12 @@ public abstract class CentroidClustering {
 		for (int i = 0; i < n; i++) {
 			if (!updated)
 				break;
-			System.out.println("iteration " + i);
+			System.out.println("iteration " + i + " starting at " + System.currentTimeMillis());
 			updateClusters();
 			// checkAllFragments();
 			for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters
 					.clone()) {
-				if (f.getSize() == 0)
+				if (f.getSize() < 1)
 					clusters.remove(f);
 			}
 		}

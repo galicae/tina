@@ -186,6 +186,7 @@ public class ProteinFragment {
 			atoms[i] = new Atom(this.atoms[i].getType(), coordinates[i]);
 		}
 		ProteinFragment result = new ProteinFragment(id, sequence, atoms, fragLength);
+		result.setClusterIndex(clustered);
 		return result;
 	}
 	

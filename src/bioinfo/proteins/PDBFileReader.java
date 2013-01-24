@@ -116,10 +116,15 @@ public class PDBFileReader {
 			return null;
 		}
 		// huberste: PDBFiles normally are named without the ChainID!
-		String filename = folder+id.substring(0, 4).toUpperCase()+".pdb"; 
+		//String filename = folder+id.substring(0, 4).toUpperCase()+".pdb"; 
+		//String filename = folder+id.substring(0, 4).toUpperCase()+".pdb"; 
+		// seitza: but our f*cking files are ^^ searched the mistake in my code a whole night
+		// galicae: I had the same problem with my clusters - I wrote the parseRealEntry for 
+		//			this exact reason!
+		String filename = folder+id+".pdb";
 		BufferedReader br = null;
 		try{
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(folder+id+".pdb")));
 		}catch(Exception e){
 			return null;
 		}

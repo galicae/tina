@@ -1,36 +1,39 @@
 package bioinfo.alignment.kerbsch.temp;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.Alignable;
 import bioinfo.alignment.Alignment;
 import bioinfo.alignment.SequenceAlignment;
+import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
 import bioinfo.alignment.gotoh.Gotoh;
+import bioinfo.alignment.matrices.QuasarMatrix;
+import bioinfo.proteins.PDBEntry;
+import bioinfo.proteins.PDBFileReader;
+import bioinfo.superpos.Kabsch;
+import bioinfo.superpos.PDBReduce;
+import bioinfo.superpos.TMMain;
+import bioinfo.superpos.Transformation;
 
 public class GlobalAngleAligner extends Gotoh {
+	private static final int MM_ANGLEBORDER = (int) (8.9 * Gotoh.FACTOR);
+	private static final int MP_ANGLEBORDER = (int) (16.9 * Gotoh.FACTOR);
+	private static final int PM_ANGLEBORDER = (int) (99.26 * Gotoh.FACTOR);
+	private static final int PP_ANGLEBORDER = (int) (58.69 * Gotoh.FACTOR);
+	
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
-	private static final int ANGLE_BORDER = 3000;
-	private HashMap<Character, HashMap<String, int[]>> angleprofiles = new HashMap<Character,HashMap<String,int[]>>();
+	private int[][][][][] angleMatrix;
+	private String dssppath = null;
+	private int[] stances;
 
-	public GlobalAngleAligner(double go, double ge,
-			HashMap<Character, HashMap<String, double[]>> angleprofiles) {
+	public GlobalAngleAligner(double go, double ge, String anglepath,
+			String dssppath) {
 		super(go, ge);
-
-		for (Entry<Character, HashMap<String, double[]>> amino : angleprofiles
-				.entrySet()) {
-			this.angleprofiles
-					.put(amino.getKey(), new HashMap<String, int[]>());
-			for (Entry<String, double[]> profile : amino.getValue().entrySet()) {
-				this.angleprofiles.get(amino.getKey()).put(profile.getKey(),
-						new int[2]);
-				this.angleprofiles.get(amino.getKey()).get(profile.getKey())[0] = (int) (profile
-						.getValue()[0] * Gotoh.FACTOR);
-				this.angleprofiles.get(amino.getKey()).get(profile.getKey())[1] = (int) (profile
-						.getValue()[1] * Gotoh.FACTOR);
-			}
-		}
+		this.angleMatrix = DihedralAngles.readAngles(anglepath);
+		this.dssppath = dssppath;
 	}
 
 	public SequenceAlignment align(Alignable sequence1, Alignable sequence2) {
@@ -81,11 +84,14 @@ public class GlobalAngleAligner extends Gotoh {
 		int[][] tempScore = new int[sequence1.length()][sequence2.length()];
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
+		stances = DihedralAngles.readStances(dssppath + "/"
+				+ sequence1.getID() + ".dssp");
 
 		for (int i = 2; i < sequence1.length(); i++) {
 			for (int j = 2; j < sequence2.length(); j++) {
-				tempScore[i - 1][j - 1] = score(seq1[i - 2], seq1[i - 1],
-						seq1[i], seq2[j - 2], seq2[j - 1], seq2[j]);
+				tempScore[i - 1][j - 1] = getScore(seq1[i - 2]-65, seq1[i - 1]-65,
+						seq1[i]-65, seq2[j - 2]-65, seq2[j - 1]-65, seq2[j]-65,
+						stances[i - 1]);
 			}
 		}
 
@@ -110,81 +116,62 @@ public class GlobalAngleAligner extends Gotoh {
 	private Alignment traceback() {
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
-		
-		int x = sequence1.length() - 1;
-		int y = sequence2.length() - 1;
-		int score = M[x + 1][y + 1];
-		String row0 = "";
-		String row1 = "";
+
+		int x = seq1.length - 1;
+		int y = seq2.length - 1;
+		int score = M[x][y];
+		String row0 = seq1[x] + "-";
+		String row1 = "-" + seq2[y];
 		int actScore = 0;
 		char actx;
 		char acty;
 		while (x > 1 && y > 1) {
 
-			actScore = M[x + 1][y + 1];
-			actx = seq1[x-1];
-			acty = seq2[y-1];
+			actScore = M[x][y];
+			actx = seq1[x - 1];
+			acty = seq2[y - 1];
 
-			if (actScore == M[x][y] + score(seq1[x-2],actx, seq1[x], seq2[y-2], acty, seq2[y])) {
+			if (actScore == M[x - 1][y - 1]
+					+ getScore(seq1[x - 2]-65, actx-65, seq1[x]-65, seq2[y - 2]-65, acty-65,
+							seq2[y]-65,stances[x-1])) {
 				row0 += actx;
 				row1 += acty;
 				y--;
 				x--;
-			} else if (actScore == D[x + 1][y + 1]) {
-				while (D[x + 1][y + 1] == D[x + 1][y] + gapExtend && y > 0) {
+			} else if (actScore == D[x][y]) {
+				while (D[x][y] == D[x][y - 1] + gapExtend && y > 1) {
 					row0 += "-";
 					row1 += acty;
 					y--;
-					acty = (Character) sequence2.getComp(y);
+					acty = seq2[y - 1];
 				}
 				row0 += "-";
 				row1 += acty;
 				y--;
-			} else if (actScore == I[x + 1][y + 1]) {
-				while (I[x + 1][y + 1] == I[x][y + 1] + gapExtend && x > 0) {
+			} else if (actScore == I[x][y]) {
+				while (I[x][y] == I[x - 1][y] + gapExtend && x > 1) {
 					row0 += actx;
 					row1 += "-";
 					x--;
-					actx = (Character) sequence1.getComp(x);
+					actx = seq1[x - 1];
 				}
 				row0 += actx;
 				row1 += "-";
 				x--;
 			}
 		}
-		for (int i = y + 1; i > 0; i--) {
+		for (int i = y - 1; i >= 0; i--) {
 			row0 += "-";
-			row1 += sequence2.getComp(i - 1);
+			row1 += seq2[i];
 		}
-		for (int i = x + 1; i > 0; i--) {
-			row0 += sequence1.getComp(i - 1);
+		for (int i = x - 1; i >= 0; i--) {
+			row0 += seq1[i];
 			row1 += "-";
 		}
 
 		return new SequenceAlignment((Sequence) sequence1,
 				(Sequence) sequence2, flip(row0.toCharArray()),
 				flip(row1.toCharArray()), 1.0d * score / Gotoh.FACTOR);
-	}
-
-	/**
-	 * @param the
-	 *            two indices of the actual considered aminos in the 2 Sequences
-	 * @return the similarity between the angle-profiles score between two
-	 *         components of Alignable
-	 */
-	private int score(char seq1_pre, char seq1_res, char seq1_fol,
-			char seq2_pre, char seq2_res, char seq2_fol) {
-		int phiDifference = Math.abs(this.angleprofiles.get(seq1_res).get(
-				"" + seq1_pre + seq1_fol)[0]
-				- this.angleprofiles.get(seq2_res)
-						.get("" + seq2_pre + seq2_fol)[0]);
-		int psiDifference = Math.abs(this.angleprofiles.get(seq1_res).get(
-				"" + seq1_pre + seq1_fol)[1]
-				- this.angleprofiles.get(seq2_res)
-						.get("" + seq2_pre + seq2_fol)[1]);
-		int phiscore = ANGLE_BORDER - phiDifference;
-		int psiscore = ANGLE_BORDER - psiDifference;
-		return phiscore+psiscore;
 	}
 
 	/**
@@ -201,13 +188,48 @@ public class GlobalAngleAligner extends Gotoh {
 		}
 		return out;
 	}
-	
-	public static void main(String[] args){
-		GlobalAngleAligner test = new GlobalAngleAligner(-110.0,-102.0,DihedralAngles.read("angles"));
+
+	private int getScore(int pre1, int res1, int fol1, int pre2, int res2,
+			int fol2, int stance) {
+		int result;
+		int border;
 		
-		Sequence seq1 = new Sequence("id1","MFKVYGYDSNIHKCVYCDNAKRLLTVKKQPFEFINIMPEKGVFDDEKIAELLTKLGRDTQIGLTMPQVFAPDGSHIGGFDQLREYF");
-		Sequence seq2 = new Sequence("id2","MFKVYGYDSNIHKCVYCDNAKRLLTVKKQPFEFINIMPEKGVFDDEKIAELLTKLGRDTQIGLTMPQVFAPDGSHIGGFDQLREYF");
-		SequenceAlignment alignment = test.align(seq1, seq2);
-		System.out.println(alignment.toStringVerbose());
+		if(stance == 0){
+			border = MM_ANGLEBORDER;
+		}else if (stance == 1){
+			border = MP_ANGLEBORDER;
+		}else if (stance == 2){
+			border = PM_ANGLEBORDER;
+		}else{
+			border = PP_ANGLEBORDER;
+		}
+		result = border
+				- ((Math.abs(angleMatrix[res1][pre1][fol1][0][stance]
+						- angleMatrix[res2][pre2][fol2][0][stance]) + Math
+							.abs(angleMatrix[res1][pre1][fol1][1][stance]
+									- angleMatrix[res2][pre2][fol2][1][stance])) / 2);
+
+		return result;
 	}
+
+//	public static void main(String[] args) throws Exception {
+//		GlobalAngleAligner test = new GlobalAngleAligner(-20.0, -5.0, "angles","../GoBi_old/DSSP");
+//		GlobalSequenceGotoh test2 = new GlobalSequenceGotoh(-12.0,-1.0,QuasarMatrix.DAYHOFF_MATRIX);
+//
+//		Sequence seq1 = new Sequence("1j2xA00","GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK");
+//		Sequence seq2 = new Sequence("1wq2B00","MEEAKQKVVDFLNSKSKSKFYFNDFTDLFPDMKQREVKKILTALVNDEVLEYWSSGSTTMYGLKG");
+//		SequenceAlignment align1 = test.align(seq1, seq2);
+//		SequenceAlignment align2 = test2.align(seq1, seq2);
+//		System.out.println(align1.toStringVerbose());
+//		System.out.println(align1.getScore()/ align1.countAlignedResidues());
+//		
+//		PDBFileReader pdbreader = new PDBFileReader("../GoBi_old/STRUCTURES");
+//		TMMain superpos = new TMMain();
+//		PDBEntry p = pdbreader.readFromFolderById("1j2xA00");
+//		PDBEntry q = pdbreader.readFromFolderById("1wq2B00");
+//		Transformation tr1 = superpos.calculateTransformation(align1, p, q);
+//		Transformation tr2 = superpos.calculateTransformation(align2, p, q);
+//		System.out.println("TMScore für Angles: " + tr1.getTmscore());
+//		System.out.println("TMScore für Sequence: " + tr2.getTmscore());
+//	}
 }
