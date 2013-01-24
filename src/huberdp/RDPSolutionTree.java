@@ -1,5 +1,5 @@
 /******************************************************************************
- * RDPSolutionTree is the data structure of RDP's solution tree.              *
+ * RDPSolutionTree is one part of the the data structure of RDP.              *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -13,7 +13,11 @@ package huberdp;
  */
 public class RDPSolutionTree {
 	
+	private RDPSolutionTreeOrNode root;
 	
+	public RDPSolutionTreeNode getRoot() {
+		return root;
+	}
 	
 }
 

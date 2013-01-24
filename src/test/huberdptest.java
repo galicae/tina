@@ -6,6 +6,8 @@
  ******************************************************************************/
 package test;
 
+import huberdp.*;
+
 /**
  * @author huberste
  * @lastchange 2013-01-10
@@ -17,7 +19,9 @@ public class huberdptest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		RDPSolutionTree t = new RDPSolutionTree();
+		RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
+		rdp(t, pq);
 
 	}
 

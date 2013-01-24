@@ -13,14 +13,12 @@ package huberdp;
  */
 public interface RDP {
 	
-	public void initialize();
-	
 	/**
 	 * 
-	 * @param t solutionTree
-	 * @param pq 
+	 * @param t SolutionTree
+	 * @param pq PriorityQueue
 	 */
-	public void rdp();
+	public void rdp(RDPSolutionTree t, RDPPriorityQueue pq);
 	
 }
 

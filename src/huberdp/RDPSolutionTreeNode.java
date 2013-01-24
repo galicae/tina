@@ -1,35 +1,55 @@
 /******************************************************************************
- * Oracle is the interface for oracles for a rdp.                             *
+ * RDPSolutionTreeNode is part of the data structure of RDP's solution tree.  *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
  ******************************************************************************/
 package huberdp;
 
-import bioinfo.proteins.PDBEntry;
+import java.util.LinkedList;
 
 /**
  * @author huberste
- * @lastchange 2013-01-17
+ *
  */
-public interface Oracle {
+public abstract class RDPSolutionTreeNode {
+
+	private LinkedList<RDPSolutionTreeNode> childs;
+	
+	/**
+	 * adds a child to the node
+	 * @param child
+	 */
+	public void addChild(RDPSolutionTreeNode child) {
+		childs.add(child);
+	}
 	
 	/**
 	 * 
-	 * @param template the template structure
-	 * @param temp_left left end of template
-	 * @param temp_right right end of template
-	 * @param target the target structure
-	 * @param targ_left left end of target
-	 * @param targ_right right end of target
-	 * @param number of similiar segments that shall be returned
-	 * @return target_structure(s) with only the aligned amino acids
+	 * @param arg a RDPSolutionTreeNode
+	 * @return true if arg is a child of this node, false else
 	 */
-	public PDBEntry[] findSimiliarSegments(
-			PDBEntry template, int temp_left, int temp_right,
-			PDBEntry target,   int targ_left, int targ_right,
-			int count);
+	public boolean contains(RDPSolutionTreeNode arg) {
+		for (RDPSolutionTreeNode child : childs) {
+			if (child.equals(arg)) return true;
+		}
+		return false;
+	}
 	
+	/**
+	 * 
+	 */
+	public void removeChild(int n) {
+		childs.remove(n);
+	}
+	
+	/**
+	 * @return the childs
+	 */
+	public LinkedList<RDPSolutionTreeNode> getChilds() {
+		return childs;
+	}
+
 }
 
 /******************************************************************************
