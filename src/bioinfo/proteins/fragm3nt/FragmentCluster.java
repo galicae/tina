@@ -34,7 +34,7 @@ public class FragmentCluster {
 			newCentroid[i][2] /= clusterSize * 1.;
 		}
 
-		if(centroid != null)
+		if (centroid != null)
 			centroid.setCoordinates(newCentroid);
 		else
 			centroid = new ProteinFragment(name, newCentroid, fragLength);
@@ -96,9 +96,9 @@ public class FragmentCluster {
 		// from phantom functions. We still don't know what was wrong there, but
 		// apparently we fixed it.
 	}
-	
+
 	public void calculatePssm() {
-		pssm = new double[fragments.get(0).fragLength][26];
+		pssm = new double[fragments.get(0).fragLength][25];
 		char c = 'a';
 		for (ProteinFragment f : fragments) {
 			for (int i = 0; i < f.getSequence().length(); i++) {

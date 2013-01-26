@@ -144,20 +144,20 @@ public class ClusterAnalysis {
 	}
 	
 	
-	/**
-	 * shortcut to retrieve a two-dimensional position from the one-dimensional
-	 * array.
-	 * 
-	 * @param i
-	 *            the x-coordinate
-	 * @param j
-	 *            the y-coordinate
-	 * @return
-	 */
-	private int getDistAt(int i, int j, int[] distance) {
-		if (j > i)
-			return distance[((j * (j - 1)) / 2) + i];
-		else
-			return distance[((i * (i - 1)) / 2) + j];
-	}
+//	/**
+//	 * shortcut to retrieve a two-dimensional position from the one-dimensional
+//	 * array.
+//	 * 
+//	 * @param i
+//	 *            the x-coordinate
+//	 * @param j
+//	 *            the y-coordinate
+//	 * @return
+//	 */
+//	private int getDistAt(int i, int j, int[] distance) {
+//		if (j > i)
+//			return distance[((j * (j - 1)) / 2) + i];
+//		else
+//			return distance[((i * (i - 1)) / 2) + j];
+//	}
 }

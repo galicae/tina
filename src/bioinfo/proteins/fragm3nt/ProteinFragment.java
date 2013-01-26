@@ -1,7 +1,9 @@
 package bioinfo.proteins.fragm3nt;
 
+import bioinfo.proteins.AminoAcid;
 import bioinfo.proteins.Atom;
 import bioinfo.proteins.AtomType;
+import bioinfo.proteins.PDBEntry;
 
 public class ProteinFragment {
 	private String id;
@@ -16,13 +18,12 @@ public class ProteinFragment {
 								// lot of time during the initialization of the
 								// clusters.
 
-	public ProteinFragment(String id, Atom[] atoms,
-			int fragLength) {
+	public ProteinFragment(String id, Atom[] atoms, int fragLength) {
 		this.fragLength = fragLength;
 		this.id = id;
 		this.atoms = atoms;
 		coordinates = new double[atoms.length][3];
-		for(int i = 0; i < atoms.length; i++) {
+		for (int i = 0; i < atoms.length; i++) {
 			coordinates[i] = atoms[i].getPosition();
 		}
 	}
@@ -33,18 +34,29 @@ public class ProteinFragment {
 		this.sequence = seq;
 		this.atoms = atoms;
 		coordinates = new double[atoms.length][3];
-		for(int i = 0; i < atoms.length; i++) {
+		for (int i = 0; i < atoms.length; i++) {
 			coordinates[i] = atoms[i].getPosition();
 		}
 	}
+	
+	public ProteinFragment(String id, String seq, double[][] newCentroid, int fragLength) {
+		this.fragLength = fragLength;
+		this.id = id;
+		this.sequence = seq;
+		coordinates = new double[newCentroid.length][3];
+		atoms = new Atom[newCentroid.length];
+		for (int i = 0; i < newCentroid.length; i++) {
+			atoms[i] = new Atom(AtomType.CA, newCentroid[i]);
+			coordinates[i] = newCentroid[i];
+		}
+	}
 
-	public ProteinFragment(String id, double[][] newCentroid,
-			int fragLength) {
+	public ProteinFragment(String id, double[][] newCentroid, int fragLength) {
 		this.fragLength = fragLength;
 		this.id = id;
 		coordinates = new double[newCentroid.length][3];
 		atoms = new Atom[newCentroid.length];
-		for(int i = 0; i < newCentroid.length; i++) {
+		for (int i = 0; i < newCentroid.length; i++) {
 			atoms[i] = new Atom(AtomType.CA, newCentroid[i]);
 			coordinates[i] = newCentroid[i];
 		}
@@ -75,8 +87,8 @@ public class ProteinFragment {
 	}
 
 	public void setCoordinates(double[][] nCoord) {
-//		this.coordinates = nCoord;
-		for(int i = 0; i < nCoord.length; i++) {
+		// this.coordinates = nCoord;
+		for (int i = 0; i < nCoord.length; i++) {
 			coordinates[i] = nCoord[i];
 			atoms[i].setPosition(nCoord[i]);
 		}
@@ -89,26 +101,9 @@ public class ProteinFragment {
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < coordinates.length; i++) {
-//			AtomType type = AtomType.C;
-//			switch (i % 4) {
-//			case 0:
-//				type = AtomType.N;
-//				break;
-//			case 1:
-//				type = AtomType.CA;
-//				break;
-//			case 2:
-//				type = AtomType.C;
-//				break;
-//			case 3:
-//				type = AtomType.O;
-//				break;
-//			}
-//			Atom cur = new Atom(type, coordinates[i]);
-//			result.append(cur.toString(i, (i / 4),
-//					String.valueOf(sequence.charAt(i / 4)), 'A')
-//					+ "\n");
-			result.append(atoms[i].toString(i, i, String.valueOf(sequence.charAt(i)), 'A') + "\n");
+			result.append(atoms[i].toString(i, i,
+					String.valueOf(sequence.charAt(i)), 'A')
+					+ "\n");
 		}
 		return result.toString();
 	}
@@ -127,10 +122,9 @@ public class ProteinFragment {
 		StringBuilder result = new StringBuilder();
 		for (int i = start; i < coordinates.length; i++) {
 			int ind = position + i - start;
-//			AtomType type = AtomType.CA;
-//			Atom cur = new Atom(type, coordinates[i]);
-//			result.append(cur.toString(ind, ind / 4, String.valueOf(sequence.charAt(i / 4)), 'A') + "\n");
-			result.append(atoms[i].toString(ind, ind, String.valueOf(sequence.charAt(i)), 'A') + "\n");
+			result.append(atoms[i].toString(ind, ind,
+					String.valueOf(sequence.charAt(i)), 'A')
+					+ "\n");
 		}
 		return result.toString();
 	}
@@ -172,7 +166,6 @@ public class ProteinFragment {
 		sequence = seq;
 	}
 
-
 	public void setNoise(boolean noise) {
 		this.noise = noise;
 	}
@@ -182,65 +175,50 @@ public class ProteinFragment {
 		String id = this.id;
 		String sequence = this.sequence;
 		Atom[] atoms = new Atom[this.atoms.length];
-		for(int i = 0; i < atoms.length; i++) {
+		for (int i = 0; i < atoms.length; i++) {
 			atoms[i] = new Atom(this.atoms[i].getType(), coordinates[i]);
 		}
-		ProteinFragment result = new ProteinFragment(id, sequence, atoms, fragLength);
+		ProteinFragment result = new ProteinFragment(id, sequence, atoms,
+				fragLength);
 		result.setClusterIndex(clustered);
 		return result;
 	}
-	
-	
-//	public void correctCoordinates() {
-//		String coord = String.valueOf(coordinates[0][0]);
-//		if(coord.length() > 7) {
-//			double[] corr = new double[3];
-//			corr[0] = coordinates[0][0];
-//			corr[1] = coordinates[0][1];
-//			corr[2] = coordinates[0][2];
-//			for(int i = 0; i < coordinates.length; i++) {
-//				for(int j = 0; j < coordinates[0].length; j++) {
-//					coordinates[i][j] -= corr[j];
-//				}
-//				atoms[i].setPosition(coordinates[i]);
-//			}
-//		}
-//	}
 
 	public void translateCoordinates(double[] correct) {
-		for(int i = 0; i < coordinates.length; i++) {
-			for(int j = 0; j < coordinates[0].length; j++) {
+		for (int i = 0; i < coordinates.length; i++) {
+			for (int j = 0; j < coordinates[0].length; j++) {
 				coordinates[i][j] += correct[j];
 				atoms[i].setPosition(coordinates[i]);
 			}
 		}
 	}
-	
+
 	public void append(double[][] coord, String seq) {
-		double[][] newCoordinates = new double[coord.length + coordinates.length][3];
+		double[][] newCoordinates = new double[coord.length
+				+ coordinates.length][3];
 		Atom[] newAtoms = new Atom[coord.length + coordinates.length];
 		int i = 0;
-		
-		for(i = 0; i < coordinates.length; i++) {
+
+		for (i = 0; i < coordinates.length; i++) {
 			newCoordinates[i] = coordinates[i];
 			newAtoms[i] = atoms[i];
 		}
-		for(int j = i; j < newCoordinates.length; j++) {
+		for (int j = i; j < newCoordinates.length; j++) {
 			newCoordinates[j] = coord[j - i];
 			newAtoms[j] = new Atom(AtomType.CA, coord[j - i]);
 		}
-		
+
 		this.coordinates = new double[coord.length + coordinates.length][3];
 		this.atoms = new Atom[coord.length + coordinates.length];
-		for(int j = 0; j < coordinates.length; j++) {
+		for (int j = 0; j < coordinates.length; j++) {
 			atoms[j] = newAtoms[j];
-			for(int k = 0; k < 3; k++) {
+			for (int k = 0; k < 3; k++) {
 				coordinates[j][k] = newCoordinates[j][k];
 			}
 		}
 		this.sequence += seq;
 	}
-	
+
 	public Atom[] getAtoms() {
 		return this.atoms;
 	}

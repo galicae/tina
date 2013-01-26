@@ -3,7 +3,6 @@ package bioinfo.proteins.fragm3nt;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import bioinfo.proteins.Atom;
 import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.Transformation;
 

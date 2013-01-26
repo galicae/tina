@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import bioinfo.alignment.Alignment;
 import bioinfo.proteins.AminoAcid;
 import bioinfo.proteins.Atom;
+import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;
 
 /**
@@ -117,6 +118,17 @@ public class PDBReduce {
 		pdb1 = new PDBEntry(pdb1.getID(), pdb1Array);
 		pdb2 = new PDBEntry(pdb2.getID(), pdb2Array);
 		PDBEntry[] result = { pdb1, pdb2 };
+		return result;
+	}
+	
+	
+	public static double[][] reduceSinglePDB(PDBEntry pdb1) {
+		double[][] result = new double[pdb1.length()][3];
+		Atom tempA = new Atom(AtomType.CA, new double[3]);
+		for(int i = 0; i < pdb1.length(); i++) {
+			tempA = pdb1.getAminoAcid(i).getAtomByType(AtomType.CA);
+			result[i] = tempA.getPosition();
+		}
 		return result;
 	}
 }
