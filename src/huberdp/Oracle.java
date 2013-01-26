@@ -6,7 +6,8 @@
  ******************************************************************************/
 package huberdp;
 
-import bioinfo.proteins.PDBEntry;
+
+import java.util.LinkedList;
 
 /**
  * @author huberste
@@ -16,19 +17,11 @@ public interface Oracle {
 	
 	/**
 	 * 
-	 * @param template the template structure
-	 * @param temp_left left end of template
-	 * @param temp_right right end of template
-	 * @param target the target structure
-	 * @param targ_left left end of target
-	 * @param targ_right right end of target
-	 * @param number of similiar segments that shall be returned
-	 * @return target_structure(s) with only the aligned amino acids
+	 * @param problem
+	 * @param m number of possible solutions the oracle shall find
+	 * @return a number of Segments / Alignments
 	 */
-	public PDBEntry[] findSimiliarSegments(
-			PDBEntry template, int temp_left, int temp_right,
-			PDBEntry target,   int targ_left, int targ_right,
-			int count);
+	public LinkedList<RDPProblem> findSimiliarSegments(RDPProblem problem, int m);
 	
 }
 

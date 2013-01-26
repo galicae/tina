@@ -6,6 +6,9 @@
  ******************************************************************************/
 package huberdp;
 
+
+import java.util.LinkedList;
+
 /**
  * @author huberste
  * @lastchange 2013-01-26
@@ -16,6 +19,16 @@ public class HubeRDP {
 									//  shall give
 //	private final static int N = 2; // number of subproblems after using oracle
 	
+	private LinkedList<Oracle> oracles;
+	
+	/**
+	 * adds an oracle to the List of oracles
+	 * @param oracle
+	 */
+	public void addOracle(Oracle oracle) {
+		oracles.add(oracle);
+	}
+	
 	/** 
 	 * first rdp must be called with
 	 * t = new RDPSolutionTree();
@@ -24,7 +37,7 @@ public class HubeRDP {
 	 * Optimal solution is now in t.getRoot();
 	 */
 	// RDP (T, pq):=
-	public static void rdp(RDPSolutionTree t, RDPPriorityQueue pq) {
+	public void rdp(RDPSolutionTree t, RDPPriorityQueue pq) {
 		// if (pq = {} ) do return root
 		if (pq.isEmpty() ) {
 			// nothing to do here: everything is already calculated
@@ -71,10 +84,21 @@ public class HubeRDP {
 	 * @param t the complete SolutionTree
 	 * @return (partial) solutions for this subproblem
 	 */
-	private static RDPSolutionTreeAndNode[] gAND
+	private RDPSolutionTreeAndNode[] gAND
 			(RDPSolutionTreeOrNode v, int m, RDPSolutionTree t) {
-		// TODO
-		return null;
+		
+		LinkedList<RDPSolutionTreeAndNode> results =
+			new LinkedList<RDPSolutionTreeAndNode>();
+		
+		for (Oracle oracle : oracles) {
+			LinkedList<RDPProblem> temp =
+					oracle.findSimiliarSegments(v.getProblem(), M);
+			for (RDPProblem node: temp) {
+				results.add(node);
+			}
+			
+		}
+		return results.toArray(new RDPSolutionTreeAndNode[0]);
 	}
 	
 	/**
@@ -83,7 +107,7 @@ public class HubeRDP {
 	 * @param t the complete SolutionTree
 	 * @return subproblems
 	 */
-	private static RDPSolutionTreeOrNode[] gOR
+	private RDPSolutionTreeOrNode[] gOR
 			(RDPSolutionTreeAndNode u, RDPSolutionTree t) {
 		// TODO
 		return null;
@@ -95,7 +119,7 @@ public class HubeRDP {
 	 * removes alignments contradicting biological and structural constraints
 	 * @param uSet
 	 */
-	private static void sf(RDPSolutionTreeNode[] uSet) {
+	private void sf(RDPSolutionTreeAndNode[] uSet) {
 		// TODO remove identical nodes
 		
 		// TODO remove very similiar nodes
@@ -105,7 +129,7 @@ public class HubeRDP {
 	}
 	
 	
-	private static void finish(RDPSolutionTreeNode u, RDPSolutionTree t) {
+	private void finish(RDPSolutionTreeNode u, RDPSolutionTree t) {
 		// TODO
 	}
 	

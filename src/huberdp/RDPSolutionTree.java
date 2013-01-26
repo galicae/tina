@@ -22,11 +22,19 @@ public class RDPSolutionTree extends RDPSolutionTreeOrNode {
 		root = null;
 	}
 	
+	/**
+	 * constructs an RDPSolutionTree with the root containing the given problem
+	 * @param problem
+	 */
 	public RDPSolutionTree(RDPProblem problem) {
 		root = new RDPSolutionTreeOrNode(problem);
 		
 	}
 	
+	/**
+	 * 
+	 * @return the root of the tree
+	 */
 	public RDPSolutionTreeOrNode getRoot() {
 		return root;
 	}

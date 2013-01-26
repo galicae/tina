@@ -21,7 +21,11 @@ public class huberdptest {
 	public static void main(String[] args) {
 		RDPSolutionTree t = new RDPSolutionTree();
 		RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
-		HubeRDP.rdp(t, pq);
+		
+//		Oracle oracle = new Oracle();
+		
+		HubeRDP rdp = new HubeRDP();
+		rdp.rdp(t, pq);
 		System.out.println("HubeRDP was successfully executed!");
 		// Solution is now in t.getRoot();
 		// TODO output of t.getRoot();

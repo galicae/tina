@@ -17,5 +17,20 @@ package huberdp;
  *
  */
 public class RDPSolutionTreeAndNode extends RDPSolutionTreeNode {
+
+	// PA = PartialAlignment
+	private Alignment alignment;
+	// TA = TreeAlignment
+	private TreeAlignment ta;
+	
+	public RDPSolutionTreeAndNode() {
+		super();
+	}
 	
 }
+
+/******************************************************************************
+ * "A question that sometimes drives me hazy:                                 *
+ *  Am I or are the others crazy?"                                            *
+ *     - Albert Einstein (1979 - 1966)                                        *
+ ******************************************************************************/

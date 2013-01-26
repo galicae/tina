@@ -11,6 +11,8 @@
  ******************************************************************************/
 package huberdp;
 
+import java.util.LinkedList;
+
 /**
  * @author huberste
  * @lastchange 2013-01-26
@@ -19,13 +21,30 @@ package huberdp;
 public class RDPSolutionTreeOrNode
 	extends RDPSolutionTreeNode
 	implements Comparable<RDPSolutionTreeOrNode> {
-
+	
+	// SP = SubProblem
+	private RDPProblem problem;
+	// TA = TreeAlignment
+	private LinkedList<RDPSolution> solutions;
+	
 	private double score;
-		
+	
+	/**
+	 * 
+	 */
 	public RDPSolutionTreeOrNode() {
-		
+		super();
 	}
 	
+	/**
+	 * 
+	 * @param problem
+	 */
+	public RDPSolutionTreeOrNode(RDPProblem problem) {
+		super();
+		this.problem=problem;
+	}
+
 	@Override
 	public int compareTo(RDPSolutionTreeOrNode other) {
 		if (this.score > other.score) {
@@ -36,6 +55,10 @@ public class RDPSolutionTreeOrNode
 			return -1;
 		}
 //		return 0;
+	}
+	
+	public RDPProblem getProblem() {
+		return problem;
 	}
 	
 }
