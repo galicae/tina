@@ -15,7 +15,6 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
 import bioinfo.alignment.gotoh.LocalSequenceGotoh;
-import bioinfo.alignment.kerbsch.temp.DihedralAngles;
 import bioinfo.alignment.kerbsch.temp.GlobalAngleAligner;
 import bioinfo.alignment.kerbsch.temp.InitClass;
 import bioinfo.alignment.kerbsch.temp.PairReader;
@@ -27,9 +26,6 @@ public class AlignmentBenchmarker {
 	// different shit
 	private double go;
 	private double ge;
-	private String seqlibfile;
-	private String pairfile;
-	private String cathscoplib;
 	private InitClass matrices = new InitClass();
 	private double[][] substMatrix;
 	private HashMap<String, char[]> seqlib;

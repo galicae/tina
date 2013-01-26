@@ -34,6 +34,7 @@ public class GridSurfacePotential implements IEnergy{
 	 * smaller then 4,8,16,32,64,128,256,512,bigger then 512, where all values smaller then 2 have to be ignored
 	 */
 	private double[][][] potential = new double[26][26][9];
+	//private int[] aminoCount = new int[26];
 	private final String pdbFolder;
 	private final VoroPrepType type;
 	private final double MINCONTACT = 2.0d;
@@ -196,6 +197,7 @@ public class GridSurfacePotential implements IEnergy{
 							}
 							p1 = amino.get(id1).getOneLetterCode().charAt(0)-65;
 							p2 = amino.get(id2).getOneLetterCode().charAt(0)-65;
+							//aminoCount[p1]++;
 							potential[p1][p2][tmp]++;
 							potential[p2][p1][tmp]++;
 							count++;
@@ -209,7 +211,7 @@ public class GridSurfacePotential implements IEnergy{
 		for(int i = 0; i != 26; i++){
 			for(int j = 0; j != 26; j++){
 				for(int k = 0; k != 9; k++){
-					potential[i][j][k] = mkT*Math.log(potential[i][j][k]+1/count+1);
+					potential[i][j][k] = mkT*Math.log((potential[i][j][k]+1)/(count+1));
 				}
 			}
 		}

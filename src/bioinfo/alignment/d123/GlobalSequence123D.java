@@ -16,7 +16,7 @@ public class GlobalSequence123D extends Gotoh {
 
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
 	private int[] secStruct, localConts, globalConts, gapOpen, gapExtend = null;
-	private int[][] scoringmatrix, secStrucPref, weights, tempScore;
+	private int[][] scoringmatrix, secStrucPref, weights;
 	private int[][][] contactPot;
 
 	/**
