@@ -15,6 +15,11 @@ import java.util.LinkedList;
 public abstract class RDPSolutionTreeNode {
 
 	private LinkedList<RDPSolutionTreeNode> childs;
+	private RDPProblem problem;
+	
+	public RDPSolutionTreeNode(RDPProblem problem) {
+		this.problem=problem;
+	}
 	
 	/**
 	 * adds a child to the node
