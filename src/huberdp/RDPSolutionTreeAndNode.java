@@ -18,6 +18,4 @@ package huberdp;
  */
 public class RDPSolutionTreeAndNode extends RDPSolutionTreeNode {
 	
-	 
-	
 }

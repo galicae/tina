@@ -18,7 +18,7 @@ public interface RDP {
 	 * @param t SolutionTree
 	 * @param pq PriorityQueue
 	 */
-	public void rdp(RDPSolutionTree t, RDPPriorityQueue pq);
+	public RDPSolutionTreeNode rdp(RDPSolutionTree t, RDPPriorityQueue pq);
 	
 }
 

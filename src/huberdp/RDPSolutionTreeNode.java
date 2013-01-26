@@ -25,6 +25,17 @@ public abstract class RDPSolutionTreeNode {
 	}
 	
 	/**
+	 * adds all nodes in the given array to this node's children
+	 * @param children array containing all the nodes that shall be added to
+	 * this node's children
+	 */
+	public void addChildren(RDPSolutionTreeNode[] children) {
+		for (RDPSolutionTreeNode node: children) {
+			this.addChild(node);
+		}
+	}
+	
+	/**
 	 * 
 	 * @param arg a RDPSolutionTreeNode
 	 * @return true if arg is a child of this node, false else
@@ -50,6 +61,18 @@ public abstract class RDPSolutionTreeNode {
 		return childs;
 	}
 
+	/**
+	 * 
+	 * @return true if this node has no childs
+	 */
+	public boolean isLeaf() {
+		if (childs.size() == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 }
 
 /******************************************************************************

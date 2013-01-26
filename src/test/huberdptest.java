@@ -10,7 +10,7 @@ import huberdp.*;
 
 /**
  * @author huberste
- * @lastchange 2013-01-10
+ * @lastchange 2013-01-26
  * 
  */
 public class huberdptest {
@@ -21,7 +21,10 @@ public class huberdptest {
 	public static void main(String[] args) {
 		RDPSolutionTree t = new RDPSolutionTree();
 		RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
-		rdp(t, pq);
+		HubeRDP.rdp(t, pq);
+		System.out.println("HubeRDP was successfully executed!");
+		// Solution is now in t.getRoot();
+		// TODO output of t.getRoot();
 
 	}
 
