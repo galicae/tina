@@ -1,33 +1,49 @@
 /******************************************************************************
- * hubeRDPTest is mainly a test routine for calling hubeRDP.                  *
+ * RDPProblem is the problem definition for RDP.                              *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
  ******************************************************************************/
-package test;
+package huberdp;
 
-import huberdp.*;
+import bioinfo.Sequence;
+import bioinfo.alignment.SequenceAlignment;
+import bioinfo.proteins.PDBEntry;
 
 /**
  * @author huberste
  * @lastchange 2013-01-26
  * 
  */
-public class huberdptest {
+public class RDPProblem {
 
 	/**
-	 * @param args
+	 * Target
 	 */
-	public static void main(String[] args) {
-		RDPSolutionTree t = new RDPSolutionTree();
-		RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
-		HubeRDP.rdp(t, pq);
-		System.out.println("HubeRDP was successfully executed!");
-		// Solution is now in t.getRoot();
-		// TODO output of t.getRoot();
-
-	}
-
+	public Sequence targetSequence;
+	public PDBEntry targetStructure;
+	
+	/**
+	 * Template
+	 */
+	public Sequence templateSequence;
+	public PDBEntry templateStructure;
+	
+	/**
+	 * SequenceAlignment so far
+	 */
+	public SequenceAlignment alignment;
+	
+	/**
+	 * start of the given (sub-)problem.
+	 */
+	public int start;
+	/**
+	 * end of the given (sub-)problem.
+	 */
+	public int end;
+	
+	
 }
 
 /******************************************************************************

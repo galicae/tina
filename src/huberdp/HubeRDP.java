@@ -8,35 +8,105 @@ package huberdp;
 
 /**
  * @author huberste
- * @lastchange 2013-01-10
+ * @lastchange 2013-01-26
  */
-public class HubeRDP implements RDP {
+public class HubeRDP {
 
+	private final static int M = 3;	// number of different solutions an oracle
+									//  shall give
+//	private final static int N = 2; // number of subproblems after using oracle
+	
 	/** 
 	 * first rdp must be called with
 	 * t = new RDPSolutionTree();
 	 * pq = new RDPPriorityQueue(t.getRoot());
 	 * rdp (t, pq);
+	 * Optimal solution is now in t.getRoot();
 	 */
-	@Override
-	public void rdp(RDPSolutionTree t, RDPPriorityQueue pq) {
-		// TODO Auto-generated method stub
+	// RDP (T, pq):=
+	public static void rdp(RDPSolutionTree t, RDPPriorityQueue pq) {
+		// if (pq = {} ) do return root
 		if (pq.isEmpty() ) {
-			return t.getRoot();
+			// nothing to do here: everything is already calculated
+			// DO NOTHING
+			
 		} else {
 			// v := <SP, \empty >^{\vee} \leftarrow first(pq)
-			RDPSolutionTreeNode v = new RDPSolutionTreeOrNode(pq.getFirst());
+			RDPSolutionTreeOrNode v = pq.getFirst();
 			// U := {<PA, \empty >^{\wedge}}
-			RDPSolutionTreeNode u = new RDPSolutionTreeAndNode();
+			RDPSolutionTreeAndNode[] uSet = gAND(v, M, t);
 			// U <-- sf_{\wedge}(U)
-			// TODO
-			if (u.isEmpty()) {
+			sf(uSet);
+			// if (U = {}) do <SP, TA>^{\wedge} <-- Finish(v,T) 
+			if (uSet.length == 0) {
 				finish(v,t);
 			} else {
+				// T <-- insert (T,U)
+				v.addChildren(uSet);
+				// for each u := <PA, {}>^{\wedge} \in U do
+				for (RDPSolutionTreeAndNode u : uSet ) {
+					// if (Leaf(u)) do <PA,TA>^{\wedge} <-- Finish (u, T)
+					if (u.isLeaf()) {
+						finish(u,t);
+					} else {
+						// V:= {<SP', {}>^{\vee}} <-- g_{\vee}(u, T)
+						RDPSolutionTreeOrNode[] vSet = gOR(u, t);
+						// T <-- insert (T, V)
+						u.addChildren(vSet);
+						// pq <-- insert(pq, V)
+						pq.add(vSet);
+					}
+					
+				}
 				
 			}
-			
+//			return rdp(t, pq);
 		}
+	}
+	
+	/**
+	 * Function that calls the oracles
+	 * @param v the OrNode of the SolutionTree to be worked on
+	 * @param m maximum number of "hits" an oracle shall create
+	 * @param t the complete SolutionTree
+	 * @return (partial) solutions for this subproblem
+	 */
+	private static RDPSolutionTreeAndNode[] gAND
+			(RDPSolutionTreeOrNode v, int m, RDPSolutionTree t) {
+		// TODO
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param u the AndNode of the SolutionTree to be worked on
+	 * @param t the complete SolutionTree
+	 * @return subproblems
+	 */
+	private static RDPSolutionTreeOrNode[] gOR
+			(RDPSolutionTreeAndNode u, RDPSolutionTree t) {
+		// TODO
+		return null;
+	}
+	
+	/**
+	 * filters the given set of AND nodes:
+	 * removes identical or very similiar nodes
+	 * removes alignments contradicting biological and structural constraints
+	 * @param uSet
+	 */
+	private static void sf(RDPSolutionTreeNode[] uSet) {
+		// TODO remove identical nodes
+		
+		// TODO remove very similiar nodes
+		
+		// TODO remove alignments contradicting biological and structural constraints
+		
+	}
+	
+	
+	private static void finish(RDPSolutionTreeNode u, RDPSolutionTree t) {
+		// TODO
 	}
 	
 }

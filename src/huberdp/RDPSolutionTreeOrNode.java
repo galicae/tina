@@ -13,12 +13,30 @@ package huberdp;
 
 /**
  * @author huberste
- * @lastchange 2013-01-17
+ * @lastchange 2013-01-26
  *
  */
-public class RDPSolutionTreeOrNode extends RDPSolutionTreeNode {
+public class RDPSolutionTreeOrNode
+	extends RDPSolutionTreeNode
+	implements Comparable<RDPSolutionTreeOrNode> {
+
+	private double score;
+		
+	public RDPSolutionTreeOrNode() {
+		
+	}
 	
-	
+	@Override
+	public int compareTo(RDPSolutionTreeOrNode other) {
+		if (this.score > other.score) {
+			return  1;
+		} else if (this.score == other.score) {
+			return  0;
+		} else { // this.score < other.score
+			return -1;
+		}
+//		return 0;
+	}
 	
 }
 

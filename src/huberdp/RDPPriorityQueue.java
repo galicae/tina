@@ -15,15 +15,49 @@ import java.util.PriorityQueue;
  */
 public class RDPPriorityQueue {
 
-	private PriorityQueue<RDPSolutionTree> pq;
+	private PriorityQueue<RDPSolutionTreeOrNode> pq;
 	
-	public RDPPriorityQueue(RDPSolutionTreeNode root) {
+	/**
+	 * Constructs a new (empty) RDPPriorityQueue
+	 */
+	public RDPPriorityQueue() {
 		// TODO correct construction of priorityQueue!
-		pq = new PriorityQueue<RDPSolutionTree>();
+		pq = new PriorityQueue<RDPSolutionTreeOrNode>();
 	}
 	
-	public RDPSolutionTree getFirst() {
+	/**
+	 * Constructs a new RDPPriorityQueue containing only the given Element
+	 * @param node
+	 */
+	public RDPPriorityQueue(RDPSolutionTreeOrNode node) {
+		// TODO correct construction of priorityQueue!
+		pq = new PriorityQueue<RDPSolutionTreeOrNode>();
+		add(node);
+	}
+	
+	public RDPSolutionTreeOrNode getFirst() {
 		return pq.poll();
+	}
+	
+	public boolean isEmpty() {
+		return pq.isEmpty();
+	}
+	
+	/**
+	 * 
+	 * @param e
+	 */
+	public void add(RDPSolutionTreeOrNode node) {
+		pq.add(node);
+	}
+	
+	/**
+	 *
+	 */
+	public void add(RDPSolutionTreeOrNode[] nodes) {
+		for (RDPSolutionTreeOrNode node : nodes) {
+			pq.add(node);
+		}
 	}
 	
 }

@@ -15,6 +15,11 @@ import java.util.LinkedList;
 public abstract class RDPSolutionTreeNode {
 
 	private LinkedList<RDPSolutionTreeNode> childs;
+	private RDPProblem problem;
+	
+	public RDPSolutionTreeNode(RDPProblem problem) {
+		this.problem=problem;
+	}
 	
 	/**
 	 * adds a child to the node
@@ -22,6 +27,17 @@ public abstract class RDPSolutionTreeNode {
 	 */
 	public void addChild(RDPSolutionTreeNode child) {
 		childs.add(child);
+	}
+	
+	/**
+	 * adds all nodes in the given array to this node's children
+	 * @param children array containing all the nodes that shall be added to
+	 * this node's children
+	 */
+	public void addChildren(RDPSolutionTreeNode[] children) {
+		for (RDPSolutionTreeNode node: children) {
+			this.addChild(node);
+		}
 	}
 	
 	/**
@@ -50,6 +66,18 @@ public abstract class RDPSolutionTreeNode {
 		return childs;
 	}
 
+	/**
+	 * 
+	 * @return true if this node has no childs
+	 */
+	public boolean isLeaf() {
+		if (childs.size() == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 }
 
 /******************************************************************************

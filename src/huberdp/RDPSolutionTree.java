@@ -11,11 +11,23 @@ package huberdp;
  * @lastchange 2013-01-17
  *
  */
-public class RDPSolutionTree {
+public class RDPSolutionTree extends RDPSolutionTreeOrNode {
 	
 	private RDPSolutionTreeOrNode root;
 	
-	public RDPSolutionTreeNode getRoot() {
+	/**
+	 * Constructs an empty RDPSolutionTree
+	 */
+	public RDPSolutionTree() {
+		root = null;
+	}
+	
+	public RDPSolutionTree(RDPProblem problem) {
+		root = new RDPSolutionTreeOrNode(problem);
+		
+	}
+	
+	public RDPSolutionTreeOrNode getRoot() {
 		return root;
 	}
 	
