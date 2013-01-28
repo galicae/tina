@@ -113,7 +113,6 @@ public class TMScatterPlot {
 		
 		//other stuff
 		ArrayList<String[]> pairs = PairReader.parse(args[10]);
-		HashMap<Character,HashMap<String,double[]>> angles = null;
 		String pdbpath = args[11];
 		String outpath = args[12];
 		
@@ -126,9 +125,8 @@ public class TMScatterPlot {
 			matrix1 = SecStructScores.matrix;
 		} else if(feature1.equals("sequence")){
 			matrix1 = QuasarMatrix.DAYHOFF_MATRIX;
-		} else if(feature1.equals("angle")){
-			angles = DihedralAngles.readAngles("angles");
 		}
+		
 		if(feature2.equals("polarity")){
 			matrix2 = init.calcGotohInputMatrix(init.calcPolarityScores());
 		} else if(feature2.equals("hydrophob")){
@@ -137,8 +135,6 @@ public class TMScatterPlot {
 			matrix2 = SecStructScores.matrix;
 		} else if(feature2.equals("sequence")){
 			matrix2 = QuasarMatrix.DAYHOFF_MATRIX;
-		} else if(feature2.equals("angle")){
-			angles = DihedralAngles.readAngles("angles");
 		}
 		
 		//create Aligner
@@ -148,17 +144,14 @@ public class TMScatterPlot {
 			method1 = new GlobalSequenceGotoh(go1,ge1,matrix1);
 		} else if(mode1.equals("freeshift") && !feature1.equals("angle")){
 			method1 = new FreeshiftSequenceGotoh(go1,ge1,matrix1);
-		} else{
-			method1 = new GlobalAngleAligner(go1,ge1,angles);
 		}
+		
 		if(mode2.equals("local") && !feature2.equals("angle")){
 			method2 = new LocalSequenceGotoh(go2,ge2,matrix2);
 		} else if(mode2.equals("global") && !feature2.equals("angle")){
 			method2 = new GlobalSequenceGotoh(go2,ge2,matrix2);
 		} else if(mode2.equals("freeshift") && !feature2.equals("angle")){
 			method2 = new FreeshiftSequenceGotoh(go2,ge2,matrix2);
-		} else{
-			method2 = new GlobalAngleAligner(go2,ge2,angles);
 		}
 		
 		//calculate the scatterplot

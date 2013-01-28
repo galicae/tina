@@ -95,27 +95,21 @@ public class InitClass {
 	public double[][] calcGotohInputMatrix(double[] mScore) {
 		double[][] matrix = new double[mScore.length][mScore.length];
 		double temp = 0;
-		double min = 0;
-		double max = 0;
+		double distance = 0;
+		double mean_distance;
+		
 		for (int i = 0; i < mScore.length; i++) {
-			if (min > mScore[i])
-				min = mScore[i];
-			if (max < mScore[i])
-				max = mScore[i];
-		}
-		double maxscore = (max - min) / 2.0;
-
-		for (int i = 0; i < mScore.length; i++) {
-			if (mScore[i] == 0.0) {
-				continue;
+			for (int j = i+1; j < mScore.length; j++) {
+				distance += Math.abs(mScore[i] - mScore[j]);
 			}
+		}
+		
+		mean_distance = distance / (mScore.length*(mScore.length+1)/2);
+		for (int i = 0; i < mScore.length; i++) {
 			for (int j = 0; j < mScore.length; j++) {
-				if (mScore[j] == 0.0) {
-					continue;
-				}
 				temp = Math.abs(mScore[i] - mScore[j]);
-				temp = maxscore - temp;
-				temp = (Math.round(temp * 100)) / 100.0;
+				temp = mean_distance - temp;
+				temp = (Math.round(temp * 100.0)) / 100.0;
 				matrix[i][j] = temp;
 			}
 		}

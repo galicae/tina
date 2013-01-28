@@ -12,7 +12,7 @@ public class DSSPEntry {
 	private int length;
 	
 	private AminoAcidName[] names;
-	private SecondaryStructureEight[] secondaryStrcuture;
+	private SecondaryStructureEight[] secondaryStructure;
 	private int[] accesability;
 	private double[] phi;
 	private double[] psi;
@@ -41,7 +41,7 @@ public class DSSPEntry {
 			this.chainIDNum = Integer.valueOf(id.substring(5, 7));
 		}
 		this.names = names;
-		this.secondaryStrcuture = secondaryStructure;
+		this.secondaryStructure = secondaryStructure;
 		this.accesability = accessability;
 		this.phi = phi;
 		this.psi = psi;
@@ -61,7 +61,7 @@ public class DSSPEntry {
 		}
 		this.length = names.size();
 		this.names = names.toArray(new AminoAcidName[names.size()]);
-		this.secondaryStrcuture = secondaryStructure.toArray(new SecondaryStructureEight[secondaryStructure.size()]);
+		this.secondaryStructure = secondaryStructure.toArray(new SecondaryStructureEight[secondaryStructure.size()]);
 		this.accesability = new int[accessability.size()];
 		this.phi = new double[phi.size()];
 		this.psi = new double[psi.size()];
@@ -82,8 +82,8 @@ public class DSSPEntry {
 		return names;
 	}
 
-	public SecondaryStructureEight[] getSecondaryStrcuture() {
-		return secondaryStrcuture;
+	public SecondaryStructureEight[] getSecondaryStructure() {
+		return secondaryStructure;
 	}
 
 	public int[] getAccesability() {
@@ -132,7 +132,7 @@ public class DSSPEntry {
 		String out = "#AA\tSS\tACC\tPHI\tPSI\tCAX\tCAY\tCAZ\n";
 		for(int i = 0; i != names.length; i++){
 			out += names[i].getOneLetterCode()+"\t";
-			out += secondaryStrcuture[i].getCharRespres()+"\t";
+			out += secondaryStructure[i].getCharRespres()+"\t";
 			out += accesability[i]+"\t";
 			out += String.format(Locale.US,"%.1f",phi[i])+"\t";
 			out += String.format(Locale.US,"%.1f",psi[i])+"\t";

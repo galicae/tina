@@ -5,6 +5,9 @@ import bioinfo.alignment.Alignable;
 import bioinfo.alignment.Alignment;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.Gotoh;
+import bioinfo.proteins.DSSPEntry;
+import bioinfo.proteins.DSSPFileReader;
+import bioinfo.proteins.SecondaryStructureEight;
 
 public class MusterLite extends Gotoh {
 
@@ -15,10 +18,10 @@ public class MusterLite extends Gotoh {
 	private int ysize;
 
 	// substitution matrices
-	private int[][] hbMatrix;
-	private int[][] polMatrix;
-	private int[][] secStructMatrix;
-	private int[][] substMatrix;
+	private int[][] hbMatrix = new int[26][26];
+	private int[][] polMatrix = new int[26][26];
+	private int[][] secStructMatrix = new int[26][26];
+	private int[][] substMatrix = new int[26][26];
 	
 	//feature weights
 	private final int hbWeight = 1;
@@ -26,6 +29,9 @@ public class MusterLite extends Gotoh {
 	private final int secStructWeight = 1;
 	private final int substWeight = 1;
 
+	private int[][] tempScore;
+	private DSSPFileReader dsspReader = new DSSPFileReader("../GoBi_old/DSSP");
+	
 	public MusterLite(double gapOpen, double gapExtend, int[][] hbMatrix,
 			int[][] polMatrix, int[][] secStructMatrix, int[][] substMatrix) {
 		super(gapOpen, gapExtend);
@@ -39,9 +45,9 @@ public class MusterLite extends Gotoh {
 			double[][] polMatrix, double[][] secStructMatrix,
 			double[][] substMatrix) {
 		super(gapOpen, gapExtend);
-
-		for (int i = 0; i < substMatrix[0].length; i++) {
-			for (int j = 0; j < substMatrix.length; j++) {
+				
+		for (int i = 0; i < substMatrix.length; i++) {
+			for (int j = 0; j < substMatrix[i].length; j++) {
 				this.substMatrix[i][j] = (int) (Gotoh.FACTOR * substMatrix[i][j]);
 				this.hbMatrix[i][j] = (int) (Gotoh.FACTOR * hbMatrix[i][j]);
 				this.polMatrix[i][j] = (int) (Gotoh.FACTOR * polMatrix[i][j]);
@@ -57,6 +63,7 @@ public class MusterLite extends Gotoh {
 		this.M = new int[xsize][ysize];
 		this.I = new int[xsize][ysize];
 		this.D = new int[xsize][ysize];
+		tempScore = new int[xsize][ysize];
 
 		this.sequence1 = (Sequence) sequence1;
 		this.sequence2 = (Sequence) sequence2;
@@ -79,19 +86,23 @@ public class MusterLite extends Gotoh {
 		return matrix[x - 65][y - 65];
 	}
 
-	private void calculateMatrices() {
-		int[][] tempScore = new int[xsize][ysize];
+	private void calculateMatrices() {	
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
+		DSSPEntry template = dsspReader.readFromFolderById(sequence1.getID());
+		SecondaryStructureEight[] tSecStruct = template.getSecondaryStructure();
+		
+		DSSPEntry query = dsspReader.readFromFolderById(sequence2.getID());
+		SecondaryStructureEight[] qSecStruct = query.getSecondaryStructure();
 
 		for (int i = 1; i < xsize; i++) {
 			for (int j = 1; j < ysize; j++) {
 				tempScore[i][j] = score(hbMatrix, seq1[i - 1], seq2[j - 1]) * hbWeight
 						+ score(polMatrix, seq1[i - 1], seq2[j - 1]) * polWeight
-						+ score(secStructMatrix, seq1[i - 1], seq2[j - 1]) * secStructWeight
+						+ score(secStructMatrix, tSecStruct[i-1].getThreeClassAnalogon().getCharRepres(), qSecStruct[j-1].getThreeClassAnalogon().getCharRepres()) * secStructWeight
 						+ score(substMatrix, seq1[i - 1], seq2[j - 1]) * substWeight;
 			}
-		}
+		}	
 
 		for (int i = 1; i < xsize; i++) {
 			for (int j = 1; j < ysize; j++) {
@@ -147,10 +158,7 @@ public class MusterLite extends Gotoh {
 			actx = (Character) sequence1.getComp(x);
 			acty = (Character) sequence2.getComp(y);
 
-			if (actScore == M[x][y] + score(hbMatrix, actx, acty)
-					+ score(polMatrix, actx, acty)
-					+ score(secStructMatrix, actx, acty)
-					+ score(substMatrix, actx, acty)) {
+			if (actScore == M[x][y] + tempScore[x+1][y+1]) {
 				row0 += actx;
 				row1 += acty;
 				y--;
