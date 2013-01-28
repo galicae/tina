@@ -9,7 +9,7 @@ import bioinfo.proteins.DSSPEntry;
 import bioinfo.proteins.DSSPFileReader;
 import bioinfo.proteins.SecondaryStructureEight;
 
-public class MusterLite extends Gotoh {
+public class GlobalMusterLite extends Gotoh {
 
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
 
@@ -26,13 +26,13 @@ public class MusterLite extends Gotoh {
 	//feature weights
 	private final int hbWeight = 1;
 	private final int polWeight = 1;
-	private final int secStructWeight = 1;
-	private final int substWeight = 1;
+	private final int secStructWeight = 2;
+	private final int substWeight = 2;
 
 	private int[][] tempScore;
 	private DSSPFileReader dsspReader = new DSSPFileReader("../GoBi_old/DSSP");
 	
-	public MusterLite(double gapOpen, double gapExtend, int[][] hbMatrix,
+	public GlobalMusterLite(double gapOpen, double gapExtend, int[][] hbMatrix,
 			int[][] polMatrix, int[][] secStructMatrix, int[][] substMatrix) {
 		super(gapOpen, gapExtend);
 		this.hbMatrix = hbMatrix;
@@ -41,7 +41,7 @@ public class MusterLite extends Gotoh {
 		this.substMatrix = substMatrix;
 	}
 
-	public MusterLite(double gapOpen, double gapExtend, double[][] hbMatrix,
+	public GlobalMusterLite(double gapOpen, double gapExtend, double[][] hbMatrix,
 			double[][] polMatrix, double[][] secStructMatrix,
 			double[][] substMatrix) {
 		super(gapOpen, gapExtend);
@@ -75,10 +75,21 @@ public class MusterLite extends Gotoh {
 	private void prepareMatrices() {
 		for (int i = 1; i < xsize; i++) {
 			D[i][0] = INIT_VAL;
+			if (i == 1) {
+				M[i][0]= M[i - 1][0] + gapOpen + gapExtend;
+			} else {
+				M[i][0] = M[i - 1][0] + gapExtend;
+			}
+			
 		}
 
 		for (int i = 1; i < ysize; i++) {
 			I[0][i] = INIT_VAL;
+			if (i == 1) {
+				M[0][i] = M[0][i - 1] + gapOpen + gapExtend;
+			} else {
+				M[0][i] = M[0][i - 1] + gapExtend;
+			}
 		}
 	}
 
@@ -117,41 +128,17 @@ public class MusterLite extends Gotoh {
 	}
 
 	private Alignment traceback() {
-		int max = INIT_VAL;
-		int x = 0;
-		int y = 0;
+		
+		int x = sequence1.length() - 1;
+		int y = sequence2.length() - 1;
 
-		for (int i = 0; i != M.length; i++) {
-			if (M[i][M[i].length - 1] >= max) {
-				max = M[i][M[i].length - 1];
-				x = i - 1;
-				y = M[i].length - 2;
-			}
-		}
-		for (int i = (M[M.length - 1].length - 1); i >= 0; i--) {
-			if (M[(M.length - 1)][i] > max) {
-				max = M[(M.length - 1)][i];
-				y = i - 1;
-				x = M.length - 2;
-			}
-		}
-
-		int score = max;
+		int score = M[x + 1][y + 1];
 		String row0 = "";
 		String row1 = "";
 		int actScore = 0;
 		char actx;
 		char acty;
-
-		for (int i = M[M.length - 1].length - 1; i > y + 1; i--) {
-			row0 += "-";
-			row1 += sequence2.getComp(i - 1);
-		}
-		for (int i = M.length - 1; i > x + 1; i--) {
-			row0 += sequence1.getComp(i - 1);
-			row1 += "-";
-		}
-
+		
 		while (x >= 0 && y >= 0) {
 
 			actScore = M[x + 1][y + 1];

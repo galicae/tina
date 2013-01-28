@@ -1,4 +1,4 @@
-package bioinfo.alignment.kerbsch;
+package bioinfo.alignment.kerbsch.temp;
 
 /**
  * from Kyte & Doolittle, J Mol Biol 1982 May 5

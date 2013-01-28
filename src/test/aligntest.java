@@ -10,7 +10,9 @@ import java.util.HashMap;
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
-import bioinfo.alignment.kerbsch.MusterLite;
+import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
+import bioinfo.alignment.kerbsch.FreeshiftMusterLite;
+import bioinfo.alignment.kerbsch.GlobalMusterLite;
 import bioinfo.alignment.kerbsch.temp.InitClass;
 import bioinfo.alignment.kerbsch.temp.PairReader;
 import bioinfo.alignment.kerbsch.temp.SecStructScores;
@@ -32,20 +34,22 @@ public class aligntest {
 		double[][] substMatrix = QuasarMatrix.DAYHOFF_MATRIX;
 		double[][] polMatrix = init.calcGotohInputMatrix(init.calcPolarityScores());
 		double[][] hbMatrix = init.calcGotohInputMatrix(init.calcHydropathyScores());
-		FreeshiftSequenceGotoh substgotoh = new FreeshiftSequenceGotoh(-12.0,-1.0,substMatrix);
+		GlobalSequenceGotoh substgotoh = new GlobalSequenceGotoh(-12.0,-1.0,substMatrix);
 		FreeshiftSequenceGotoh polgotoh = new FreeshiftSequenceGotoh(-10,-4,polMatrix);
-		MusterLite mustertest = new MusterLite(-30.0,-6.0,hbMatrix,polMatrix,SecStructScores.matrix,substMatrix);
+		GlobalMusterLite mustertest = new GlobalMusterLite(-40.0,-10.0,hbMatrix,polMatrix,SecStructScores.matrix,substMatrix);
 			
 		Sequence seq1;
 		Sequence seq2;
 		
 		seq1 = new Sequence("1j2xA00","GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK");
-		seq2 = new Sequence("1wq2B00","MEEAKQKVVDFLNSKSKSKFYFNDFTDLFPDMKQREVKKILTALVNDEVLEYWSSGSTTMYGLKG");
+		seq2 = new Sequence("1e3hA02","DDVLEALSAAVRPELSAALTIAGKQDREAELDRVKALAAEKLLPEFEGREKEISAAYRALTKSLVRERVIAEKKRIDG");
 		SequenceAlignment align1 = mustertest.align(seq1, seq2);
 		SequenceAlignment align2 = substgotoh.align(seq1, seq2);
 		System.out.println(align1.toStringVerbose());
 		System.out.println(align2.toStringVerbose());
 		
+//		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(System.out));
+//		mustertest.streamMatricesAsTxt(out);
 		
 		PDBFileReader pdbreader = new PDBFileReader("../GoBi_old/STRUCTURES");
 		TMMain superpos = new TMMain();
@@ -55,6 +59,8 @@ public class aligntest {
 		Transformation tr2 = superpos.calculateTransformation(align2, p, q);
 		System.out.println("TMScore für Muster: " + tr1.getTmscore());
 		System.out.println("TMScore für Sequence: " + tr2.getTmscore());
+		System.out.println("RMSD für Muster: " + tr1.getRmsd());
+		System.out.println("RMSD für Sequence: " + tr2.getRmsd());
 		
 //		for(String[] pair : pairs){
 //			seq1 = new Sequence(pair[0],seqlib.get(pair[0]));
