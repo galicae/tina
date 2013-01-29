@@ -59,7 +59,7 @@ public class HubeRDP {
 				// for each u := <PA, {}>^{\wedge} \in U do
 				for (RDPSolutionTreeAndNode u : uSet ) {
 					// if (Leaf(u)) do <PA,TA>^{\wedge} <-- Finish (u, T)
-					if (u.isLeaf()) {
+					if (u.isLeaf()) { // TODO: u is always leaf?
 						finish(u,t);
 					} else {
 						// V:= {<SP', {}>^{\vee}} <-- g_{\vee}(u, T)
@@ -109,8 +109,11 @@ public class HubeRDP {
 	 */
 	private RDPSolutionTreeOrNode[] gOR
 			(RDPSolutionTreeAndNode u, RDPSolutionTree t) {
+		RDPSolutionTreeOrNode[] results = new RDPSolutionTreeOrNode[2];
 		// TODO
-		return null;
+		u.
+		
+		return results;
 	}
 	
 	/**

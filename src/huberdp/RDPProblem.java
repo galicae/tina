@@ -37,11 +37,13 @@ public class RDPProblem {
 	/**
 	 * start of the given (sub-)problem.
 	 */
-	public int start;
+	public int targetStart;
+	public int templateStart;
 	/**
 	 * end of the given (sub-)problem.
 	 */
-	public int end;
+	public int targetEnd;
+	public int templateEnd;
 	
 	
 }

@@ -6,7 +6,12 @@
  ******************************************************************************/
 package huberdp.oracles;
 
+import java.util.Arrays;
 import java.util.LinkedList;
+
+import bioinfo.Sequence;
+import bioinfo.alignment.SequenceAlignment;
+import bioinfo.alignment.gotoh.LocalSequenceGotoh;
 
 import huberdp.Oracle;
 import huberdp.RDPProblem;
@@ -21,9 +26,37 @@ public class TinyOracle implements Oracle {
 	 * @see huberdp.Oracle#findSimiliarSegments(huberdp.RDPProblem, int)
 	 */
 	@Override
-	public LinkedList<RDPProblem> findSimiliarSegments(RDPProblem problem, int m) {
-		// TODO Auto-generated method stub
-		return null;
+	public LinkedList<RDPProblem> findSimiliarSegments
+			(RDPProblem problem, int m) {
+		// TODO
+		
+		// set Sequences for Gotoh
+		char[] targetChars = Arrays.copyOfRange
+				(problem.targetSequence.getSequence(),
+						problem.targetStart, problem.targetEnd+1);
+		
+		
+		char[] templateChars = Arrays.copyOfRange
+				(problem.templateSequence.getSequence(),
+						problem.templateStart, problem.templateEnd+1);
+		
+		Sequence templateSequence = new Sequence(
+				problem.templateSequence.getID(),
+				templateChars);
+		Sequence targetSequence = new Sequence(
+				problem.targetSequence.getID(),
+				targetChars);
+		
+		// Create new Gotoh
+		LocalSequenceGotoh gotoh = new LocalSequenceGotoh(
+				-10.0, -2.0,
+				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX);
+		SequenceAlignment alignment = gotoh.align
+				(templateSequence, targetSequence);
+		
+		LinkedList<RDPProblem> results = new LinkedList<RDPProblem>();
+		results.add(null);
+		return results;
 	}
 
 }
