@@ -1,13 +1,13 @@
 package bioinfo.proteins;
 
-public enum SecondaryStructureThree {
+public enum SecStructThree {
 
 	H ('H'),
 	E ('E'),
 	C ('C');
 	
 	private final char charRepres;
-	private SecondaryStructureThree(char charRepres){
+	private SecStructThree(char charRepres){
 		this.charRepres = charRepres;
 	}
 	
