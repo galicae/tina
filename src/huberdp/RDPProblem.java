@@ -1,6 +1,5 @@
 /******************************************************************************
  * RDPProblem is the problem definition for RDP.                              *
- * It is also an implementation of the Oracle's segments.                     *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -17,7 +16,7 @@ import bioinfo.proteins.PDBEntry;
  * 
  */
 public class RDPProblem {
-
+	
 	/**
 	 * Target
 	 */
@@ -46,12 +45,25 @@ public class RDPProblem {
 	public int targetEnd;
 	public int templateEnd;
 	
-	public RDPProblem split(int tarStart, int tarEnd, int temStart, int temEnd) {
-		// TODO split problem
-		return null;
+	/**
+	 * Constructs an RDPProblem
+	 */
+	public RDPProblem(
+			Sequence targetSequence, PDBEntry targetStructure,
+			Sequence templateSequence, PDBEntry templateStructure,
+			SequenceAlignment partialAlignment,
+			int targetStart, int targetEnd, int templateStart, int templateEnd) {
+		this.targetSequence = targetSequence;
+		this.targetStructure = targetStructure;
+		this.templateSequence = templateSequence;
+		this.templateStructure = templateStructure;
+		this.alignment = partialAlignment;
+		this.targetStart = targetStart;
+		this.targetEnd = targetEnd;
+		this.templateStart = templateStart;
+		this.templateEnd = templateEnd;
+		
 	}
-	
-	
 }
 
 /******************************************************************************

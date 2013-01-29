@@ -14,6 +14,7 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.LocalSequenceGotoh;
 
 import huberdp.Oracle;
+import huberdp.PartialAlignment;
 import huberdp.RDPProblem;
 
 /**
@@ -27,7 +28,7 @@ public class TinyOracle implements Oracle {
 	 * @see huberdp.Oracle#findSimiliarSegments(huberdp.RDPProblem, int)
 	 */
 	@Override
-	public LinkedList<RDPProblem> findSimiliarSegments
+	public LinkedList<PartialAlignment> findSimiliarSegments
 			(RDPProblem problem, int m) {
 		// TODO
 		

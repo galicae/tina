@@ -21,7 +21,7 @@ public interface Oracle {
 	 * @param m number of possible solutions the oracle shall find
 	 * @return a number of Segments / Alignments
 	 */
-	public LinkedList<RDPProblem> findSimiliarSegments(RDPProblem problem, int m);
+	public LinkedList<PartialAlignment> findSimiliarSegments(RDPProblem problem, int m);
 	
 }
 

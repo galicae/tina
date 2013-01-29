@@ -101,9 +101,9 @@ public class HubeRDP {
 			new LinkedList<RDPSolutionTreeAndNode>();
 		
 		for (Oracle oracle : oracles) {
-			LinkedList<RDPProblem> segments =
+		LinkedList<PartialAlignment> segments =
 					oracle.findSimiliarSegments(v.getProblem(), M);
-			for (RDPProblem seg: segments) {
+			for (PartialAlignment seg: segments) {
 				results.add(new RDPSolutionTreeAndNode(v, seg));
 			}
 			
@@ -128,24 +128,7 @@ public class HubeRDP {
 		//  and to the right of the new aligned segment.
 		int nosp = 2; // Number Of Sub Problems
 		RDPSolutionTreeOrNode[] results = new RDPSolutionTreeOrNode[nosp];
-		RDPProblem[] subproblems = new RDPProblem[nosp];
-		
-		RDPProblem segment = u.getAlignment();
-		
-		// define the $nosp subproblems.
-		
-		// TODO check if this is correct!
-		int tarStart = 0;
-		int tarEnd = segment.targetStart-1;
-		int temStart = 0;
-		int temEnd = segment.templateStart-1;
-		subproblems[0] = segment.split(tarStart, tarEnd, temStart, temEnd);
-		
-		tarStart = segment.targetEnd+1;
-		tarEnd = segment.targetSequence.length();
-		temStart = segment.templateEnd+1;
-		temEnd = segment.targetSequence.length();
-		subproblems[1] = segment.split(tarStart, tarEnd, temStart, temEnd);
+		RDPProblem[] subproblems = u.getAlignment().getSubProblems();
 		
 		// Make new OrNodes
 		for (int i = 0; i < nosp; i++) {

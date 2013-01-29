@@ -6,6 +6,10 @@
  ******************************************************************************/
 package test;
 
+import bioinfo.Sequence;
+import bioinfo.alignment.SequenceAlignment;
+import bioinfo.proteins.PDBEntry;
+import bioinfo.proteins.PDBFileReader;
 import huberdp.*;
 
 /**
@@ -15,11 +19,26 @@ import huberdp.*;
  */
 public class huberdptest {
 
+	private static final Sequence target = new Sequence("1dp7P00","TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK");
+	private static final Sequence template = new Sequence("1j2xA00","GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK");
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		RDPProblem root = new RDPProblem();
+		
+		PDBEntry targetStructure = null;
+		PDBEntry templateStructure = null;
+		SequenceAlignment ali = null;
+		
+		PDBFileReader fr = new PDBFileReader();
+		templateStructure = fr.readPDBFromFile
+				("/home/h/huberste/gobi/webserver/pdb/1J2XA00.pdb");
+		RDPProblem root = new RDPProblem
+				(target, targetStructure,
+				 template, templateStructure,
+				 ali, 0, target.length(), 0, template.length());
+		
 		RDPSolutionTree t = new RDPSolutionTree(root);
 		RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
 		
