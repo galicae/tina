@@ -9,6 +9,8 @@ package huberdp;
 
 import java.util.LinkedList;
 
+import bioinfo.alignment.Alignment;
+
 /**
  * @author huberste
  * @lastchange 2013-01-26
@@ -78,9 +80,17 @@ public class HubeRDP {
 	}
 	
 	/**
-	 * Function that calls the oracles
+	 * Function that calls the oracles:<br />
+	 * "the generating function g_{\wedge}: V_{\vee} \rightarrow V^m_{\wedge} is
+	 * applied to a Or-node v \in V_{\vee} and produces a set of m alternate
+	 * nodes u_i \in v_{\wedge}, which represent possible alternative
+	 * extensions/completions of the current (partial) alignment coded by 
+	 * v."<br />
+	 * (From: Protein Threading by Recursive Dynamic Programming. JMB 290,
+	 * 757-779)
 	 * @param v the OrNode of the SolutionTree to be worked on
-	 * @param m maximum number of "hits" an oracle shall create
+	 * @param m maximum number of alternative extensions this function shall
+	 * 			create
 	 * @param t the complete SolutionTree
 	 * @return (partial) solutions for this subproblem
 	 */
@@ -91,10 +101,10 @@ public class HubeRDP {
 			new LinkedList<RDPSolutionTreeAndNode>();
 		
 		for (Oracle oracle : oracles) {
-			LinkedList<RDPProblem> temp =
+			LinkedList<RDPProblem> segments =
 					oracle.findSimiliarSegments(v.getProblem(), M);
-			for (RDPProblem prob: temp) {
-				results.add(new RDPSolutionTreeAndNode(v, prob));
+			for (RDPProblem seg: segments) {
+				results.add(new RDPSolutionTreeAndNode(v, seg));
 			}
 			
 		}
@@ -102,16 +112,45 @@ public class HubeRDP {
 	}
 	
 	/**
-	 * 
+	 * "The function g_{\vee}: V_{\wedge} \rightarrow V^n_{\vee} generates for
+	 * an And-node u \in V_{wedge} a set of n mandatory nodes v_i \in V_{\vee},
+	 * which all need to be considered and assembled in order to complete the
+	 * current alignment in u."<br />
+	 * (From: Protein Threading by Recursive Dynamic Programming. JMB 290,
+	 * 757-779)
 	 * @param u the AndNode of the SolutionTree to be worked on
 	 * @param t the complete SolutionTree
 	 * @return subproblems
 	 */
 	private RDPSolutionTreeOrNode[] gOR
 			(RDPSolutionTreeAndNode u, RDPSolutionTree t) {
-		RDPSolutionTreeOrNode[] results = new RDPSolutionTreeOrNode[2];
-		// TODO
+		// for most oracles there are only 2 subproblems created: To the left
+		//  and to the right of the new aligned segment.
+		int nosp = 2; // Number Of Sub Problems
+		RDPSolutionTreeOrNode[] results = new RDPSolutionTreeOrNode[nosp];
+		RDPProblem[] subproblems = new RDPProblem[nosp];
 		
+		RDPProblem segment = u.getAlignment();
+		
+		// define the $nosp subproblems.
+		
+		// TODO check if this is correct!
+		int tarStart = 0;
+		int tarEnd = segment.targetStart-1;
+		int temStart = 0;
+		int temEnd = segment.templateStart-1;
+		subproblems[0] = segment.split(tarStart, tarEnd, temStart, temEnd);
+		
+		tarStart = segment.targetEnd+1;
+		tarEnd = segment.targetSequence.length();
+		temStart = segment.templateEnd+1;
+		temEnd = segment.targetSequence.length();
+		subproblems[1] = segment.split(tarStart, tarEnd, temStart, temEnd);
+		
+		// Make new OrNodes
+		for (int i = 0; i < nosp; i++) {
+			results[i] = new RDPSolutionTreeOrNode(u, subproblems[i]);
+		}
 		
 		return results;
 	}

@@ -18,6 +18,7 @@ import huberdp.RDPProblem;
 
 /**
  * @author huberste
+ * @lastchange 2013-01-29
  *
  */
 public class TinyOracle implements Oracle {
@@ -53,6 +54,7 @@ public class TinyOracle implements Oracle {
 				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX);
 		SequenceAlignment alignment = gotoh.align
 				(templateSequence, targetSequence);
+		// TODO
 		
 		LinkedList<RDPProblem> results = new LinkedList<RDPProblem>();
 		results.add(null);
