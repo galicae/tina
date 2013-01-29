@@ -38,9 +38,8 @@ public class TinaWorker extends Worker {
 	private final static int TOP_NUM = 5;
 	
 	private final static Sequence BAD = new Sequence("id", "A");
-	private final static int[][] map = {{1},{1}};
-	private final static SequenceAlignment WORST = new
-			SequenceAlignment(BAD, BAD, "A", "A", Double.NEGATIVE_INFINITY, map);
+	private final static SequenceAlignment WORST = new SequenceAlignment(
+					BAD, BAD, "A","A", Double.NEGATIVE_INFINITY);
 	
 	private Sequence sequence;
 	private LinkedList<Sequence> sequencedb;

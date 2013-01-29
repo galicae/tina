@@ -19,7 +19,8 @@ public class huberdptest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		RDPSolutionTree t = new RDPSolutionTree();
+		RDPProblem root = new RDPProblem();
+		RDPSolutionTree t = new RDPSolutionTree(root);
 		RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
 		
 //		Oracle oracle = new Oracle();
