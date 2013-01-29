@@ -1,37 +1,20 @@
 /******************************************************************************
- * hubeRDPTest is mainly a test routine for calling hubeRDP.                  *
+ * TreeAlignment is part of the problem solution of RDP.                      *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
  ******************************************************************************/
-package test;
-
-import huberdp.*;
+package huberdp;
 
 /**
+ * I have no Idea what I'm doing.
  * @author huberste
  * @lastchange 2013-01-29
- * 
  */
-public class huberdptest {
+public class TreeAlignment {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		RDPSolutionTree t = new RDPSolutionTree();
-		RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
-		
-//		Oracle oracle = new Oracle();
-		
-		HubeRDP rdp = new HubeRDP();
-		rdp.rdp(t, pq);
-		System.out.println("HubeRDP was successfully executed!");
-		// Solution is now in t.getRoot();
-		// TODO output of t.getRoot();
-
-	}
-
+	
+	
 }
 
 /******************************************************************************

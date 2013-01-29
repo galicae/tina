@@ -19,12 +19,46 @@ package huberdp;
 public class RDPSolutionTreeAndNode extends RDPSolutionTreeNode {
 
 	// PA = PartialAlignment
-	private Alignment alignment;
+	private RDPProblem alignment;
 	// TA = TreeAlignment
 	private TreeAlignment ta;
 	
-	public RDPSolutionTreeAndNode() {
-		super();
+	/**
+	 * Constructs an RDPSolutionTreeAndNode
+	 * @param parent the node's parent
+	 * @param alignment the Partial alignment that defines this node
+	 */
+	public RDPSolutionTreeAndNode(RDPSolutionTreeOrNode parent, RDPProblem alignment) {
+		super(parent);
+		this.setAlignment(alignment);
+	}
+
+	/**
+	 * @return the alignment
+	 */
+	public RDPProblem getAlignment() {
+		return alignment;
+	}
+
+	/**
+	 * @param alignment the alignment to set
+	 */
+	public void setAlignment(RDPProblem alignment) {
+		this.alignment = alignment;
+	}
+
+	/**
+	 * @return the TreeAlignment
+	 */
+	public TreeAlignment getTa() {
+		return ta;
+	}
+
+	/**
+	 * @param ta the TreeAlignment to set
+	 */
+	public void setTa(TreeAlignment ta) {
+		this.ta = ta;
 	}
 	
 }

@@ -93,8 +93,8 @@ public class HubeRDP {
 		for (Oracle oracle : oracles) {
 			LinkedList<RDPProblem> temp =
 					oracle.findSimiliarSegments(v.getProblem(), M);
-			for (RDPProblem node: temp) {
-				results.add(node);
+			for (RDPProblem prob: temp) {
+				results.add(new RDPSolutionTreeAndNode(v, prob));
 			}
 			
 		}
@@ -111,7 +111,7 @@ public class HubeRDP {
 			(RDPSolutionTreeAndNode u, RDPSolutionTree t) {
 		RDPSolutionTreeOrNode[] results = new RDPSolutionTreeOrNode[2];
 		// TODO
-		u.
+		
 		
 		return results;
 	}

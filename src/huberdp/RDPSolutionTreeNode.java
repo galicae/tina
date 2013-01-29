@@ -10,21 +10,14 @@ import java.util.LinkedList;
 
 /**
  * @author huberste
+ * @lastchange 2013-01-29
  *
  */
 public abstract class RDPSolutionTreeNode {
 
-	private RDPSolutionTreeNode parent;
-	private LinkedList<RDPSolutionTreeNode> childs;
+	private RDPSolutionTreeNode parent; // For dual link
+	private LinkedList<RDPSolutionTreeNode> childs; // For dual link
 		
-	/**
-	 * 
-	 */
-	public RDPSolutionTreeNode() {
-		setParent(null);
-		this.childs = new LinkedList<RDPSolutionTreeNode>();
-	}
-	
 	/**
 	 * costructs a new Node with the given parent
 	 * @param parent

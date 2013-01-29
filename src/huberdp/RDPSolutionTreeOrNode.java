@@ -15,7 +15,7 @@ import java.util.LinkedList;
 
 /**
  * @author huberste
- * @lastchange 2013-01-26
+ * @lastchange 2013-01-29
  *
  */
 public class RDPSolutionTreeOrNode
@@ -25,23 +25,17 @@ public class RDPSolutionTreeOrNode
 	// SP = SubProblem
 	private RDPProblem problem;
 	// TA = TreeAlignment
-	private LinkedList<RDPSolution> solutions;
+	private LinkedList<TreeAlignment> ta;
 	
 	private double score;
 	
 	/**
 	 * 
-	 */
-	public RDPSolutionTreeOrNode() {
-		super();
-	}
-	
-	/**
-	 * 
+	 * @param parent
 	 * @param problem
 	 */
-	public RDPSolutionTreeOrNode(RDPProblem problem) {
-		super();
+	public RDPSolutionTreeOrNode(RDPSolutionTreeAndNode parent, RDPProblem problem) {
+		super(parent);
 		this.problem=problem;
 	}
 
@@ -56,9 +50,35 @@ public class RDPSolutionTreeOrNode
 		}
 //		return 0;
 	}
-	
+
+	/**
+	 * 
+	 * @return the (partial) problem that defines this node
+	 */
 	public RDPProblem getProblem() {
 		return problem;
+	}
+	
+	/**
+	 * @return the TreeALignments
+	 */
+	public LinkedList<TreeAlignment> getTa() {
+		return ta;
+	}
+
+	/**
+	 * @param ta the TreeAlignments to set
+	 */
+	public void setTa(LinkedList<TreeAlignment> ta) {
+		this.ta = ta;
+	}
+	
+	/**
+	 * 
+	 * @param ta the TreeAlignment to add
+	 */
+	public void addSolution(TreeAlignment ta) {
+		this.ta.add(ta);
 	}
 	
 }
