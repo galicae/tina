@@ -15,7 +15,6 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
 import bioinfo.alignment.gotoh.LocalSequenceGotoh;
-import bioinfo.alignment.kerbsch.temp.DihedralAngles;
 import bioinfo.alignment.kerbsch.temp.GlobalAngleAligner;
 import bioinfo.alignment.kerbsch.temp.InitClass;
 import bioinfo.alignment.kerbsch.temp.PairReader;
@@ -25,11 +24,6 @@ import bioinfo.alignment.matrices.QuasarMatrix;
 public class AlignmentBenchmarker {
 
 	// different shit
-	private double go;
-	private double ge;
-	private String seqlibfile;
-	private String pairfile;
-	private String cathscoplib;
 	private InitClass matrices = new InitClass();
 	private double[][] substMatrix;
 	private HashMap<String, char[]> seqlib;
@@ -76,8 +70,8 @@ public class AlignmentBenchmarker {
 	private double diffoldmaxscore_scop = Double.NEGATIVE_INFINITY;
 
 	public AlignmentBenchmarker(String args[], HashMap<String,char[]> sl) {
-		go = Double.parseDouble(args[0]);
-		ge = Double.parseDouble(args[1]);
+		double go = Double.parseDouble(args[0]);
+		double ge = Double.parseDouble(args[1]);
 		if (args[3].equals("polarity")) {
 			substMatrix = matrices.calcGotohInputMatrix(matrices
 					.calcPolarityScores());
@@ -219,7 +213,7 @@ public class AlignmentBenchmarker {
 		diffoldmaxscore_scop = Double.NEGATIVE_INFINITY;
 	}
 
-	public void benchmark() {
+	public void benchmark() throws IOException {
 		double score = Double.NEGATIVE_INFINITY;
 		resetStatistic();
 		
@@ -232,6 +226,8 @@ public class AlignmentBenchmarker {
 		int index = 0;
 		int id1;
 		int id2;
+		
+		BufferedWriter writer = new BufferedWriter(new FileWriter("pol_aligns"));
 		
 		for (String[] pair : pairs) {
 
@@ -263,6 +259,7 @@ public class AlignmentBenchmarker {
 				temp = (SequenceAlignment) gotoh.align(new Sequence(pair[0],
 						seqlib.get(pair[0])),
 						new Sequence(pair[1], seqlib.get(pair[1])));
+				writer.append(temp.toStringVerbose()+"\n");
 				score = temp.getScore()/temp.countAlignedResidues();
 				alignments[id1][id2] = score;
 				alignments[id2][id1] = score;
@@ -369,5 +366,11 @@ public class AlignmentBenchmarker {
 		// fold misclassification
 		out.write(scop_missamefold + "\n" + scop_misdiffoldfold + "\n");
 		out.close();
+	}
+	
+	public int[] getResults(){
+		int cath_foldrecognition = cath_recsamefam+cath_recsamesup+cath_recsamefold;
+		int scop_foldrecognition = scop_recsamefam+scop_recsamesup+scop_recsamefold;
+		return new int[]{cath_foldrecognition,scop_foldrecognition};
 	}
 }

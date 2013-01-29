@@ -59,6 +59,14 @@ public enum AminoAcidName {
 		}
 		return null;
 	}
+	
+	public static AminoAcidName getAAFromOLC(char oneLetterCode) {
+		for (AminoAcidName aa : AminoAcidName.values()) {
+			if (aa.getOneLetterCode().equals(String.valueOf(oneLetterCode)))
+				return aa;
+		}
+		return null;
+	}
 
 	public static AminoAcidName getAAFromTLC(String threeLetterCode) {
 		for (AminoAcidName aa : AminoAcidName.values()) {

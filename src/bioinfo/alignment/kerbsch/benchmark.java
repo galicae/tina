@@ -7,7 +7,7 @@ import bioinfo.alignment.kerbsch.temp.SeqLibrary;
 
 
 public class benchmark {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		HashMap<String,char[]> seqlib = SeqLibrary.read(args[4]);
 		AlignmentBenchmarker ab = new AlignmentBenchmarker(args,seqlib);
 		ab.benchmark();

@@ -44,16 +44,18 @@ public class SimpleSurfacePotential implements IEnergy{
 	public SimpleSurfacePotential(String vorobin, String pdbFolder, List<String> pdbIds, VoroPrepType type){
 		this.pdbFolder = pdbFolder;
 		this.type = type;
-		calculateFromPDBs(pdbIds);
 		this.vorobin = vorobin;
+		calculateFromPDBs(pdbIds);
+
 	}
 	
 	public SimpleSurfacePotential(String vorobin, String tmpdir, String pdbFolder, List<String> pdbIds, VoroPrepType type){
 		this.pdbFolder = pdbFolder;
 		this.type = type;
-		calculateFromPDBs(pdbIds);
 		this.vorobin = vorobin;
 		this.tmpdir = tmpdir;
+		calculateFromPDBs(pdbIds);
+
 	}
 	
 	public SimpleSurfacePotential(String filename){
@@ -131,7 +133,9 @@ public class SimpleSurfacePotential implements IEnergy{
 		int tmp = 0;
 		int p1;
 		int p2;
-		int count = 0;
+		//int count = 0;
+		int[] aminoCount = new int[26];
+
 		
 		
 		for(String pdbId: pdbIds){
@@ -179,9 +183,13 @@ public class SimpleSurfacePotential implements IEnergy{
 							}
 							p1 = amino.get(id1).getOneLetterCode().charAt(0)-65;
 							p2 = amino.get(id2).getOneLetterCode().charAt(0)-65;
+//							if(p1 == p2 && p1 == 2){
+//								System.out.println(">>"+pdbId);
+//							}
 							potential[p1][p2][tmp]++;
 							potential[p2][p1][tmp]++;
-							count++;
+							aminoCount[p1]++;
+							//count++;
 						}
 					}
 				}
@@ -192,7 +200,11 @@ public class SimpleSurfacePotential implements IEnergy{
 		for(int i = 0; i != 26; i++){
 			for(int j = 0; j != 26; j++){
 				for(int k = 0; k != 9; k++){
-					potential[i][j][k] = mkT*Math.log(potential[i][j][k]+1/count+1);
+					if(i == j){
+						potential[i][j][k] = (((potential[i][j][k]+1)/2)/((aminoCount[i]+aminoCount[j])/2+1));
+					}else{
+						potential[i][j][k] = ((potential[i][j][k]+1)/((aminoCount[i]+aminoCount[j])/2+1));
+					}
 				}
 			}
 		}
@@ -245,16 +257,16 @@ public class SimpleSurfacePotential implements IEnergy{
 	 */
 	public static void main(String[] args){
 		
-		SimpleSurfacePotential pot1 = new SimpleSurfacePotential("/Users/andreseitz/Desktop/surfacePotential_CC.pot");
-		System.exit(1);
 		List<String> pdbIds = new ArrayList<String>();
-		String pdbLoc = "/Users/andreseitz/Documents/uni/CIP/gobi/STRUCTURES/";
+		String pdbLoc = args[0];
+		
 		File file = new File(pdbLoc);
 		for(File f : file.listFiles()){
 			pdbIds.add(f.getName().substring(0, 7));
 		}
-		SimpleSurfacePotential pot = new SimpleSurfacePotential("./tools/voro++",pdbLoc, pdbIds, VoroPrepType.CC);
-		pot.writeToFile("/Users/andreseitz/Desktop/surfacePotential_CC.pot");
+		
+		SimpleSurfacePotential pot = new SimpleSurfacePotential(args[1],pdbLoc, pdbIds, VoroPrepType.CC);
+		pot.writeToFile(args[2]);
 		System.out.println("done");
 		
 	}

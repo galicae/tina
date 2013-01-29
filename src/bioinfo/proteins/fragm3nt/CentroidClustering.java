@@ -136,22 +136,31 @@ public abstract class CentroidClustering {
 	 * @param n
 	 *            how many loops to run over the update function
 	 */
+	@SuppressWarnings("unchecked")
 	public void update(int n) {
 		System.out.println("Starting update....");
 		boolean updated = true;
-		for (int i = 0; i < n; i++) {
-			if (!updated)
-				break;
-			System.out.println("iteration " + i + " starting at " + System.currentTimeMillis());
-			updateClusters();
-			// checkAllFragments();
-			for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters
-					.clone()) {
-				if (f.getSize() < 1)
-					clusters.remove(f);
+		if (n == 0) {
+			for(ProteinFragment f: fragments) {
+				clusters.addLast(new FragmentCluster());
+				clusters.getLast().setCentroid(f);
+				clusters.getLast().add(f);
+			}
+		} else {
+			for (int i = 0; i < n; i++) {
+				if (!updated)
+					break;
+				System.out.println("iteration " + i + " starting at "
+						+ System.currentTimeMillis());
+				updateClusters();
+				// checkAllFragments();
+				for (FragmentCluster f : (LinkedList<FragmentCluster>) clusters
+						.clone()) {
+					if (f.getSize() < 1)
+						clusters.remove(f);
+				}
 			}
 		}
-
 	}
 
 	/**
@@ -159,6 +168,7 @@ public abstract class CentroidClustering {
 	 * aren't updated anymore. Might be computationally expensive, if there are
 	 * a lot of clusters
 	 */
+	@SuppressWarnings("unchecked")
 	public void update() {
 		System.out.println("Starting update....");
 		boolean updated = true;

@@ -127,6 +127,7 @@ public abstract class ClusterAlgorithm {
 	 * @param n
 	 *            how many loops to run over the update function
 	 */
+	@SuppressWarnings("unchecked")
 	public void update(int n) {
 		System.out.println("Starting update....");
 		boolean updated = true;
@@ -148,6 +149,7 @@ public abstract class ClusterAlgorithm {
 	 * aren't updated anymore. Might be computationally expensive, if there are
 	 * a lot of clusters
 	 */
+	@SuppressWarnings("unchecked")
 	public void update() {
 		System.out.println("Starting update....");
 		boolean updated = true;

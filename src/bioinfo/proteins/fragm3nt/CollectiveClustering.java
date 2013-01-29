@@ -21,6 +21,7 @@ public class CollectiveClustering {
 	 * @param update
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public LinkedList<FragmentCluster> runKmeans(int update, double acc) {
 		PDBFileReader reader = new PDBFileReader(proteins);
 		List<PDBEntry> files = new LinkedList<PDBEntry>();
@@ -44,6 +45,7 @@ public class CollectiveClustering {
 		return clusters;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public LinkedList<FragmentCluster> runDBScan(int minpts, double eps) {
 		PDBFileReader reader = new PDBFileReader(proteins);
 		// and save it in a files list

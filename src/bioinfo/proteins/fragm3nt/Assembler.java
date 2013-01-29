@@ -40,17 +40,39 @@ public class Assembler {
 			LinkedList<FragmentCluster> clusters) {
 		ProteinFragment curFrag = new ProteinFragment("dada", new double[1][1],
 				1);
+
+//		LinkedList<ProteinFragment> rank = new LinkedList<ProteinFragment>();
 		double tempScore = -Double.MAX_VALUE;
 		double temp = 0;
 		double[][] matrix = new double[1][1];
 		matrix = QuasarMatrix.DAYHOFF_MATRIX;
 
-		for (FragmentCluster c : clusters) {
+		FragmentCluster c = new FragmentCluster();
+		for (int j = 0; j < clusters.size(); j++) {
+			c = clusters.get(j);
 			temp = 0;
 			for (int i = 0; i < fragLength; i++) {
 				int y = query.charAt(i) - 65;
-				temp += matrix[i][y] * c.getPssm()[i][y];
+				for (int k = 0; k < 25; k++) {
+					temp += matrix[y][k] * c.getPssm()[i][k];
+				}
 			}
+
+//			curFrag = c.getCentroid().clone();
+//			curFrag.setClusterIndex((int) (temp * 1000));
+//			if (j == 0)
+//				rank.add(curFrag);
+//			else {
+//				for (int k = 0; k < rank.size(); k++) {
+//					if ((temp * 1000) < rank.get(k).getClusterIndex())
+//						continue;
+//					else {
+//						rank.add(k, curFrag);
+//						break;
+//					}
+//				}
+//			}
+
 			if (temp > tempScore) {
 				curFrag = c.getCentroid().clone();
 				curFrag.setSequence(query);
@@ -162,13 +184,18 @@ public class Assembler {
 		String curSub = query.substring(0, fragLength);
 		ProteinFragment curFrag = findFragment(curSub, clusters);
 		LinkedList<ProteinFragment> result = new LinkedList<ProteinFragment>();
+		LinkedList<ProteinFragment> positSolutions = new LinkedList<ProteinFragment>();
 		result.add(curFrag);
 		int add = fragLength - extent;
-		for (int i = 3; i < query.length() - fragLength; i += add) {
+		for (int i = extent; i < query.length() - fragLength; i += add) {
+			positSolutions.clear();
 			curSub = query.substring(i, i + fragLength);
 			curFrag = findFragment(curSub, clusters);
 			result.add(curFrag);
 		}
+		curSub = query.substring(query.length() - fragLength, query.length());
+		curFrag = findFragment(curSub, clusters);
+		result.add(curFrag);
 		return result;
 	}
 
@@ -187,13 +214,16 @@ public class Assembler {
 	 *         fragment.
 	 */
 	private ProteinFragment assembleProtein(
-			List<ProteinFragment> rightFragments, int extent) {
+			List<ProteinFragment> rightFragments, int extent, String query) {
 		ProteinFragment resultFragment = new ProteinFragment("res",
 				new double[1][1], fragLength);
 		resultFragment = rightFragments.get(0).clone();
-		for (int i = 1; i < rightFragments.size(); i++) {
+		int size = rightFragments.size();
+		for (int i = 1; i < size - 1; i++) {
 			alignFragments(resultFragment, rightFragments.get(i), extent);
 		}
+		int newExtent = query.length() - resultFragment.getAllResidues().length;
+		alignFragments(resultFragment, rightFragments.get(size - 1), fragLength - newExtent);
 		return resultFragment;
 	}
 
@@ -217,7 +247,7 @@ public class Assembler {
 		LinkedList<ProteinFragment> result = new LinkedList<ProteinFragment>();
 		result = collectFragments(query, clusters, extent);
 
-		ProteinFragment resultFragment = assembleProtein(result, extent);
+		ProteinFragment resultFragment = assembleProtein(result, extent, query);
 		return resultFragment;
 	}
 }

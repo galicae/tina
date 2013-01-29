@@ -5,8 +5,11 @@ import bioinfo.alignment.Alignable;
 import bioinfo.alignment.Alignment;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.Gotoh;
+import bioinfo.proteins.DSSPEntry;
+import bioinfo.proteins.DSSPFileReader;
+import bioinfo.proteins.SecondaryStructureEight;
 
-public class MusterLite extends Gotoh {
+public class GlobalMusterLite extends Gotoh {
 
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
 
@@ -15,18 +18,21 @@ public class MusterLite extends Gotoh {
 	private int ysize;
 
 	// substitution matrices
-	private int[][] hbMatrix;
-	private int[][] polMatrix;
-	private int[][] secStructMatrix;
-	private int[][] substMatrix;
+	private int[][] hbMatrix = new int[26][26];
+	private int[][] polMatrix = new int[26][26];
+	private int[][] secStructMatrix = new int[26][26];
+	private int[][] substMatrix = new int[26][26];
 	
 	//feature weights
 	private final int hbWeight = 1;
 	private final int polWeight = 1;
-	private final int secStructWeight = 1;
-	private final int substWeight = 1;
+	private final int secStructWeight = 2;
+	private final int substWeight = 2;
 
-	public MusterLite(double gapOpen, double gapExtend, int[][] hbMatrix,
+	private int[][] tempScore;
+	private DSSPFileReader dsspReader = new DSSPFileReader("../GoBi_old/DSSP");
+	
+	public GlobalMusterLite(double gapOpen, double gapExtend, int[][] hbMatrix,
 			int[][] polMatrix, int[][] secStructMatrix, int[][] substMatrix) {
 		super(gapOpen, gapExtend);
 		this.hbMatrix = hbMatrix;
@@ -35,13 +41,13 @@ public class MusterLite extends Gotoh {
 		this.substMatrix = substMatrix;
 	}
 
-	public MusterLite(double gapOpen, double gapExtend, double[][] hbMatrix,
+	public GlobalMusterLite(double gapOpen, double gapExtend, double[][] hbMatrix,
 			double[][] polMatrix, double[][] secStructMatrix,
 			double[][] substMatrix) {
 		super(gapOpen, gapExtend);
-
-		for (int i = 0; i < substMatrix[0].length; i++) {
-			for (int j = 0; j < substMatrix.length; j++) {
+				
+		for (int i = 0; i < substMatrix.length; i++) {
+			for (int j = 0; j < substMatrix[i].length; j++) {
 				this.substMatrix[i][j] = (int) (Gotoh.FACTOR * substMatrix[i][j]);
 				this.hbMatrix[i][j] = (int) (Gotoh.FACTOR * hbMatrix[i][j]);
 				this.polMatrix[i][j] = (int) (Gotoh.FACTOR * polMatrix[i][j]);
@@ -57,6 +63,7 @@ public class MusterLite extends Gotoh {
 		this.M = new int[xsize][ysize];
 		this.I = new int[xsize][ysize];
 		this.D = new int[xsize][ysize];
+		tempScore = new int[xsize][ysize];
 
 		this.sequence1 = (Sequence) sequence1;
 		this.sequence2 = (Sequence) sequence2;
@@ -68,10 +75,21 @@ public class MusterLite extends Gotoh {
 	private void prepareMatrices() {
 		for (int i = 1; i < xsize; i++) {
 			D[i][0] = INIT_VAL;
+			if (i == 1) {
+				M[i][0]= M[i - 1][0] + gapOpen + gapExtend;
+			} else {
+				M[i][0] = M[i - 1][0] + gapExtend;
+			}
+			
 		}
 
 		for (int i = 1; i < ysize; i++) {
 			I[0][i] = INIT_VAL;
+			if (i == 1) {
+				M[0][i] = M[0][i - 1] + gapOpen + gapExtend;
+			} else {
+				M[0][i] = M[0][i - 1] + gapExtend;
+			}
 		}
 	}
 
@@ -79,19 +97,23 @@ public class MusterLite extends Gotoh {
 		return matrix[x - 65][y - 65];
 	}
 
-	private void calculateMatrices() {
-		int[][] tempScore = new int[xsize][ysize];
+	private void calculateMatrices() {	
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
+		DSSPEntry template = dsspReader.readFromFolderById(sequence1.getID());
+		SecondaryStructureEight[] tSecStruct = template.getSecondaryStructure();
+		
+		DSSPEntry query = dsspReader.readFromFolderById(sequence2.getID());
+		SecondaryStructureEight[] qSecStruct = query.getSecondaryStructure();
 
 		for (int i = 1; i < xsize; i++) {
 			for (int j = 1; j < ysize; j++) {
 				tempScore[i][j] = score(hbMatrix, seq1[i - 1], seq2[j - 1]) * hbWeight
 						+ score(polMatrix, seq1[i - 1], seq2[j - 1]) * polWeight
-						+ score(secStructMatrix, seq1[i - 1], seq2[j - 1]) * secStructWeight
+						+ score(secStructMatrix, tSecStruct[i-1].getThreeClassAnalogon().getCharRepres(), qSecStruct[j-1].getThreeClassAnalogon().getCharRepres()) * secStructWeight
 						+ score(substMatrix, seq1[i - 1], seq2[j - 1]) * substWeight;
 			}
-		}
+		}	
 
 		for (int i = 1; i < xsize; i++) {
 			for (int j = 1; j < ysize; j++) {
@@ -106,51 +128,24 @@ public class MusterLite extends Gotoh {
 	}
 
 	private Alignment traceback() {
-		int max = INIT_VAL;
-		int x = 0;
-		int y = 0;
+		
+		int x = sequence1.length() - 1;
+		int y = sequence2.length() - 1;
 
-		for (int i = 0; i != M.length; i++) {
-			if (M[i][M[i].length - 1] >= max) {
-				max = M[i][M[i].length - 1];
-				x = i - 1;
-				y = M[i].length - 2;
-			}
-		}
-		for (int i = (M[M.length - 1].length - 1); i >= 0; i--) {
-			if (M[(M.length - 1)][i] > max) {
-				max = M[(M.length - 1)][i];
-				y = i - 1;
-				x = M.length - 2;
-			}
-		}
-
-		int score = max;
+		int score = M[x + 1][y + 1];
 		String row0 = "";
 		String row1 = "";
 		int actScore = 0;
 		char actx;
 		char acty;
-
-		for (int i = M[M.length - 1].length - 1; i > y + 1; i--) {
-			row0 += "-";
-			row1 += sequence2.getComp(i - 1);
-		}
-		for (int i = M.length - 1; i > x + 1; i--) {
-			row0 += sequence1.getComp(i - 1);
-			row1 += "-";
-		}
-
+		
 		while (x >= 0 && y >= 0) {
 
 			actScore = M[x + 1][y + 1];
 			actx = (Character) sequence1.getComp(x);
 			acty = (Character) sequence2.getComp(y);
 
-			if (actScore == M[x][y] + score(hbMatrix, actx, acty)
-					+ score(polMatrix, actx, acty)
-					+ score(secStructMatrix, actx, acty)
-					+ score(substMatrix, actx, acty)) {
+			if (actScore == M[x][y] + tempScore[x+1][y+1]) {
 				row0 += actx;
 				row1 += acty;
 				y--;

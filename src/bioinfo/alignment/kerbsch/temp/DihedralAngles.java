@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import bioinfo.alignment.gotoh.Gotoh;
 
@@ -35,15 +36,78 @@ public class DihedralAngles {
 			add('Y');
 		}
 	};
+	private static final HashMap<Character,Integer> aaToIndex = new HashMap<Character,Integer>() {
+		{
+			put('A',1);
+			put('C',2);
+			put('D',3);
+			put('E',4);
+			put('F',5);
+			put('G',6);
+			put('H',7);
+			put('I',8);
+			put('K',9);
+			put('L',10);
+			put('M',11);
+			put('N',12);
+			put('P',13);
+			put('Q',14);
+			put('R',15);
+			put('S',16);
+			put('T',17);
+			put('V',18);
+			put('W',19);
+			put('Y',20);
+		}
+	};
 
 	public static void calc(String folderpath) {
 		BufferedReader in;
 		BufferedWriter out;
+		HashMap<String,Integer> profilesToIndex = new HashMap<String,Integer>();
+		int profindex = 1;
+		for(char c : aminoacids){
+			for(char c2: aminoacids){
+				profilesToIndex.put(c+c2+"",profindex);
+				profindex++;
+			}
+		}
+		
 
-		double[][][][] minusminus = new double[26][26][26][3];
-		double[][][][] minusplus = new double[26][26][26][3];
-		double[][][][] plusminus = new double[26][26][26][3];
-		double[][][][] plusplus = new double[26][26][26][3];
+		//first dimension: amino acid in the middle
+		//second dimension: amino acid precursor
+		//third dimension: amino acid follower
+		//fourth dimension: 0 -> phi, 1 -> psi, 2 -> count, 3 -> max phi, 4 -> max psi, 5 -> min phi, 6 -> min psi
+		double[][][][] minusminus = new double[26][26][26][7];
+		double[][][][] minusplus = new double[26][26][26][7];
+		double[][][][] plusminus = new double[26][26][26][7];
+		double[][][][] plusplus = new double[26][26][26][7];
+		
+		for (int i = 0; i < 26; i++) {
+			for (int j = 0; j < 26; j++) {
+				for (int j2 = 0; j2 < 26; j2++) {
+					minusminus[i][j][j2][3] = Double.NEGATIVE_INFINITY;
+					minusminus[i][j][j2][4] = Double.NEGATIVE_INFINITY;
+					minusminus[i][j][j2][5] = Double.POSITIVE_INFINITY;
+					minusminus[i][j][j2][6] = Double.POSITIVE_INFINITY;
+					
+					minusplus[i][j][j2][3] = Double.NEGATIVE_INFINITY;
+					minusplus[i][j][j2][4] = Double.NEGATIVE_INFINITY;
+					minusplus[i][j][j2][5] = Double.POSITIVE_INFINITY;
+					minusplus[i][j][j2][6] = Double.POSITIVE_INFINITY;
+					
+					plusminus[i][j][j2][3] = Double.NEGATIVE_INFINITY;
+					plusminus[i][j][j2][4] = Double.NEGATIVE_INFINITY;
+					plusminus[i][j][j2][5] = Double.POSITIVE_INFINITY;
+					plusminus[i][j][j2][6] = Double.POSITIVE_INFINITY;
+					
+					plusplus[i][j][j2][3] = Double.NEGATIVE_INFINITY;
+					plusplus[i][j][j2][4] = Double.NEGATIVE_INFINITY;
+					plusplus[i][j][j2][5] = Double.POSITIVE_INFINITY;
+					plusplus[i][j][j2][6] = Double.POSITIVE_INFINITY;
+				}
+			}
+		}
 
 		char precursor;
 		char residue;
@@ -89,45 +153,103 @@ public class DihedralAngles {
 						line = in.readLine();
 						if (!line.matches("(.)*!(.)*")
 								&& line.charAt(13) != 'X') { // chain border
-							residue = line.charAt(13);
-
-							// lower-case letters in DSSP are Cysteines
-							if (Character.isLowerCase(residue)) {
-								residue = 'C';
+							if(precursor != 0){
+								residue = line.charAt(13);
+	
+								// lower-case letters in DSSP are Cysteines
+								if (Character.isLowerCase(residue)) {
+									residue = 'C';
+								}
+								phi = Double.parseDouble(line.substring(103, 109));
+								psi = Double.parseDouble(line.substring(109, 115));
+							} else{
+								residue = 0;
 							}
-
-							phi = Double.parseDouble(line.substring(103, 109));
-							psi = Double.parseDouble(line.substring(109, 115));
 						} else {
 							residue = 0;
 						}
 						line = in.readLine();
 						if (!line.matches("(.)*!(.)*")
 								&& line.charAt(13) != 'X') { // chain border
-							follower = line.charAt(13);
-
-							// lower-case letters in DSSP are Cysteines
-							if (Character.isLowerCase(follower)) {
-								follower = 'C';
+							if(residue != 0){
+								follower = line.charAt(13);
+	
+								// lower-case letters in DSSP are Cysteines
+								if (Character.isLowerCase(follower)) {
+									follower = 'C';
+								}
+							} else{
+								follower = 0;
 							}
-
 						} else {
 							follower = 0;
 						}
 						if (precursor != 0 && residue != 0 && follower != 0) {
 							if (phi < 0 && psi < 0) {
+								//stats | max,min
+								if(minusminus[residue - 65][precursor - 65][follower - 65][3] < phi){
+									minusminus[residue - 65][precursor - 65][follower - 65][3] = phi;
+								}
+								if(minusminus[residue - 65][precursor - 65][follower - 65][4] < psi){
+									minusminus[residue - 65][precursor - 65][follower - 65][4] = psi;
+								}
+								if(minusminus[residue - 65][precursor - 65][follower - 65][5] > phi){
+									minusminus[residue - 65][precursor - 65][follower - 65][5] = phi;
+								}
+								if(minusminus[residue - 65][precursor - 65][follower - 65][6] > psi){
+									minusminus[residue - 65][precursor - 65][follower - 65][6] = psi;
+								}
 								minusminus[residue - 65][precursor - 65][follower - 65][0] += phi;
 								minusminus[residue - 65][precursor - 65][follower - 65][1] += psi;
 								minusminus[residue - 65][precursor - 65][follower - 65][2] += 1;
 							} else if (phi < 0 && psi >= 0) {
+								//stats | max,min
+								if(minusplus[residue - 65][precursor - 65][follower - 65][3] < phi){
+									minusplus[residue - 65][precursor - 65][follower - 65][3] = phi;
+								}
+								if(minusplus[residue - 65][precursor - 65][follower - 65][4] < psi){
+									minusplus[residue - 65][precursor - 65][follower - 65][4] = psi;
+								}
+								if(minusplus[residue - 65][precursor - 65][follower - 65][5] > phi){
+									minusplus[residue - 65][precursor - 65][follower - 65][5] = phi;
+								}
+								if(minusplus[residue - 65][precursor - 65][follower - 65][6] > psi){
+									minusplus[residue - 65][precursor - 65][follower - 65][6] = psi;
+								}
 								minusplus[residue - 65][precursor - 65][follower - 65][0] += phi;
 								minusplus[residue - 65][precursor - 65][follower - 65][1] += psi;
 								minusplus[residue - 65][precursor - 65][follower - 65][2] += 1;
 							} else if (phi >= 0 && psi < 0) {
+								//stats | max,min
+								if(plusminus[residue - 65][precursor - 65][follower - 65][3] < phi){
+									plusminus[residue - 65][precursor - 65][follower - 65][3] = phi;
+								}
+								if(plusminus[residue - 65][precursor - 65][follower - 65][4] < psi){
+									plusminus[residue - 65][precursor - 65][follower - 65][4] = psi;
+								}
+								if(plusminus[residue - 65][precursor - 65][follower - 65][5] > phi){
+									plusminus[residue - 65][precursor - 65][follower - 65][5] = phi;
+								}
+								if(plusminus[residue - 65][precursor - 65][follower - 65][6] > psi){
+									plusminus[residue - 65][precursor - 65][follower - 65][6] = psi;
+								}
 								plusminus[residue - 65][precursor - 65][follower - 65][0] += phi;
 								plusminus[residue - 65][precursor - 65][follower - 65][1] += psi;
 								plusminus[residue - 65][precursor - 65][follower - 65][2] += 1;
 							} else if (phi >= 0 && psi >= 0) {
+								//stats | max,min
+								if(plusplus[residue - 65][precursor - 65][follower - 65][3] < phi){
+									plusplus[residue - 65][precursor - 65][follower - 65][3] = phi;
+								}
+								if(plusplus[residue - 65][precursor - 65][follower - 65][4] < psi){
+									plusplus[residue - 65][precursor - 65][follower - 65][4] = psi;
+								}
+								if(plusplus[residue - 65][precursor - 65][follower - 65][5] > phi){
+									plusplus[residue - 65][precursor - 65][follower - 65][5] = phi;
+								}
+								if(plusplus[residue - 65][precursor - 65][follower - 65][6] > psi){
+									plusplus[residue - 65][precursor - 65][follower - 65][6] = psi;
+								}
 								plusplus[residue - 65][precursor - 65][follower - 65][0] += phi;
 								plusplus[residue - 65][precursor - 65][follower - 65][1] += psi;
 								plusplus[residue - 65][precursor - 65][follower - 65][2] += 1;
@@ -136,9 +258,12 @@ public class DihedralAngles {
 							residue = follower;
 							phi = Double.parseDouble(line.substring(103, 109));
 							psi = Double.parseDouble(line.substring(109, 115));
+
 						} else {
 							precursor = residue;
 							residue = follower;
+							phi = Double.parseDouble(line.substring(103, 109));
+							psi = Double.parseDouble(line.substring(109, 115));
 						}
 
 						// read the rest of the DSSP
@@ -154,18 +279,70 @@ public class DihedralAngles {
 
 								if (precursor != 0 && residue != 0) {
 									if (phi < 0 && psi < 0) {
+										//stats | max,min
+										if(minusminus[residue - 65][precursor - 65][follower - 65][3] < phi){
+											minusminus[residue - 65][precursor - 65][follower - 65][3] = phi;
+										}
+										if(minusminus[residue - 65][precursor - 65][follower - 65][4] < psi){
+											minusminus[residue - 65][precursor - 65][follower - 65][4] = psi;
+										}
+										if(minusminus[residue - 65][precursor - 65][follower - 65][5] > phi){
+											minusminus[residue - 65][precursor - 65][follower - 65][5] = phi;
+										}
+										if(minusminus[residue - 65][precursor - 65][follower - 65][6] > psi){
+											minusminus[residue - 65][precursor - 65][follower - 65][6] = psi;
+										}
 										minusminus[residue - 65][precursor - 65][follower - 65][0] += phi;
 										minusminus[residue - 65][precursor - 65][follower - 65][1] += psi;
 										minusminus[residue - 65][precursor - 65][follower - 65][2] += 1;
 									} else if (phi < 0 && psi >= 0) {
+										//stats | max,min
+										if(minusplus[residue - 65][precursor - 65][follower - 65][3] < phi){
+											minusplus[residue - 65][precursor - 65][follower - 65][3] = phi;
+										}
+										if(minusplus[residue - 65][precursor - 65][follower - 65][4] < psi){
+											minusplus[residue - 65][precursor - 65][follower - 65][4] = psi;
+										}
+										if(minusplus[residue - 65][precursor - 65][follower - 65][5] > phi){
+											minusplus[residue - 65][precursor - 65][follower - 65][5] = phi;
+										}
+										if(minusplus[residue - 65][precursor - 65][follower - 65][6] > psi){
+											minusplus[residue - 65][precursor - 65][follower - 65][6] = psi;
+										}
 										minusplus[residue - 65][precursor - 65][follower - 65][0] += phi;
 										minusplus[residue - 65][precursor - 65][follower - 65][1] += psi;
 										minusplus[residue - 65][precursor - 65][follower - 65][2] += 1;
 									} else if (phi >= 0 && psi < 0) {
+										//stats | max,min
+										if(plusminus[residue - 65][precursor - 65][follower - 65][3] < phi){
+											plusminus[residue - 65][precursor - 65][follower - 65][3] = phi;
+										}
+										if(plusminus[residue - 65][precursor - 65][follower - 65][4] < psi){
+											plusminus[residue - 65][precursor - 65][follower - 65][4] = psi;
+										}
+										if(plusminus[residue - 65][precursor - 65][follower - 65][5] > phi){
+											plusminus[residue - 65][precursor - 65][follower - 65][5] = phi;
+										}
+										if(plusminus[residue - 65][precursor - 65][follower - 65][6] > psi){
+											plusminus[residue - 65][precursor - 65][follower - 65][6] = psi;
+										}
 										plusminus[residue - 65][precursor - 65][follower - 65][0] += phi;
 										plusminus[residue - 65][precursor - 65][follower - 65][1] += psi;
 										plusminus[residue - 65][precursor - 65][follower - 65][2] += 1;
 									} else if (phi >= 0 && psi >= 0) {
+										//stats | max,min
+										if(plusplus[residue - 65][precursor - 65][follower - 65][3] < phi){
+											plusplus[residue - 65][precursor - 65][follower - 65][3] = phi;
+										}
+										if(plusplus[residue - 65][precursor - 65][follower - 65][4] < psi){
+											plusplus[residue - 65][precursor - 65][follower - 65][4] = psi;
+										}
+										if(plusplus[residue - 65][precursor - 65][follower - 65][5] > phi){
+											plusplus[residue - 65][precursor - 65][follower - 65][5] = phi;
+										}
+										if(plusplus[residue - 65][precursor - 65][follower - 65][6] > psi){
+											plusplus[residue - 65][precursor - 65][follower - 65][6] = psi;
+										}
 										plusplus[residue - 65][precursor - 65][follower - 65][0] += phi;
 										plusplus[residue - 65][precursor - 65][follower - 65][1] += psi;
 										plusplus[residue - 65][precursor - 65][follower - 65][2] += 1;
@@ -179,10 +356,15 @@ public class DihedralAngles {
 								} else {
 									precursor = residue;
 									residue = follower;
+									phi = Double.parseDouble(line.substring(103, 109));
+									psi = Double.parseDouble(line.substring(109, 115));
 								}
 							} else {
+								follower = 0;
 								precursor = residue;
 								residue = follower;
+								phi = Double.parseDouble(line.substring(103, 109));
+								psi = Double.parseDouble(line.substring(109, 115));
 							}
 						}
 					}
@@ -194,72 +376,121 @@ public class DihedralAngles {
 		}
 
 		// write out results
-		for (char amino : aminoacids) {
-			try {
-				out = new BufferedWriter(new FileWriter("angles/" + amino
-						+ ".angles"));
+		try {
+			out = new BufferedWriter(new FileWriter("angles/summary.angles"));
+			for (char amino : aminoacids) {
 				for (char pre : aminoacids) {
 					for (char fol : aminoacids) {
-						out.append(pre + "" + fol + "\t");
+//						out.append(pre + "" + fol + "\t");
+						
+						out.append(aaToIndex.get(amino)+ "\t" + profilesToIndex.get(pre+fol+"") + "\t");
 						
 						//minus minus
 						if(minusminus[amino - 65][pre - 65][fol - 65][2] > 0){
-						out.append(minusminus[amino - 65][pre - 65][fol - 65][0]
-								/ minusminus[amino - 65][pre - 65][fol - 65][2]
+						out.append(Math.round(minusminus[amino - 65][pre - 65][fol - 65][0]
+								/ minusminus[amino - 65][pre - 65][fol - 65][2]*100.0)/100.0
 								+ "\t");
-						out.append(minusminus[amino - 65][pre - 65][fol - 65][1]
-								/ minusminus[amino - 65][pre - 65][fol - 65][2]
+						out.append(Math.round(minusminus[amino - 65][pre - 65][fol - 65][1]
+								/ minusminus[amino - 65][pre - 65][fol - 65][2]*100.0)/100.0
 								+ "\t");
+						//counts
+						out.append(minusminus[amino - 65][pre - 65][fol - 65][2] + "\t");
+						
+						//maxmin phi
+						out.append(minusminus[amino - 65][pre - 65][fol - 65][3] + "\t");
+						out.append(minusminus[amino - 65][pre - 65][fol - 65][5] + "\t");
+						
+						//maxmin psi
+						out.append(minusminus[amino - 65][pre - 65][fol - 65][4] + "\t");
+						out.append(minusminus[amino - 65][pre - 65][fol - 65][6] + "\t");
 						} else{
 							out.append(-999.0 + "\t"); //profile not exists
-							out.append(-999.0 + "\t");	
+							out.append(-999.0 + "\t" + 0.0 + "\t");	
+							out.append(360.0 + "\t" + -360.0 + "\t" );
+							out.append(360.0 + "\t" + -360.0 + "\t" );
 						}
 						
 						//minus plus
 						if(minusplus[amino - 65][pre - 65][fol - 65][2] > 0){
-						out.append(minusplus[amino - 65][pre - 65][fol - 65][0]
-								/ minusplus[amino - 65][pre - 65][fol - 65][2]
+						out.append(Math.round(minusplus[amino - 65][pre - 65][fol - 65][0]
+								/ minusplus[amino - 65][pre - 65][fol - 65][2]*100.0)/100.0
 								+ "\t");
-						out.append(minusplus[amino - 65][pre - 65][fol - 65][1]
-								/ minusplus[amino - 65][pre - 65][fol - 65][2]
+						out.append(Math.round(minusplus[amino - 65][pre - 65][fol - 65][1]
+								/ minusplus[amino - 65][pre - 65][fol - 65][2]*100.0)/100.0
 								+ "\t");
+						//counts
+						out.append(minusplus[amino - 65][pre - 65][fol - 65][2] + "\t");
+						
+						//maxmin phi
+						out.append(minusplus[amino - 65][pre - 65][fol - 65][3] + "\t");
+						out.append(minusplus[amino - 65][pre - 65][fol - 65][5] + "\t");
+						
+						//maxmin psi
+						out.append(minusplus[amino - 65][pre - 65][fol - 65][4] + "\t");
+						out.append(minusplus[amino - 65][pre - 65][fol - 65][6] + "\t");
 						} else{
 							out.append(-999.0 + "\t"); //profile not exists
-							out.append(999.0 + "\t");	
+							out.append(999.0 + "\t" + 0.0 + "\t");	
+							out.append(360.0 + "\t" + -360.0 + "\t" );
+							out.append(360.0 + "\t" + -360.0 + "\t" );
 						}
 						
 						
 						//plus minus
 						if(plusminus[amino - 65][pre - 65][fol - 65][2] > 0){
-						out.append(plusminus[amino - 65][pre - 65][fol - 65][0]
-								/ plusminus[amino - 65][pre - 65][fol - 65][2]
+						out.append(Math.round(plusminus[amino - 65][pre - 65][fol - 65][0]
+								/ plusminus[amino - 65][pre - 65][fol - 65][2]*100.0)/100.0
 								+ "\t");
-						out.append(plusminus[amino - 65][pre - 65][fol - 65][1]
-								/ plusminus[amino - 65][pre - 65][fol - 65][2]
+						out.append(Math.round(plusminus[amino - 65][pre - 65][fol - 65][1]
+								/ plusminus[amino - 65][pre - 65][fol - 65][2]*100.0)/100.0
 								+ "\t");
+						//counts
+						out.append(plusminus[amino - 65][pre - 65][fol - 65][2] + "\t");
+						
+						//maxmin phi
+						out.append(plusminus[amino - 65][pre - 65][fol - 65][3] + "\t");
+						out.append(plusminus[amino - 65][pre - 65][fol - 65][5] + "\t");
+						
+						//maxmin psi
+						out.append(plusminus[amino - 65][pre - 65][fol - 65][4] + "\t");
+						out.append(plusminus[amino - 65][pre - 65][fol - 65][6] + "\t");
 						} else{
 							out.append(999.0 + "\t"); //profile not exists
-							out.append(-999.0 + "\t");	
+							out.append(-999.0 + "\t" + 0.0 + "\t");	
+							out.append(360.0 + "\t" + -360.0 + "\t" );
+							out.append(360.0 + "\t" + -360.0 + "\t" );
 						}
 						
 						//plus plus
 						if(plusplus[amino - 65][pre - 65][fol - 65][2] > 0){
-						out.append(plusplus[amino - 65][pre - 65][fol - 65][0]
-								/ plusplus[amino - 65][pre - 65][fol - 65][2]
+						out.append(Math.round(plusplus[amino - 65][pre - 65][fol - 65][0]
+								/ plusplus[amino - 65][pre - 65][fol - 65][2]*100.0)/100.0
 								+ "\t");
-						out.append(plusplus[amino - 65][pre - 65][fol - 65][1]
-								/ plusplus[amino - 65][pre - 65][fol - 65][2]
-								+ "\n");
+						out.append(Math.round(plusplus[amino - 65][pre - 65][fol - 65][1]
+								/ plusplus[amino - 65][pre - 65][fol - 65][2]*100.0)/100.0
+								+ "\t");
+						//counts
+						out.append(plusplus[amino - 65][pre - 65][fol - 65][2] + "\t");
+						
+						//maxmin phi
+						out.append(plusplus[amino - 65][pre - 65][fol - 65][3] + "\t");
+						out.append(plusplus[amino - 65][pre - 65][fol - 65][5] + "\t");
+						
+						//maxmin psi
+						out.append(plusplus[amino - 65][pre - 65][fol - 65][4] + "\t");
+						out.append(plusplus[amino - 65][pre - 65][fol - 65][6] + "\n");
 						}else{
 							out.append(999.0 + "\t"); //profile not exists
-							out.append(999.0 + "\t");	
+							out.append(999.0 + "\t" + 0.0 + "\t");
+							out.append(360.0 + "\t" + -360.0 + "\t" );
+							out.append(360.0 + "\t" + -360.0 + "\n" );
 						}
 					}
 				}
-				out.close();
-			} catch (IOException e) {
-				System.out.println("cannot write angles " + amino);
 			}
+		out.close();
+		} catch (IOException e) {
+			System.out.println("cannot write angles ");
 		}
 	}
 
@@ -361,7 +592,7 @@ public class DihedralAngles {
 	}
 
 	public static void main(String[] args) {
-		DihedralAngles.calc("DSSP");
+		DihedralAngles.calc("../GoBi_old/DSSP");
 	}
 
 }
