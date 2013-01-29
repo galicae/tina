@@ -23,11 +23,11 @@ public class TMMain {
 	 * @param alignment
 	 *            the path of the alignment file
 	 * @param pFile
-	 *            the path of the first structure file. SHould be in the
-	 *            directory the class sees as "home"
+	 *            the path of the first structure file. TM sees this as the
+	 *            prediction.
 	 * @param qFile
-	 *            the path of the second structure file. SHould be in the
-	 *            directory the class sees as "home"
+	 *            the path of the second structure file. TM sees this as the
+	 *            reference
 	 * @return a transformation object, containing everything necessary for
 	 *         transformation and evaluation in the TM pipeline
 	 * @throws Exception
@@ -41,7 +41,8 @@ public class TMMain {
 		writeToFile("TM" + qFile, pdbs[1]);
 
 		// actual calculation of TM score and corresponding rotation matrix
-		double[][] tmResult = TMOriginal.doStuff("TM" + pFile + " TM" + qFile);
+		String[] bla = {"TM" + pFile, " TM" + qFile};
+		double[][] tmResult = TMOriginal.calculateTmScore("TM" + pFile, " TM" + qFile, 5);
 
 		// remember that rmResult is [5][4], and that [i][0] is empty
 		// also [4][0] is the TM score and [4][1] the GDT
@@ -63,9 +64,9 @@ public class TMMain {
 	 * @param alignment
 	 *            the alignment object of pFile and qFile sequences
 	 * @param pFile
-	 *            the PDBEntry with structure one
+	 *            the PDBEntry with structure one (the prediction)
 	 * @param qFile
-	 *            the PDBEntry with structure two
+	 *            the PDBEntry with structure two (the native)
 	 * @return a transformation object, containing everything necessary for
 	 *         transformation and evaluation in the TM pipeline
 	 * @throws Exception
@@ -77,10 +78,9 @@ public class TMMain {
 
 		// writeToFile("TM" + pFile.getID(), pdbs[0]);
 		// writeToFile("TM" + qFile.getID(), pdbs[1]);
-
+		int nLeng = alignment.getComponent(1).length();
 		// actual calculation of TM score and corresponding rotation matrix
-		double[][] tmResult = TMScore.doStuff("TM" + pFile.getID() + ".pdb"
-				+ " TM" + qFile.getID() + ".pdb", pdbs[0], pdbs[1], (SequenceAlignment)alignment);
+		double[][] tmResult = TMScore.doStuff(pdbs[0], pdbs[1], nLeng);
 
 		// remember that rmResult is [5][4], and that [i][0] is empty
 		// also [4][0] is the TM score and [4][1] the GDT

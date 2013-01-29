@@ -2,19 +2,10 @@ package test;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
-import bioinfo.proteins.PDBEntry;
-import bioinfo.proteins.PDBFileReader;
 import bioinfo.proteins.fragm3nt.CollectiveClustering;
-import bioinfo.proteins.fragm3nt.DBScan;
 import bioinfo.proteins.fragm3nt.FragmentCluster;
-import bioinfo.proteins.fragm3nt.Fragmenter;
-import bioinfo.proteins.fragm3nt.ProteinFragment;
-import bioinfo.superpos.Kabsch;
-import bioinfo.superpos.Transformation;
 
 public class Fragm3ntTest {
 	public static void main(String[] args) {
