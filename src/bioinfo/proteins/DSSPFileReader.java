@@ -245,7 +245,7 @@ public class DSSPFileReader {
 		String line;
 		boolean sectionFlag = false;
 		List<AminoAcidName> amino = new ArrayList<AminoAcidName>();
-		List<SecondaryStructureEight> secstr = new ArrayList<SecondaryStructureEight>();
+		List<SecStructEight> secstr = new ArrayList<SecStructEight>();
 		List<Integer> accessability = new ArrayList<Integer>();
 		List<Double> phi = new ArrayList<Double>();
 		List<Double> psi = new ArrayList<Double>();
@@ -264,7 +264,7 @@ public class DSSPFileReader {
 					}else{
 						amino.add(AminoAcidName.getAAFromOLC(line.charAt(13)));
 					}
-					secstr.add(SecondaryStructureEight.getSSFromChar(line.charAt(16)));
+					secstr.add(SecStructEight.getSSFromChar(line.charAt(16)));
 					accessability.add(Integer.parseInt(line.substring(35,38).trim()));
 					phi.add(Double.parseDouble(line.substring(104,109).trim()));
 					psi.add(Double.parseDouble(line.substring(110,115).trim()));

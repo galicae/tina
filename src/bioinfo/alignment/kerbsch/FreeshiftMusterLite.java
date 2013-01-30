@@ -7,7 +7,7 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.Gotoh;
 import bioinfo.proteins.DSSPEntry;
 import bioinfo.proteins.DSSPFileReader;
-import bioinfo.proteins.SecondaryStructureEight;
+import bioinfo.proteins.SecStructEight;
 
 public class FreeshiftMusterLite extends Gotoh {
 
@@ -90,10 +90,10 @@ public class FreeshiftMusterLite extends Gotoh {
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
 		DSSPEntry template = dsspReader.readFromFolderById(sequence1.getID());
-		SecondaryStructureEight[] tSecStruct = template.getSecondaryStructure();
+		SecStructEight[] tSecStruct = template.getSecondaryStructure();
 		
 		DSSPEntry query = dsspReader.readFromFolderById(sequence2.getID());
-		SecondaryStructureEight[] qSecStruct = query.getSecondaryStructure();
+		SecStructEight[] qSecStruct = query.getSecondaryStructure();
 
 		for (int i = 1; i < xsize; i++) {
 			for (int j = 1; j < ysize; j++) {

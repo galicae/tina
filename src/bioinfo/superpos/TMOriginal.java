@@ -43,6 +43,7 @@ public class TMOriginal {
 	static int ier = 0;
 	static int n_ali;
 	static int n_cut; // ![1,n_ali],align residues for the score
+	static int normLength;
 	static double score, score_maxsub, score_fix, score10;
 	static double n_GDT05, n_GDT1, n_GDT2, n_GDT4, n_GDT8;
 	static double score_max, score_fix_max;
@@ -73,8 +74,8 @@ public class TMOriginal {
 	static double[][] r_1 = new double[3 + 1][nmax];
 	static double[][] r_2 = new double[3 + 1][nmax];
 
-	public static double[][] doStuff(String argument) throws Exception {
-		String[] args = argument.split("\\s+");
+	public static void calculateTmScore(String pred, String natv, double nLeng) throws Exception {
+		normLength = (int)nLeng;
 		int i, j;
 		int k = 0;
 		d0_fix = -1;				
@@ -82,34 +83,35 @@ public class TMOriginal {
 		int[] k_ali0 = new int[nmax];
 		String seq1A = "";		
 		j = 0;
-		if(args.length<2){
-			System.out.println(help());
-			System.exit(1);
-		}
-		String[] pdbs = new String[2];		
-		for(i=0;i<args.length;){
-			if(args[i].equals("-o")){
-				m_out = 1;
-				i++;
-				outname = args[i];
-				i++;
-			}else if(args[i].equals("-d")){
-				m_fix = 1;
-				i++;
-				d0_fix = Double.valueOf(args[i]);
-				i++;
-			}else if(j<2){
-				pdbs[j] = args[i];
-				i++;
-				j++;
-			}
-		}
+//		if(args.length<2){
+//			System.out.println(help());
+//			System.exit(1);
+//		}
+//		String[] pdbs = new String[2];		
+//		for(i=0;i<args.length;){
+//			if(args[i].equals("-o")){
+//				m_out = 1;
+//				i++;
+//				outname = args[i];
+//				i++;
+//			}else if(args[i].equals("-d")){
+//				m_fix = 1;
+//				i++;
+//				d0_fix = Double.valueOf(args[i]);
+//				i++;
+//			}else if(j<2){
+//				pdbs[j] = args[i];
+//				i++;
+//				j++;
+//			}
+//		}
 		
-		seq1A = readPDB(pdbs[0], xa, ya, za, nresA);
+		seq1A = readPDB(pred, xa, ya, za, nresA);
 		String seq1B = "";
-		seq1B = readPDB(pdbs[1], xb, yb, zb, nresB);
+		seq1B = readPDB(natv, xb, yb, zb, nresB);
 		nseqA = seq1A.length();
-		nseqB = seq1B.length();				
+		nseqB = seq1B.length();	
+//		normLength = nseqB;
 		nseqA--;
 		nseqB--;
 		int ka0 = 0;			
@@ -314,32 +316,33 @@ outer:for (i = 1; i <= (n_init_max - 1); i++) {
 				// 302 continue
 			} // 300 continue !for shift
 		} // 333 continue !for initial length, L_ali/M		
-		DecimalFormat df = new DecimalFormat("0.0000"); 
+		DecimalFormat df = new DecimalFormat("0.0000000000"); 
 		//***   output TM-scale ---------------------------->
-//		 System.out.println(
-//		 "*****************************************************************************\n" +
-//	     "*                                 TM-SCORE                                  *\n"  +
-//	     "* A scoring function to assess the similarity of protein structures         *\n"  +
-//	     "* Based on statistics:                                                      *\n"  +
-//	     "* 0.0 < TM-score < 0.17, random structural similarity                       *\n"  +
-//	     "* 0.5 < TM-score < 1.00, in about the same fold                             *\n"  +
-//	     "*                                                                           *\n"  +
-//	     "* Reference: Yang Zhang and Jeffrey Skolnick, Proteins 2004 57: 702-710     *\n"  +
-//	     "* For comments, please email to: zhng@umich.edu                             *\n"  +
-//	     "*****************************************************************************");
-//		 System.out.printf("Structure1: %s  Length= %d\n","PDB1",nseqA);
-//		 System.out.printf("Structure1: %s  Length= %d (by which all scores are normalized)\n","PDB2",nseqB);
-//		 System.out.printf("Number of residues in common= %d\n",n_ali);
-//		 System.out.printf("RMSD of  the common residues= %s\n",df.format(rmsd_ali));
-//		 System.out.printf("TM-score    = %s  (d0=%s  TM10=%s)\n",df.format(score_max),df.format(d0),df.format(score10_max));
-//		 System.out.printf("MaxSub-score= %s  (d0= 3.50)\n",df.format(score_maxsub_max));		 
-	     double score_GDT=(n_GDT1_max+n_GDT2_max+n_GDT4_max+n_GDT8_max)/(float)(4*nseqB);
-//	     System.out.printf("GDT-TS-score= %s (d<1)= %s  (d<2)= %s (d<4)= %s (d<8)= %s\n",
-//	    		 df.format(score_GDT),df.format(n_GDT1_max/(float)(nseqB)),df.format(n_GDT2_max/(float)(nseqB)),df.format(n_GDT4_max/(float)(nseqB)),df.format(n_GDT8_max/(float)(nseqB)));
+		 System.out.println(
+		 "*****************************************************************************\n" +
+	     "*                                 TM-SCORE                                  *\n"  +
+	     "* A scoring function to assess the similarity of protein structures         *\n"  +
+	     "* Based on statistics:                                                      *\n"  +
+	     "* 0.0 < TM-score < 0.17, random structural similarity                       *\n"  +
+	     "* 0.5 < TM-score < 1.00, in about the same fold                             *\n"  +
+	     "*                                                                           *\n"  +
+	     "* Reference: Yang Zhang and Jeffrey Skolnick, Proteins 2004 57: 702-710     *\n"  +
+	     "* For comments, please email to: zhng@umich.edu                             *\n"  +
+	     "*****************************************************************************");
+		 System.out.printf("Structure1: %s  Length= %d\n","PDB1",nseqA);
+		 System.out.printf("Structure2: %s  Length= %d\n","PDB2",nseqB);
+		 System.out.printf("TM-Score is normalized by " + normLength + "\n");
+		 System.out.printf("Number of residues in common= %d\n",n_ali);
+		 System.out.printf("RMSD of  the common residues= %s\n",df.format(rmsd_ali));
+		 System.out.printf("TM-score    = %s  (d0=%s  TM10=%s)\n",df.format(score_max),df.format(d0),df.format(score10_max));
+		 System.out.printf("MaxSub-score= %s  (d0= 3.50)\n",df.format(score_maxsub_max));		 
+	     double score_GDT=(n_GDT1_max+n_GDT2_max+n_GDT4_max+n_GDT8_max)/(float)(4*normLength);
+	     System.out.printf("GDT-TS-score= %s (d<1)= %s  (d<2)= %s (d<4)= %s (d<8)= %s\n",
+	    		 df.format(score_GDT),df.format(n_GDT1_max/(float)(normLength)),df.format(n_GDT2_max/(float)(normLength)),df.format(n_GDT4_max/(float)(normLength)),df.format(n_GDT8_max/(float)(normLength)));
 	   
-	     double score_GDT_HA=(n_GDT05_max+n_GDT1_max+n_GDT2_max+n_GDT4_max)/(float)(4*nseqB);
-//	     System.out.printf("GDT-HA-score= %s (d<0.5)= %s  (d<1)= %s (d<2)= %s, (d<4)= %s\n\n",
-//	    		 df.format(score_GDT_HA),df.format(n_GDT05_max/(float)(nseqB)),df.format(n_GDT1_max/(float)(nseqB)),df.format(n_GDT2_max/(float)(nseqB)),df.format(n_GDT4_max/(float)(nseqB)));
+	     double score_GDT_HA=(n_GDT05_max+n_GDT1_max+n_GDT2_max+n_GDT4_max)/(float)(4*normLength);
+	     System.out.printf("GDT-HA-score= %s (d<0.5)= %s  (d<1)= %s (d<2)= %s, (d<4)= %s\n\n",
+	    		 df.format(score_GDT_HA),df.format(n_GDT05_max/(float)(normLength)),df.format(n_GDT1_max/(float)(normLength)),df.format(n_GDT2_max/(float)(normLength)),df.format(n_GDT4_max/(float)(normLength)));
 	     
 		// *** recall and output the superposition of maxiumum TM-score:
 		LL = 0;
@@ -362,10 +365,10 @@ outer:for (i = 1; i <= (n_init_max - 1); i++) {
 
 		// ********* extract rotation matrix ------------>
 		// write(*,*)'-------- rotation matrix to rotate Chain-1 to ',
-//		System.out.println(" -------- rotation matrix to rotate Chain-1 to Chain-2 ------");
-//		System.out.printf("%-6s %-10s %-10s %-10s %-10s\n","i","t(i)","u(i,1)","u(i,2)","u(i,3)");
-//		for (i = 1; i <= 3; i++) {
-//			System.out.printf("%-6d %-10s %-10s %-10s %-10s\n",i,df.format(t[i]),df.format(u[i][1]),df.format(u[i][2]),df.format(u[i][3]));		}
+		System.out.println(" -------- rotation matrix to rotate Chain-1 to Chain-2 ------");
+		System.out.printf("%-6s %-10s %-10s %-10s %-10s\n","i","t(i)","u(i,1)","u(i,2)","u(i,3)");
+		for (i = 1; i <= 3; i++) {
+			System.out.printf("%-6d %-10s %-10s %-10s %-10s\n",i,df.format(t[i]),df.format(u[i][1]),df.format(u[i][2]),df.format(u[i][3]));		}
 		// ********* rmsd in superposed regions --------------->
 		d = d_output; // !for output
 		score_fun(xt,yt,zt,xb,yb,zb);  // !give i_ali(i), score_max=score now
@@ -512,31 +515,22 @@ ali_while:while (true) {
 				//}
 			}
 		}		
-//		System.out.printf("\nSuperposition in the TM-score: Length(d<%f)= %d  RMSD=  %f\n",d_output,n_cut,rmsd);
-//		System.out.printf(": denotes the residue pairs of distance  %s Angstrom\n",df.format(d_output));		
-//		System.out.println(sequenceA);
-//		System.out.println(sequenceM);
-//		System.out.println(sequenceB);		
-//		for(i=1;i<=sequenceA.length();i++){
-//			System.out.print(i%10);
-//		}
-//		System.out.println("\n");
-//		release_memory();
-		double[][] result = new double[5][4];
-		result[0] = t.clone();
-		result[1] = u[1].clone();
-		result[2] = u[2].clone();
-		result[3] = u[3].clone();
-		result[4][0] = score_max;
-		result[4][1] = score_GDT;
-		result[4][2] = rmsd_ali;
-		return result;
+		System.out.printf("\nSuperposition in the TM-score: Length(d<%f)= %d  RMSD=  %f\n",d_output,n_cut,rmsd);
+		System.out.printf(": denotes the residue pairs of distance  %s Angstrom\n",df.format(d_output));		
+		System.out.println(sequenceA);
+		System.out.println(sequenceM);
+		System.out.println(sequenceB);		
+		for(i=1;i<=sequenceA.length();i++){
+			System.out.print(i%10);
+		}
+		System.out.println("\n");
+		release_memory();
 	}
 
 	public static String readPDB(String file, double[] x, double[] y,double[] z, int[] nres){
 		String seq = "*";
 		String line = "";
-		BufferedReader br = null;
+		BufferedReader br;
 		int i;
 		i = 0;
 		try {
@@ -561,12 +555,6 @@ ali_while:while (true) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				br.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 		return seq;
 	}
@@ -654,9 +642,9 @@ w_outer:while(true){
         	break w_outer;
         }        
 	 } // while(true);        
-     score_maxsub=score_maxsub_sum/(float)(nseqB); // !MAXsub-score
-     score=score_sum/(float)(nseqB);               // !TM-score
-     score10=score_sum10/(float)(nseqB);           // !TM-score10	 
+     score_maxsub=score_maxsub_sum/(float)(normLength); // !MAXsub-score
+     score=score_sum/(float)(normLength);               // !TM-score
+     score10=score_sum10/(float)(normLength);           // !TM-score10	 
 	}
 
 	public static double u3b(double[][] x, double[][] y, int n, int mode,

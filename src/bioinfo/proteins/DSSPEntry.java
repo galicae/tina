@@ -12,7 +12,7 @@ public class DSSPEntry {
 	private int length;
 	
 	private AminoAcidName[] names;
-	private SecondaryStructureEight[] secondaryStructure;
+	private SecStructEight[] secondaryStructure;
 	private int[] accesability;
 	private double[] phi;
 	private double[] psi;
@@ -30,7 +30,7 @@ public class DSSPEntry {
 //		}
 //	}
 	
-	public DSSPEntry(String id, AminoAcidName[] names, SecondaryStructureEight[] secondaryStructure, int[] accessability, double[] phi, double[] psi, double[][] caTrace){
+	public DSSPEntry(String id, AminoAcidName[] names, SecStructEight[] secondaryStructure, int[] accessability, double[] phi, double[] psi, double[][] caTrace){
 		if (id.length() == 4) {
 			this.id = id;
 			this.chainID = 'A';
@@ -49,7 +49,7 @@ public class DSSPEntry {
 		this.length = names.length;
 	}
 	
-	public DSSPEntry(String id, List<AminoAcidName> names, List<SecondaryStructureEight> secondaryStructure, List<Integer> accessability, List<Double> phi, List<Double> psi, List<double[]> caTrace){
+	public DSSPEntry(String id, List<AminoAcidName> names, List<SecStructEight> secondaryStructure, List<Integer> accessability, List<Double> phi, List<Double> psi, List<double[]> caTrace){
 		if (id.length() == 4) {
 			this.id = id;
 			this.chainID = 'A';
@@ -61,7 +61,7 @@ public class DSSPEntry {
 		}
 		this.length = names.size();
 		this.names = names.toArray(new AminoAcidName[names.size()]);
-		this.secondaryStructure = secondaryStructure.toArray(new SecondaryStructureEight[secondaryStructure.size()]);
+		this.secondaryStructure = secondaryStructure.toArray(new SecStructEight[secondaryStructure.size()]);
 		this.accesability = new int[accessability.size()];
 		this.phi = new double[phi.size()];
 		this.psi = new double[psi.size()];
@@ -82,7 +82,7 @@ public class DSSPEntry {
 		return names;
 	}
 
-	public SecondaryStructureEight[] getSecondaryStructure() {
+	public SecStructEight[] getSecondaryStructure() {
 		return secondaryStructure;
 	}
 

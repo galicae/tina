@@ -133,4 +133,12 @@ public class Transformation {
 	public double getTmscore() {
 		return tmscore;
 	}
+	
+	public String getTranslation() {
+		return translation.toString();
+	}
+	
+	public String getRotation() {
+		return rotation.toString();
+	}
 }

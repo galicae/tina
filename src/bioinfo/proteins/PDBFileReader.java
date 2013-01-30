@@ -248,7 +248,6 @@ public class PDBFileReader {
 			String line;
 			List<Atom> atoms = new ArrayList<Atom>();
 			
-			
 			boolean firstflag = true;
 			String name;
 			String resName = "";

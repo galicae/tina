@@ -8,14 +8,21 @@ import bioinfo.proteins.PDBFileReader;
 public class ImportPDBs {
 
 	public static void main(String[] args) {
-		MysqlDBConnection connection = new MysqlDBConnection();
+		LocalConnection connection = new LocalConnection();
 		PDBConnector pdbconnector = new PDBConnector(connection);
 		
 		PDBFileReader pdbreader = new PDBFileReader(args[0]);
-		//PDBFile.downloadPDB("2ADU", "./");
-		//PDBEntry test = pdbreader.readFromFolderById("1J2xA00");		
-		//pdbconnector.addEntry(test);
-		PDBEntry out = pdbconnector.getPDB("1J2XB00");
+		
+		String pdb = "1j2xA00";
+		
+		if(!pdbconnector.pdbExist(pdb)){
+			PDBEntry test = pdbreader.readFromFolderById(pdb);
+			pdbconnector.addEntry(test);
+		} else{
+			System.out.println("PDB '"+pdb+"' existiert bereits in DB.");
+		}
+		
+		PDBEntry out = pdbconnector.getPDB(pdb);
 		System.out.println(out.getAminoAcid(7).getAtomByType(AtomType.CA).getPosition()[0]);
 	}
 

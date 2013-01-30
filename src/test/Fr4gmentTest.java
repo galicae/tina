@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.util.LinkedList;
 import java.util.List;
 
-import bioinfo.proteins.Atom;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 import bioinfo.proteins.fragm3nt.Assembler;

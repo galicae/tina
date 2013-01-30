@@ -1,62 +1,85 @@
 package test;
 
-import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
 
-import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
-import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
-import bioinfo.alignment.kerbsch.temp.SeqLibrary;
-import bioinfo.alignment.matrices.QuasarMatrix;
+import bioinfo.alignment.SequenceAlignmentFileReader;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
+import bioinfo.superpos.TMCollective;
 import bioinfo.superpos.TMMain;
+import bioinfo.superpos.TMOriginal;
 import bioinfo.superpos.Transformation;
 
 public class TMPipeline {
 	public static void main(String[] args) throws Exception {
+		String protDir = "/home/p/papadopoulos/Desktop/STRUCTURES/";
+		SequenceAlignmentFileReader aliReader = new SequenceAlignmentFileReader(
+				"/home/p/papadopoulos/Dokumente/assignment1/out/freeshift.alignments");
+		aliReader.initSequentialRead();
 
-		// 1wjfA00 1zr4B03
+		PDBEntry[] tmOr = new PDBEntry[2];
 
-		String seq1 = "1lddB00";
-		String seq2 = "1wq2B00";
-		// String seq2 = "1lddB00";
+		TMCollective tmc = new TMCollective();
+		PDBFileReader pdbReader = new PDBFileReader();
+		SequenceAlignment curAli = aliReader.nextAlignment();
+		curAli = aliReader.nextAlignment();
+		curAli = aliReader.nextAlignment();
 
-		HashMap<String, char[]> sequences = SeqLibrary.read("domains.seqlib");
-		double[][] matr = QuasarMatrix.parseMatrix("dayhoff.mat");
+		PDBEntry pdb1 = pdbReader.readPDBFromFile(protDir
+				+ curAli.getComponent(0).getID() + ".pdb");
+		PDBEntry pdb2 = pdbReader.readPDBFromFile(protDir
+				+ curAli.getComponent(1).getID() + ".pdb");
 
-		PDBFileReader reader = new PDBFileReader();
-		PDBEntry pdb1 = reader.readPDBFromFile("./" + seq1 + ".pdb");
-		PDBEntry pdb2 = reader.readPDBFromFile("./" + seq2 + ".pdb");
-
-		// System.out.println(pdb1.getAtomSectionAsString());
-		FreeshiftSequenceGotoh gotoh = new FreeshiftSequenceGotoh(-12, -1, matr);
-		Sequence sequence1 = new Sequence(seq1, sequences.get(seq1));
-		Sequence sequence2 = new Sequence(seq2, sequences.get(seq2));
-
-		SequenceAlignment aliSeq = gotoh.align(sequence1, sequence2);
-
-		System.out.println(aliSeq.toStringVerbose());
-		double cur = 0;
-		double prev = 0;
-		boolean tmAlright = true;
 		TMMain main = new TMMain();
-		Transformation tr1 = main.calculateTransformation(aliSeq, pdb1,
-				pdb2);
-		prev = tr1.getTmscore();
-		for (int i = 0; i < 10000; i++) {
-			main = new TMMain();
-			tr1 = main.calculateTransformation(aliSeq, pdb1,
-					pdb2);
-			cur = tr1.getTmscore();
-			if(cur != prev) {
-				tmAlright = false;
-			}
-			prev = cur;
+		System.out.println(curAli.toStringVerbose() + "\n");
+		System.err.println("OBJECT ORIENTED#########################");
+		Transformation tr1 = main.calculateTransformation(curAli, pdb1, pdb2);
+		System.out.println(tr1.getTmscore());
+
+		tmOr = tmc.createTMInput(curAli, pdb1, pdb2);
+
+		String p2 = "TM" + curAli.getComponent(1).getID() + ".pdb";
+		String p1 = "TM" + curAli.getComponent(0).getID() + ".pdb";
+		try {
+			BufferedWriter wr1 = new BufferedWriter(new FileWriter(p1));
+			wr1.write(tmOr[0].getAtomSectionAsString());
+			wr1.close();
+			BufferedWriter wr2 = new BufferedWriter(new FileWriter(p2));
+			wr2.write(tmOr[1].getAtomSectionAsString());
+			wr2.close();
+			// Runtime r = Runtime.getRuntime();
+			// Process p = r.exec("./lib/TMscore " + p1 + " " + p2);
+			// + " -l "
+			// + curAli.getComponent(1).length());
+			// BufferedReader input = new BufferedReader(new InputStreamReader(
+			// p.getInputStream()));
+			//
+			// String l = input.readLine();
+			// while (l != null) {
+			// // if(l.startsWith("TM-score    ="))
+			// System.out.println(l);
+			// l = input.readLine();
+			// }
+			//
+			// p.destroy();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		
-		if(tmAlright)
-			System.out.println("tm score is alright");
-		else
-			System.out.println("BEEP BEEP");
+		System.err.println("REFERENCE#################################");
+		TMOriginal.calculateTmScore(p1, p2, curAli.getComponent(1).length());
+
+		// while (curAli != null) {
+		// pdb1 = pdbReader.readPDBFromFile(protDir
+		// + curAli.getComponent(0).getID() + ".pdb");
+		// pdb2 = pdbReader.readPDBFromFile(protDir
+		// + curAli.getComponent(1).getID() + ".pdb");
+		// tr1 = main.calculateTransformation(curAli, pdb1, pdb2);
+		// System.out.println(tr1.getTmscore());
+		// curAli = aliReader.nextAlignment();
+		// }
 	}
 }
