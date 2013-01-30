@@ -145,9 +145,12 @@ public class AminoAcid implements Serializable{
 	/**
 	 * should return all atoms of an amino acid in PDB format
 	 */
-	public String toPDBLineString() {
-		// TODO
-		return " ";
+	public String toPDBLineString(int startIndex, char chain) {
+		StringBuilder result = new StringBuilder();
+		for(int i = 0; i < numberOfAtoms; i++) {
+			result.append(atoms[i].toString((startIndex + i), resIndex, name.getOneLetterCode(), chain));
+		}
+		return result.toString();
 	}
 	
 	public int getAtomNumber() {

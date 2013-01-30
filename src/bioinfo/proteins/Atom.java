@@ -83,7 +83,7 @@ public class Atom implements Serializable{
 		String result = "ATOM  ##### aaaa+rrr c****i   xxxxxxxxyyyyyyyyzzzzzzzzooooootttttt          eehh";
 
 		// coordinate strings
-		DecimalFormat df = new DecimalFormat("####.###");
+		DecimalFormat df = new DecimalFormat("####.000");
 		String xCoord = df.format(position[0]).replace(",", ".");
 		while (xCoord.length() < 8)
 			xCoord = " " + xCoord;

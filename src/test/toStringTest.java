@@ -1,27 +1,23 @@
 package test;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.util.LinkedList;
+import java.util.List;
 
-import bioinfo.pdb.PDBFile;
 import bioinfo.proteins.PDBEntry;
+import bioinfo.proteins.PDBFileReader;
 
 public class toStringTest {
 
 	public static void main(String[] args) {
-		try {
-			BufferedReader br = new BufferedReader(new FileReader("prot_list"));
-			String line;
-			while((line = br.readLine()) != null) {
-				PDBFile.downloadPDB(line, "./proteins/");
-				System.out.println("got " + line);
-			}
-			br.close();
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
+		PDBFileReader reader = new PDBFileReader("./temp");
+		List<PDBEntry> list = new LinkedList<PDBEntry>();
+		list = reader.readPdbFolder();
 		
-//		PDBFile.downloadPDB("1BMV", "./proteins/");
+		PDBEntry aj = list.get(0);
+		int startIndex = 0;
+		for (int i = 0; i < 5; i++) {
+			System.out.println(aj.getAminoAcid(i).toPDBLineString(startIndex, 'A'));
+			startIndex += aj.getAminoAcid(i).getAtomNumber();
+		}
 	}
 }

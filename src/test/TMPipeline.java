@@ -1,9 +1,7 @@
 package test;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
 
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.SequenceAlignmentFileReader;
@@ -15,6 +13,9 @@ import bioinfo.superpos.TMOriginal;
 import bioinfo.superpos.Transformation;
 
 public class TMPipeline {
+	static String p1;
+	static String p2;
+
 	public static void main(String[] args) throws Exception {
 		String protDir = "/home/p/papadopoulos/Desktop/STRUCTURES/";
 		SequenceAlignmentFileReader aliReader = new SequenceAlignmentFileReader(
@@ -35,15 +36,46 @@ public class TMPipeline {
 				+ curAli.getComponent(1).getID() + ".pdb");
 
 		TMMain main = new TMMain();
-		System.out.println(curAli.toStringVerbose() + "\n");
-		System.err.println("OBJECT ORIENTED#########################");
+		double[][] result = new double[5][4];
+		// System.out.println(curAli.toStringVerbose() + "\n");
+		// System.err.println("OBJECT ORIENTED#########################");
 		Transformation tr1 = main.calculateTransformation(curAli, pdb1, pdb2);
-		System.out.println(tr1.getTmscore());
+		// System.out.println(tr1.getTmscore());
+		//
+		// tmOr = tmc.createTMInput(curAli, pdb1, pdb2);
+		// createTMFiles(curAli, tmOr);
+		//
+		// System.err.println("REFERENCE#################################");
+		// TMOriginal.calculateTmScore(p1, p2, curAli.getComponent(1).length());
+		try {
+			BufferedWriter ouuut = new BufferedWriter(new FileWriter("tmBench.tb"));
 
-		tmOr = tmc.createTMInput(curAli, pdb1, pdb2);
+			while (curAli != null) {
+				pdb1 = pdbReader.readPDBFromFile(protDir
+						+ curAli.getComponent(0).getID() + ".pdb");
+				pdb2 = pdbReader.readPDBFromFile(protDir
+						+ curAli.getComponent(1).getID() + ".pdb");
+				tmOr = tmc.createTMInput(curAli, pdb1, pdb2);
+				createTMFiles(curAli, tmOr);
+				// System.err.println("OBJECT ORIENTED#########################");
+				tr1 = main.calculateTransformation(curAli, pdb1, pdb2);
+				// System.err.println("REFERENCE#################################");
+				result = TMOriginal.calculateTmScore(p1, p2, curAli
+						.getComponent(1).length());
+				System.out.println(curAli);
+				ouuut.write(result[4][0] + "\t" + tr1.getTmscore()
+						+ "\t" + curAli.getComponent(1).length() + "\n");
+				curAli = aliReader.nextAlignment();
+			}
+			ouuut.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-		String p2 = "TM" + curAli.getComponent(1).getID() + ".pdb";
-		String p1 = "TM" + curAli.getComponent(0).getID() + ".pdb";
+	public static void createTMFiles(SequenceAlignment curAli, PDBEntry[] tmOr) {
+		p2 = "./temp/TM" + curAli.getComponent(1).getID() + ".pdb";
+		p1 = "./temp/TM" + curAli.getComponent(0).getID() + ".pdb";
 		try {
 			BufferedWriter wr1 = new BufferedWriter(new FileWriter(p1));
 			wr1.write(tmOr[0].getAtomSectionAsString());
@@ -69,17 +101,5 @@ public class TMPipeline {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.err.println("REFERENCE#################################");
-		TMOriginal.calculateTmScore(p1, p2, curAli.getComponent(1).length());
-
-		// while (curAli != null) {
-		// pdb1 = pdbReader.readPDBFromFile(protDir
-		// + curAli.getComponent(0).getID() + ".pdb");
-		// pdb2 = pdbReader.readPDBFromFile(protDir
-		// + curAli.getComponent(1).getID() + ".pdb");
-		// tr1 = main.calculateTransformation(curAli, pdb1, pdb2);
-		// System.out.println(tr1.getTmscore());
-		// curAli = aliReader.nextAlignment();
-		// }
 	}
 }
