@@ -17,6 +17,7 @@ public class DSSPEntry {
 	private double[] phi;
 	private double[] psi;
 	private double[][] caTrace; 
+	private int[] resIndex;
 	
 //	public DSSPEntry(String arg1) {
 //		if (arg1.length() == 4) {
@@ -30,7 +31,7 @@ public class DSSPEntry {
 //		}
 //	}
 	
-	public DSSPEntry(String id, AminoAcidName[] names, SecStructEight[] secondaryStructure, int[] accessability, double[] phi, double[] psi, double[][] caTrace){
+	public DSSPEntry(String id, AminoAcidName[] names, int[]resIndex, SecStructEight[] secondaryStructure, int[] accessability, double[] phi, double[] psi, double[][] caTrace){
 		if (id.length() == 4) {
 			this.id = id;
 			this.chainID = 'A';
@@ -41,6 +42,7 @@ public class DSSPEntry {
 			this.chainIDNum = Integer.valueOf(id.substring(5, 7));
 		}
 		this.names = names;
+		this.resIndex = resIndex;
 		this.secondaryStructure = secondaryStructure;
 		this.accesability = accessability;
 		this.phi = phi;
@@ -49,7 +51,7 @@ public class DSSPEntry {
 		this.length = names.length;
 	}
 	
-	public DSSPEntry(String id, List<AminoAcidName> names, List<SecStructEight> secondaryStructure, List<Integer> accessability, List<Double> phi, List<Double> psi, List<double[]> caTrace){
+	public DSSPEntry(String id, List<AminoAcidName> names, List<Integer> resIndex, List<SecStructEight> secondaryStructure, List<Integer> accessability, List<Double> phi, List<Double> psi, List<double[]> caTrace){
 		if (id.length() == 4) {
 			this.id = id;
 			this.chainID = 'A';
@@ -63,10 +65,12 @@ public class DSSPEntry {
 		this.names = names.toArray(new AminoAcidName[names.size()]);
 		this.secondaryStructure = secondaryStructure.toArray(new SecStructEight[secondaryStructure.size()]);
 		this.accesability = new int[accessability.size()];
+		this.resIndex = new int[resIndex.size()];
 		this.phi = new double[phi.size()];
 		this.psi = new double[psi.size()];
 		this.caTrace = new double[caTrace.size()][3];
 		for(int i = 0; i != names.size(); i++){
+			this.resIndex[i] = resIndex.get(i);
 			this.accesability[i] = accessability.get(i);
 			this.phi[i] = phi.get(i);
 			this.psi[i] = psi.get(i);
@@ -80,6 +84,10 @@ public class DSSPEntry {
 
 	public AminoAcidName[] getNames() {
 		return names;
+	}
+	
+	public int[] getResIndex() {
+		return resIndex;
 	}
 
 	public SecStructEight[] getSecondaryStructure() {

@@ -1,7 +1,8 @@
 package db.mysql;
 
 //import bioinfo.pdb.PDBFile;
-import bioinfo.proteins.AtomType;
+import bioinfo.proteins.DSSPEntry;
+import bioinfo.proteins.DSSPFileReader;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 
@@ -12,18 +13,18 @@ public class ImportPDBs {
 		PDBConnector pdbconnector = new PDBConnector(connection);
 		
 		PDBFileReader pdbreader = new PDBFileReader(args[0]);
+		DSSPFileReader dsspreader = new DSSPFileReader(args[1]);
 		
 		String pdb = "1j2xA00";
-		
-		if(!pdbconnector.pdbExist(pdb)){
-			PDBEntry test = pdbreader.readFromFolderById(pdb);
-			pdbconnector.addEntry(test);
-		} else{
-			System.out.println("PDB '"+pdb+"' existiert bereits in DB.");
-		}
-		
-		PDBEntry out = pdbconnector.getPDB(pdb);
-		System.out.println(out.getAminoAcid(7).getAtomByType(AtomType.CA).getPosition()[0]);
+	
+		PDBEntry pdbtest = pdbreader.readFromFolderById(pdb);
+		DSSPEntry dssptest = dsspreader.readFromFolderById(pdb);
+		//pdbconnector.addPDBEntry(pdbtest);
+		//pdbconnector.addDSSPEntry(dssptest);
+
+		DSSPEntry out = pdbconnector.getDSSP(pdb);
+		System.out.println(out.getID());
+		System.out.println(out.getLength());
 	}
 
 }
