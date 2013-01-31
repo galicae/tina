@@ -33,7 +33,7 @@ public class CollectiveClustering {
 		}
 		KMeansAllvsAll clustah = new KMeansAllvsAll(pList, acc);
 		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
-		clustah.initializeClusters();
+		clustah.initializeClusters(1);
 		clustah.update(update);
 
 		clusters = clustah.getClusters();

@@ -17,45 +17,76 @@ import bioinfo.superpos.PDBReduce;
 import bioinfo.superpos.Transformation;
 
 public class Fr4gmentTest {
-	static int fragLength = 5;
+	static int fragLength = 6;
+
 	public static void main(String[] args) {
-		PDBFileReader reader = new PDBFileReader("./proteins2/");
-		List<PDBEntry> files = new LinkedList<PDBEntry>();
-		LinkedList<ProteinFragment> pList = new LinkedList<ProteinFragment>();
-		files = reader.readPdbFolder();
-		// files.add(pdb1);
-		PDBEntry pdb1 = files.get(0);
-		for (PDBEntry e : files) {
-			Fragmenter.crunchBackboneSeq(e, pList, fragLength);
+		PDBFileReader reader = new PDBFileReader("./proteins/");
+		List<PDBEntry> list = new LinkedList<PDBEntry>();
+		list = reader.readPdbFolder();
+		double cutoff = 0.01;
+		PDBEntry pdb1 = list.get(0);
+		
+		for(int i = 0; i < list.size(); i++) {
+			pdb1 = list.get(i);
+			if(hasNoRepeats(pdb1))
+				magic(pdb1, cutoff);
 		}
-		System.out.println("crunched");
-		KMeansAllvsAll clustah = new KMeansAllvsAll(pList, 0.01);
+	}
+
+	
+	public static boolean hasNoRepeats(PDBEntry pdb) {
+		LinkedList<String> frags = new LinkedList<String>();
+		String curFrag = "";
+		for(int i = 0; i < pdb.length() - fragLength; i++) {
+			frags.add("");
+			for (int j = i; j < i + fragLength; j++) {
+				curFrag += pdb.getAminoAcid(j).getName().getOneLetterCode();
+			}
+			// check if frag is already there
+			for(int k = 0; k < frags.size(); k++) {
+				if(curFrag.equals(frags.get(k)))
+					return false;
+			}
+			frags.add(curFrag);
+			curFrag = "";
+		}
+		return true;
+	}
+	
+	
+	public static void magic(PDBEntry pdb1, double cutoff) {
+		System.out.println("Magicking protein " + pdb1.getID());
+		LinkedList<ProteinFragment> pList = new LinkedList<ProteinFragment>();
+		Fragmenter.crunchBackboneSeq(pdb1, pList, fragLength);
+		KMeansAllvsAll clustah = new KMeansAllvsAll(pList, cutoff);
 		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
-		clustah.initializeClusters();
+		clustah.initializeClusters(0);
 		clustah.update(0);
 
 		clusters = clustah.getClusters();
-		
+
 		// assembly?
 		Assembler ass = new Assembler(fragLength);
 		String query = ass.readSequence(pdb1);
 		ProteinFragment resultFragment = ass.predictStructure(query, clusters, 3);
-		
-		
+
 		double[][][] kabschFood = new double[2][pdb1.length()][3];
 		kabschFood[0] = PDBReduce.reduceSinglePDB(pdb1);
-		
-		ProteinFragment prot = new ProteinFragment("real", query, new double[0][0], fragLength);
+
+		ProteinFragment prot = new ProteinFragment("real", query,
+				new double[0][0], fragLength);
 		prot.append(kabschFood[0], "");
-		
+
 		kabschFood[1] = resultFragment.getAllResidues();
 		Transformation t = Kabsch.calculateTransformation(kabschFood);
-		
-		resultFragment.setCoordinates(t.transform(resultFragment.getAllResidues()));
+
+		resultFragment.setCoordinates(t.transform(resultFragment
+				.getAllResidues()));
 		System.out.println(t.getRmsd());
-		
+
 		try {
-			BufferedWriter w = new BufferedWriter(new FileWriter("C:/users/nikos/Desktop/test.pdb"));
+			BufferedWriter w = new BufferedWriter(new FileWriter("./results/sh"
+					+ pdb1.getID() + ".pdb"));
 			w.write("MODEL        1\n");
 			w.write(resultFragment.toString());
 			w.write("ENDMDL\n");
@@ -63,8 +94,7 @@ public class Fr4gmentTest {
 			w.write(prot.toString());
 			w.write("ENDMDL\n");
 			w.close();
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

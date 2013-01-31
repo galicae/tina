@@ -27,8 +27,10 @@ public abstract class CentroidClustering {
 	/**
 	 * this method goes through the whole input and assigns or creates clusters.
 	 * Always override.
+	 * 
+	 * @param p a flag for difficult (positive) and easy (0/negative) initialization
 	 */
-	public void initializeClusters() {
+	public void initializeClusters(int p) {
 
 	}
 
