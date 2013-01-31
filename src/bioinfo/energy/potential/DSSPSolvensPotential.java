@@ -43,7 +43,7 @@ public class DSSPSolvensPotential implements IEnergy{
 	 */
 	private double[][][] potential = new double[26][26][7];
 	//private int[] aminoCount = new int[26];
-	private final String pdbFolder;
+	private final String dsspFolder;
 	private final double MINCONTACT = 1.0d;
 	private final int MINSURFACE = 10;
 	private final double mkT = -0.582d;
@@ -56,13 +56,13 @@ public class DSSPSolvensPotential implements IEnergy{
 	private String tmpdir;
 	
 	public DSSPSolvensPotential(String vorobin, String dsspFolder, List<String> dsspIds){
-		this.pdbFolder = dsspFolder;
+		this.dsspFolder = dsspFolder;
 		this.vorobin = vorobin;
 		calculateFromDATA(dsspIds);
 	}
 	
 	public DSSPSolvensPotential(String vorobin, String tmpdir, String dsspFolder, List<String> dsspIds){
-		this.pdbFolder = dsspFolder;
+		this.dsspFolder = dsspFolder;
 		this.vorobin = vorobin;
 		this.tmpdir = tmpdir;
 		calculateFromDATA(dsspIds);
@@ -70,14 +70,14 @@ public class DSSPSolvensPotential implements IEnergy{
 	}
 	
 	public DSSPSolvensPotential(String filename,String vorobin, String tmpdir){
-		this.pdbFolder=null;
+		this.dsspFolder=null;
 		this.vorobin = vorobin;
 		this.tmpdir = tmpdir;
 		this.readFromFile(filename);
 	}
 	
 	public DSSPSolvensPotential(String filename,String vorobin){
-		this.pdbFolder=null;
+		this.dsspFolder=null;
 		this.vorobin = vorobin;
 		this.readFromFile(filename);
 	}
@@ -140,12 +140,12 @@ public class DSSPSolvensPotential implements IEnergy{
 	@Override
 	public void calculateFromDATA(List<String> dsspIds) {
 		DSSPEntry dssp = null;
-		DSSPFileReader reader = new DSSPFileReader(pdbFolder);
+		DSSPFileReader reader = new DSSPFileReader(dsspFolder);
 		VoronoiData data = null;
 		VoroPrepare vprep = new VoroPrepare();
 		Set<Integer> gridIds = null;
 		Set<Integer> pepIds = null;
-		HashMap<Integer,Integer> acc;
+		int[] acc;
 		HashMap<Integer, AminoAcidName> amino;
 		HashMap<Integer, HashMap<Integer,Double>> faces;
 		HashMap<Integer,Double> neighbors;
@@ -167,10 +167,7 @@ public class DSSPSolvensPotential implements IEnergy{
 			dssp = reader.readFromFolderById(dsspId);
 			data = new VoronoiData(dsspId,null);
 			data = vprep.reduceDSSP(dssp);
-			acc = new HashMap<Integer,Integer>();
-			for(int i = 0; i != dssp.getPdbIndizes().length; i++){
-				acc.put(dssp.getPdbIndizes()[i], dssp.getAccesability()[i]);
-			}
+			acc = dssp.getAccesability();
 			pepIds = data.getAllInsertedIds();
 			gridIds = data.fillGridWithoutClashes(data.extendHull(gridHullExtend), gridDensity, gridClash);
 			VoroPPWrap voro;
@@ -206,7 +203,7 @@ public class DSSPSolvensPotential implements IEnergy{
 					}
 				}
 				if(surfaceFlag){
-					accessability = acc.get(id1);
+					accessability = acc[id1];
 					System.err.println(accessability);
 					surfaceIds.add(id1);
 					if(accessability > MINSURFACE){
@@ -302,7 +299,6 @@ public class DSSPSolvensPotential implements IEnergy{
 		String dsspLoc = args[0];
 		
 		File file = new File(dsspLoc);
-		System.out.println(file.listFiles().length);
 		for(File f : file.listFiles()){
 			dsspIds.add(f.getName().substring(0, 7));
 		}

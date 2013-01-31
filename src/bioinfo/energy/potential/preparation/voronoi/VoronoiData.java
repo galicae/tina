@@ -177,7 +177,12 @@ public class VoronoiData {
 	 * @return Set of all existing identifiers in the dataset
 	 */
 	public Set<Integer> getAllInsertedIds(){
-		return amino.keySet();
+		Set<Integer> result = new HashSet<Integer>();
+		for(int i: amino.keySet()){
+			result.add(i);
+		}
+		return result;
+		
 	}
 	
 	/**
