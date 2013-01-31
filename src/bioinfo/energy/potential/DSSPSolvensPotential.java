@@ -168,8 +168,8 @@ public class DSSPSolvensPotential implements IEnergy{
 			data = new VoronoiData(dsspId,null);
 			data = vprep.reduceDSSP(dssp);
 			acc = new HashMap<Integer,Integer>();
-			for(int i = 0; i != dssp.getPdbIndizes().length; i++){
-				acc.put(dssp.getPdbIndizes()[i], dssp.getAccesability()[i]);
+			for(int i = 0; i != dssp.getResIndex().length; i++){
+				acc.put(dssp.getResIndex()[i], dssp.getAccesability()[i]);
 			}
 			pepIds = data.getAllInsertedIds();
 			gridIds = data.fillGridWithoutClashes(data.extendHull(gridHullExtend), gridDensity, gridClash);
