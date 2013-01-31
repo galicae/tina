@@ -14,7 +14,7 @@ import bioinfo.proteins.DSSPEntry;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.SecStructEight;
 
-public class PDBConnector extends MysqlWrapper{
+public class DBConnector extends MysqlWrapper{
 
 	private static final String tablename = "pdb";
 	
@@ -34,7 +34,7 @@ public class PDBConnector extends MysqlWrapper{
 	private static final String getDSSPById = "select dssp.*,aminoacid.name,aminoacid.res_index from dssp join pdb on pdb.id = dssp.pdb_id join aminoacid on aminoacid.id = dssp.aminoacid_id" +
 			" where pdb.pdb_id = ? and pdb.chainID = ? and pdb.chainIDNum = ?";
 	
-	public PDBConnector(MysqlDBConnection connection) {
+	public DBConnector(MysqlDBConnection connection) {
 		super(connection);
 	}
 	

@@ -42,7 +42,7 @@ public class aligntest {
 		Sequence seq2;
 		
 		seq1 = new Sequence("1j2xA00","GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK");
-		seq2 = new Sequence("1e3hA02","DDVLEALSAAVRPELSAALTIAGKQDREAELDRVKALAAEKLLPEFEGREKEISAAYRALTKSLVRERVIAEKKRIDG");
+		seq2 = new Sequence("1wq2B00","MEEAKQKVVDFLNSKSKSKFYFNDFTDLFPDMKQREVKKILTALVNDEVLEYWSSGSTTMYGLKG");
 		SequenceAlignment align1 = mustertest.align(seq1, seq2);
 		SequenceAlignment align2 = substgotoh.align(seq1, seq2);
 		System.out.println(align1.toStringVerbose());

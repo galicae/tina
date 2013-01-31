@@ -1,6 +1,10 @@
 package db.mysql;
 
 //import bioinfo.pdb.PDBFile;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+import bioinfo.alignment.kerbsch.temp.SeqLibrary;
 import bioinfo.proteins.DSSPEntry;
 import bioinfo.proteins.DSSPFileReader;
 import bioinfo.proteins.PDBEntry;
@@ -10,21 +14,31 @@ public class ImportPDBs {
 
 	public static void main(String[] args) {
 		LocalConnection connection = new LocalConnection();
-		PDBConnector pdbconnector = new PDBConnector(connection);
+		DBConnector pdbconnector = new DBConnector(connection);
 		
+		HashMap<String,char[]> seqlib = SeqLibrary.read("../GoBi_old/full_domains.seqlib");
 		PDBFileReader pdbreader = new PDBFileReader(args[0]);
 		DSSPFileReader dsspreader = new DSSPFileReader(args[1]);
 		
-		String pdb = "1j2xA00";
+		for(Entry<String,char[]> e : seqlib.entrySet()){
+			PDBEntry pdbtest = pdbreader.readFromFolderById(e.getKey());
+			pdbconnector.addPDBEntry(pdbtest);
+			DSSPEntry dssptest = dsspreader.readFromFolderById(e.getKey());
+			pdbconnector.addDSSPEntry(dssptest);
+		}
+//		String pdb = "2f0aD00";
+//		String pdb2 = "1e3hA02";
 	
-		PDBEntry pdbtest = pdbreader.readFromFolderById(pdb);
-		DSSPEntry dssptest = dsspreader.readFromFolderById(pdb);
-		//pdbconnector.addPDBEntry(pdbtest);
-		//pdbconnector.addDSSPEntry(dssptest);
+		
+//		pdbtest = pdbreader.readFromFolderById(pdb2);
+//		pdbconnector.addPDBEntry(pdbtest);
+		
 
-		DSSPEntry out = pdbconnector.getDSSP(pdb);
-		System.out.println(out.getID());
-		System.out.println(out.getLength());
+//		dssptest = dsspreader.readFromFolderById(pdb2);
+//		pdbconnector.addDSSPEntry(dssptest);
+		
+//		DSSPEntry dssp = pdbconnector.getDSSP(pdb);
+//		System.out.println(dssp.getLength());
 	}
 
 }

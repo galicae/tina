@@ -1,5 +1,7 @@
 package bioinfo.alignment.kerbsch;
 
+import db.mysql.DBConnector;
+import db.mysql.LocalConnection;
 import bioinfo.Sequence;
 import bioinfo.alignment.Alignable;
 import bioinfo.alignment.Alignment;
@@ -30,7 +32,8 @@ public class GlobalMusterLite extends Gotoh {
 	private final int substWeight = 2;
 
 	private int[][] tempScore;
-	private DSSPFileReader dsspReader = new DSSPFileReader("../GoBi_old/DSSP");
+	private LocalConnection con = new LocalConnection();
+	private DBConnector dbconnector = new DBConnector(con);
 	
 	public GlobalMusterLite(double gapOpen, double gapExtend, int[][] hbMatrix,
 			int[][] polMatrix, int[][] secStructMatrix, int[][] substMatrix) {
@@ -100,10 +103,10 @@ public class GlobalMusterLite extends Gotoh {
 	private void calculateMatrices() {	
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
-		DSSPEntry template = dsspReader.readFromFolderById(sequence1.getID());
+		DSSPEntry template = dbconnector.getDSSP(sequence1.getID());
 		SecStructEight[] tSecStruct = template.getSecondaryStructure();
 		
-		DSSPEntry query = dsspReader.readFromFolderById(sequence2.getID());
+		DSSPEntry query = dbconnector.getDSSP(sequence2.getID());
 		SecStructEight[] qSecStruct = query.getSecondaryStructure();
 
 		for (int i = 1; i < xsize; i++) {
