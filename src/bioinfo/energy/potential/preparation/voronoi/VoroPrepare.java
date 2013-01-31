@@ -9,6 +9,7 @@ import cern.colt.matrix.DoubleFactory1D;
 import bioinfo.proteins.AminoAcid;
 import bioinfo.proteins.Atom;
 import bioinfo.proteins.AtomType;
+import bioinfo.proteins.DSSPEntry;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 
@@ -75,8 +76,37 @@ public class VoroPrepare {
 					reduced.addValues(i, centroid, tmp.getName());				
 				}
 			};break;
+			case SC:{
+				AminoAcid aaTmp;
+				Atom aTmp;
+				List<double[]> coordTmp;
+				double[] centroid;
+				for(int i = 0; i != pdb.length(); i++){
+					aaTmp = pdb.getAminoAcid(i);
+					coordTmp = new ArrayList<double[]>();
+					for(int j = 0; j != aaTmp.getAtomNumber(); j++){
+						aTmp = aaTmp.getAtom(j);
+						if(aTmp.getType() != AtomType.C && aTmp.getType() != AtomType.CA && aTmp.getType() != AtomType.O && aTmp.getType() != AtomType.N){
+							coordTmp.add(aTmp.getPosition());
+						}
+					}
+					centroid = calculateCentroid(coordTmp.toArray(new double[coordTmp.size()][3]));
+					reduced.addValues(i,centroid,aaTmp.getName());
+				}
+			}break;
 		}
 		
+		return reduced;
+
+	}
+	
+	public VoronoiData reduceDSSP(DSSPEntry dssp){
+
+		VoronoiData reduced = new VoronoiData(dssp.getID(),VoroPrepType.CA);
+		
+		for(int i = 0; i != dssp.getLength(); i++){
+			reduced.addValues(i,dssp.getCaTrace()[i],dssp.getNames()[i]);
+		}
 		return reduced;
 
 	}
