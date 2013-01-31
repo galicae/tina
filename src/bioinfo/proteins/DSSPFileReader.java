@@ -244,8 +244,8 @@ public class DSSPFileReader {
 	private DSSPEntry parseEntry(BufferedReader br, String DSSPId){
 		String line;
 		boolean sectionFlag = false;
-		List<Integer> pdbInd = new ArrayList<Integer>();
 		List<AminoAcidName> amino = new ArrayList<AminoAcidName>();
+		List<Integer> resIndex = new ArrayList<Integer>();
 		List<SecStructEight> secstr = new ArrayList<SecStructEight>();
 		List<Integer> accessability = new ArrayList<Integer>();
 		List<Double> phi = new ArrayList<Double>();
@@ -260,22 +260,20 @@ public class DSSPFileReader {
 					if(line.charAt(13) == '!'){
 						continue;
 					}
-					pdbInd.add(Integer.parseInt(line.substring(6,10).trim()));
-					System.out.println(Integer.parseInt(line.substring(6,10).trim()));
-					continue;
 					if(line.charAt(13)>96){
 						amino.add(AminoAcidName.getAAFromOLC((char)(line.charAt(13)-32)));
 					}else{
 						amino.add(AminoAcidName.getAAFromOLC(line.charAt(13)));
 					}
+					resIndex.add(Integer.parseInt(line.substring(5,10).trim()));
 					secstr.add(SecStructEight.getSSFromChar(line.charAt(16)));
-					accessability.add(Integer.parseInt(line.substring(35,38).trim()));
-					phi.add(Double.parseDouble(line.substring(104,109).trim()));
-					psi.add(Double.parseDouble(line.substring(110,115).trim()));
+					accessability.add(Integer.parseInt(line.substring(34,38).trim()));
+					phi.add(Double.parseDouble(line.substring(103,109).trim()));
+					psi.add(Double.parseDouble(line.substring(109,115).trim()));
 					coord = new double[3];
-					coord[0] = Double.parseDouble(line.substring(116,122).trim());
-					coord[1] = Double.parseDouble(line.substring(123,129).trim());
-					coord[2] = Double.parseDouble(line.substring(130,136).trim());
+					coord[0] = Double.parseDouble(line.substring(115,122).trim());
+					coord[1] = Double.parseDouble(line.substring(122,129).trim());
+					coord[2] = Double.parseDouble(line.substring(129,136).trim());
 					caTrace.add(coord);
 				}
 				if(line.trim().startsWith("#")){
@@ -286,7 +284,7 @@ public class DSSPFileReader {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		return new DSSPEntry(DSSPId,pdbInd,amino,secstr,accessability,phi,psi,caTrace);
+		return new DSSPEntry(DSSPId,amino,resIndex,secstr,accessability,phi,psi,caTrace);
 	}
 	
 }

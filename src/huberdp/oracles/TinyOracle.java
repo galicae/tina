@@ -30,13 +30,11 @@ public class TinyOracle implements Oracle {
 	@Override
 	public LinkedList<PartialAlignment> findSimiliarSegments
 			(RDPProblem problem, int m) {
-		// TODO
 		
 		// set Sequences for Gotoh
 		char[] targetChars = Arrays.copyOfRange
 				(problem.targetSequence.getSequence(),
 						problem.targetStart, problem.targetEnd+1);
-		
 		
 		char[] templateChars = Arrays.copyOfRange
 				(problem.templateSequence.getSequence(),
@@ -55,10 +53,25 @@ public class TinyOracle implements Oracle {
 				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX);
 		SequenceAlignment alignment = gotoh.align
 				(templateSequence, targetSequence);
-		// TODO
 		
-		LinkedList<RDPProblem> results = new LinkedList<RDPProblem>();
-		results.add(null);
+		LinkedList<PartialAlignment> results = new LinkedList<PartialAlignment>();
+		
+		// TODO calculate new partial alignment: merge problem.partialAlignment with alignment
+		SequenceAlignment pa = null;
+		// TODO calculate patarstart, patarend, 
+		int paTarStart = 0;
+		int paTarEnd   = 0;
+		int paTemStart = 0;
+		int paTemEnd   = 0;
+		
+		results.add(new PartialAlignment
+				(problem.templateSequence, problem.targetStructure,
+				problem.templateSequence, problem.templateStructure,
+				pa,
+				problem.targetStart, problem.targetEnd,
+				problem.templateStart, problem.templateEnd,
+				paTarStart, paTarEnd, paTemStart, paTemEnd));
+		
 		return results;
 	}
 
