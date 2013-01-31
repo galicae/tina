@@ -245,6 +245,12 @@ public class PDBFileReader {
 		List<AminoAcid> aminoacids = new ArrayList<AminoAcid>();
 		try{
 			char chain = pdbId.charAt(4);
+
+			//chain = 0 fix
+			if(chain == 48){
+				chain = ' ';
+			}
+			
 			String line;
 			List<Atom> atoms = new ArrayList<Atom>();
 			
@@ -263,9 +269,10 @@ public class PDBFileReader {
 										
 					chainId = line.charAt(21);
 					if(chainId != chain){
+						
 						continue;
 					}
-					
+
 					resSeq = Integer.parseInt(line.substring(22,26).trim());
 					resName = line.substring(17,20).trim();
 					

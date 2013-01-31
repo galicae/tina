@@ -28,13 +28,13 @@ public class ImportPDBs {
 			dssptest = dsspreader.readFromFolderById(e.getKey());
 			pdbconnector.addDSSPEntry(dssptest);
 		}
-//		String pdb = "2f0aD00";
+		
+//		String pdb = "1bus000";
 //		String pdb2 = "1e3hA02";
 	
 		
-//		pdbtest = pdbreader.readFromFolderById(pdb2);
-//		pdbconnector.addPDBEntry(pdbtest);
-		
+//		pdbtest = pdbreader.readFromFolderById(pdb);
+//		pdbconnector.addPDBEntry(pdbtest);	
 
 //		dssptest = dsspreader.readFromFolderById(pdb2);
 //		pdbconnector.addDSSPEntry(dssptest);

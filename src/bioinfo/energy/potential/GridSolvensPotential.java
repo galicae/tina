@@ -201,7 +201,7 @@ public class GridSolvensPotential implements IEnergy{
 					}
 				}
 				if(surfaceFlag){
-					//System.err.println(surfaceArea);
+					System.err.println(surfaceArea);
 					surfaceIds.add(id1);
 					if(surfaceArea > MINCONTACT){
 						for(int id2 : neighbors.keySet()){
@@ -374,7 +374,7 @@ public class GridSolvensPotential implements IEnergy{
 			pdbIds.add(f.getName().substring(0, 7));
 		}
 		
-		GridSolvensPotential pot = new GridSolvensPotential(args[1],pdbLoc, pdbIds, VoroPrepType.SC);
+		GridSolvensPotential pot = new GridSolvensPotential(args[1],pdbLoc, pdbIds, VoroPrepType.CA);
 		pot.writeToFile(args[2]);
 		System.out.println("done");
 		
