@@ -3,6 +3,8 @@ package bioinfo.energy.potential;
 import java.util.List;
 import java.util.Map;
 
+import bioinfo.proteins.PDBEntry;
+
 public interface IEnergy {
 	
 	/**
@@ -18,12 +20,12 @@ public interface IEnergy {
 	public void readFromFile(String filename);
 	
 	/**
-	 * calculates energy from PDB in a Boltzmann-based mean force way
+	 * calculates energy from data in a Boltzmann-based mean force way
 	 * should only have to be done once, written to file and then reused from there
 	 * @param List of pdb ids, which should be used to generate energy function
-	 * location of PDBs can be implemented in abstract class
+	 * location of data can be implemented in abstract class
 	 */
-	public void calculateFromPDBs(List<String> pdbIds);
+	public void calculateFromDATA(List<String> pdbIds);
 	
 	/**
 	 * 
@@ -37,5 +39,12 @@ public interface IEnergy {
 	 * @return List of String values representing valid (and required!) keys which can be used with getEnergyValue
 	 */
 	public String[] getMapKeys();
+	
+	/**
+	 * 
+	 * @param model of type PDBEntry
+	 * @return score of model calculated with Potential
+	 */
+	public double scoreModel(PDBEntry model);
 	
 }

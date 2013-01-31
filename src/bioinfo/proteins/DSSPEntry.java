@@ -12,6 +12,7 @@ public class DSSPEntry {
 	private int length;
 	
 	private AminoAcidName[] names;
+	private int[] pdbIndizes;
 	private SecStructEight[] secondaryStructure;
 	private int[] accesability;
 	private double[] phi;
@@ -30,7 +31,7 @@ public class DSSPEntry {
 //		}
 //	}
 	
-	public DSSPEntry(String id, AminoAcidName[] names, SecStructEight[] secondaryStructure, int[] accessability, double[] phi, double[] psi, double[][] caTrace){
+	public DSSPEntry(String id, int[] pdbIndizes, AminoAcidName[] names, SecStructEight[] secondaryStructure, int[] accessability, double[] phi, double[] psi, double[][] caTrace){
 		if (id.length() == 4) {
 			this.id = id;
 			this.chainID = 'A';
@@ -40,6 +41,7 @@ public class DSSPEntry {
 			this.chainID = id.charAt(4);
 			this.chainIDNum = Integer.valueOf(id.substring(5, 7));
 		}
+		this.pdbIndizes = pdbIndizes;
 		this.names = names;
 		this.secondaryStructure = secondaryStructure;
 		this.accesability = accessability;
@@ -49,7 +51,7 @@ public class DSSPEntry {
 		this.length = names.length;
 	}
 	
-	public DSSPEntry(String id, List<AminoAcidName> names, List<SecStructEight> secondaryStructure, List<Integer> accessability, List<Double> phi, List<Double> psi, List<double[]> caTrace){
+	public DSSPEntry(String id, List<Integer> pdbIndizes, List<AminoAcidName> names, List<SecStructEight> secondaryStructure, List<Integer> accessability, List<Double> phi, List<Double> psi, List<double[]> caTrace){
 		if (id.length() == 4) {
 			this.id = id;
 			this.chainID = 'A';
@@ -60,6 +62,7 @@ public class DSSPEntry {
 			this.chainIDNum = Integer.valueOf(id.substring(5, 7));
 		}
 		this.length = names.size();
+		this.pdbIndizes = new int[pdbIndizes.size()];
 		this.names = names.toArray(new AminoAcidName[names.size()]);
 		this.secondaryStructure = secondaryStructure.toArray(new SecStructEight[secondaryStructure.size()]);
 		this.accesability = new int[accessability.size()];
@@ -67,6 +70,7 @@ public class DSSPEntry {
 		this.psi = new double[psi.size()];
 		this.caTrace = new double[caTrace.size()][3];
 		for(int i = 0; i != names.size(); i++){
+			this.pdbIndizes[i] = pdbIndizes.get(i);
 			this.accesability[i] = accessability.get(i);
 			this.phi[i] = phi.get(i);
 			this.psi[i] = psi.get(i);
@@ -100,6 +104,10 @@ public class DSSPEntry {
 
 	public double[][] getCaTrace() {
 		return caTrace;
+	}
+	
+	public int[] getPdbIndizes(){
+		return pdbIndizes;
 	}
 	
 	/**

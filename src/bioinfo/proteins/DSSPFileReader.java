@@ -244,6 +244,7 @@ public class DSSPFileReader {
 	private DSSPEntry parseEntry(BufferedReader br, String DSSPId){
 		String line;
 		boolean sectionFlag = false;
+		List<Integer> pdbInd = new ArrayList<Integer>();
 		List<AminoAcidName> amino = new ArrayList<AminoAcidName>();
 		List<SecStructEight> secstr = new ArrayList<SecStructEight>();
 		List<Integer> accessability = new ArrayList<Integer>();
@@ -259,6 +260,9 @@ public class DSSPFileReader {
 					if(line.charAt(13) == '!'){
 						continue;
 					}
+					pdbInd.add(Integer.parseInt(line.substring(6,10).trim()));
+					System.out.println(Integer.parseInt(line.substring(6,10).trim()));
+					continue;
 					if(line.charAt(13)>96){
 						amino.add(AminoAcidName.getAAFromOLC((char)(line.charAt(13)-32)));
 					}else{
@@ -282,7 +286,7 @@ public class DSSPFileReader {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		return new DSSPEntry(DSSPId,amino,secstr,accessability,phi,psi,caTrace);
+		return new DSSPEntry(DSSPId,pdbInd,amino,secstr,accessability,phi,psi,caTrace);
 	}
 	
 }
