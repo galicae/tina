@@ -23,30 +23,26 @@ public class PartialAlignment extends RDPProblem {
 	public int paTemEnd;
 	
 	/**
-	 * 
-	 * @param targetSequence
-	 * @param targetStructure
-	 * @param templateSequence
-	 * @param templateStructure
-	 * @param partialAlignment
-	 * @param targetStart
-	 * @param targetEnd
-	 * @param templateStart
-	 * @param templateEnd
+	 * Constructs a new PartialAlignment given the following parameters:
+	 * @param targetSequence Sequence of the target
+	 * @param targetStructure (incomplete) structure of the target (maybe null)
+	 * @param templateSequence Sequence of the template
+	 * @param templateStructure Structure of the template
+	 * @param partialAlignment partial SequenceAlignment
+	 * @param targetStart start of the subproblem (on target)
+	 * @param targetEnd end of the subproblem (on target)
+	 * @param templateStart start of the subproblen (on template)
+	 * @param templateEnd end of the subproblem (on template)
+	 * @param paTarStart start of the new partial alignment (target)
+	 * @param paTarEnd end of the new partial alignment (target)
+	 * @param paTemStart start of the new partial alignment (template)
+	 * @param paTemEnd end of the new partial alignment (template)
 	 */
 	public PartialAlignment(Sequence targetSequence, PDBEntry targetStructure,
 			Sequence templateSequence, PDBEntry templateStructure,
-			SequenceAlignment partialAlignment, int targetStart, int targetEnd,
-			int templateStart, int templateEnd) {
-		super(targetSequence, targetStructure, templateSequence, templateStructure,
-				partialAlignment, targetStart, targetEnd, templateStart, templateEnd);
-	}
-	
-	public PartialAlignment(Sequence targetSequence, PDBEntry targetStructure,
-			Sequence templateSequence, PDBEntry templateStructure,
-			SequenceAlignment partialAlignment, int targetStart, int targetEnd,
-			int templateStart, int templateEnd, int paTarStart, int paTarEnd,
-			int paTemStart, int paTemEnd) {
+			SequenceAlignment partialAlignment,
+			int targetStart, int targetEnd, int templateStart, int templateEnd,
+			int paTarStart, int paTarEnd, int paTemStart, int paTemEnd) {
 		super(targetSequence, targetStructure, templateSequence, templateStructure,
 				partialAlignment, targetStart, targetEnd, templateStart, templateEnd);
 		this.paTarStart = paTarStart;

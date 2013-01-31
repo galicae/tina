@@ -9,8 +9,6 @@ package huberdp;
 
 import java.util.LinkedList;
 
-import bioinfo.alignment.Alignment;
-
 /**
  * @author huberste
  * @lastchange 2013-01-26
@@ -44,7 +42,6 @@ public class HubeRDP {
 		if (pq.isEmpty() ) {
 			// nothing to do here: everything is already calculated
 			// DO NOTHING
-			
 		} else {
 			// v := <SP, \empty >^{\vee} \leftarrow first(pq)
 			RDPSolutionTreeOrNode v = pq.getFirst();

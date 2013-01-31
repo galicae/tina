@@ -37,6 +37,7 @@ public class RDPSolutionTreeOrNode
 	public RDPSolutionTreeOrNode(RDPSolutionTreeAndNode parent, RDPProblem problem) {
 		super(parent);
 		this.problem=problem;
+		this.score = calcScore();
 	}
 
 	@Override
@@ -49,6 +50,23 @@ public class RDPSolutionTreeOrNode
 			return -1;
 		}
 //		return 0;
+	}
+	
+	/**
+	 * This function calculates an heuristic score for the Priority Queue
+	 * @return
+	 */
+	private double calcScore() {
+		// TODO calculate score
+		
+		/**
+		 * Possible Scoring features:
+		 * unclosable gaps
+		 * large pags
+		 * ...
+		 */
+		
+		return 0.0;
 	}
 
 	/**
