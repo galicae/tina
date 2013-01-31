@@ -260,7 +260,8 @@ public class DBConnector extends MysqlWrapper{
 					PreparedStatement stmt2 = connection.createStatement("select id from aminoacid where res_index = ? and pdb_id = ?");
 					
 					for (int i = 0; i < entry.getLength(); i++) {
-						
+						System.out.println(entry.getResIndex()[i]);
+						System.out.println(entry.getID());
 						stmt2.setInt(1, entry.getResIndex()[i]);
 						stmt2.setInt(2, pdbDBID);
 						res = stmt2.executeQuery();

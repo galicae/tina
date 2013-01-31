@@ -19,11 +19,13 @@ public class ImportPDBs {
 		HashMap<String,char[]> seqlib = SeqLibrary.read("../GoBi_old/full_domains.seqlib");
 		PDBFileReader pdbreader = new PDBFileReader(args[0]);
 		DSSPFileReader dsspreader = new DSSPFileReader(args[1]);
+		PDBEntry pdbtest;
+		DSSPEntry dssptest;
 		
 		for(Entry<String,char[]> e : seqlib.entrySet()){
-			PDBEntry pdbtest = pdbreader.readFromFolderById(e.getKey());
+			pdbtest = pdbreader.readFromFolderById(e.getKey());
 			pdbconnector.addPDBEntry(pdbtest);
-			DSSPEntry dssptest = dsspreader.readFromFolderById(e.getKey());
+			dssptest = dsspreader.readFromFolderById(e.getKey());
 			pdbconnector.addDSSPEntry(dssptest);
 		}
 //		String pdb = "2f0aD00";
