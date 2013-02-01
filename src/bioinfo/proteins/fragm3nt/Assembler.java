@@ -41,7 +41,7 @@ public class Assembler {
 		ProteinFragment curFrag = new ProteinFragment("dada", new double[1][1],
 				1);
 
-//		LinkedList<ProteinFragment> rank = new LinkedList<ProteinFragment>();
+		LinkedList<ProteinFragment> rank = new LinkedList<ProteinFragment>();
 		double tempScore = -Double.MAX_VALUE;
 		double temp = 0;
 		double[][] matrix = new double[1][1];
@@ -58,33 +58,51 @@ public class Assembler {
 				}
 			}
 
-//			curFrag = c.getCentroid().clone();
-//			curFrag.setClusterIndex((int) (temp * 1000));
-//			if (j == 0)
-//				rank.add(curFrag);
-//			else {
-//				for (int k = 0; k < rank.size(); k++) {
-//					if ((temp * 1000) < rank.get(k).getClusterIndex())
-//						continue;
-//					else {
-//						rank.add(k, curFrag);
-//						break;
-//					}
-//				}
-//			}
-
-			if (temp > tempScore) {
-				curFrag = c.getCentroid().clone();
-				curFrag.setSequence(query);
-				tempScore = temp;
+			curFrag = c.getCentroid().clone();
+			curFrag.setClusterIndex((int) (temp * 1000));
+			// reward sequence IDENTITY
+			int percent = 0;
+			for(int i = 0; i < fragLength; i++) {
+				if(query.charAt(i) == curFrag.getSequence().charAt(i)) {
+					int curScore = curFrag.getClusterIndex();
+					curFrag.setClusterIndex(curScore + 10);
+					percent++;
+				}
 			}
+			if(percent == fragLength) {
+				int curScore = curFrag.getClusterIndex();
+				curFrag.setClusterIndex(curScore * 3);
+			}
+			// add to sorted list of results
+			if (j == 0)
+				rank.add(curFrag);
+			else {
+				for (int k = 0; k < rank.size(); k++) {
+					if ((temp * 1000) < rank.get(k).getClusterIndex())
+						continue;
+					else {
+						rank.add(k, curFrag);
+						break;
+					}
+				}
+			}
+
+//			if (temp > tempScore) {
+//				curFrag = c.getCentroid().clone();
+//				tempScore = temp;
+//			}
 		}
-		return curFrag;
+		if(!query.equals(rank.getFirst().getSequence()))
+			System.err.println("wrong fragment!! " + query + " " + rank.getFirst().getSequence());
+//		System.out.println(query + " " + curFrag.getSequence());
+		curFrag.setSequence(query);
+		return rank.getFirst();
 	}
 
 	/**
 	 * this function merges two fragments by aligning the end of the stable
-	 * fragment to the beginning of the "move" fragment and incorporating the
+	 * fragment to the beginning of the
+	 *  "move" fragment and incorporating the
 	 * unaligned parts of the "move" fragment to the stable.
 	 * 
 	 * @param stable

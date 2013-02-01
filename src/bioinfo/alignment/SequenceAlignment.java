@@ -11,7 +11,7 @@ import bioinfo.Sequence;
 
 /**
  * @author gobi_4
- * @date November 25, 2012
+ * @lastchange 2013-02-01
  */
 public class SequenceAlignment implements Alignment {
 
@@ -37,7 +37,6 @@ public class SequenceAlignment implements Alignment {
 	 * n or m of the sequences 1 or 2. every position in the scd dimension of the
 	 * arrays contains the index of the residue from the other sequence it is
 	 * aligned to
-	 * 
 	 */
 	private final int[][] map;
 	/**
@@ -142,7 +141,11 @@ public class SequenceAlignment implements Alignment {
 		return rows[0].length;
 	}
 	
-	//get an array with indices of only alignedResidues
+	/**
+	 * Calculates an 2D array similiar to the map[][], but that only contains
+	 * the aligned residues
+	 * @return the 2D array
+	 */
 	public int[][] getAlignedResidues() {
 		int[][] result = new int[2][countAlignedResidues()];
 		int temp = 0;
@@ -156,7 +159,10 @@ public class SequenceAlignment implements Alignment {
 		return result;
 	}
 	
-	//calc aligned indices
+	/**
+	 * Calculates the number of aligned residues
+	 * @return the number of aligned residues
+	 */
 	public int countAlignedResidues(){
 		int result = 0;
 		for (int i = 0; i < map[0].length; i++) {

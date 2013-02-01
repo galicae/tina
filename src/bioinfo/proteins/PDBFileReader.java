@@ -315,6 +315,9 @@ public class PDBFileReader {
 	}
 
 	private PDBEntry parseRealEntry(BufferedReader br, String pdbId){
+		if(pdbId.equals("1ACX"))
+			System.out.print("");
+			
 		List<AminoAcid> aminoacids = new ArrayList<AminoAcid>();
 		String newPdbId = pdbId;
 		try{
@@ -322,7 +325,7 @@ public class PDBFileReader {
 			if(pdbId.length() == 6)
 				chain = pdbId.charAt(5);
 			else
-				chain = 'A';
+				chain = '.';
 			String line;
 			List<Atom> atoms = new ArrayList<Atom>();
 			
@@ -340,6 +343,13 @@ public class PDBFileReader {
 				if(line.startsWith("ATOM")){
 										
 					chainId = line.charAt(21);
+					if(chainId == ' ') {
+						chain = 'A';
+						chainId = chain;
+					}
+					else
+						if(chain == '.')
+							chain = chainId;
 					if(chainId != chain){
 						continue;
 					}
