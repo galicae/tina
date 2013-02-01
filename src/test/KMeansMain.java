@@ -53,7 +53,7 @@ public class KMeansMain {
 
 		KMeansAllvsAll clusterAlgorithm = new KMeansAllvsAll(pList, acc);
 		System.out.println("initializing clusters...");
-		clusterAlgorithm.initializeClusters();
+		clusterAlgorithm.initializeClusters(1);
 //		clusterAlgorithm.checkAllFragments();
 		updateTime = System.currentTimeMillis();
 

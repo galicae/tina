@@ -61,10 +61,11 @@ public class Fragmenter {
 				seq.delete(0, fLength);
 				for (int j = i; j < i + fLength; j++) {
 					tempAA = pdb.getAminoAcid(j);
-					
 					seq.append(tempAA.getName().getOneLetterCode());
 					temp[j - i] = tempAA.getAtomByType(AtomType.CA);
 				}
+//				if(seq.toString().equals("IGYPA"))
+//					System.out.println();
 				ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_" + i, seq.toString(), temp, fLength);
 				l.add(tempFrag);
 			}

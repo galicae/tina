@@ -3,7 +3,6 @@ package db.mysql;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,23 +15,52 @@ import bioinfo.proteins.SecStructEight;
 
 public class DBConnector extends MysqlWrapper{
 
-	private static final String tablename = "pdb";
+	private static final String pdb_table = "pdb";
+	private static final String amino_table = "aminoacid";
+	private static final String atom_table = "atom";
+	private static final String dssp_table = "dssp";
+	private static final String lastIds_table = "last_ids";
+	private static final String seq_table = "sequence";
 	
-	private static final String[] pdbfields = {"id","pdb_id","chainID", "chainIDNum","length"};
+	private static final String[] pdbfields
+	= {"id","pdb_id","chainID", "chainIDNum","length"};
 	private static final String[] dsspfields = {"id","ss","sa", "phi","psi","x_ca","y_ca","z_ca","aminoacid_id","pdb_id"};
 	private static final String[] aafields = {"id","name","res_index","numberofAtom","pdb_id"};
 	private static final String[] atomfields = {"id","type","x","y","z","aminoacid_id"};
+	private static final String[] lastIDfields = {"last_aa_id"};
 	
-	private static final String setPDBEntry = "insert into "+tablename+" ("+pdbfields[1]+","+pdbfields[2]+","+pdbfields[3]+","+pdbfields[4]+") values (?,?,?,?)";	
-	private static final String getPDBById = "select * from pdb join aminoacid on pdb.id = aminoacid.pdb_id join atom on aminoacid.id = atom.aminoacid_id" +
+	//pdb queries
+	private static final String setPDBEntry = "insert into "+pdb_table+" ("+pdbfields[1]+","+pdbfields[2]+","+pdbfields[3]+","+pdbfields[4]+") values (?,?,?,?)";	
+	private static final String getPDBById = "select * from "+pdb_table+" join aminoacid on pdb.id = aminoacid.pdb_id join atom on aminoacid.id = atom.aminoacid_id" +
 			" where pdb.pdb_id = ? and pdb.chainID = ? and pdb.chainIDNum = ?";
+	private static final String setAminoEntry = "insert into "+amino_table+" ("+aafields[0]+","+aafields[1]+","+aafields[2]+","+aafields[3]+","+aafields[4]+") values (?,?,?,?,?)";
+	private static final String setAtomEntry = "insert into "+atom_table+" ("+atomfields[1]+","+atomfields[2]+","+atomfields[3]+","+atomfields[4]+","+atomfields[5]+") values (?,?,?,?,?)";
+	private static final String queryPDBExist = "select id from "+pdb_table+" where "+pdbfields[1]+" = ? and "+pdbfields[2]+" = ? and "+pdbfields[3]+" = ?";
+	private static final String setLastAAId = "update "+lastIds_table+" set "+lastIDfields[0]+" = ?";
 	
-	private static final String setDSSPEntry = "insert into dssp ("
+	//dssp queries
+	private static final String setDSSPEntry = "insert into "+dssp_table+" ("
 			+ dsspfields[1] + "," + dsspfields[2] + "," + dsspfields[3] + ","
 			+ dsspfields[4] + "," + dsspfields[5] + "," + dsspfields[6] + ","
 			+ dsspfields[7] + "," + dsspfields[8] + "," + dsspfields[9] + ") values (?,?,?,?,?,?,?,?,?)";	
-	private static final String getDSSPById = "select dssp.*,aminoacid.name,aminoacid.res_index from dssp join pdb on pdb.id = dssp.pdb_id join aminoacid on aminoacid.id = dssp.aminoacid_id" +
+	private static final String getDSSPById = "select dssp.*,aminoacid.name,aminoacid.res_index from "+dssp_table+" join pdb on pdb.id = dssp.pdb_id join aminoacid on aminoacid.id = dssp.aminoacid_id" +
 			" where pdb.pdb_id = ? and pdb.chainID = ? and pdb.chainIDNum = ?";
+	private static final String queryDSSPExist = "select dssp.id from "+dssp_table+" join pdb on pdb.id = dssp.pdb_id where pdb."+pdbfields[1]+" = ? and "+pdbfields[2]+" = ? and "+pdbfields[3]+" = ?";
+	
+	
+	//statements
+	private PreparedStatement stmtGetPDBById = connection.createStatement(getPDBById);
+	private PreparedStatement stmtGetDSSPById = connection.createStatement(getDSSPById);
+	private PreparedStatement stmtPDBExist = connection.createStatement(queryPDBExist);
+	private PreparedStatement stmtDSSPExist = connection.createStatement(queryDSSPExist);
+	private PreparedStatement stmtGetLastIDAA = connection.createStatement("Select last_aa_id from "+lastIds_table);
+	private PreparedStatement stmtSetLastIDAA = connection.createStatement(setLastAAId);
+	private PreparedStatement stmtLastIDPDB = connection.createStatement("Select LAST_INSERT_ID() from "+pdb_table);
+	private PreparedStatement stmtSetPDBEntry = connection.createStatement(setPDBEntry);
+	private PreparedStatement stmtSetAminoEntry = connection.createStatement(setAminoEntry);
+	private PreparedStatement stmtSetAtomEntry = connection.createStatement(setAtomEntry);
+	private PreparedStatement stmtSetDSSPEntry = connection.createStatement(setDSSPEntry);
+	private PreparedStatement stmtGetAAIdByResIndex = connection.createStatement("select id from "+amino_table+" where res_index = ? and pdb_id = ?");
 	
 	public DBConnector(MysqlDBConnection connection) {
 		super(connection);
@@ -40,7 +68,7 @@ public class DBConnector extends MysqlWrapper{
 	
 	@Override
 	String getTablename() {
-		return tablename;
+		return pdb_table;
 	}
 
 	@Override
@@ -49,7 +77,6 @@ public class DBConnector extends MysqlWrapper{
 	}
 	
 	public PDBEntry getPDB(String id){
-		PreparedStatement stmt = connection.createStatement(getPDBById);
 		List<Atom> atoms = new ArrayList<Atom>();
 		List<AminoAcid> aminos = new ArrayList<AminoAcid>();
 		
@@ -58,10 +85,10 @@ public class DBConnector extends MysqlWrapper{
 		String pdbid = id.substring(0, 4);
 		
 		try{
-			stmt.setString(1, pdbid);
-			stmt.setString(2, chainID);
-			stmt.setInt(3, chainIDNum);
-			ResultSet res = stmt.executeQuery();
+			stmtGetPDBById.setString(1, pdbid);
+			stmtGetPDBById.setString(2, chainID);
+			stmtGetPDBById.setInt(3, chainIDNum);
+			ResultSet res = stmtGetPDBById.executeQuery();
 			
 			int atomquantity;
 			double[] pos_temp;
@@ -98,7 +125,6 @@ public class DBConnector extends MysqlWrapper{
 	}
 	
 	public DSSPEntry getDSSP(String id){
-		PreparedStatement stmt = connection.createStatement(getDSSPById);
 		List<AminoAcidName> aminos = new ArrayList<AminoAcidName>();
 		List<Integer> resIndex = new ArrayList<Integer>();
 		List<SecStructEight> secStruct = new ArrayList<SecStructEight>();
@@ -112,10 +138,10 @@ public class DBConnector extends MysqlWrapper{
 		int chainIDNum=Integer.parseInt(id.substring(5));
 		
 		try{
-			stmt.setString(1, pdbid);
-			stmt.setString(2, chainID);
-			stmt.setInt(3, chainIDNum);
-			ResultSet res = stmt.executeQuery();
+			stmtGetDSSPById.setString(1, pdbid);
+			stmtGetDSSPById.setString(2, chainID);
+			stmtGetDSSPById.setInt(3, chainIDNum);
+			ResultSet res = stmtGetDSSPById.executeQuery();
 
 			if(pdbExist(id) != -1){		
 				while(res.next()){
@@ -140,18 +166,15 @@ public class DBConnector extends MysqlWrapper{
 	}
 	
 	public int pdbExist(String id){
-		String query = "select id from "+tablename+" where "+pdbfields[1]+" = ? and "+pdbfields[2]+" = ? and "+pdbfields[3]+" = ?";
-		PreparedStatement stmt = connection.createStatement(query);
-		
 		String pdbid = id.substring(0,4);
 		String chain = id.substring(4,5);
 		int chainIdNum = Integer.parseInt(id.substring(5));
 		try{
-			stmt.setString(1, pdbid);
-			stmt.setString(2, chain);
-			stmt.setInt(3, chainIdNum);
+			stmtPDBExist.setString(1, pdbid);
+			stmtPDBExist.setString(2, chain);
+			stmtPDBExist.setInt(3, chainIdNum);
 			
-			ResultSet res = stmt.executeQuery();
+			ResultSet res = stmtPDBExist.executeQuery();
 			
 			if(res.first()){
 				return res.getInt(pdbfields[0]);
@@ -164,18 +187,15 @@ public class DBConnector extends MysqlWrapper{
 	}
 	
 	public int dsspExist(String id){
-		String query = "select dssp.id from dssp join pdb on pdb.id = dssp.pdb_id where pdb."+pdbfields[1]+" = ? and "+pdbfields[2]+" = ? and "+pdbfields[3]+" = ?";
-		PreparedStatement stmt = connection.createStatement(query);
-		
 		String pdbid = id.substring(0,4);
 		String chain = id.substring(4,5);
 		int chainIdNum = Integer.parseInt(id.substring(5));
 		try{
-			stmt.setString(1, pdbid);
-			stmt.setString(2, chain);
-			stmt.setInt(3, chainIdNum);
+			stmtDSSPExist.setString(1, pdbid);
+			stmtDSSPExist.setString(2, chain);
+			stmtDSSPExist.setInt(3, chainIdNum);
 			
-			ResultSet res = stmt.executeQuery();
+			ResultSet res = stmtDSSPExist.executeQuery();
 			
 			if(res.first()){
 				return res.getInt(pdbfields[0]);
@@ -187,27 +207,40 @@ public class DBConnector extends MysqlWrapper{
 		}
 	}
 	
-	public String[] getIDs(){
-		Statement stmt = connection.createStatement();
-		try {
-			ResultSet res = stmt.executeQuery("select id from "+getTablename());
-			List<String> ids = new ArrayList<String>();
-			while(res.next()){
-				ids.add(res.getString(pdbfields[0]));
-			}
-			return ids.toArray(new String[ids.size()]);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+//	public String[] getIDs(){
+//		Statement stmt = connection.createStatement();
+//		try {
+//			ResultSet res = stmt.executeQuery("select id from "+getTablename());
+//			List<String> ids = new ArrayList<String>();
+//			while(res.next()){
+//				ids.add(res.getString(pdbfields[0]));
+//			}
+//			return ids.toArray(new String[ids.size()]);
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
 		
-	private int getLastId(){
-		int lastid;
-		Statement stmt = connection.createStatement();
+	public int getLastIdAA(){
 		ResultSet res;
 		try {
-			res = stmt.executeQuery("Select LAST_INSERT_ID() from "+tablename);
+			res = stmtGetLastIDAA.executeQuery();
+			if(res.first()){
+				return res.getInt(1);
+			}
+			return 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}	
+	}
+	
+	private int getLastIdPDB(){
+		int lastid;
+		ResultSet res;
+		try {
+			res = stmtLastIDPDB.executeQuery();
 			res.first();
 			lastid = res.getInt(1);
 		} catch (SQLException e) {
@@ -221,23 +254,48 @@ public class DBConnector extends MysqlWrapper{
 		
 		if(pdbExist(entry.getID()+entry.getChainID()+entry.getChainIDNum()) == -1){
 			try{
-				AAConnector aaconnector = new AAConnector(this.connection);
-				PreparedStatement stmt = connection.createStatement(setPDBEntry);
+				int lastpdbid;
+				int lastaminoid;
 				AminoAcid amino;
-	
-				//insert pdbentry
-				stmt.setString(1,entry.getID());
-				stmt.setString(2,String.valueOf(entry.getChainID()));
-				stmt.setInt(3,entry.getChainIDNum());
-				stmt.setInt(4, entry.length());
-				stmt.execute();
-				int pdbid = getLastId();
+				Atom atom;
+				double[] pos;
 				
+				//insert pdbentry
+				stmtSetPDBEntry.setString(1,entry.getID());
+				stmtSetPDBEntry.setString(2,String.valueOf(entry.getChainID()));
+				stmtSetPDBEntry.setInt(3,entry.getChainIDNum());
+				stmtSetPDBEntry.setInt(4, entry.length());
+				stmtSetPDBEntry.execute();
+				lastpdbid = getLastIdPDB();
+				lastaminoid = getLastIdAA()+1;
+				
+				//insert aminos
 				for (int i = 0; i < entry.length(); i++) {
-					//insert amino
 					amino = entry.getAminoAcid(i);
-					aaconnector.addEntry(amino, pdbid);	
+					stmtSetAminoEntry.setInt(1, lastaminoid + i);
+					stmtSetAminoEntry.setString(2, amino.toString());
+					stmtSetAminoEntry.setInt(3, amino.getResIndex());
+					stmtSetAminoEntry.setInt(4, amino.getAtomNumber());
+					stmtSetAminoEntry.setInt(5, lastpdbid);
+					stmtSetAminoEntry.addBatch();
+					
+					
+					//insert atoms
+					for (int j = 0; j < amino.getAtomNumber(); j++) {
+						atom = amino.getAtom(j);
+						pos = atom.getPosition();
+						stmtSetAtomEntry.setString(1, atom.getType().toString());
+						stmtSetAtomEntry.setDouble(2, pos[0]);
+						stmtSetAtomEntry.setDouble(3, pos[1]);
+						stmtSetAtomEntry.setDouble(4, pos[2]);
+						stmtSetAtomEntry.setInt(5, lastaminoid + i);
+						stmtSetAtomEntry.addBatch();
+					}
 				}
+				stmtSetAminoEntry.executeBatch();
+				stmtSetLastIDAA.setInt(1, (lastaminoid + entry.length() - 1));
+				stmtSetLastIDAA.execute();
+				stmtSetAtomEntry.executeBatch();
 				return true;		
 			}catch(SQLException e){
 				e.printStackTrace();
@@ -255,29 +313,32 @@ public class DBConnector extends MysqlWrapper{
 			ResultSet res;
 			
 			if(pdbDBID != -1 && dsspExist(entry.getID()+entry.getChainID()+entry.getChainIDNum()) == -1){
-				try{
-					PreparedStatement stmt = connection.createStatement(setDSSPEntry);
-					PreparedStatement stmt2 = connection.createStatement("select id from aminoacid where res_index = ? and pdb_id = ?");
-					
+				try{					
 					for (int i = 0; i < entry.getLength(); i++) {
+						stmtGetAAIdByResIndex.setInt(1, entry.getResIndex()[i]);
+						stmtGetAAIdByResIndex.setInt(2, pdbDBID);
+						res = stmtGetAAIdByResIndex.executeQuery();
+						aminoid = -1;
+						if(res.first()){
+							aminoid = res.getInt(aafields[0]);
+						}else{
+							System.out.println(entry.getID()+entry.getChainID()+entry.getChainIDNum());
+							System.out.println(entry.getResIndex()[i]);
+							System.out.println("--------------------------");
+						}
 						
-						stmt2.setInt(1, entry.getResIndex()[i]);
-						stmt2.setInt(2, pdbDBID);
-						res = stmt2.executeQuery();
-						res.first();
-						aminoid = res.getInt(aafields[0]);
-						
-						stmt.setString(1, entry.getSecondaryStructure()[i].toString());
-						stmt.setInt(2, entry.getAccesability()[i]);
-						stmt.setDouble(3, entry.getPhi()[i]);
-						stmt.setDouble(4, entry.getPsi()[i]);
-						stmt.setDouble(5, entry.getCaTrace()[i][0]);
-						stmt.setDouble(6, entry.getCaTrace()[i][1]);
-						stmt.setDouble(7, entry.getCaTrace()[i][2]);
-						stmt.setInt(8, aminoid);
-						stmt.setInt(9, pdbDBID);
-						stmt.execute();
+						stmtSetDSSPEntry.setString(1, entry.getSecondaryStructure()[i].toString());
+						stmtSetDSSPEntry.setInt(2, entry.getAccesability()[i]);
+						stmtSetDSSPEntry.setDouble(3, entry.getPhi()[i]);
+						stmtSetDSSPEntry.setDouble(4, entry.getPsi()[i]);
+						stmtSetDSSPEntry.setDouble(5, entry.getCaTrace()[i][0]);
+						stmtSetDSSPEntry.setDouble(6, entry.getCaTrace()[i][1]);
+						stmtSetDSSPEntry.setDouble(7, entry.getCaTrace()[i][2]);
+						stmtSetDSSPEntry.setInt(8, aminoid);
+						stmtSetDSSPEntry.setInt(9, pdbDBID);
+						stmtSetDSSPEntry.addBatch();
 					}
+					stmtSetDSSPEntry.executeBatch();
 					return true;
 					
 				}catch(SQLException e){

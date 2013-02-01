@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,58 +20,64 @@ import bioinfo.energy.potential.preparation.voronoi.VoroPrepType;
 import bioinfo.energy.potential.preparation.voronoi.VoroPrepare;
 import bioinfo.energy.potential.preparation.voronoi.VoronoiData;
 import bioinfo.proteins.AminoAcidName;
+import bioinfo.proteins.DSSPEntry;
+import bioinfo.proteins.DSSPFileReader;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 
-public class SimpleSurfacePotential implements IEnergy{
-	
+/**
+ * just a dummy potential to evaluate the self-written solvensPotential
+ * therefore scoreModel returns always 0.0d;
+ * @author andreseitz
+ *
+ */
+public class DSSPSolvensPotential implements IEnergy{
+
 	/**
 	 * potential contains the actual mean force potential
 	 * [a][b][c]
 	 * a contains aminoacid information (one letter code ascii - 65) of partner 1
 	 * b contains aminoacid information (one letter code ascii - 65) of partner 2
 	 * c contains area of face between the two partners with the following classes
-	 * smaller then 4,8,16,32,64,128,256,512,bigger then 512, where all values smaller then 2 have to be ignored
+	 * smaller then 25,50,75,100,125,150,bigger then 150, where all values smaller then 1 have to be ignored
 	 */
-	private double[][][] potential = new double[26][26][9];
-	private final String pdbFolder;
-	private final VoroPrepType type;
-	private final double MINCONTACT = 2.0d;
+	private double[][][] potential = new double[26][26][7];
+	//private int[] aminoCount = new int[26];
+	private final String dsspFolder;
+	private final double MINCONTACT = 1.0d;
+	private final int MINSURFACE = 10;
 	private final double mkT = -0.582d;
-	private final String[] mappingKeys = {"aminoacid1","aminoacid2","faceArea"};
-	private String vorobin = null;
-	private String tmpdir = null;
-	int[] aminoCount = new int[26];
-
+	private final double gridHullExtend = 2.0d;
+	private final double gridDensity = 1.0d;
+	private final double gridClash = 4.0d;
 	
-	public SimpleSurfacePotential(String vorobin, String pdbFolder, List<String> pdbIds, VoroPrepType type){
-		this.pdbFolder = pdbFolder;
-		this.type = type;
+	private final String[] mappingKeys = {"aminoacid1","aminoacid2","faceArea"};
+	private String vorobin;
+	private String tmpdir;
+	
+	public DSSPSolvensPotential(String vorobin, String dsspFolder, List<String> dsspIds){
+		this.dsspFolder = dsspFolder;
 		this.vorobin = vorobin;
-		calculateFromDATA(pdbIds);
-
+		calculateFromDATA(dsspIds);
 	}
 	
-	public SimpleSurfacePotential(String vorobin, String tmpdir, String pdbFolder, List<String> pdbIds, VoroPrepType type){
-		this.pdbFolder = pdbFolder;
-		this.type = type;
+	public DSSPSolvensPotential(String vorobin, String tmpdir, String dsspFolder, List<String> dsspIds){
+		this.dsspFolder = dsspFolder;
 		this.vorobin = vorobin;
 		this.tmpdir = tmpdir;
-		calculateFromDATA(pdbIds);
+		calculateFromDATA(dsspIds);
 
 	}
 	
-	public SimpleSurfacePotential(String filename,String vorobin, String tmpdir,VoroPrepType type){
-		this.type=type;
-		this.pdbFolder=null;
+	public DSSPSolvensPotential(String filename,String vorobin, String tmpdir){
+		this.dsspFolder=null;
 		this.vorobin = vorobin;
 		this.tmpdir = tmpdir;
 		this.readFromFile(filename);
 	}
 	
-	public SimpleSurfacePotential(String filename,String vorobin,VoroPrepType type){
-		this.type=type;
-		this.pdbFolder=null;
+	public DSSPSolvensPotential(String filename,String vorobin){
+		this.dsspFolder=null;
 		this.vorobin = vorobin;
 		this.readFromFile(filename);
 	}
@@ -131,35 +138,43 @@ public class SimpleSurfacePotential implements IEnergy{
 	}
 
 	@Override
-	public void calculateFromDATA(List<String> pdbIds) {
-		PDBEntry pdb = null;
-		PDBFileReader reader = new PDBFileReader(pdbFolder);
+	public void calculateFromDATA(List<String> dsspIds) {
+		DSSPEntry dssp = null;
+		DSSPFileReader reader = new DSSPFileReader(dsspFolder);
 		VoronoiData data = null;
 		VoroPrepare vprep = new VoroPrepare();
+		Set<Integer> gridIds = null;
+		Set<Integer> pepIds = null;
+		int[] acc;
 		HashMap<Integer, AminoAcidName> amino;
 		HashMap<Integer, HashMap<Integer,Double>> faces;
 		HashMap<Integer,Double> neighbors;
+		HashMap<Integer, Double> neighborsNeighbors;
+		boolean solvensNeighbor;
 		boolean surfaceFlag = false;
 		List<Integer> surfaceIds = new ArrayList<Integer>();
 		int tmp = 0;
 		int p1;
 		int p2;
-
+		int[] aminoCount = new int[26];
+		int accessability = 0;
 		
-		
-		for(String pdbId: pdbIds){
+		for(String dsspId: dsspIds){
 			
-			System.out.println(">"+pdbId);
+			System.out.println(">"+dsspId);
 			
 			//read from files, can be changed to db later!
-			pdb = reader.readFromFolderById(pdbId);
-			data = new VoronoiData(pdbId, type);
-			data = vprep.reducePDB(type, pdb);
+			dssp = reader.readFromFolderById(dsspId);
+			data = new VoronoiData(dsspId,null);
+			data = vprep.reduceDSSP(dssp);
+			acc = dssp.getAccesability();
+			pepIds = data.getAllInsertedIds();
+			gridIds = data.fillGridWithoutClashes(data.extendHull(gridHullExtend), gridDensity, gridClash);
 			VoroPPWrap voro;
-			if(this.tmpdir == null){
+			if(tmpdir == null){
 				voro = new VoroPPWrap(vorobin);
 			}else{
-				voro = new VoroPPWrap(vorobin,tmpdir);
+				voro = new VoroPPWrap(tmpdir,vorobin);
 			}
 			data = voro.decomposite(data);
 			faces = data.getFaces();
@@ -167,35 +182,46 @@ public class SimpleSurfacePotential implements IEnergy{
 			
 			System.out.println("\tdecomp done ... "+faces.size()+" faces");
 			
-			for(int id1: amino.keySet()){
+			for(int id1: pepIds){
 				if(faces.get(id1) == null){
 					continue;
 				}
 				neighbors = faces.get(id1);
 				surfaceFlag = false;
 				for(int id2 : neighbors.keySet()){
-					if(id2 < 0 && neighbors.get(id2) > MINCONTACT){
-						surfaceFlag = true;
-						surfaceIds.add(id1);
-						break;
+					if(gridIds.contains(id2) && neighbors.get(id2) > MINCONTACT){
+						neighborsNeighbors = faces.get(id2);
+						solvensNeighbor = false;
+						for(int id3 : neighborsNeighbors.keySet()){
+							if(gridIds.contains(id3) && neighborsNeighbors.get(id3) > MINCONTACT){
+								solvensNeighbor = true;
+							}
+						}
+						if(solvensNeighbor){
+							surfaceFlag = true;
+						}
 					}
 				}
 				if(surfaceFlag){
-					for(int id2 : neighbors.keySet()){
-						if(id2 > 0 && neighbors.get(id2) > MINCONTACT){
-							tmp = 0;
-							for(int i = 4; i <= 512; i *= 2){
-								if(neighbors.get(id2) <= i*1.0d){
-									break;
+					accessability = acc[id1];
+					System.err.println(accessability);
+					surfaceIds.add(id1);
+					if(accessability > MINSURFACE){
+						for(int id2 : neighbors.keySet()){
+							if(pepIds.contains(id2) && neighbors.get(id2) > MINCONTACT){
+								tmp = 0;
+								for(int i = 25; i <= 150; i += 25){
+									if(accessability <= i*1.0d){
+										break;
+									}
+									tmp++;
 								}
-								tmp++;
+								p1 = amino.get(id1).getOneLetterCode().charAt(0)-65;
+								p2 = amino.get(id2).getOneLetterCode().charAt(0)-65;
+								potential[p1][p2][tmp]++;
+								potential[p2][p1][tmp]++;
+								aminoCount[p1]++;
 							}
-							p1 = amino.get(id1).getOneLetterCode().charAt(0)-65;
-							p2 = amino.get(id2).getOneLetterCode().charAt(0)-65;
-
-							potential[p1][p2][tmp]++;
-							potential[p2][p1][tmp]++;
-							aminoCount[p1]++;
 						}
 					}
 				}
@@ -205,7 +231,7 @@ public class SimpleSurfacePotential implements IEnergy{
 		
 		for(int i = 0; i != 26; i++){
 			for(int j = 0; j != 26; j++){
-				for(int k = 0; k != 9; k++){
+				for(int k = 0; k != 7; k++){
 					if(i == j){
 						potential[i][j][k] = mkT*Math.log(((potential[i][j][k]+1)/2)/(((aminoCount[i]+aminoCount[j])/2)+1));
 					}else{
@@ -240,7 +266,7 @@ public class SimpleSurfacePotential implements IEnergy{
 		char aa2 = (Character)mapping.get("aminoacid2");
 		double area = (Double)mapping.get("faceArea");
 		int k = 0;
-		for(int i = 4; i <= 512; i *= 2){
+		for(int i = 25; i <= 150; i += 25){
 			if(area <= i*1.0d){
 				break;
 			}
@@ -261,63 +287,7 @@ public class SimpleSurfacePotential implements IEnergy{
 
 	@Override
 	public double scoreModel(PDBEntry model) {
-		double score = 0.0d;
-		VoroPrepare vprep = new VoroPrepare();
-		VoronoiData data = vprep.reducePDB(type, model);
-		HashMap<Integer, AminoAcidName> amino;
-		HashMap<Integer, HashMap<Integer,Double>> faces;
-		HashMap<Integer,Double> neighbors;
-		boolean surfaceFlag = false;
-		List<Integer> surfaceIds = new ArrayList<Integer>();
-		int tmp = 0;
-		int p1;
-		int p2;
-
-		VoroPPWrap voro;
-		if(this.tmpdir == null){
-			voro = new VoroPPWrap(vorobin);
-		}else{
-			voro = new VoroPPWrap(vorobin,tmpdir);
-		}
-		data = voro.decomposite(data);
-		faces = data.getFaces();
-		amino = data.getAmino();
-		
-		System.out.println("\tdecomp done ... "+faces.size()+" faces");
-		
-		for(int id1: amino.keySet()){
-			if(faces.get(id1) == null){
-				continue;
-			}
-			neighbors = faces.get(id1);
-			surfaceFlag = false;
-			for(int id2 : neighbors.keySet()){
-				if(id2 < 0 && neighbors.get(id2) > MINCONTACT){
-					surfaceFlag = true;
-					surfaceIds.add(id1);
-					break;
-				}
-			}
-			if(surfaceFlag){
-				for(int id2 : neighbors.keySet()){
-					if(id2 > 0 && neighbors.get(id2) > MINCONTACT){
-						tmp = 0;
-						for(int i = 4; i <= 512; i *= 2){
-							if(neighbors.get(id2) <= i*1.0d){
-								break;
-							}
-							tmp++;
-						}
-						p1 = amino.get(id1).getOneLetterCode().charAt(0)-65;
-						p2 = amino.get(id2).getOneLetterCode().charAt(0)-65;
-
-						score += potential[p1][p2][tmp];
-					}
-				}
-			}
-		}
-		
-		return score;
+		return 0.0d;
 	}
 	
 	/**
@@ -325,22 +295,23 @@ public class SimpleSurfacePotential implements IEnergy{
 	 */
 	public static void main(String[] args){
 		
-		List<String> pdbIds = new ArrayList<String>();
-		String pdbLoc = args[0];
+		List<String> dsspIds = new ArrayList<String>();
+		String dsspLoc = args[0];
 		
-		File file = new File(pdbLoc);
+		File file = new File(dsspLoc);
 		for(File f : file.listFiles()){
-			pdbIds.add(f.getName().substring(0, 7));
+			dsspIds.add(f.getName().substring(0, 7));
 		}
 		
-		SimpleSurfacePotential pot = new SimpleSurfacePotential(args[1],pdbLoc, pdbIds, VoroPrepType.CC);
+		DSSPSolvensPotential pot = new DSSPSolvensPotential(args[1],dsspLoc, dsspIds);
 		pot.writeToFile(args[2]);
 		System.out.println("done");
 		
-//		SimpleSurfacePotential pot = new SimpleSurfacePotential(args[2], args[1], VoroPrepType.CC);
+//		GridSolvensPotential pot = new GridSolvensPotential(args[2],args[1],VoroPrepType.CC);
 //		PDBFileReader reader = new PDBFileReader(pdbLoc);
 //		PDBEntry pdb = reader.readFromFolderById("1j2xA00");
 //		System.out.println(pot.scoreModel(pdb));
+		
 	}
 
 }
