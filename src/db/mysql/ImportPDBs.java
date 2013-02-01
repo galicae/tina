@@ -19,28 +19,66 @@ public class ImportPDBs {
 		HashMap<String,char[]> seqlib = SeqLibrary.read("../GoBi_old/full_domains.seqlib");
 		PDBFileReader pdbreader = new PDBFileReader(args[0]);
 		DSSPFileReader dsspreader = new DSSPFileReader(args[1]);
+		
 		PDBEntry pdbtest;
 		DSSPEntry dssptest;
 		
-		for(Entry<String,char[]> e : seqlib.entrySet()){
-			pdbtest = pdbreader.readFromFolderById(e.getKey());
-			pdbconnector.addPDBEntry(pdbtest);
-			dssptest = dsspreader.readFromFolderById(e.getKey());
-			pdbconnector.addDSSPEntry(dssptest);
-		}
+		long start;
+		long end;
+		long steadyDB = 0;
+		long steadyFile = 0;
+		int count = 0;
 		
-//		String pdb = "1bus000";
+//		for(Entry<String,char[]> e : seqlib.entrySet()){
+//			pdbtest = pdbreader.readFromFolderById(e.getKey());
+//			pdbconnector.addPDBEntry(pdbtest);
+//			dssptest = dsspreader.readFromFolderById(e.getKey());
+//			pdbconnector.addDSSPEntry(dssptest);
+//			
+//			start = System.currentTimeMillis();
+//			dssptest = pdbconnector.getDSSP(e.getKey());
+//			end = System.currentTimeMillis();
+//			steadyDB += (end-start);
+//			
+//			start = System.currentTimeMillis();
+//			dssptest = dsspreader.readFromFolderById(e.getKey());
+//			end = System.currentTimeMillis();
+//			steadyFile += (end-start);
+//			
+//			System.out.println(++count);
+//		}
+//		System.out.println("time for file (DSSP): "+ (steadyFile/9303));
+//		System.out.println("time for DB (DSSP): "+ (steadyDB/9303));
+		
+		
+		String pdb = "2f0aD00";
 //		String pdb2 = "1e3hA02";
 	
+
+
 		
-//		pdbtest = pdbreader.readFromFolderById(pdb);
-//		pdbconnector.addPDBEntry(pdbtest);	
+//		start = System.currentTimeMillis();
+//		dssptest = dsspreader.readFromFolderById(pdb);
+//		end = System.currentTimeMillis();
+//		
+//		System.out.println("time for file (DSSP): "+ (end-start));
+//		
+//		start = System.currentTimeMillis();
+//		dssptest = pdbconnector.getDSSP(pdb);
+//		end = System.currentTimeMillis();
+//		
+//		System.out.println("time for DB (DSSP): "+ (end-start));
+	
+		//		pdbconnector.addPDBEntry(pdbtest);	
 
 //		dssptest = dsspreader.readFromFolderById(pdb2);
 //		pdbconnector.addDSSPEntry(dssptest);
 		
-//		DSSPEntry dssp = pdbconnector.getDSSP(pdb);
-//		System.out.println(dssp.getLength());
+		PDBEntry pdbentry = pdbconnector.getPDB(pdb);
+		DSSPEntry dssp = pdbconnector.getDSSP(pdb);
+		System.out.println(dssp.getLength());
+		System.out.println(pdbentry.length());
+		System.out.println();
 	}
 
 }

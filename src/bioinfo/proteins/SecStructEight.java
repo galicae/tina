@@ -34,4 +34,21 @@ public enum SecStructEight {
 		}
 		return SecStructEight.C;
 	}
+	
+	//addded for readout from MySQL-DB (ask Paul)
+	public static SecStructEight getSSFromChar(String ssString){
+		char ss;
+		if(ssString != null){
+			ss = ssString.charAt(0);
+		}else{
+			return SecStructEight.C;
+		}
+		
+		for(SecStructEight ssE: SecStructEight.values()){
+			if(ssE.getCharRespres() == ss){
+				return ssE;
+			}
+		}
+		return SecStructEight.C;
+	}
 }

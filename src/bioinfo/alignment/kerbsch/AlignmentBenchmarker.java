@@ -69,43 +69,13 @@ public class AlignmentBenchmarker {
 	private double samefoldmaxscore_scop = Double.NEGATIVE_INFINITY;
 	private double diffoldmaxscore_scop = Double.NEGATIVE_INFINITY;
 
-	public AlignmentBenchmarker(String args[], HashMap<String,char[]> sl) {
-		double go = Double.parseDouble(args[0]);
-		double ge = Double.parseDouble(args[1]);
-		if (args[3].equals("polarity")) {
-			substMatrix = matrices.calcGotohInputMatrix(matrices
-					.calcPolarityScores());
-		} else if (args[3].equals("hydrophob")) {
-			substMatrix = matrices.calcGotohInputMatrix(matrices
-					.calcHydropathyScores());
-		} else if (args[3].equals("secstruct")) {
-			substMatrix = SecStructScores.matrix;
-		} else if (args[3].equals("sequence")) {
-			substMatrix = QuasarMatrix.DAYHOFF_MATRIX;
-		} 
-		
-		if(args[2].equals("freeshift")){
-			gotoh = new FreeshiftSequenceGotoh(go, ge, substMatrix);
-		}
-		else if(args[2].equals("local")){
-			gotoh = new LocalSequenceGotoh(go, ge, substMatrix);
-		}
-		else if(args[2].equals("global")){
-			gotoh = new GlobalSequenceGotoh(go, ge, substMatrix);
-		} else {
-			gotoh = new GlobalAngleAligner(go,ge,"angles","../GoBi_old/DSSP");
-		}
-		seqlib = sl;
-		pairs = PairReader.parse(args[5]);
-		cathscopinfo = CathScopHash.read(args[6]);
+	public AlignmentBenchmarker(HashMap<String,char[]> sl, ArrayList<String[]> pairs, HashMap<String, CathScopEntry> cathscopinfo, BufferedWriter resultwriter) {
+		this.seqlib = sl;
+		this.pairs = pairs;
+		this.cathscopinfo = cathscopinfo;
 		alignments = new double[seqlib.size()][seqlib.size()];
+		out = resultwriter;
 		init();
-		
-		try {
-			out = new BufferedWriter(new FileWriter(args[7]));
-		} catch (IOException e) {
-			System.out.println("cannot initialize writer! (Benchmarker)");
-		}	
 	}
 	
 	private void init(){
@@ -226,9 +196,7 @@ public class AlignmentBenchmarker {
 		int index = 0;
 		int id1;
 		int id2;
-		
-		BufferedWriter writer = new BufferedWriter(new FileWriter("pol_aligns"));
-		
+				
 		for (String[] pair : pairs) {
 
 			// give index to ID for storing the score of the alignment in a
@@ -259,7 +227,6 @@ public class AlignmentBenchmarker {
 				temp = (SequenceAlignment) gotoh.align(new Sequence(pair[0],
 						seqlib.get(pair[0])),
 						new Sequence(pair[1], seqlib.get(pair[1])));
-				writer.append(temp.toStringVerbose()+"\n");
 				score = temp.getScore()/temp.countAlignedResidues();
 				alignments[id1][id2] = score;
 				alignments[id2][id1] = score;

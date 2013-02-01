@@ -43,7 +43,7 @@ public class DBConnector extends MysqlWrapper{
 			+ dsspfields[1] + "," + dsspfields[2] + "," + dsspfields[3] + ","
 			+ dsspfields[4] + "," + dsspfields[5] + "," + dsspfields[6] + ","
 			+ dsspfields[7] + "," + dsspfields[8] + "," + dsspfields[9] + ") values (?,?,?,?,?,?,?,?,?)";	
-	private static final String getDSSPById = "select dssp.*,aminoacid.name,aminoacid.res_index from "+dssp_table+" join pdb on pdb.id = dssp.pdb_id join aminoacid on aminoacid.id = dssp.aminoacid_id" +
+	private static final String getDSSPById = "select dssp.*,aminoacid.name,aminoacid.res_index from "+dssp_table+" right join aminoacid on aminoacid.id = dssp.aminoacid_id join pdb on pdb.id = aminoacid.pdb_id" +
 			" where pdb.pdb_id = ? and pdb.chainID = ? and pdb.chainIDNum = ?";
 	private static final String queryDSSPExist = "select dssp.id from "+dssp_table+" join pdb on pdb.id = dssp.pdb_id where pdb."+pdbfields[1]+" = ? and "+pdbfields[2]+" = ? and "+pdbfields[3]+" = ?";
 	
@@ -93,35 +93,32 @@ public class DBConnector extends MysqlWrapper{
 			int atomquantity;
 			double[] pos_temp;
 			
-			if(pdbExist(id) != -1){
-				while(res.next()){
-					//read out aminos and corresponding atoms
-					atomquantity = res.getInt(aafields[3]);
+			while(res.next()){
+				//read out aminos and corresponding atoms
+				atomquantity = res.getInt(aafields[3]);
+				pos_temp = new double[3];
+				pos_temp[0] = res.getDouble(atomfields[2]);
+				pos_temp[1] = res.getDouble(atomfields[3]);
+				pos_temp[2] = res.getDouble(atomfields[4]);
+				atoms.add(new Atom(res.getString(atomfields[1]),pos_temp));
+				
+				for (int j = 0; j < atomquantity-1; j++) {
+					res.next();
 					pos_temp = new double[3];
 					pos_temp[0] = res.getDouble(atomfields[2]);
 					pos_temp[1] = res.getDouble(atomfields[3]);
 					pos_temp[2] = res.getDouble(atomfields[4]);
 					atoms.add(new Atom(res.getString(atomfields[1]),pos_temp));
-					
-					for (int j = 0; j < atomquantity-1; j++) {
-						res.next();
-						pos_temp = new double[3];
-						pos_temp[0] = res.getDouble(atomfields[2]);
-						pos_temp[1] = res.getDouble(atomfields[3]);
-						pos_temp[2] = res.getDouble(atomfields[4]);
-						atoms.add(new Atom(res.getString(atomfields[1]),pos_temp));
-					}
-					aminos.add(new AminoAcid(AminoAcidName.getAAFromOLC(res.getString(aafields[1])),res.getInt(aafields[2]),atoms.toArray(new Atom[atomquantity])));
-					atoms.clear();
 				}
-				return new PDBEntry(id,aminos.toArray(new AminoAcid[aminos.size()]));
-			} else {
-				return null;
+				aminos.add(new AminoAcid(AminoAcidName.getAAFromOLC(res.getString(aafields[1])),res.getInt(aafields[2]),atoms.toArray(new Atom[atomquantity])));
+				atoms.clear();
 			}
+			return new PDBEntry(id,aminos.toArray(new AminoAcid[aminos.size()]));
 		}catch(SQLException e){
 			e.printStackTrace();
 			return null;
 		}
+		
 	}
 	
 	public DSSPEntry getDSSP(String id){
@@ -148,7 +145,7 @@ public class DBConnector extends MysqlWrapper{
 					//read out dssp
 					aminos.add(AminoAcidName.getAAFromOLC(res.getString("aminoacid."+aafields[1])));
 					resIndex.add(res.getInt("aminoacid."+aafields[2]));
-					secStruct.add(SecStructEight.getSSFromChar(res.getString(dsspfields[1]).charAt(0)));
+					secStruct.add(SecStructEight.getSSFromChar(res.getString(dsspfields[1])));
 					caTrace.add(new double[] {res.getDouble(dsspfields[5]),res.getDouble(dsspfields[6]),res.getDouble(dsspfields[7])});
 					sa.add(res.getInt(dsspfields[2]));
 					phi.add(res.getDouble(dsspfields[3]));
