@@ -104,20 +104,82 @@ public class TinyOracle implements Oracle {
 		} else {
 			// TODO merge problem.alignment with alignment
 			map = problem.alignment.calcMap();
-			problem.alignment.getRow(0);
-			problem.alignment.getRow(1);
+			char[] temRow = problem.alignment.getRow(0);
+			char[] tarRow = problem.alignment.getRow(1);
+			int paTemStartInd = 0;
+			int pos = 0;
+			while (pos < paTemStart) {
+				if (temRow[paTemStartInd] != '-') {
+					pos++;
+				}
+				paTemStartInd ++;
+			}
+			int paTarStartInd = 0;
+			pos = 0;
+			while (pos < paTarStart) {
+				if (tarRow[paTarStartInd] != '-') {
+					pos++;
+				}
+				paTarStartInd ++;
+			}
+			int paTemEndInd = 0;
+			pos = 0;
+			while (pos < paTemEnd) {
+				if (temRow[paTemEndInd] != '-') {
+					pos++;
+				}
+				paTemEndInd ++;
+			}
+			int paTarEndInd = 0;
+			pos = 0;
+			while (pos < paTarEnd) {
+				if (tarRow[paTarEndInd] != '-') {
+					pos++;
+				}
+				paTarEndInd ++;
+			}
+			// Error handling 141
+			if (paTemStartInd != paTarStartInd) {
+				System.err.println("Error 141 in TinyOracle: Alignment lengths don't match.");
+			}
+			// Error handling 145
+			if (paTemEndInd != paTarEndInd) {
+				System.err.println("Error 145 in TinyOracle: Alignment lengths don't match.");
+			}
+			
+			char[][] newRows = new char[2][];
+			newRows[0] = new char[(paTemStartInd - 1) + alignment.length() + (problem.alignment.length() - paTemEndInd)];
+			newRows[1] = new char[newRows[0].length];
+			// make new Alignment:
+			// copy beginning of old alignment
+			for (pos = 0; pos < paTemStartInd; pos++) {
+				newRows[0][pos]=temRow[pos];
+			}
+			for (pos = 0; pos < paTarStartInd; pos++) {
+				newRows[1][pos]=tarRow[pos];
+			}
+			// copy new aligned
+			for (pos = 0; pos < alignment.length(); pos++) {
+				newRows[0][paTemStartInd + pos]=alignment.getRow(0)[pos];
+			}
+			for (pos = 0; pos < alignment.length(); pos++) {
+				newRows[1][paTarStartInd + pos]=alignment.getRow(1)[pos];
+			}
+			// copy new aligned
+			for (pos = 0; pos < problem.alignment.length() - paTemEndInd; pos++) {
+				newRows[0][paTemStartInd + alignment.length() + pos]=temRow[paTemEndInd + pos];
+			}
+			for (pos = 0; pos < problem.alignment.length() - paTarEndInd; pos++) {
+				newRows[1][paTarStartInd + alignment.length() + pos]=tarRow[paTarEndInd + pos];
+			}
+			
+			// merge scores. Here simply adding the scores will be fine.
+			double newScore = problem.alignment.getScore()+alignment.getScore();
+			
+			pa = new SequenceAlignment(
+					problem.templateSequence, problem.targetSequence, newRows, newScore);
+			
 		}
-		
-		
-		char[][] newRows = new char[2][];
-		
-		// merge scores. Here simply adding the scores will be fine.
-		double newScore = problem.alignment.getScore()+alignment.getScore();
-		
-		pa = new SequenceAlignment(
-				problem.templateSequence, problem.targetSequence, newRows, newScore);
-		
-
 		
 		results.add(new PartialAlignment
 				(problem.templateSequence, problem.targetStructure,

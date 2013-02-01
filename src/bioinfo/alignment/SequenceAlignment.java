@@ -11,7 +11,7 @@ import bioinfo.Sequence;
 
 /**
  * @author gobi_4
- * @date November 25, 2012
+ * @lastchange 2013-02-01
  */
 public class SequenceAlignment implements Alignment {
 
@@ -37,7 +37,6 @@ public class SequenceAlignment implements Alignment {
 	 * n or m of the sequences 1 or 2. every position in the scd dimension of the
 	 * arrays contains the index of the residue from the other sequence it is
 	 * aligned to
-	 * 
 	 */
 	private final int[][] map;
 	/**
