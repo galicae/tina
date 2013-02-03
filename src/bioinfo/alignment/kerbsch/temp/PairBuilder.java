@@ -12,8 +12,37 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public class VoreScorePairBuilder {
-	public static void build(){
+public class PairBuilder {
+	
+	public static void buildSmallSubsetPairs(){
+		BufferedReader in;
+		BufferedWriter out;
+		ArrayList<String> ids = new ArrayList<String>();
+		
+		try{
+			in = new BufferedReader(new FileReader("../410.list"));
+			String line;
+			while((line = in.readLine()) != null){
+				ids.add(line.trim());
+			}
+			in.close();
+			
+			out = new BufferedWriter(new FileWriter("410List.pairs"));
+			for (int i = 0; i < ids.size(); i++) {
+				for (int j = 0; j < ids.size(); j++) {
+					if(ids.get(i) != ids.get(j)){
+						out.append(ids.get(i) + "\t" + ids.get(j) + "\n");
+					}
+				}
+			}
+			out.close();
+		} catch (IOException e) {
+			System.out.println("cannot read voretargets");
+		}
+	}
+	
+	
+	public static void buildVorePairs(){
 		BufferedReader in;
 		BufferedWriter out;
 		HashMap<String,CathScopEntry> cathscopinfo = CathScopHash.read("cathscop.seqlib");
@@ -27,6 +56,8 @@ public class VoreScorePairBuilder {
 				targets.add(line.split("\\s+")[0]);
 			}
 			in.close();
+			
+			
 		} catch (IOException e) {
 			System.out.println("cannot read voretargets");
 		}
@@ -49,6 +80,6 @@ public class VoreScorePairBuilder {
 	}
 	
 	public static void main(String[] args){
-		VoreScorePairBuilder.build();
+		PairBuilder.buildSmallSubsetPairs();
 	}
 }

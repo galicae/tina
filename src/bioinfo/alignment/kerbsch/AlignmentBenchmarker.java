@@ -1,31 +1,19 @@
 package bioinfo.alignment.kerbsch;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
 import highscorealignments.CathScopEntry;
-import highscorealignments.CathScopHash;
 import bioinfo.Sequence;
 import bioinfo.alignment.Aligner;
 import bioinfo.alignment.SequenceAlignment;
-import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
-import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
-import bioinfo.alignment.gotoh.LocalSequenceGotoh;
-import bioinfo.alignment.kerbsch.temp.GlobalAngleAligner;
-import bioinfo.alignment.kerbsch.temp.InitClass;
-import bioinfo.alignment.kerbsch.temp.PairReader;
-import bioinfo.alignment.kerbsch.temp.SecStructScores;
-import bioinfo.alignment.matrices.QuasarMatrix;
 
 public class AlignmentBenchmarker {
 
 	// different shit
-	private InitClass matrices = new InitClass();
-	private double[][] substMatrix;
 	private HashMap<String, char[]> seqlib;
 	private ArrayList<String[]> pairs;
 	private HashMap<String, CathScopEntry> cathscopinfo;
@@ -69,7 +57,8 @@ public class AlignmentBenchmarker {
 	private double samefoldmaxscore_scop = Double.NEGATIVE_INFINITY;
 	private double diffoldmaxscore_scop = Double.NEGATIVE_INFINITY;
 
-	public AlignmentBenchmarker(HashMap<String,char[]> sl, ArrayList<String[]> pairs, HashMap<String, CathScopEntry> cathscopinfo, BufferedWriter resultwriter) {
+	public AlignmentBenchmarker(Aligner gotoh,HashMap<String,char[]> sl, ArrayList<String[]> pairs, HashMap<String, CathScopEntry> cathscopinfo, BufferedWriter resultwriter) {
+		this.gotoh = gotoh;
 		this.seqlib = sl;
 		this.pairs = pairs;
 		this.cathscopinfo = cathscopinfo;

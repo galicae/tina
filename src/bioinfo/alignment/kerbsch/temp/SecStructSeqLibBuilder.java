@@ -6,28 +6,35 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import bioinfo.proteins.DSSPEntry;
+import bioinfo.proteins.SecStructEight;
+
+import db.mysql.DBConnector;
+import db.mysql.LocalConnection;
+
 
 public class SecStructSeqLibBuilder {
-	public static void build(HashMap<String,char[]> seqlib, String outpath){
+	public static void main(String[] args){
+		LocalConnection con = new LocalConnection();
+		DBConnector dbcon = new DBConnector(con);	
 		BufferedWriter out;
-//		HashMap<String,char[]> seqlib_ref = SeqLibrary.read("../GoBi/referenz/domains.seqlib");
+		HashMap<String,char[]> seqlib = SeqLibrary.read("../GoBi_old/full_domains.seqlib");
+		DSSPEntry dsspentry;
+		
 		try{
-			out = new BufferedWriter(new FileWriter(outpath));
+			out = new BufferedWriter(new FileWriter("full_secstruct.seqlib"));
+			
 			for(Entry<String,char[]> entry : seqlib.entrySet()){
-//				if(seqlib_ref.containsKey(entry.getKey())){
+				dsspentry = dbcon.getDSSP(entry.getKey());
 				out.write(entry.getKey() + ":");
-				out.write(entry.getValue());
+				for(SecStructEight ss : dsspentry.getSecondaryStructure()){
+					out.append(ss.getThreeClassAnalogon().getCharRepres());
+				}
 				out.write("\n");
-//				}
 			}
 			out.close();
 		}catch(IOException e){
 			System.out.println("cannot write file(SecStructBuilder)");
 		}
 	}
-	
-//	public static void main (String[] args){
-//		HashMap<String,char[]> seqlib = SSReaderFromDir.read("../GoBi/DSSP");
-//		SecStructSeqLibBuilder.build(seqlib, "secstruct.seqlib");
-//	}
 }
