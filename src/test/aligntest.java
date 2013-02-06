@@ -2,6 +2,7 @@ package test;
 
 
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -13,8 +14,10 @@ import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
+import bioinfo.alignment.gotoh.LocalSequenceGotoh;
 import bioinfo.alignment.kerbsch.FreeshiftMusterLite;
 import bioinfo.alignment.kerbsch.GlobalMusterLite;
+import bioinfo.alignment.kerbsch.GLocalMusterLite;
 import bioinfo.alignment.kerbsch.temp.InitClass;
 import bioinfo.alignment.kerbsch.temp.PairReader;
 import bioinfo.alignment.kerbsch.temp.SecStructScores;
@@ -30,6 +33,7 @@ import bioinfo.superpos.Transformation;
 public class aligntest {
 
 	public static void main(String[] args) throws Exception {
+		BufferedWriter out = new BufferedWriter(new FileWriter("matrix"));
 		HashMap<String,char[]> seqlib = SeqLibrary.read("../GoBi_old/referenz/domains.seqlib");
 		HashMap<String,char[]> sec_seqlib = SeqLibrary.read("secstruct.seqlib");
 		ArrayList<String[]> pairs = PairReader.parse("vorescore.pairs");
@@ -39,25 +43,27 @@ public class aligntest {
 		double[][] hbMatrix = init.calcGotohInputMatrix(init.calcHydropathyScores());
 		GlobalSequenceGotoh substgotoh = new GlobalSequenceGotoh(-12.0,-1.0,substMatrix);
 		FreeshiftSequenceGotoh polgotoh = new FreeshiftSequenceGotoh(-10,-4,polMatrix);
-		GlobalMusterLite mustertest = new GlobalMusterLite(-20.0,-5.0,hbMatrix,polMatrix,SecStructScores.matrix,substMatrix);
-			
+		LocalSequenceGotoh localgotoh = new LocalSequenceGotoh(-7,-2,polMatrix);
+		GLocalMusterLite mustertest = new GLocalMusterLite(-2.0,-1.0, SeqLibrary.read("secstruct.seqlib"),hbMatrix,polMatrix,SecStructScores.matrix,substMatrix,0.1,0.1,0.3,0.1);
 		Sequence seq1;
 		Sequence seq2;
 		
-		seq1 = new Sequence("1j2xA00","GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK");
-		seq2 = new Sequence("1p7iD00","EKRPRTAFSSEQLARLKREFNENRYLTERRRQQLSSELGLNEAQIKIWFQNARAKI");
+		String pdb1 = "1j2xA00";
+		String pdb2 = "1fokA02";
+				
+		seq1 = new Sequence(pdb1,seqlib.get(pdb1));
+		seq2 = new Sequence(pdb2,seqlib.get(pdb2));
 		SequenceAlignment align1 = mustertest.align(seq1, seq2);
+
 		SequenceAlignment align2 = substgotoh.align(seq1, seq2);
 		System.out.println(align1.toStringVerbose());
 		System.out.println(align2.toStringVerbose());
 		
-//		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(System.out));
-//		mustertest.streamMatricesAsTxt(out);
 		
 		PDBFileReader pdbreader = new PDBFileReader("../GoBi_old/STRUCTURES");
 		TMMain superpos = new TMMain();
-		PDBEntry p = pdbreader.readFromFolderById("1j2xA00");
-		PDBEntry q = pdbreader.readFromFolderById("1p7iD00");
+		PDBEntry p = pdbreader.readFromFolderById(pdb1);
+		PDBEntry q = pdbreader.readFromFolderById(pdb2);
 		Transformation tr1 = superpos.calculateTransformation(align1, p, q);
 		Transformation tr2 = superpos.calculateTransformation(align2, p, q);
 		System.out.println("TMScore für Muster: " + tr1.getTmscore());
@@ -66,14 +72,14 @@ public class aligntest {
 		System.out.println("RMSD für Sequence: " + tr2.getRmsd());
 		
 	
-		PDBReduce reduce = new PDBReduce();
-		PDBEntry[] result1 = PDBReduce.reducePDB(align1, p, tr1.transform(q));
-		JMolView view = new JMolView();
-		view.addPDBEntry(p, "red");
-		view.addPDBEntry(q, "green");
-		
-		view.addPDBEntry(tr1.transform(p), "yellow");
-		view.addPDBEntry(tr1.transform(q), "cyan");		
+//		PDBReduce reduce = new PDBReduce();
+//		PDBEntry[] result1 = PDBReduce.reducePDB(align1, p, tr1.transform(q));
+//		JMolView view = new JMolView();
+//		view.addPDBEntry(p, "red");
+//		view.addPDBEntry(q, "green");
+//		
+//		view.addPDBEntry(tr1.transform(p), "yellow");
+//		view.addPDBEntry(tr1.transform(q), "cyan");		
 		
 //		for(String[] pair : pairs){
 //			seq1 = new Sequence(pair[0],seqlib.get(pair[0]));

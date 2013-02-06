@@ -42,6 +42,10 @@ public class GlobalMusterLite extends Gotoh {
 	public GlobalMusterLite(double gapOpen, double gapExtend, HashMap<String,char[]> sslib, int[][] hbMatrix,
 			int[][] polMatrix, int[][] secStructMatrix, int[][] substMatrix, int hbWeight, int polWeight, int ssWeight, int substWeight) {
 		super(gapOpen, gapExtend);
+		
+		this.gapOpen *= Gotoh.FACTOR;
+		this.gapExtend *= Gotoh.FACTOR;
+		
 		this.hbMatrix = hbMatrix;
 		this.polMatrix = polMatrix;
 		this.secStructMatrix = secStructMatrix;
@@ -57,7 +61,10 @@ public class GlobalMusterLite extends Gotoh {
 			double[][] polMatrix, double[][] secStructMatrix,
 			double[][] substMatrix, double hbWeight, double polWeight, double ssWeight ,double substWeight) {
 		super(gapOpen, gapExtend);
-				
+		
+		this.gapOpen *= Gotoh.FACTOR;
+		this.gapExtend *= Gotoh.FACTOR;
+		
 		for (int i = 0; i < substMatrix.length; i++) {
 			for (int j = 0; j < substMatrix[i].length; j++) {
 				this.substMatrix[i][j] = (int) (Gotoh.FACTOR * substMatrix[i][j]);
@@ -71,6 +78,11 @@ public class GlobalMusterLite extends Gotoh {
 		this.polWeight = (int)(polWeight * Gotoh.FACTOR);
 		this.secStructWeight = (int)(ssWeight * Gotoh.FACTOR);
 		this.substWeight = (int)(substWeight * Gotoh.FACTOR);
+		
+//		this.hbWeight = 1;
+//		this.polWeight = 1;
+//		this.secStructWeight = 2;
+//		this.substWeight = 2;
 		this.secStructSeqlib = sslib;
 	}
 
@@ -205,7 +217,7 @@ public class GlobalMusterLite extends Gotoh {
 
 		return new SequenceAlignment((Sequence) sequence1,
 				(Sequence) sequence2, flip(row0.toCharArray()),
-				flip(row1.toCharArray()), 1.0d * score / Gotoh.FACTOR*Gotoh.FACTOR);
+				flip(row1.toCharArray()), 1.0d * score / (Gotoh.FACTOR*Gotoh.FACTOR));
 	}
 
 	/**

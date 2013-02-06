@@ -14,8 +14,8 @@ public class LocalSequenceGotoh extends Gotoh {
 
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
 	private int[][] scoringmatrix;
-	Sequence sequence1;
-	Sequence sequence2;
+//	Sequence sequence1;
+//	Sequence sequence2;
 
 	/**
 	 * 
@@ -47,8 +47,8 @@ public class LocalSequenceGotoh extends Gotoh {
 		this.M = new int[sequence1.length() + 1][sequence2.length() + 1];
 		this.I = new int[sequence1.length() + 1][sequence2.length() + 1];
 		this.D = new int[sequence1.length() + 1][sequence2.length() + 1];
-		this.sequence1 = (Sequence) sequence1;
-		this.sequence2 = (Sequence) sequence2;
+		this.sequence1 = sequence1;
+		this.sequence2 = sequence2;
 		prepareMatrices();
 		calculateMatrices();
 		return (SequenceAlignment) traceback();
@@ -187,8 +187,8 @@ public class LocalSequenceGotoh extends Gotoh {
 		while (x >= 0 && y >= 0 && M[x + 1][y + 1] != 0) {
 
 			actScore = M[x + 1][y + 1];
-			actx = sequence1.getComp(x);
-			acty = sequence2.getComp(y);
+			actx = (Character) sequence1.getComp(x);
+			acty = (Character) sequence2.getComp(y);
 
 			if (actScore == M[x][y] + score(actx, acty)) {
 				row0 += actx;
@@ -200,7 +200,7 @@ public class LocalSequenceGotoh extends Gotoh {
 					row0 += "-";
 					row1 += acty;
 					y--;
-					acty = sequence2.getComp(y);
+					acty = (Character)sequence2.getComp(y);
 				}
 				row0 += "-";
 				row1 += acty;
@@ -210,7 +210,7 @@ public class LocalSequenceGotoh extends Gotoh {
 					row0 += actx;
 					row1 += "-";
 					x--;
-					actx = sequence1.getComp(x);
+					actx = (Character)sequence1.getComp(x);
 				}
 				row0 += actx;
 				row1 += "-";
@@ -226,7 +226,7 @@ public class LocalSequenceGotoh extends Gotoh {
 			row1 += "-";
 		}
 
-		return new SequenceAlignment(sequence1, sequence2,
+		return new SequenceAlignment((Sequence)sequence1, (Sequence)sequence2,
 				flip(row0.toCharArray()), flip(row1.toCharArray()), 1.0d
 						* score / Gotoh.FACTOR);
 	}
