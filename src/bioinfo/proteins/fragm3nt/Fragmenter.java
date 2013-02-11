@@ -21,15 +21,17 @@ public class Fragmenter {
 	 *            the desired length of protein fragments
 	 * @return the new list of fragments
 	 */
-	public static LinkedList<ProteinFragment> crunchBackboneN(PDBEntry pdb,
+	public static LinkedList<ProteinFragment> crunchBackboneN(PDBEntry pdb, String secStruct,
 			LinkedList<ProteinFragment> l, int fLength) {
 		try {
+			String curSecStruct = "";
 			for (int i = 0; i < pdb.length() - fLength; i++) {
 				Atom[] temp = new Atom[fLength];
 				for (int j = i; j < i + fLength; j++) {
 					temp[j - i] = pdb.getAminoAcid(j).getAtomByType(AtomType.CA);
 				}
-				ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_" + i, temp, fLength);
+				curSecStruct = secStruct.substring(i, i + fLength);
+				ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_" + i, curSecStruct, temp, fLength);
 				l.add(tempFrag);
 			}
 			return l;
@@ -51,11 +53,12 @@ public class Fragmenter {
 	 *            the desired length of protein fragments
 	 * @return the new list of fragments
 	 */
-	public static List<ProteinFragment> crunchBackboneSeq(PDBEntry pdb,
+	public static List<ProteinFragment> crunchBackboneSeq(PDBEntry pdb, String secStruct,
 			List<ProteinFragment> l, int fLength) {
 		try {
 			AminoAcid tempAA = new AminoAcid("ALA", 0);
 			StringBuilder seq = new StringBuilder();
+			String curSecStruct = "";
 			for (int i = 0; i < pdb.length() - fLength; i++) {
 				Atom[] temp = new Atom[fLength];
 				seq.delete(0, fLength);
@@ -66,7 +69,8 @@ public class Fragmenter {
 				}
 //				if(seq.toString().equals("IGYPA"))
 //					System.out.println();
-				ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_" + i, seq.toString(), temp, fLength);
+				curSecStruct = secStruct.substring(i, i + fLength);
+				ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_" + i, curSecStruct, seq.toString(), temp, fLength);
 				l.add(tempFrag);
 			}
 			return l;
