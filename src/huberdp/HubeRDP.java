@@ -8,6 +8,8 @@ package huberdp;
 
 import java.util.LinkedList;
 
+import bioinfo.alignment.SequenceAlignment;
+
 /**
  * @author huberste
  * @lastchange 2013-02-11
@@ -65,7 +67,7 @@ public class HubeRDP {
 				for (RDPSolutionTreeAndNode u : uSet ) {
 					// if (Leaf(u)) do <PA,TA>^{\wedge} <-- Finish (u, T)
 					// TODO this would always be correct, something's wrong here
-//					if (u.isLeaf()) { // TODO: u is always leaf?
+//					if (u.isLeaf()) {
 //						finish(u,t);
 //					} else {
 					// V:= {<SP', {}>^{\vee}} <-- g_{\vee}(u, T)
@@ -108,9 +110,8 @@ public class HubeRDP {
 		LinkedList<RDPSolutionTreeAndNode> results =
 			new LinkedList<RDPSolutionTreeAndNode>();
 		
-		// FIXME
 		// BEGIN DEBUGGING
-		System.out.println("sending problem to oracles: \n"+v.getProblem());
+//		System.out.println("sending problem to oracles: \n"+v.getProblem());
 		// END DEBUGGING
 		
 		for (Oracle oracle : oracles) {
@@ -168,7 +169,11 @@ public class HubeRDP {
 		
 	}
 	
-	
+	/**
+	 * finishes a node
+	 * @param node the node to be finished
+	 * @param t the tree the node is part of
+	 */
 	private void finish(RDPSolutionTreeNode node, RDPSolutionTree t) {
 		
 		// checkFinal() checks if the node can be finished
@@ -190,7 +195,7 @@ public class HubeRDP {
 					);
 				} else {
 					for (RDPSolutionTreeNode child : node.getChilds()) {
-						mergeTAs((RDPSolutionTreeAndNode) node, (RDPSolutionTreeOrNode) child);
+//						mergePaA((RDPSolutionTreeAndNode) node, (RDPSolutionTreeOrNode) child);
 					}
 				}
 			}
@@ -203,9 +208,166 @@ public class HubeRDP {
 		}
 	}
 	
-	private PartialAlignment mergeTAs(RDPSolutionTreeAndNode u, RDPSolutionTreeOrNode v) {
-		// TODO
-		return null;
+	/**
+	 * merges a Problem and an Alignment
+	 * @param prob a RDPPloblem
+	 * @param ali An SequenceAlignment for this Problem
+	 * @return a LinkedList with all the possible PartialAlignments
+	 */
+	static public LinkedList<PartialAlignment> mergePaA(RDPProblem prob, SequenceAlignment ali) {
+		
+		LinkedList<PartialAlignment> results = new LinkedList<PartialAlignment>();
+		
+		// map is the map of the newly generated alignment
+		int[][] map = ali.calcMap();
+		// get first aligned character of the template
+		
+		// calculate paTarStart, paTarEnd, paTemStart, paTemEnd
+		// these are the first/last aligned characters of the sequences
+		int i = 0;
+		// paTemStart is the first aligned character of the template sequence in this subproblem
+		int paTemStart = prob.templateStart;
+		i=0;
+		while (i < map[0].length && map[0][i] < 0) {
+			i++;
+		}
+		if (i < map[0].length) {
+			paTemStart += i;
+		}
+		
+		// paTemEnd is the last aligned character of the template sequence in this subproblem
+		int paTemEnd = prob.templateEnd;
+		i=0;
+		while (i < map[0].length && map[0][map[0].length-i-1] < 0) {
+			i++;
+		}
+		if (i < map[0].length) {
+			paTemEnd -= i;
+		}
+		
+		// paTarStart is the first aligned character of the target sequence in this subproblem
+		int paTarStart = prob.targetStart;
+		i=0;
+		while (i < map[1].length && map[1][i] < 0) {
+			i++;
+		}
+		if (i < map[1].length) {
+			paTarStart += i;
+		}
+		
+		// paTarEnd is the last aligned character of the template sequence in this subproblem
+		int paTarEnd = prob.targetEnd;
+		i = 0;
+		while (i < map[1].length && map[1][map[1].length-i-1] < 0) {
+			i++;
+		}
+		if (i < map[1].length) {
+			paTarEnd -= i;
+		}
+		
+		// calculate new partial alignment (pa)
+		SequenceAlignment pa = null;
+		if (prob.alignment == null) {
+			// no pa was calculated yet, this means that this is the first call.
+			pa = ali;
+		} else {
+			// DONE check this code! ~huberste 2013-02-11
+			// merge problem.alignment with alignment
+			map = prob.alignment.calcMap();
+			char[] temRow = prob.alignment.getRow(0); // templateRow
+			char[] tarRow = prob.alignment.getRow(1); // targetRow
+			
+			int paTemStartInd = 0; // position in temRow, later first aligned character
+			int pos = 0; // position in problem.templateSequence
+			while (pos < prob.templateStart) {
+				if (temRow[paTemStartInd] != '-') {
+					pos++;
+				}
+				paTemStartInd++;
+			}
+			
+			int paTarStartInd = 0; // position in tarRow, later first aligned character
+			pos = 0; // position in problem.targetSequence
+			while (pos < prob.targetStart) {
+				if (tarRow[paTarStartInd] != '-') {
+					pos++;
+				}
+				paTarStartInd++;
+			}
+			
+			int paTemEndInd = temRow.length - 1; // position in temRow, later last aligned character
+			pos = prob.templateSequence.length() - 1; // position in problem.templateSequence
+			while (pos > prob.templateEnd) {
+				if (temRow[paTemEndInd] != '-') {
+					pos--;
+				}
+				paTemEndInd--;
+			}
+			
+			int paTarEndInd = tarRow.length - 1; // position in tarRow, later last aligned character
+			pos = prob.targetSequence.length() - 1;  // position in problem.targetSequence
+			while (pos > prob.targetEnd) {
+				if (tarRow[paTarEndInd] != '-') {
+					pos--;
+				}
+				paTarEndInd--;
+			}
+			
+			// Error handling 143
+			if (paTemStartInd != paTarStartInd) {
+				System.err.println("Error 143 in Oracle: Alignment lengths don't match.");
+			}
+			// Error handling 147
+			if (paTemEndInd != paTarEndInd) {
+				System.err.println("Error 147 in Oracle: Alignment lengths don't match.");
+			}
+			
+			char[][] newRows = new char[2][];
+			// paTemStartInd = length of old alignment before new alignment
+			// alignment.length = length of new alignment
+			// (problem.alignment.length() - (paTemEndInd+1)) = length of old alignment behind new alignment
+			newRows[0] = new char[paTemStartInd + ali.length() + (prob.alignment.length() - (paTemEndInd+1))];
+			newRows[1] = new char[newRows[0].length];
+			// make new Alignment:
+			// copy beginning of old alignment
+			for (pos = 0; pos < paTemStartInd; pos++) {
+				newRows[0][pos]=temRow[pos];
+			}
+			for (pos = 0; pos < paTarStartInd; pos++) {
+				newRows[1][pos]=tarRow[pos];
+			}
+			// copy new aligned
+			for (pos = 0; pos < ali.length(); pos++) {
+				newRows[0][paTemStartInd + pos]=ali.getRow(0)[pos];
+			}
+			for (pos = 0; pos < ali.length(); pos++) {
+				newRows[1][paTarStartInd + pos]=ali.getRow(1)[pos];
+			}
+			// copy end of old alignment
+			for (pos = 0; pos < prob.alignment.length() - (paTemEndInd + 1); pos++) {
+				newRows[0][paTemStartInd + ali.length() + pos]=temRow[(paTemEndInd + 1) + pos];
+			}
+			for (pos = 0; pos < prob.alignment.length() - (paTarEndInd + 1); pos++) {
+				newRows[1][paTarStartInd + ali.length() + pos]=tarRow[(paTarEndInd + 1) + pos];
+			}
+			
+			// merge scores. Here simply adding the scores will do fine.
+			double newScore = prob.alignment.getScore()+ali.getScore();
+			
+			pa = new SequenceAlignment(
+					prob.templateSequence, prob.targetSequence, newRows, newScore);
+			
+		}
+		
+		results.add(new PartialAlignment
+				(prob.templateSequence, prob.templateStructure,
+				prob.targetSequence, prob.targetStructure,
+				pa,
+				prob.templateStart, prob.templateEnd,
+				prob.targetStart, prob.targetEnd,
+				paTemStart, paTemEnd, paTarStart, paTarEnd));
+		
+		return results;
 	}
 	
 }

@@ -45,16 +45,6 @@ public class RDPSolutionTreeAndNode extends RDPSolutionTreeNode {
 		this.pa = pa;
 	}
 	
-	/**
-	 * merges the given TA with this AND node's PA and adds it to this node's
-	 * list of TAs
-	 * @param ta the ta to merge
-	 */
-	public void mergeTA(RDPSolution ta) {
-		// TODO merge ta with this.alignment
-		this.addTA(ta);
-	}
-	
 }
 
 /******************************************************************************
