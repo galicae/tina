@@ -314,10 +314,7 @@ public class PDBFileReader {
 		return new PDBEntry(pdbId, aminoacids);
 	}
 
-	private PDBEntry parseRealEntry(BufferedReader br, String pdbId){
-		if(pdbId.equals("1ACX"))
-			System.out.print("");
-			
+	private PDBEntry parseRealEntry(BufferedReader br, String pdbId){			
 		List<AminoAcid> aminoacids = new ArrayList<AminoAcid>();
 		String newPdbId = pdbId;
 		try{
@@ -390,6 +387,7 @@ public class PDBFileReader {
 			br.close();
 		}catch(Exception e){
 			e.printStackTrace();
+			
 		}
 		return new PDBEntry(newPdbId, aminoacids);
 	}

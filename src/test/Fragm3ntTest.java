@@ -10,8 +10,8 @@ import bioinfo.proteins.fragm3nt.FragmentCluster;
 public class Fragm3ntTest {
 	public static void main(String[] args) {
 		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
-		CollectiveClustering db = new CollectiveClustering(5, "./proteins2");
-		clusters = db.runKmeans(50, 0.5);
+		CollectiveClustering db = new CollectiveClustering(8, "./proteins2");
+		clusters = db.runKmeans(50, 0.2);
 //		clusters = db.runDBScan(4, 1.0);
 		
 		int sumOfFrags = 0;
@@ -25,7 +25,7 @@ public class Fragm3ntTest {
 		// write out clusters
 		for (FragmentCluster c : clusters) {
 			try {
-				BufferedWriter br = new BufferedWriter(new FileWriter("./clusters/k" + c.getCentroid().getID()));
+				BufferedWriter br = new BufferedWriter(new FileWriter("./clusters/" + c.getCentroid().getID()));
 				br.write(c.toString());
 				br.close();
 			} catch (Exception e) {

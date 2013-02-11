@@ -37,12 +37,11 @@ public class Assembler {
 	 * @return a clone of the centroid of the best cluster match to query
 	 */
 	private ProteinFragment findFragment(String query,
-			LinkedList<FragmentCluster> clusters) {
+			LinkedList<FragmentCluster> clusters, ProteinFragment lastFrag) {		
 		ProteinFragment curFrag = new ProteinFragment("dada", new double[1][1],
 				1);
 
 		LinkedList<ProteinFragment> rank = new LinkedList<ProteinFragment>();
-		double tempScore = -Double.MAX_VALUE;
 		double temp = 0;
 		double[][] matrix = new double[1][1];
 		matrix = QuasarMatrix.DAYHOFF_MATRIX;
@@ -62,13 +61,13 @@ public class Assembler {
 			curFrag.setClusterIndex((int) (temp * 1000));
 			// reward sequence IDENTITY
 			int percent = 0;
-			for(int i = 0; i < fragLength; i++) {
-				if(query.charAt(i) == curFrag.getSequence().charAt(i)) {
-					int curScore = curFrag.getClusterIndex();
-					curFrag.setClusterIndex(curScore + 10);
-					percent++;
-				}
-			}
+//			for(int i = 0; i < fragLength; i++) {
+//				if(query.charAt(i) == curFrag.getSequence().charAt(i)) {
+//					int curScore = curFrag.getClusterIndex();
+//					curFrag.setClusterIndex(curScore + 10);
+//					percent++;
+//				}
+//			}
 			if(percent == fragLength) {
 				int curScore = curFrag.getClusterIndex();
 				curFrag.setClusterIndex(curScore * 3);
@@ -78,8 +77,13 @@ public class Assembler {
 				rank.add(curFrag);
 			else {
 				for (int k = 0; k < rank.size(); k++) {
-					if ((temp * 1000) < rank.get(k).getClusterIndex())
+					if ((temp * 1000) < rank.get(k).getClusterIndex()) {
+						if(k == rank.size() - 1) {
+							rank.add(curFrag);
+							break;
+						}
 						continue;
+					}
 					else {
 						rank.add(k, curFrag);
 						break;
@@ -92,10 +96,33 @@ public class Assembler {
 //				tempScore = temp;
 //			}
 		}
-		if(!query.equals(rank.getFirst().getSequence()))
-			System.err.println("wrong fragment!! " + query + " " + rank.getFirst().getSequence());
+//		if(!query.equals(rank.getFirst().getSequence()))
+//			System.err.println("wrong fragment!! " + query + " " + rank.getFirst().getSequence());
 //		System.out.println(query + " " + curFrag.getSequence());
-		curFrag.setSequence(query);
+		
+		// now for the new stuff:
+		if(lastFrag == null)
+			System.out.print("");
+		else {
+			double tempScore = Double.MAX_VALUE;
+			ProteinFragment secCopy = lastFrag.clone();
+			double[][][] kabschFood = new double[2][4][3];
+			int shove = secCopy.getAllResidues().length - 4;
+			for(int k = 0; k < 5; k++) {
+				for (int i = 0; i < 3; i++) {
+					kabschFood[0][i] = secCopy.getResidue(shove + i);
+					kabschFood[1][i] = rank.get(k).getResidue(i);
+				}
+				Transformation t = Kabsch.calculateTransformation(kabschFood);
+				if(tempScore > t.getRmsd()) {
+					tempScore = t.getRmsd();
+					ProteinFragment tmpFrag = rank.remove(k);
+					rank.addFirst(tmpFrag);
+				}
+			}
+		}
+		
+		rank.getFirst().setSequence(query);
 		return rank.getFirst();
 	}
 
@@ -200,19 +227,20 @@ public class Assembler {
 	private LinkedList<ProteinFragment> collectFragments(String query,
 			LinkedList<FragmentCluster> clusters, int extent) {
 		String curSub = query.substring(0, fragLength);
-		ProteinFragment curFrag = findFragment(curSub, clusters);
+		ProteinFragment curFrag = findFragment(curSub, clusters, null);
 		LinkedList<ProteinFragment> result = new LinkedList<ProteinFragment>();
 		LinkedList<ProteinFragment> positSolutions = new LinkedList<ProteinFragment>();
 		result.add(curFrag);
 		int add = fragLength - extent;
-		for (int i = extent; i < query.length() - fragLength; i += add) {
+		for (int i = add; i < query.length() - fragLength; i += add) {
 			positSolutions.clear();
 			curSub = query.substring(i, i + fragLength);
-			curFrag = findFragment(curSub, clusters);
+			curFrag = findFragment(curSub, clusters, curFrag);
+			
 			result.add(curFrag);
 		}
 		curSub = query.substring(query.length() - fragLength, query.length());
-		curFrag = findFragment(curSub, clusters);
+		curFrag = findFragment(curSub, clusters, curFrag);
 		result.add(curFrag);
 		return result;
 	}

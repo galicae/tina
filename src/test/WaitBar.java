@@ -1,26 +1,42 @@
 package test;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.LinkedList;
+
 public class WaitBar {
-  static void updateProgress(double progressPercentage) {
-    final int width = 50; // progress bar width in chars
+	public static void main(String[] args) {
+		LinkedList<String> idList = new LinkedList<String>();
+		int count = 0;
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(
+					"list.txt"));
+			String line = reader.readLine();
+			String[] lArr = new String[2];
+			while (line != null) {
+				lArr = line.split(" ");
+				if (lArr[1].equals("b.1.1.4")){
+					count++;
+					idList.add(lArr[0]);
+				}
+				line = reader.readLine();
+			}
+			reader.close();
+			System.out.println("finished reading  " + count);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-    System.out.print("\r[");
-    int i = 0;
-    for (; i <= (int)(progressPercentage*width); i++) {
-      System.out.print(".");
-    }
-    for (; i < width; i++) {
-      System.out.print(" ");
-    }
-    System.out.print("]");
-  }
-
-  public static void main(String[] args) {
-    try {
-      for (double progressPercentage = 0.0; progressPercentage < 1.0; progressPercentage += 0.01) {
-        updateProgress(progressPercentage);
-        Thread.sleep(20);
-      }
-    } catch (InterruptedException e) {}
-  }
+		try {
+			BufferedWriter wr = new BufferedWriter(new FileWriter("idList.txt"));
+			for (int i = 0; i < idList.size(); i++) {
+				wr.write(idList.get(i) + "\n");
+			}
+			wr.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

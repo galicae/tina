@@ -50,7 +50,7 @@ public abstract class CentroidClustering {
 		// checkClusters();
 		assignInstances();
 		// checkAllFragments();
-		System.out.println(clusters.size() + " clusters");
+//		System.out.println(clusters.size() + " clusters");
 		return updated;
 	}
 
@@ -140,7 +140,7 @@ public abstract class CentroidClustering {
 	 */
 	@SuppressWarnings("unchecked")
 	public void update(int n) {
-		System.out.println("Starting update....");
+//		System.out.println("Starting update....");
 		boolean updated = true;
 		if (n == 0) {
 			for(ProteinFragment f: fragments) {
@@ -221,13 +221,13 @@ public abstract class CentroidClustering {
 	}
 
 	public boolean checkFragment(ProteinFragment f) {
-		double dist = 0;
-		for (int i = 1; i < f.fragLength; i++) {
-			dist = distance(f.getResidue(i - 1), f.getResidue(i));
-			if (dist < 3.5 || dist > 4.0) {
-				return false;
-			}
-		}
+//		double dist = 0;
+//		for (int i = 1; i < f.fragLength; i++) {
+//			dist = distance(f.getResidue(i - 1), f.getResidue(i));
+//			if (dist < 3.5 || dist > 4.0) {
+//				return false;
+//			}
+//		}
 		return true;
 	}
 

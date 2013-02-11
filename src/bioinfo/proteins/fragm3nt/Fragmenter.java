@@ -62,7 +62,7 @@ public class Fragmenter {
 				for (int j = i; j < i + fLength; j++) {
 					tempAA = pdb.getAminoAcid(j);
 					seq.append(tempAA.getName().getOneLetterCode());
-					temp[j - i] = tempAA.getAtomByType(AtomType.CA);
+					temp[j - i] = tempAA.getAtomByType(AtomType.CA).clone();
 				}
 //				if(seq.toString().equals("IGYPA"))
 //					System.out.println();

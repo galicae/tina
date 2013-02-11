@@ -4,17 +4,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import bioinfo.proteins.Atom;
 import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.Transformation;
 
 public class ClusterAnalysis {
-	private ArrayList<FragmentCluster> clusters;
+	private LinkedList<FragmentCluster> clusters;
 
-	public ClusterAnalysis(ArrayList<FragmentCluster> clusters) {
-		this.clusters = new ArrayList<FragmentCluster>();
+	public ClusterAnalysis(LinkedList<FragmentCluster> clusters) {
+		this.clusters = new LinkedList<FragmentCluster>();
 		for (FragmentCluster f : clusters) {
 			this.clusters.add(f);
 		}
@@ -27,7 +27,7 @@ public class ClusterAnalysis {
 	 *            the path to the folder where the cluster files are saved
 	 */
 	public ClusterAnalysis(String folder) {
-		this.clusters = new ArrayList<FragmentCluster>();
+		this.clusters = new LinkedList<FragmentCluster>();
 		BufferedReader br = null;
 		try {
 			if (folder == null) {
@@ -49,7 +49,7 @@ public class ClusterAnalysis {
 		}
 	}
 	
-//	public ClusterAnalysis(ArrayList<FragmentCluster> clusters) {
+//	public ClusterAnalysis(LinkedList<FragmentCluster> clusters) {
 //		
 //	}
 
@@ -72,7 +72,7 @@ public class ClusterAnalysis {
 			String line = br.readLine();
 			String seq = "";
 			int fragLength = 0;
-			ArrayList<Atom> atoms = new ArrayList<Atom>();
+			LinkedList<Atom> atoms = new LinkedList<Atom>();
 			String name;
 			double[] coord = new double[3];
 			while (line != null) {
@@ -93,14 +93,14 @@ public class ClusterAnalysis {
 					coord = new double[3];
 				} else if (line.startsWith("ENDMDL")) {
 					fragLength = atoms.size();
-					Atom[] atomArray = new Atom[atoms.size()];
+					Atom[] atomLinked = new Atom[atoms.size()];
 					for (int i = 0; i < atoms.size(); i++) {
 						Atom tempAt = atoms.get(i);
-						atomArray[i] = new Atom(tempAt.getType(),
+						atomLinked[i] = new Atom(tempAt.getType(),
 								tempAt.getPosition());
 					}
 					ProteinFragment heyIJustMetYou = new ProteinFragment(
-							tempId, seq, atomArray, fragLength);
+							tempId, seq, atomLinked, fragLength);
 					// result.add(heyIJustMetYou);
 					result.add(heyIJustMetYou);
 					tempId = clusterId;
@@ -118,7 +118,7 @@ public class ClusterAnalysis {
 		return null;
 	}
 
-	public ArrayList<FragmentCluster> getClusters() {
+	public LinkedList<FragmentCluster> getClusters() {
 		return this.clusters;
 	}
 

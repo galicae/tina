@@ -127,6 +127,8 @@ public class PDBReduce {
 		Atom tempA = new Atom(AtomType.CA, new double[3]);
 		for(int i = 0; i < pdb1.length(); i++) {
 			tempA = pdb1.getAminoAcid(i).getAtomByType(AtomType.CA);
+			if(tempA == null)
+				return null;
 			result[i] = tempA.getPosition();
 		}
 		return result;

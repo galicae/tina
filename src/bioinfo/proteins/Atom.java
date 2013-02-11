@@ -83,7 +83,7 @@ public class Atom implements Serializable{
 		String result = "ATOM  ##### aaaa+rrr c****i   xxxxxxxxyyyyyyyyzzzzzzzzooooootttttt          eehh";
 
 		// coordinate strings
-		DecimalFormat df = new DecimalFormat("####.000");
+		DecimalFormat df = new DecimalFormat("###0.000");
 		String xCoord = df.format(position[0]).replace(",", ".");
 		while (xCoord.length() < 8)
 			xCoord = " " + xCoord;
@@ -95,8 +95,10 @@ public class Atom implements Serializable{
 			zCoord = " " + zCoord;
 		// atom type
 		String atomType = type.toString();
-		while (atomType.length() < 4)
+		if (atomType.length() < 4)
 			atomType = " " + atomType;
+		while (atomType.length() < 4)
+			atomType = atomType + " ";
 		// element symbol
 		String element = "";
 		if (atomType.contains("C"))
@@ -202,5 +204,10 @@ public class Atom implements Serializable{
 		result = result.replace("yyyyyyyy", yCoord);
 		result = result.replace("zzzzzzzz", zCoord);
 		return result;
+	}
+	
+	public Atom clone() {
+		Atom clone = new Atom(this.type, this.position);
+		return clone;
 	}
 }

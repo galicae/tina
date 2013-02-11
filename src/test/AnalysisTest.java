@@ -1,6 +1,7 @@
 package test;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import bioinfo.proteins.fragm3nt.ClusterAnalysis;
 import bioinfo.proteins.fragm3nt.FragmentCluster;
@@ -9,7 +10,7 @@ public class AnalysisTest {
 
 	public static void main(String[] args) {
 		ClusterAnalysis ccl = new ClusterAnalysis("./clusters/");
-		ArrayList<FragmentCluster> clusters = new ArrayList<FragmentCluster>();
+		List<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
 		
 		clusters = ccl.getClusters();
 		double tempRMSD = 0;

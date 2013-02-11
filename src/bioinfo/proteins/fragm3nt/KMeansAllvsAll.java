@@ -11,7 +11,6 @@ public class KMeansAllvsAll extends CentroidClustering {
 		super(f, accuracy);
 	}
 
-
 	/**
 	 * this function initializes clusters to use the k-means clustering
 	 * algorithm. The distance function here is the RMSD of the fragments to one
@@ -39,7 +38,7 @@ public class KMeansAllvsAll extends CentroidClustering {
 				else
 					wrongList.add(f);
 			}
-			// System.out.println("Sorted fragments in good and bad");
+			System.out.println("Sorted fragments in good and bad");
 			fragments = correctList;
 
 			for (ProteinFragment f : wrongList) {
