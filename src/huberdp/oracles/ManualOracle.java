@@ -52,7 +52,7 @@ public class ManualOracle extends Oracle {
 			e.printStackTrace();
 		}
 		
-		if (templateSequence.equals("")) {
+		if (templateInput.equals("")) {
 //			result = null; // already happened in line 33
 		} else {		
 			result = new SequenceAlignment(

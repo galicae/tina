@@ -22,10 +22,10 @@ import huberdp.oracles.TinyOracle;
 public class huberdptest {
 
 	// set test data
-//	private static final Sequence target = new Sequence("1dp7P00","TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK");
 //	private static final Sequence template = new Sequence("1j2xA00","GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK");
-	private static final Sequence template = new Sequence("1j2xA00","G");
-	private static final Sequence target = new Sequence("1dp7P00","T");
+//	private static final Sequence target   = new Sequence("1dp7P00","TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK");
+	private static final Sequence template = new Sequence("test001","GGGGTTTAAA");
+	private static final Sequence target = new Sequence("test002","TTTGGGGAAA");
 	
 	/**
 	 * main function
@@ -34,8 +34,8 @@ public class huberdptest {
 	public static void main(String[] args) {
 		
 		// set test data
-		PDBEntry targetStructure = null;
 		PDBEntry templateStructure = null;
+		PDBEntry targetStructure = null;
 		SequenceAlignment ali = null;
 		
 		// read test pdb file
@@ -48,9 +48,9 @@ public class huberdptest {
 		// construct rdp tree
 		System.out.print("Constructing RDP Tree structure...");
 		RDPProblem root = new RDPProblem
-				(target, targetStructure,
-				 template, templateStructure,
-				 ali, 0, target.length(), 0, template.length());
+				 (template, templateStructure,
+					target, targetStructure,
+				 ali, 0, template.length() - 1, 0, target.length() - 1);
 		RDPSolutionTree t = new RDPSolutionTree(root);
 		System.out.println(" done!");
 

@@ -31,11 +31,11 @@ public abstract class Oracle {
 		// set Sequences for Oracle
 		char[] templateChars = Arrays.copyOfRange
 				(problem.templateSequence.getSequence(),
-						problem.templateStart, problem.templateEnd);
+						problem.templateStart, problem.templateEnd+1);
 				
 		char[] targetChars = Arrays.copyOfRange
 				(problem.targetSequence.getSequence(),
-						problem.targetStart, problem.targetEnd);
+						problem.targetStart, problem.targetEnd+1);
 		
 		Sequence templateSequence = new Sequence(
 				problem.templateSequence.getID(),
@@ -180,12 +180,12 @@ public abstract class Oracle {
 		}
 		
 		results.add(new PartialAlignment
-				(problem.templateSequence, problem.targetStructure,
-				problem.templateSequence, problem.templateStructure,
+				(problem.templateSequence, problem.templateStructure,
+				problem.targetSequence, problem.targetStructure,
 				pa,
-				problem.targetStart, problem.targetEnd,
 				problem.templateStart, problem.templateEnd,
-				paTarStart, paTarEnd, paTemStart, paTemEnd));
+				problem.targetStart, problem.targetEnd,
+				paTemStart, paTemEnd, paTarStart, paTarEnd));
 		
 		}
 		

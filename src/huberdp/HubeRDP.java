@@ -11,7 +11,7 @@ import java.util.LinkedList;
 
 /**
  * @author huberste
- * @lastchange 2013-01-26
+ * @lastchange 2013-02-11
  */
 public class HubeRDP {
 
@@ -103,6 +103,11 @@ public class HubeRDP {
 		
 		LinkedList<RDPSolutionTreeAndNode> results =
 			new LinkedList<RDPSolutionTreeAndNode>();
+		
+		// FIXME
+		// BEGIN DEBUGGING
+		System.out.println("sending problem to oracles: \n"+v.getProblem());
+		// END DEBUGGING
 		
 		for (Oracle oracle : oracles) {
 		LinkedList<PartialAlignment> segments =

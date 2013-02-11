@@ -12,22 +12,22 @@ import bioinfo.proteins.PDBEntry;
 
 /**
  * @author huberste
- * @lastchange 2013-01-26
+ * @lastchange 2013-02-11
  * 
  */
 public class RDPProblem {
-	
-	/**
-	 * Target
-	 */
-	public Sequence targetSequence;
-	public PDBEntry targetStructure;
 	
 	/**
 	 * Template
 	 */
 	public Sequence templateSequence;
 	public PDBEntry templateStructure;
+	
+	/**
+	 * Target
+	 */
+	public Sequence targetSequence;
+	public PDBEntry targetStructure;
 	
 	/**
 	 * SequenceAlignment so far
@@ -37,32 +37,50 @@ public class RDPProblem {
 	/**
 	 * start of the given (sub-)problem.
 	 */
-	public int targetStart;
 	public int templateStart;
+	public int targetStart;
+	
 	/**
 	 * end of the given (sub-)problem.
 	 */
-	public int targetEnd;
 	public int templateEnd;
+	public int targetEnd;
 	
 	/**
 	 * Constructs an RDPProblem
+	 * @param templateSequence
+	 * @param templateStructure
+	 * @param targetSequence
+	 * @param targetStructure
+	 * @param partialAlignment
+	 * @param templateStart Start of the (sub-) problem on template side
+	 * @param templateEnd End of the (sub-) problem on template side
+	 * @param targetStart Start of the (sub-) problem on target side
+	 * @param targetEnd End of the (sub-) problem on target side
 	 */
 	public RDPProblem(
-			Sequence targetSequence, PDBEntry targetStructure,
 			Sequence templateSequence, PDBEntry templateStructure,
+			Sequence targetSequence, PDBEntry targetStructure,
 			SequenceAlignment partialAlignment,
-			int targetStart, int targetEnd, int templateStart, int templateEnd) {
-		this.targetSequence = targetSequence;
-		this.targetStructure = targetStructure;
+			int templateStart, int templateEnd,
+			int targetStart, int targetEnd) {
 		this.templateSequence = templateSequence;
 		this.templateStructure = templateStructure;
+		this.targetSequence = targetSequence;
+		this.targetStructure = targetStructure;
 		this.alignment = partialAlignment;
-		this.targetStart = targetStart;
-		this.targetEnd = targetEnd;
 		this.templateStart = templateStart;
 		this.templateEnd = templateEnd;
+		this.targetStart = targetStart;
+		this.targetEnd = targetEnd;
 		
+	}
+	
+	public String toString() {
+		String result = "";
+		result += templateSequence.getSequenceAsString().substring(templateStart, templateEnd)+ "\n";
+		result += targetSequence.getSequenceAsString().substring(targetStart, targetEnd)+ "\n";
+		return result;
 	}
 }
 
