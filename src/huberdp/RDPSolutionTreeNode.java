@@ -15,9 +15,12 @@ import java.util.LinkedList;
  */
 public abstract class RDPSolutionTreeNode {
 
-	private RDPSolutionTreeNode parent; // For dual link
-	private LinkedList<RDPSolutionTreeNode> childs; // For dual link
-		
+	private RDPSolutionTreeNode parent; // for dual link
+	private LinkedList<RDPSolutionTreeNode> childs; // for dual link
+	
+	// TA = TreeAlignment
+	protected LinkedList<RDPSolution> ta;
+	
 	/**
 	 * costructs a new Node with the given parent
 	 * @param parent
@@ -25,6 +28,7 @@ public abstract class RDPSolutionTreeNode {
 	public RDPSolutionTreeNode(RDPSolutionTreeNode parent) {
 		this.setParent(parent);
 		this.childs = new LinkedList<RDPSolutionTreeNode>();
+		this.setTA(new LinkedList<RDPSolution>());
 	}
 
 	/**
@@ -97,6 +101,31 @@ public abstract class RDPSolutionTreeNode {
 	 */
 	private void setParent(RDPSolutionTreeNode parent) {
 		this.parent = parent;
+	}
+
+	/**
+	 * @return the ta
+	 */
+	public LinkedList<RDPSolution> getTA() {
+		return ta;
+	}
+	
+	/**
+	 * @param
+	 */
+	public void setTA(LinkedList<RDPSolution> ta) {
+		this.ta = ta;
+	}
+	
+	public void addTA(RDPSolution ta) {
+		this.ta.add(ta);
+	}
+	
+	public void addTAs(LinkedList<RDPSolution> tas) {
+		for (RDPSolution ta : tas) {
+			this.addTA(ta);
+		}
+		
 	}
 	
 }

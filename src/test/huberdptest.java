@@ -73,6 +73,7 @@ public class huberdptest {
 		// Solution is now in t.getRoot();
 		
 		// TODO output of t.getRoot();
+		System.out.println(t.getRoot().getTA().get(0).targetSequence);
 
 	}
 

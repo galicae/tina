@@ -7,7 +7,7 @@
 package huberdp;
 
 import bioinfo.Sequence;
-import bioinfo.alignment.SequenceAlignment;
+import bioinfo.alignment.Alignment;
 import bioinfo.proteins.PDBEntry;
 
 /**
@@ -18,27 +18,33 @@ import bioinfo.proteins.PDBEntry;
 public class RDPSolution{
 	
 	/**
+	 * Template
+	 */
+	public Sequence templateSequence;
+	public PDBEntry templateStructure;
+	
+	/**
 	 * Target == solution
 	 */
 	public Sequence targetSequence;
 	public PDBEntry targetStructure;
 	
+	public Alignment solution;
+	
 	/**
 	 * 
-	 * @param templateSequence
-	 * @param templateStructure
 	 * @param targetSequence
 	 * @param targetStructure
-	 * @param solution
 	 */
 	public RDPSolution(Sequence templateSequence, PDBEntry templateStructure,
 			Sequence targetSequence, PDBEntry targetStructure,
-			SequenceAlignment solution) {
+			Alignment solution) {
+		this.templateSequence = templateSequence;
+		this.templateStructure = templateStructure;
 		this.targetSequence = targetSequence;
 		this.targetStructure = targetStructure;
+		this.solution = solution;
 	}
-
-	
 	
 }
 

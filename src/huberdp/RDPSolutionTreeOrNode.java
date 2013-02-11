@@ -11,8 +11,6 @@
  ******************************************************************************/
 package huberdp;
 
-import java.util.LinkedList;
-
 /**
  * @author huberste
  * @lastchange 2013-01-29
@@ -24,8 +22,6 @@ public class RDPSolutionTreeOrNode
 	
 	// SP = SubProblem
 	private RDPProblem problem;
-	// TA = TreeAlignment
-	private LinkedList<RDPSolution> ta;
 	
 	private double score;
 	
@@ -75,28 +71,6 @@ public class RDPSolutionTreeOrNode
 	 */
 	public RDPProblem getProblem() {
 		return problem;
-	}
-	
-	/**
-	 * @return the TreeALignments
-	 */
-	public LinkedList<RDPSolution> getTa() {
-		return ta;
-	}
-
-	/**
-	 * @param ta the TreeAlignments to set
-	 */
-	public void setTa(LinkedList<RDPSolution> ta) {
-		this.ta = ta;
-	}
-	
-	/**
-	 * 
-	 * @param ta the TreeAlignment to add
-	 */
-	public void addSolution(RDPSolution ta) {
-		this.ta.add(ta);
 	}
 	
 }

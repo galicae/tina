@@ -143,7 +143,7 @@ public class HubeRDP {
 		LinkedList<RDPSolutionTreeOrNode> results =
 				new LinkedList<RDPSolutionTreeOrNode>();
 		
-		LinkedList<RDPProblem> subproblems = u.getAlignment().getSubProblems();
+		LinkedList<RDPProblem> subproblems = u.getPA().getSubProblems();
 		
 		// Make new OrNodes
 		for (RDPProblem subproblem : subproblems) {
@@ -170,11 +170,47 @@ public class HubeRDP {
 	}
 	
 	
-	private void finish(RDPSolutionTreeNode u, RDPSolutionTree t) {
-		if (u instanceof RDPSolutionTreeOrNode) {
+	private void finish(RDPSolutionTreeNode node, RDPSolutionTree t) {
+		if (node instanceof RDPSolutionTreeOrNode) {
+			for (RDPSolutionTreeNode child : node.getChilds()) {
+				((RDPSolutionTreeOrNode) node).addTAs(((RDPSolutionTreeAndNode) child).getTA());
+			}
 			
-		} else if (u instanceof RDPSolutionTreeAndNode) {
-			
+		} else if (node instanceof RDPSolutionTreeAndNode) {
+			if (node.getChilds().isEmpty()) {
+				((RDPSolutionTreeAndNode) node).addTA(
+					new RDPSolution(
+						((RDPSolutionTreeAndNode) node).getPA().templateSequence,
+						((RDPSolutionTreeAndNode) node).getPA().templateStructure,
+						((RDPSolutionTreeAndNode) node).getPA().targetSequence,
+						((RDPSolutionTreeAndNode) node).getPA().targetStructure,
+						((RDPSolutionTreeAndNode) node).getPA().alignment
+					)
+				);
+			} else {
+				// TODO
+			}
+		}
+		
+		boolean finished = true;
+		if (node.getParent() != null) {
+			for (RDPSolutionTreeNode sibling : node.getParent().getChilds()) {
+				if (sibling instanceof RDPSolutionTreeAndNode) {
+					if (((RDPSolutionTreeAndNode)sibling).getTA() == null) {
+						finished = false;
+						break;
+					}
+				}
+				if (sibling instanceof RDPSolutionTreeOrNode) {
+					if (((RDPSolutionTreeOrNode)sibling).getTA().isEmpty()) {
+						finished = false;
+						break;
+					}
+				}
+			}
+			if (finished) { 
+				finish (node.getParent(), t);
+			}
 		}
 	}
 	

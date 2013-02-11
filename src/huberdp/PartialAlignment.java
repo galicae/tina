@@ -100,4 +100,9 @@ public class PartialAlignment extends RDPProblem {
 		return results;
 	}
 	
+	public String toString() {
+		// TODO
+		return null; 
+	}
+	
 }
