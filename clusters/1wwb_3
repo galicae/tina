@@ -1,0 +1,22 @@
+REMARK 500 APTITFLE
+MODEL        1
+ATOM      0  CA  ALA A   0       1.088  56.361  15.152  1.00  0.00           C  
+ATOM      1  CA  PRO A   1       2.364  53.740  17.632  1.00  0.00           C  
+ATOM      2  CA  THR A   2       0.577  52.580  20.784  1.00  0.00           C  
+ATOM      3  CA  ILE A   3       2.319  50.374  23.367  1.00  0.00           C  
+ATOM      4  CA  THR A   4      -0.713  48.326  24.399  1.00  0.00           C  
+ATOM      5  CA  PHE A   5       1.008  45.877  26.762  1.00  0.00           C  
+ATOM      6  CA  LEU A   6       4.268  45.829  28.738  1.00  0.00           C  
+ATOM      7  CA  GLU A   7       4.522  43.461  31.648  1.00  0.00           C  
+ENDMDL
+REMARK 500 PPRVVSLE
+MODEL        2
+ATOM      0  CA  PRO A   0       0.868  56.491  15.282  1.00  0.00           C  
+ATOM      1  CA  PRO A   1       2.489  53.695  17.457  1.00  0.00           C  
+ATOM      2  CA  ARG A   2       0.930  52.613  20.709  1.00  0.00           C  
+ATOM      3  CA  VAL A   3       2.209  50.283  23.429  1.00  0.00           C  
+ATOM      4  CA  VAL A   4      -0.827  48.169  24.359  1.00  0.00           C  
+ATOM      5  CA  SER A   5       0.959  45.978  26.826  1.00  0.00           C  
+ATOM      6  CA  LEU A   6       4.247  45.819  28.720  1.00  0.00           C  
+ATOM      7  CA  GLU A   7       4.558  43.499  31.700  1.00  0.00           C  
+ENDMDL

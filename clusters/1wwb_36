@@ -1,0 +1,22 @@
+REMARK 500 YNGAILNE
+MODEL        1
+ATOM      0  CA  TYR A   0      17.276   7.717  31.893  1.00  0.00           C  
+ATOM      1  CA  ASN A   1      17.545   5.457  34.944  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      17.844   2.429  32.729  1.00  0.00           C  
+ATOM      3  CA  ALA A   3      14.798   3.243  30.583  1.00  0.00           C  
+ATOM      4  CA  ILE A   4      14.912   4.519  27.024  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      14.504   8.264  26.899  1.00  0.00           C  
+ATOM      6  CA  ASN A   6      12.139   9.169  24.096  1.00  0.00           C  
+ATOM      7  CA  GLU A   7      13.092  12.616  22.759  1.00  0.00           C  
+ENDMDL
+REMARK 500 FNGSVLNE
+MODEL        2
+ATOM      0  CA  PHE A   0      17.071   7.723  31.766  1.00  0.00           C  
+ATOM      1  CA  ASN A   1      17.498   5.594  34.876  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      18.034   2.501  32.715  1.00  0.00           C  
+ATOM      3  CA  SER A   3      14.954   2.897  30.585  1.00  0.00           C  
+ATOM      4  CA  VAL A   4      14.721   4.455  27.155  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      14.401   8.243  26.971  1.00  0.00           C  
+ATOM      6  CA  ASN A   6      12.107   9.372  24.156  1.00  0.00           C  
+ATOM      7  CA  GLU A   7      13.324  12.629  22.702  1.00  0.00           C  
+ENDMDL

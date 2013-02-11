@@ -1,0 +1,22 @@
+REMARK 500 QISAHFMG
+MODEL        1
+ATOM      0  CA  GLN A   0      26.521   7.476  31.630  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      26.412  10.631  33.710  1.00  0.00           C  
+ATOM      2  CA  SER A   2      24.659  11.841  36.877  1.00  0.00           C  
+ATOM      3  CA  ALA A   3      22.474  14.909  36.402  1.00  0.00           C  
+ATOM      4  CA  HIS A   4      20.888  17.133  39.003  1.00  0.00           C  
+ATOM      5  CA  PHE A   5      18.624  19.963  37.804  1.00  0.00           C  
+ATOM      6  CA  MET A   6      16.671  21.078  40.820  1.00  0.00           C  
+ATOM      7  CA  GLY A   7      16.759  20.186  44.488  1.00  0.00           C  
+ENDMDL
+REMARK 500 SIMAAFMD
+MODEL        2
+ATOM      0  CA  SER A   0      26.546   7.415  31.709  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      26.319  10.604  33.750  1.00  0.00           C  
+ATOM      2  CA  MET A   2      24.611  11.886  36.884  1.00  0.00           C  
+ATOM      3  CA  ALA A   3      22.546  15.036  36.395  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      20.783  17.277  38.936  1.00  0.00           C  
+ATOM      5  CA  PHE A   5      18.615  20.077  37.639  1.00  0.00           C  
+ATOM      6  CA  MET A   6      16.810  20.890  40.853  1.00  0.00           C  
+ATOM      7  CA  ASP A   7      16.778  20.034  44.567  1.00  0.00           C  
+ENDMDL

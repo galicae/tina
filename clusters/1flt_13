@@ -1,0 +1,22 @@
+REMARK 500 IIHMTEGR
+MODEL        1
+ATOM      0  CA  ILE A   0      27.322   3.627  10.271  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      28.392   1.441   7.348  1.00  0.00           C  
+ATOM      2  CA  HIS A   2      27.387   2.603   3.847  1.00  0.00           C  
+ATOM      3  CA  MET A   3      26.393  -0.363   1.688  1.00  0.00           C  
+ATOM      4  CA  THR A   4      25.429  -0.911  -1.942  1.00  0.00           C  
+ATOM      5  CA  GLU A   5      23.331  -3.866  -2.895  1.00  0.00           C  
+ATOM      6  CA  GLY A   6      25.149  -6.260  -5.198  1.00  0.00           C  
+ATOM      7  CA  ARG A   7      28.582  -5.246  -3.969  1.00  0.00           C  
+ENDMDL
+REMARK 500 FSLAKEGE
+MODEL        2
+ATOM      0  CA  PHE A   0      27.688   3.375  10.409  1.00  0.00           C  
+ATOM      1  CA  SER A   1      28.454   1.713   7.075  1.00  0.00           C  
+ATOM      2  CA  LEU A   2      26.873   2.667   3.780  1.00  0.00           C  
+ATOM      3  CA  ALA A   3      26.262  -0.554   1.809  1.00  0.00           C  
+ATOM      4  CA  LYS A   4      25.487  -0.816  -1.900  1.00  0.00           C  
+ATOM      5  CA  GLU A   5      23.341  -3.667  -3.179  1.00  0.00           C  
+ATOM      6  CA  GLY A   6      25.258  -6.224  -5.225  1.00  0.00           C  
+ATOM      7  CA  GLU A   7      28.622  -5.469  -3.618  1.00  0.00           C  
+ENDMDL

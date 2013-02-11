@@ -1,0 +1,22 @@
+REMARK 500 KLVLEDSG
+MODEL        1
+ATOM      0  CA  LYS A   0      -2.561  41.615  34.869  1.00  0.00           C  
+ATOM      1  CA  LEU A   1      -4.420  39.933  37.727  1.00  0.00           C  
+ATOM      2  CA  VAL A   2      -7.638  37.975  37.236  1.00  0.00           C  
+ATOM      3  CA  LEU A   3     -10.650  37.707  39.543  1.00  0.00           C  
+ATOM      4  CA  GLU A   4      -9.551  34.091  40.001  1.00  0.00           C  
+ATOM      5  CA  ASP A   5      -6.109  34.941  41.409  1.00  0.00           C  
+ATOM      6  CA  SER A   6      -7.804  35.795  44.701  1.00  0.00           C  
+ATOM      7  CA  GLY A   7      -6.927  33.441  47.538  1.00  0.00           C  
+ENDMDL
+REMARK 500 NVQPSDAG
+MODEL        2
+ATOM      0  CA  ASN A   0      -2.509  41.459  34.871  1.00  0.00           C  
+ATOM      1  CA  VAL A   1      -4.462  40.073  37.841  1.00  0.00           C  
+ATOM      2  CA  GLN A   2      -7.668  38.113  37.292  1.00  0.00           C  
+ATOM      3  CA  PRO A   3     -10.534  37.610  39.751  1.00  0.00           C  
+ATOM      4  CA  SER A   4      -9.579  33.912  39.867  1.00  0.00           C  
+ATOM      5  CA  ASP A   5      -6.176  34.904  41.298  1.00  0.00           C  
+ATOM      6  CA  ALA A   6      -7.830  35.838  44.602  1.00  0.00           C  
+ATOM      7  CA  GLY A   7      -6.903  33.589  47.503  1.00  0.00           C  
+ENDMDL

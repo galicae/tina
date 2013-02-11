@@ -7,10 +7,9 @@ import java.util.List;
 
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
-import bioinfo.proteins.fragm3nt.Assembler;
 import bioinfo.proteins.fragm3nt.ClusterAnalysis;
 import bioinfo.proteins.fragm3nt.FragmentCluster;
-import bioinfo.proteins.fragm3nt.ProteinFragment;
+import bioinfo.proteins.fragm3nt.*;
 import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.PDBReduce;
 import bioinfo.superpos.Transformation;
@@ -28,7 +27,6 @@ public class Fr4gmentTest {
 
 		ClusterAnalysis c = new ClusterAnalysis("clusters");
 		LinkedList<FragmentCluster> clusters = c.getClusters();
-		Assembler ass = new Assembler(fragLength);
 
 		double[][][] kabschFood;
 
@@ -36,37 +34,43 @@ public class Fr4gmentTest {
 			BufferedWriter wr = new BufferedWriter(new FileWriter(
 					"famTestResults"));
 			for (PDBEntry pdb : fileList) {
+				CheatAssembler ass = new CheatAssembler(fragLength, pdb);
 				BufferedWriter wr2 = new BufferedWriter(new FileWriter(
 						"famTest/" + pdb.getID() + ".pdb"));
 				query = "";
 				for (int i = 0; i < pdb.length(); i++) {
 					query += pdb.getAminoAcid(i).getName().getOneLetterCode();
 				}
-				ProteinFragment result = ass.predictStructure(query, clusters,
-						extent);
-				kabschFood = new double[2][result.getAllResidues().length][3];
-				kabschFood[0] = result.getAllResidues();
-				kabschFood[1] = PDBReduce.reduceSinglePDB(pdb);
-				if(kabschFood[1] == null)
+				try {
+					ProteinFragment result = ass.proveConcept(query, clusters,
+							extent);
+					kabschFood = new double[2][result.getAllResidues().length][3];
+					kabschFood[0] = result.getAllResidues();
+					kabschFood[1] = PDBReduce.reduceSinglePDB(pdb);
+					if (kabschFood[1] == null)
+						continue;
+					Transformation t = Kabsch
+							.calculateTransformation(kabschFood);
+					result.setCoordinates(t.transform(kabschFood[0]));
+					wr.write(Double.toString(t.getRmsd()) + "\n");
+					System.out.println(t.getRmsd());
+					sum += t.getRmsd();
+
+					ProteinFragment prot = new ProteinFragment("real", query,
+							new double[0][0], fragLength);
+					prot.append(PDBReduce.reduceSinglePDB(pdb), "");
+					prot.setCoordinates(kabschFood[1]);
+
+					wr2.write("MODEL        1\n");
+					wr2.write(result.toString());
+					wr2.write("ENDMDL\n");
+					wr2.write("MODEL        2\n");
+					wr2.write(prot.toString());
+					wr2.write("ENDMDL\n");
+					wr2.close();
+				} catch (Exception e) {
 					continue;
-				Transformation t = Kabsch.calculateTransformation(kabschFood);
-				result.setCoordinates(t.transform(kabschFood[0]));
-				wr.write(Double.toString(t.getRmsd()) + "\n");
-				System.out.println(t.getRmsd());
-				sum += t.getRmsd();
-
-				ProteinFragment prot = new ProteinFragment("real", query,
-						new double[0][0], fragLength);
-				prot.append(PDBReduce.reduceSinglePDB(pdb), "");
-				prot.setCoordinates(kabschFood[1]);
-
-				wr2.write("MODEL        1\n");
-				wr2.write(result.toString());
-				wr2.write("ENDMDL\n");
-				wr2.write("MODEL        2\n");
-				wr2.write(prot.toString());
-				wr2.write("ENDMDL\n");
-				wr2.close();
+				}
 			}
 			System.out.println(sum / fileList.size());
 			wr.close();

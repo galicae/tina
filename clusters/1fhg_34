@@ -1,0 +1,22 @@
+REMARK 500 YPDPEVMW
+MODEL        1
+ATOM      0  CA  TYR A   0       4.616  12.439  24.305  1.00  0.00           C  
+ATOM      1  CA  PRO A   1       4.510   9.542  24.863  1.00  0.00           C  
+ATOM      2  CA  ASP A   2       8.081  10.040  25.710  1.00  0.00           C  
+ATOM      3  CA  PRO A   3      10.328   8.706  23.068  1.00  0.00           C  
+ATOM      4  CA  GLU A   4      12.831   5.928  23.203  1.00  0.00           C  
+ATOM      5  CA  VAL A   5      16.283   7.017  22.206  1.00  0.00           C  
+ATOM      6  CA  MET A   6      19.193   5.326  20.525  1.00  0.00           C  
+ATOM      7  CA  TRP A   7      22.537   6.499  19.195  1.00  0.00           C  
+ENDMDL
+REMARK 500 NPPPTLHW
+MODEL        2
+ATOM      0  CA  ASN A   0       4.392  12.529  24.080  1.00  0.00           C  
+ATOM      1  CA  PRO A   1       4.363   9.620  24.780  1.00  0.00           C  
+ATOM      2  CA  PRO A   2       8.074   9.822  26.048  1.00  0.00           C  
+ATOM      3  CA  PRO A   3      10.448   8.748  23.166  1.00  0.00           C  
+ATOM      4  CA  THR A   4      12.921   5.988  23.190  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      16.490   7.135  22.346  1.00  0.00           C  
+ATOM      6  CA  HIS A   6      19.158   5.245  20.325  1.00  0.00           C  
+ATOM      7  CA  TRP A   7      22.532   6.410  19.141  1.00  0.00           C  
+ENDMDL

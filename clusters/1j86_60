@@ -1,0 +1,22 @@
+REMARK 500 DSGTYYCT
+MODEL        1
+ATOM      0  CA  ASP A   0      -7.608  26.367  22.733  1.00  0.00           C  
+ATOM      1  CA  SER A   1      -8.457  23.922  25.528  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      -8.769  20.253  24.651  1.00  0.00           C  
+ATOM      3  CA  THR A   3      -6.878  16.993  24.195  1.00  0.00           C  
+ATOM      4  CA  TYR A   4      -3.893  17.337  21.852  1.00  0.00           C  
+ATOM      5  CA  TYR A   5      -1.489  14.837  20.313  1.00  0.00           C  
+ATOM      6  CA  CYS A   6       0.815  14.775  17.335  1.00  0.00           C  
+ATOM      7  CA  THR A   7       1.832  12.250  14.688  1.00  0.00           C  
+ENDMDL
+REMARK 500 HSGDYHCT
+MODEL        2
+ATOM      0  CA  HIS A   0      -7.643  26.269  22.765  1.00  0.00           C  
+ATOM      1  CA  SER A   1      -8.662  23.953  25.584  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      -8.682  20.276  24.674  1.00  0.00           C  
+ATOM      3  CA  ASP A   3      -6.836  17.045  23.954  1.00  0.00           C  
+ATOM      4  CA  TYR A   4      -3.641  17.501  22.019  1.00  0.00           C  
+ATOM      5  CA  HIS A   5      -1.598  14.825  20.272  1.00  0.00           C  
+ATOM      6  CA  CYS A   6       0.868  14.651  17.400  1.00  0.00           C  
+ATOM      7  CA  THR A   7       1.748  12.213  14.627  1.00  0.00           C  
+ENDMDL

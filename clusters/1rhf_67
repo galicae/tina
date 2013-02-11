@@ -1,0 +1,22 @@
+REMARK 500 HNLKGLAS
+MODEL        1
+ATOM      0  CA  HIS A   0      -5.101  27.211  13.293  1.00  0.00           C  
+ATOM      1  CA  ASN A   1      -8.668  26.108  12.642  1.00  0.00           C  
+ATOM      2  CA  LEU A   2     -10.821  25.991   9.503  1.00  0.00           C  
+ATOM      3  CA  LYS A   3     -11.435  29.739   9.712  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      -7.722  30.642   9.723  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      -4.874  31.746  12.014  1.00  0.00           C  
+ATOM      6  CA  ALA A   6      -4.327  33.536  15.294  1.00  0.00           C  
+ATOM      7  CA  SER A   7      -1.129  34.364  17.210  1.00  0.00           C  
+ENDMDL
+REMARK 500 ANPFGQAS
+MODEL        2
+ATOM      0  CA  ALA A   0      -5.119  27.272  13.589  1.00  0.00           C  
+ATOM      1  CA  ASN A   1      -8.560  25.937  12.600  1.00  0.00           C  
+ATOM      2  CA  PRO A   2     -10.708  26.102   9.406  1.00  0.00           C  
+ATOM      3  CA  PHE A   3     -11.316  29.895   9.737  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      -7.687  30.895   9.635  1.00  0.00           C  
+ATOM      5  CA  GLN A   5      -5.043  31.446  12.267  1.00  0.00           C  
+ATOM      6  CA  ALA A   6      -4.536  33.407  15.490  1.00  0.00           C  
+ATOM      7  CA  SER A   7      -1.108  34.382  16.667  1.00  0.00           C  
+ENDMDL

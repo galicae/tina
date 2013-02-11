@@ -1,0 +1,22 @@
+REMARK 500 YYGCRATN
+MODEL        1
+ATOM      0  CA  TYR A   0      43.495  74.345  80.781  1.00  0.00           C  
+ATOM      1  CA  TYR A   1      46.007  74.238  83.629  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      47.207  70.769  84.571  1.00  0.00           C  
+ATOM      3  CA  CYS A   3      48.661  69.589  87.859  1.00  0.00           C  
+ATOM      4  CA  ARG A   4      50.667  66.371  87.535  1.00  0.00           C  
+ATOM      5  CA  ALA A   5      51.568  64.623  90.772  1.00  0.00           C  
+ATOM      6  CA  THR A   6      54.049  61.711  90.520  1.00  0.00           C  
+ATOM      7  CA  ASN A   7      56.322  59.336  92.439  1.00  0.00           C  
+ENDMDL
+REMARK 500 NYTCIVEN
+MODEL        2
+ATOM      0  CA  ASN A   0      43.596  74.559  80.694  1.00  0.00           C  
+ATOM      1  CA  TYR A   1      45.916  74.136  83.630  1.00  0.00           C  
+ATOM      2  CA  THR A   2      46.999  70.689  84.609  1.00  0.00           C  
+ATOM      3  CA  CYS A   3      48.757  69.630  87.723  1.00  0.00           C  
+ATOM      4  CA  ILE A   4      50.720  66.425  87.629  1.00  0.00           C  
+ATOM      5  CA  VAL A   5      51.593  64.581  90.807  1.00  0.00           C  
+ATOM      6  CA  GLU A   6      53.899  61.579  90.649  1.00  0.00           C  
+ATOM      7  CA  ASN A   7      56.496  59.383  92.365  1.00  0.00           C  
+ENDMDL

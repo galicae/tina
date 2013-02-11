@@ -1,0 +1,22 @@
+REMARK 500 EGYPDPEV
+MODEL        1
+ATOM      0  CA  GLU A   0      45.890  -7.290  36.315  1.00  0.00           C  
+ATOM      1  CA  GLY A   1      46.314  -9.594  39.285  1.00  0.00           C  
+ATOM      2  CA  TYR A   2      47.128 -13.183  40.233  1.00  0.00           C  
+ATOM      3  CA  PRO A   3      45.200 -15.322  40.884  1.00  0.00           C  
+ATOM      4  CA  ASP A   4      43.249 -13.767  38.147  1.00  0.00           C  
+ATOM      5  CA  PRO A   5      40.380 -11.792  39.444  1.00  0.00           C  
+ATOM      6  CA  GLU A   6      36.701 -12.291  38.982  1.00  0.00           C  
+ATOM      7  CA  VAL A   7      34.989  -9.288  37.515  1.00  0.00           C  
+ENDMDL
+REMARK 500 DGQPAPSL
+MODEL        2
+ATOM      0  CA  ASP A   0      45.711  -7.440  36.418  1.00  0.00           C  
+ATOM      1  CA  GLY A   1      46.307  -9.701  39.383  1.00  0.00           C  
+ATOM      2  CA  GLN A   2      47.242 -13.313  40.105  1.00  0.00           C  
+ATOM      3  CA  PRO A   3      45.174 -15.276  40.856  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      43.236 -13.621  38.069  1.00  0.00           C  
+ATOM      5  CA  PRO A   5      40.445 -11.485  39.583  1.00  0.00           C  
+ATOM      6  CA  SER A   6      36.789 -12.241  39.080  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      34.947  -9.450  37.311  1.00  0.00           C  
+ENDMDL

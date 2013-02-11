@@ -1,0 +1,22 @@
+REMARK 500 CHSWKNTA
+MODEL        1
+ATOM      0  CA  CYS A   0      57.620  56.699 -10.259  1.00  0.00           C  
+ATOM      1  CA  HIS A   1      57.981  54.497 -13.320  1.00  0.00           C  
+ATOM      2  CA  SER A   2      57.336  50.767 -13.538  1.00  0.00           C  
+ATOM      3  CA  TRP A   3      59.164  48.284 -15.781  1.00  0.00           C  
+ATOM      4  CA  LYS A   4      57.272  47.507 -18.960  1.00  0.00           C  
+ATOM      5  CA  ASN A   5      54.913  50.142 -17.508  1.00  0.00           C  
+ATOM      6  CA  THR A   6      53.067  47.469 -15.549  1.00  0.00           C  
+ATOM      7  CA  ALA A   7      50.298  48.741 -13.258  1.00  0.00           C  
+ENDMDL
+REMARK 500 CHSWKDKP
+MODEL        2
+ATOM      0  CA  CYS A   0      57.588  56.635 -10.322  1.00  0.00           C  
+ATOM      1  CA  HIS A   1      58.003  54.492 -13.413  1.00  0.00           C  
+ATOM      2  CA  SER A   2      57.484  50.713 -13.445  1.00  0.00           C  
+ATOM      3  CA  TRP A   3      59.238  48.201 -15.697  1.00  0.00           C  
+ATOM      4  CA  LYS A   4      57.334  47.758 -19.001  1.00  0.00           C  
+ATOM      5  CA  ASP A   5      54.711  50.109 -17.553  1.00  0.00           C  
+ATOM      6  CA  LYS A   6      53.104  47.381 -15.421  1.00  0.00           C  
+ATOM      7  CA  PRO A   7      50.189  48.817 -13.323  1.00  0.00           C  
+ENDMDL

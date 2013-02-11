@@ -1,0 +1,22 @@
+REMARK 500 VEDSGHYY
+MODEL        1
+ATOM      0  CA  VAL A   0       8.588  16.442 134.295  1.00  0.00           C  
+ATOM      1  CA  GLU A   1       9.121  19.554 132.108  1.00  0.00           C  
+ATOM      2  CA  ASP A   2      11.707  20.638 134.738  1.00  0.00           C  
+ATOM      3  CA  SER A   3      14.297  18.074 133.589  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      17.592  19.679 132.545  1.00  0.00           C  
+ATOM      5  CA  HIS A   5      20.676  21.720 133.457  1.00  0.00           C  
+ATOM      6  CA  TYR A   6      20.683  24.159 136.373  1.00  0.00           C  
+ATOM      7  CA  TYR A   7      23.499  26.472 137.312  1.00  0.00           C  
+ENDMDL
+REMARK 500 LSDNGSYS
+MODEL        2
+ATOM      0  CA  LEU A   0       8.607  16.389 134.019  1.00  0.00           C  
+ATOM      1  CA  SER A   1       9.211  19.656 132.188  1.00  0.00           C  
+ATOM      2  CA  ASP A   2      11.752  20.578 134.937  1.00  0.00           C  
+ATOM      3  CA  ASN A   3      14.197  17.956 133.615  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      17.383  19.776 132.556  1.00  0.00           C  
+ATOM      5  CA  SER A   5      20.676  21.444 133.590  1.00  0.00           C  
+ATOM      6  CA  TYR A   6      20.785  24.287 136.126  1.00  0.00           C  
+ATOM      7  CA  SER A   7      23.554  26.652 137.386  1.00  0.00           C  
+ENDMDL

@@ -1,0 +1,22 @@
+REMARK 500 YQCVATNA
+MODEL        1
+ATOM      0  CA  TYR A   0       1.644  -2.363   4.917  1.00  0.00           C  
+ATOM      1  CA  GLN A   1       5.364  -1.603   4.742  1.00  0.00           C  
+ATOM      2  CA  CYS A   2       7.491   0.133   2.112  1.00  0.00           C  
+ATOM      3  CA  VAL A   3      10.952  -1.114   1.160  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      13.375   1.273  -0.558  1.00  0.00           C  
+ATOM      5  CA  THR A   5      16.428  -0.168  -2.297  1.00  0.00           C  
+ATOM      6  CA  ASN A   6      19.378   0.902  -4.430  1.00  0.00           C  
+ATOM      7  CA  ALA A   7      22.951  -0.225  -5.124  1.00  0.00           C  
+ENDMDL
+REMARK 500 YTVTVKNP
+MODEL        2
+ATOM      0  CA  TYR A   0       1.679  -1.933   4.839  1.00  0.00           C  
+ATOM      1  CA  THR A   1       5.498  -1.880   4.832  1.00  0.00           C  
+ATOM      2  CA  VAL A   2       7.223  -0.125   1.912  1.00  0.00           C  
+ATOM      3  CA  THR A   3      10.906  -0.993   1.336  1.00  0.00           C  
+ATOM      4  CA  VAL A   4      13.368   1.251  -0.557  1.00  0.00           C  
+ATOM      5  CA  LYS A   5      16.498  -0.306  -2.124  1.00  0.00           C  
+ATOM      6  CA  ASN A   6      19.407   0.805  -4.350  1.00  0.00           C  
+ATOM      7  CA  PRO A   7      23.003   0.016  -5.366  1.00  0.00           C  
+ENDMDL

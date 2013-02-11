@@ -1,0 +1,22 @@
+REMARK 500 LNESKYIC
+MODEL        1
+ATOM      0  CA  LEU A   0      24.199  -5.289  36.418  1.00  0.00           C  
+ATOM      1  CA  ASN A   1      23.078  -8.769  35.470  1.00  0.00           C  
+ATOM      2  CA  GLU A   2      24.887  -9.806  32.272  1.00  0.00           C  
+ATOM      3  CA  SER A   3      22.803 -10.883  29.312  1.00  0.00           C  
+ATOM      4  CA  LYS A   4      22.595 -11.432  25.589  1.00  0.00           C  
+ATOM      5  CA  TYR A   5      22.730  -7.606  25.075  1.00  0.00           C  
+ATOM      6  CA  ILE A   6      25.334  -6.638  27.679  1.00  0.00           C  
+ATOM      7  CA  CYS A   7      28.250  -8.755  28.818  1.00  0.00           C  
+ENDMDL
+REMARK 500 LNETSFIF
+MODEL        2
+ATOM      0  CA  LEU A   0      24.402  -5.342  36.528  1.00  0.00           C  
+ATOM      1  CA  ASN A   1      23.181  -8.759  35.390  1.00  0.00           C  
+ATOM      2  CA  GLU A   2      24.763  -9.685  32.098  1.00  0.00           C  
+ATOM      3  CA  THR A   3      22.452 -10.824  29.332  1.00  0.00           C  
+ATOM      4  CA  SER A   4      23.037 -11.514  25.678  1.00  0.00           C  
+ATOM      5  CA  PHE A   5      22.969  -7.737  25.026  1.00  0.00           C  
+ATOM      6  CA  ILE A   6      25.104  -6.489  27.902  1.00  0.00           C  
+ATOM      7  CA  PHE A   7      27.969  -8.828  28.680  1.00  0.00           C  
+ENDMDL

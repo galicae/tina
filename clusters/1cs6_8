@@ -1,0 +1,22 @@
+REMARK 500 EQPAHTLF
+MODEL        1
+ATOM      0  CA  GLU A   0      13.711  -8.670  27.906  1.00  0.00           C  
+ATOM      1  CA  GLN A   1      10.633  -6.577  28.653  1.00  0.00           C  
+ATOM      2  CA  PRO A   2       6.910  -7.437  28.468  1.00  0.00           C  
+ATOM      3  CA  ALA A   3       5.188  -7.080  25.094  1.00  0.00           C  
+ATOM      4  CA  HIS A   4       1.606  -6.160  24.243  1.00  0.00           C  
+ATOM      5  CA  THR A   5      -0.347  -9.412  24.290  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      -3.600 -10.485  22.640  1.00  0.00           C  
+ATOM      7  CA  PHE A   7      -5.052 -13.628  24.196  1.00  0.00           C  
+ENDMDL
+REMARK 500 DVITDTEA
+MODEL        2
+ATOM      0  CA  ASP A   0      13.870  -8.743  28.187  1.00  0.00           C  
+ATOM      1  CA  VAL A   1      10.533  -6.987  28.673  1.00  0.00           C  
+ATOM      2  CA  ILE A   2       6.811  -7.549  28.195  1.00  0.00           C  
+ATOM      3  CA  THR A   3       5.115  -6.494  24.961  1.00  0.00           C  
+ATOM      4  CA  ASP A   4       1.439  -5.992  24.099  1.00  0.00           C  
+ATOM      5  CA  THR A   5      -0.249  -9.389  24.160  1.00  0.00           C  
+ATOM      6  CA  GLU A   6      -3.631 -10.514  22.848  1.00  0.00           C  
+ATOM      7  CA  ALA A   7      -4.840 -13.783  24.366  1.00  0.00           C  
+ENDMDL

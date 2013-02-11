@@ -1,0 +1,22 @@
+REMARK 500 FDCKVEGY
+MODEL        1
+ATOM      0  CA  PHE A   0      27.431  15.051  21.919  1.00  0.00           C  
+ATOM      1  CA  ASP A   1      24.253  16.343  23.492  1.00  0.00           C  
+ATOM      2  CA  CYS A   2      20.754  17.265  22.433  1.00  0.00           C  
+ATOM      3  CA  LYS A   3      17.308  17.610  23.983  1.00  0.00           C  
+ATOM      4  CA  VAL A   4      14.201  15.783  22.882  1.00  0.00           C  
+ATOM      5  CA  GLU A   5      10.503  16.468  23.452  1.00  0.00           C  
+ATOM      6  CA  GLY A   6       7.473  14.342  22.673  1.00  0.00           C  
+ATOM      7  CA  TYR A   7       4.616  12.439  24.305  1.00  0.00           C  
+ENDMDL
+REMARK 500 IPFTVKGN
+MODEL        2
+ATOM      0  CA  ILE A   0      27.065  14.675  21.649  1.00  0.00           C  
+ATOM      1  CA  PRO A   1      24.481  16.715  23.623  1.00  0.00           C  
+ATOM      2  CA  PHE A   2      20.797  17.027  22.801  1.00  0.00           C  
+ATOM      3  CA  THR A   3      17.275  17.785  24.014  1.00  0.00           C  
+ATOM      4  CA  VAL A   4      14.157  16.043  22.695  1.00  0.00           C  
+ATOM      5  CA  LYS A   5      10.422  16.586  23.366  1.00  0.00           C  
+ATOM      6  CA  GLY A   6       7.620  14.162  22.690  1.00  0.00           C  
+ATOM      7  CA  ASN A   7       4.721  12.308  24.300  1.00  0.00           C  
+ENDMDL

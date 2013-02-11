@@ -1,0 +1,22 @@
+REMARK 500 LAQIGDSV
+MODEL        1
+ATOM      0  CA  LEU A   0      33.003  18.177  28.109  1.00  0.00           C  
+ATOM      1  CA  ALA A   1      30.695  19.445  25.425  1.00  0.00           C  
+ATOM      2  CA  GLN A   2      26.973  19.469  24.807  1.00  0.00           C  
+ATOM      3  CA  ILE A   3      25.785  17.918  21.552  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      24.868  20.718  19.223  1.00  0.00           C  
+ATOM      5  CA  ASP A   5      27.513  23.147  20.542  1.00  0.00           C  
+ATOM      6  CA  SER A   6      30.320  24.583  18.387  1.00  0.00           C  
+ATOM      7  CA  VAL A   7      33.597  23.370  19.972  1.00  0.00           C  
+ENDMDL
+REMARK 500 SAWTGELF
+MODEL        2
+ATOM      0  CA  SER A   0      33.085  17.978  28.266  1.00  0.00           C  
+ATOM      1  CA  ALA A   1      30.846  19.502  25.586  1.00  0.00           C  
+ATOM      2  CA  TRP A   2      27.100  19.463  24.780  1.00  0.00           C  
+ATOM      3  CA  THR A   3      25.727  17.995  21.611  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      24.955  20.698  19.041  1.00  0.00           C  
+ATOM      5  CA  GLU A   5      27.460  23.243  20.433  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      30.282  24.719  18.214  1.00  0.00           C  
+ATOM      7  CA  PHE A   7      33.299  23.229  20.086  1.00  0.00           C  
+ENDMDL

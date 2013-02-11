@@ -1,0 +1,33 @@
+REMARK 500 YECEAENI
+MODEL        1
+ATOM      0  CA  TYR A   0      17.776   6.526  36.811  1.00  0.00           C  
+ATOM      1  CA  GLU A   1      15.323   6.349  33.968  1.00  0.00           C  
+ATOM      2  CA  CYS A   2      14.454   8.803  31.227  1.00  0.00           C  
+ATOM      3  CA  GLU A   3      11.054   8.393  29.588  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      10.063  10.010  26.278  1.00  0.00           C  
+ATOM      5  CA  GLU A   5       6.374   9.912  25.432  1.00  0.00           C  
+ATOM      6  CA  ASN A   6       3.797  11.169  22.943  1.00  0.00           C  
+ATOM      7  CA  ILE A   7       0.324   9.999  21.879  1.00  0.00           C  
+ENDMDL
+REMARK 500 YQCVAENK
+MODEL        2
+ATOM      0  CA  TYR A   0      17.803   6.443  36.865  1.00  0.00           C  
+ATOM      1  CA  GLN A   1      15.522   6.400  33.847  1.00  0.00           C  
+ATOM      2  CA  CYS A   2      14.398   8.981  31.341  1.00  0.00           C  
+ATOM      3  CA  VAL A   3      11.043   8.398  29.662  1.00  0.00           C  
+ATOM      4  CA  ALA A   4       9.985   9.833  26.299  1.00  0.00           C  
+ATOM      5  CA  GLU A   5       6.287   9.837  25.457  1.00  0.00           C  
+ATOM      6  CA  ASN A   6       3.838  11.063  22.856  1.00  0.00           C  
+ATOM      7  CA  LYS A   7       0.289  10.207  21.799  1.00  0.00           C  
+ENDMDL
+REMARK 500 YVCTGSNM
+MODEL        3
+ATOM      0  CA  TYR A   0      17.790   6.592  36.766  1.00  0.00           C  
+ATOM      1  CA  VAL A   1      15.406   6.335  33.804  1.00  0.00           C  
+ATOM      2  CA  CYS A   2      14.350   8.979  31.287  1.00  0.00           C  
+ATOM      3  CA  THR A   3      10.994   8.228  29.687  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      10.071   9.833  26.371  1.00  0.00           C  
+ATOM      5  CA  SER A   5       6.373   9.940  25.510  1.00  0.00           C  
+ATOM      6  CA  ASN A   6       3.849  11.118  22.897  1.00  0.00           C  
+ATOM      7  CA  MET A   7       0.332  10.137  21.805  1.00  0.00           C  
+ENDMDL

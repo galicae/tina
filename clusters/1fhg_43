@@ -1,0 +1,22 @@
+REMARK 500 KDDNPVKE
+MODEL        1
+ATOM      0  CA  LYS A   0      27.966   5.553  14.956  1.00  0.00           C  
+ATOM      1  CA  ASP A   1      27.923   5.550  11.138  1.00  0.00           C  
+ATOM      2  CA  ASP A   2      24.444   4.052  11.381  1.00  0.00           C  
+ATOM      3  CA  ASN A   3      25.587   1.164  13.643  1.00  0.00           C  
+ATOM      4  CA  PRO A   4      23.833   1.031  17.056  1.00  0.00           C  
+ATOM      5  CA  VAL A   5      25.983   2.359  19.859  1.00  0.00           C  
+ATOM      6  CA  LYS A   6      26.089   0.090  22.911  1.00  0.00           C  
+ATOM      7  CA  GLU A   7      26.765   1.489  26.379  1.00  0.00           C  
+ENDMDL
+REMARK 500 KNGVKIER
+MODEL        2
+ATOM      0  CA  LYS A   0      27.747   5.931  14.853  1.00  0.00           C  
+ATOM      1  CA  ASN A   1      27.999   5.527  11.037  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      24.707   3.664  11.103  1.00  0.00           C  
+ATOM      3  CA  VAL A   3      25.708   1.223  13.851  1.00  0.00           C  
+ATOM      4  CA  LYS A   4      23.649   1.359  17.050  1.00  0.00           C  
+ATOM      5  CA  ILE A   5      25.767   2.340  20.029  1.00  0.00           C  
+ATOM      6  CA  GLU A   6      25.806   0.036  23.045  1.00  0.00           C  
+ATOM      7  CA  ARG A   7      27.207   1.208  26.354  1.00  0.00           C  
+ENDMDL

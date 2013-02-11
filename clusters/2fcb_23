@@ -1,0 +1,22 @@
+REMARK 500 WKNTALHK
+MODEL        1
+ATOM      0  CA  TRP A   0      16.521   7.644  29.141  1.00  0.00           C  
+ATOM      1  CA  LYS A   1      15.237   6.476  32.500  1.00  0.00           C  
+ATOM      2  CA  ASN A   2      18.983   6.433  33.262  1.00  0.00           C  
+ATOM      3  CA  THR A   3      19.254   2.889  31.937  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      22.777   1.432  31.875  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      24.821   2.692  28.975  1.00  0.00           C  
+ATOM      6  CA  HIS A   6      28.063   0.932  27.930  1.00  0.00           C  
+ATOM      7  CA  LYS A   7      30.827   1.068  25.275  1.00  0.00           C  
+ENDMDL
+REMARK 500 WKDKPLVK
+MODEL        2
+ATOM      0  CA  TRP A   0      16.452   7.538  28.934  1.00  0.00           C  
+ATOM      1  CA  LYS A   1      15.386   6.761  32.539  1.00  0.00           C  
+ATOM      2  CA  ASP A   2      19.089   6.312  33.307  1.00  0.00           C  
+ATOM      3  CA  LYS A   3      19.213   2.800  31.817  1.00  0.00           C  
+ATOM      4  CA  PRO A   4      22.795   1.354  32.005  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      24.842   2.613  29.058  1.00  0.00           C  
+ATOM      6  CA  VAL A   6      28.044   0.847  27.979  1.00  0.00           C  
+ATOM      7  CA  LYS A   7      30.662   1.342  25.256  1.00  0.00           C  
+ENDMDL

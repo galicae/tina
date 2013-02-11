@@ -1,0 +1,22 @@
+REMARK 500 AWSFPSEP
+MODEL        1
+ATOM      0  CA  ALA A   0       8.658  29.420  30.638  1.00  0.00           C  
+ATOM      1  CA  TRP A   1       9.990  29.842  27.080  1.00  0.00           C  
+ATOM      2  CA  SER A   2       8.255  30.179  23.692  1.00  0.00           C  
+ATOM      3  CA  PHE A   3       8.674  27.996  20.597  1.00  0.00           C  
+ATOM      4  CA  PRO A   4      12.162  27.872  19.134  1.00  0.00           C  
+ATOM      5  CA  SER A   5      12.651  30.206  16.181  1.00  0.00           C  
+ATOM      6  CA  GLU A   6      13.459  28.935  12.704  1.00  0.00           C  
+ATOM      7  CA  PRO A   7      17.119  27.816  12.539  1.00  0.00           C  
+ENDMDL
+REMARK 500 EWSLPSDL
+MODEL        2
+ATOM      0  CA  GLU A   0       8.515  29.245  30.552  1.00  0.00           C  
+ATOM      1  CA  TRP A   1       9.870  29.795  27.061  1.00  0.00           C  
+ATOM      2  CA  SER A   2       8.405  30.301  23.623  1.00  0.00           C  
+ATOM      3  CA  LEU A   3       8.840  27.942  20.729  1.00  0.00           C  
+ATOM      4  CA  PRO A   4      12.352  28.215  19.271  1.00  0.00           C  
+ATOM      5  CA  SER A   5      12.667  30.263  16.103  1.00  0.00           C  
+ATOM      6  CA  ASP A   6      13.352  28.770  12.721  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      16.968  27.735  12.505  1.00  0.00           C  
+ENDMDL

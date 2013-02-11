@@ -1,0 +1,22 @@
+REMARK 500 TISEVCGD
+MODEL        1
+ATOM      0  CA  THR A   0      35.147  16.686  29.899  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      37.189  19.275  27.938  1.00  0.00           C  
+ATOM      2  CA  SER A   2      39.789  20.866  30.233  1.00  0.00           C  
+ATOM      3  CA  GLU A   3      40.709  24.124  28.479  1.00  0.00           C  
+ATOM      4  CA  VAL A   4      38.181  24.982  25.828  1.00  0.00           C  
+ATOM      5  CA  CYS A   5      39.656  26.550  22.682  1.00  0.00           C  
+ATOM      6  CA  GLY A   6      38.378  27.581  19.278  1.00  0.00           C  
+ATOM      7  CA  ASP A   7      38.972  24.111  17.907  1.00  0.00           C  
+ENDMDL
+REMARK 500 SIPQANHS
+MODEL        2
+ATOM      0  CA  SER A   0      35.149  16.955  29.850  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      37.364  19.239  27.803  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      39.585  20.932  30.472  1.00  0.00           C  
+ATOM      3  CA  GLN A   3      40.662  24.093  28.665  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      38.452  24.649  25.668  1.00  0.00           C  
+ATOM      5  CA  ASN A   5      39.747  26.490  22.630  1.00  0.00           C  
+ATOM      6  CA  HIS A   6      38.092  27.566  19.403  1.00  0.00           C  
+ATOM      7  CA  SER A   7      38.970  24.251  17.754  1.00  0.00           C  
+ENDMDL

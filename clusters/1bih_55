@@ -1,0 +1,22 @@
+REMARK 500 AGPDGNLY
+MODEL        1
+ATOM      0  CA  ALA A   0      47.886  28.866 101.843  1.00  0.00           C  
+ATOM      1  CA  GLY A   1      50.897  31.176 101.922  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      51.328  34.303  99.771  1.00  0.00           C  
+ATOM      3  CA  ASP A   3      53.656  32.271  97.551  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      50.789  30.105  96.403  1.00  0.00           C  
+ATOM      5  CA  ASN A   5      51.614  26.897  98.244  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      49.418  24.979 100.640  1.00  0.00           C  
+ATOM      7  CA  TYR A   7      50.946  24.440 104.071  1.00  0.00           C  
+ENDMDL
+REMARK 500 FSPNGEKL
+MODEL        2
+ATOM      0  CA  PHE A   0      47.956  28.794 101.493  1.00  0.00           C  
+ATOM      1  CA  SER A   1      50.954  31.044 101.970  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      51.511  34.259  99.937  1.00  0.00           C  
+ATOM      3  CA  ASN A   3      53.550  32.317  97.373  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      50.546  30.082  96.606  1.00  0.00           C  
+ATOM      5  CA  GLU A   5      51.700  26.964  98.372  1.00  0.00           C  
+ATOM      6  CA  LYS A   6      49.471  24.883 100.571  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      50.846  24.693 104.122  1.00  0.00           C  
+ENDMDL

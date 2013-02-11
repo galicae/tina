@@ -1,0 +1,22 @@
+REMARK 500 NIAGETSS
+MODEL        1
+ATOM      0  CA  ASN A   0      17.928   7.832  35.856  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      17.703   4.063  35.477  1.00  0.00           C  
+ATOM      2  CA  ALA A   2      14.269   3.868  37.116  1.00  0.00           C  
+ATOM      3  CA  GLY A   3      12.527   6.361  34.822  1.00  0.00           C  
+ATOM      4  CA  GLU A   4      12.238   9.879  33.482  1.00  0.00           C  
+ATOM      5  CA  THR A   5       9.976  12.863  34.031  1.00  0.00           C  
+ATOM      6  CA  SER A   6       9.772  16.298  32.461  1.00  0.00           C  
+ATOM      7  CA  SER A   7       8.759  19.890  32.946  1.00  0.00           C  
+ENDMDL
+REMARK 500 NKAGEQDA
+MODEL        2
+ATOM      0  CA  ASN A   0      17.902   7.869  35.953  1.00  0.00           C  
+ATOM      1  CA  LYS A   1      17.896   4.106  35.460  1.00  0.00           C  
+ATOM      2  CA  ALA A   2      14.410   3.796  36.952  1.00  0.00           C  
+ATOM      3  CA  GLY A   3      12.475   6.287  34.876  1.00  0.00           C  
+ATOM      4  CA  GLU A   4      11.839   9.781  33.599  1.00  0.00           C  
+ATOM      5  CA  GLN A   5       9.835  12.960  34.063  1.00  0.00           C  
+ATOM      6  CA  ASP A   6       9.998  16.354  32.406  1.00  0.00           C  
+ATOM      7  CA  ALA A   7       8.817  19.902  32.883  1.00  0.00           C  
+ENDMDL

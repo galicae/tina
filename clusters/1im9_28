@@ -1,0 +1,22 @@
+REMARK 500 FEHFLLHR
+MODEL        1
+ATOM      0  CA  PHE A   0     110.857  30.482 -10.380  1.00  0.00           C  
+ATOM      1  CA  GLU A   1     108.633  32.040  -7.735  1.00  0.00           C  
+ATOM      2  CA  HIS A   2     106.473  28.920  -8.149  1.00  0.00           C  
+ATOM      3  CA  PHE A   3     105.705  25.905 -10.310  1.00  0.00           C  
+ATOM      4  CA  LEU A   4     102.464  24.705 -11.840  1.00  0.00           C  
+ATOM      5  CA  LEU A   5     102.047  20.926 -11.968  1.00  0.00           C  
+ATOM      6  CA  HIS A   6      99.393  19.608 -14.320  1.00  0.00           C  
+ATOM      7  CA  ARG A   7      97.999  16.097 -14.518  1.00  0.00           C  
+ENDMDL
+REMARK 500 YDMYHLSR
+MODEL        2
+ATOM      0  CA  TYR A   0     111.027  30.677 -10.596  1.00  0.00           C  
+ATOM      1  CA  ASP A   1     108.847  31.799  -7.706  1.00  0.00           C  
+ATOM      2  CA  MET A   2     106.108  29.268  -8.439  1.00  0.00           C  
+ATOM      3  CA  TYR A   3     105.736  25.808  -9.922  1.00  0.00           C  
+ATOM      4  CA  HIS A   4     102.550  24.575 -11.525  1.00  0.00           C  
+ATOM      5  CA  LEU A   5     101.897  20.844 -11.868  1.00  0.00           C  
+ATOM      6  CA  SER A   6      99.328  19.631 -14.383  1.00  0.00           C  
+ATOM      7  CA  ARG A   7      98.077  16.081 -14.782  1.00  0.00           C  
+ENDMDL

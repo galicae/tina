@@ -1,0 +1,22 @@
+REMARK 500 NKHGTVYA
+MODEL        1
+ATOM      0  CA  ASN A   0      16.986  22.933  53.154  1.00  0.00           C  
+ATOM      1  CA  LYS A   1      18.351  19.436  53.747  1.00  0.00           C  
+ATOM      2  CA  HIS A   2      17.161  19.624  57.371  1.00  0.00           C  
+ATOM      3  CA  GLY A   3      13.620  20.956  57.203  1.00  0.00           C  
+ATOM      4  CA  THR A   4      10.912  23.171  55.756  1.00  0.00           C  
+ATOM      5  CA  VAL A   5       8.957  26.162  57.018  1.00  0.00           C  
+ATOM      6  CA  TYR A   6       5.796  27.787  55.684  1.00  0.00           C  
+ATOM      7  CA  ALA A   7       4.480  31.349  55.694  1.00  0.00           C  
+ENDMDL
+REMARK 500 NMFAMDQG
+MODEL        2
+ATOM      0  CA  ASN A   0      16.923  22.938  53.134  1.00  0.00           C  
+ATOM      1  CA  MET A   1      18.410  19.474  53.700  1.00  0.00           C  
+ATOM      2  CA  PHE A   2      17.244  19.545  57.338  1.00  0.00           C  
+ATOM      3  CA  ALA A   3      13.678  20.906  57.305  1.00  0.00           C  
+ATOM      4  CA  MET A   4      10.931  23.099  55.845  1.00  0.00           C  
+ATOM      5  CA  ASP A   5       8.842  26.047  57.027  1.00  0.00           C  
+ATOM      6  CA  GLN A   6       5.878  27.968  55.612  1.00  0.00           C  
+ATOM      7  CA  GLY A   7       4.357  31.440  55.667  1.00  0.00           C  
+ENDMDL

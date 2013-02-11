@@ -1,0 +1,22 @@
+REMARK 500 RYRLVAGD
+MODEL        1
+ATOM      0  CA  ARG A   0      -3.904 -16.402  40.093  1.00  0.00           C  
+ATOM      1  CA  TYR A   1      -0.417 -14.995  39.524  1.00  0.00           C  
+ATOM      2  CA  ARG A   2       2.891 -16.850  39.698  1.00  0.00           C  
+ATOM      3  CA  LEU A   3       6.426 -15.884  38.713  1.00  0.00           C  
+ATOM      4  CA  VAL A   4       8.885 -17.893  36.653  1.00  0.00           C  
+ATOM      5  CA  ALA A   5      12.254 -16.164  36.882  1.00  0.00           C  
+ATOM      6  CA  GLY A   6      10.896 -12.695  36.181  1.00  0.00           C  
+ATOM      7  CA  ASP A   7       8.108 -13.704  33.800  1.00  0.00           C  
+ENDMDL
+REMARK 500 IFESIGAK
+MODEL        2
+ATOM      0  CA  ILE A   0      -3.848 -16.488  39.987  1.00  0.00           C  
+ATOM      1  CA  PHE A   1      -0.461 -14.778  40.108  1.00  0.00           C  
+ATOM      2  CA  GLU A   2       2.549 -16.980  39.354  1.00  0.00           C  
+ATOM      3  CA  SER A   3       6.146 -15.975  38.671  1.00  0.00           C  
+ATOM      4  CA  ILE A   4       8.976 -17.741  36.882  1.00  0.00           C  
+ATOM      5  CA  GLY A   5      12.388 -16.068  36.601  1.00  0.00           C  
+ATOM      6  CA  ALA A   6      10.891 -12.571  36.251  1.00  0.00           C  
+ATOM      7  CA  LYS A   7       8.498 -13.985  33.689  1.00  0.00           C  
+ENDMDL

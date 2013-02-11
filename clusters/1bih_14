@@ -1,0 +1,22 @@
+REMARK 500 KQGQDVTI
+MODEL        1
+ATOM      0  CA  LYS A   0      37.110  88.520  84.581  1.00  0.00           C  
+ATOM      1  CA  GLN A   1      40.004  90.023  82.629  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      41.931  91.818  85.339  1.00  0.00           C  
+ATOM      3  CA  GLN A   3      41.163  89.839  88.501  1.00  0.00           C  
+ATOM      4  CA  ASP A   4      43.885  87.449  89.717  1.00  0.00           C  
+ATOM      5  CA  VAL A   5      43.036  83.766  89.583  1.00  0.00           C  
+ATOM      6  CA  THR A   6      44.403  81.081  91.883  1.00  0.00           C  
+ATOM      7  CA  ILE A   7      44.094  77.561  90.522  1.00  0.00           C  
+ENDMDL
+REMARK 500 QIGDSVSL
+MODEL        2
+ATOM      0  CA  GLN A   0      36.972  88.607  84.611  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      39.976  89.966  82.729  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      42.078  91.891  85.176  1.00  0.00           C  
+ATOM      3  CA  ASP A   3      41.231  89.677  88.178  1.00  0.00           C  
+ATOM      4  CA  SER A   4      43.839  87.694  90.140  1.00  0.00           C  
+ATOM      5  CA  VAL A   5      42.877  84.000  89.747  1.00  0.00           C  
+ATOM      6  CA  SER A   6      44.395  80.964  91.546  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      44.257  77.258  90.628  1.00  0.00           C  
+ENDMDL

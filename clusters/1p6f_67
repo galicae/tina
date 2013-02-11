@@ -1,0 +1,22 @@
+REMARK 500 MAGQYSCI
+MODEL        1
+ATOM      0  CA  MET A   0       7.054  21.648  36.850  1.00  0.00           C  
+ATOM      1  CA  ALA A   1       9.420  24.312  35.499  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      11.693  25.439  38.314  1.00  0.00           C  
+ATOM      3  CA  GLN A   3      14.438  24.548  40.769  1.00  0.00           C  
+ATOM      4  CA  TYR A   4      15.166  20.972  41.809  1.00  0.00           C  
+ATOM      5  CA  SER A   5      17.641  19.575  44.352  1.00  0.00           C  
+ATOM      6  CA  CYS A   6      18.479  16.176  45.775  1.00  0.00           C  
+ATOM      7  CA  ILE A   7      19.482  14.659  49.141  1.00  0.00           C  
+ENDMDL
+REMARK 500 HAGRYRCY
+MODEL        2
+ATOM      0  CA  HIS A   0       7.078  21.501  36.757  1.00  0.00           C  
+ATOM      1  CA  ALA A   1       9.299  24.353  35.551  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      11.529  25.360  38.445  1.00  0.00           C  
+ATOM      3  CA  ARG A   3      14.686  24.693  40.465  1.00  0.00           C  
+ATOM      4  CA  TYR A   4      15.236  21.210  41.974  1.00  0.00           C  
+ATOM      5  CA  ARG A   5      17.709  19.559  44.415  1.00  0.00           C  
+ATOM      6  CA  CYS A   6      18.443  16.069  45.750  1.00  0.00           C  
+ATOM      7  CA  TYR A   7      19.394  14.582  49.152  1.00  0.00           C  
+ENDMDL

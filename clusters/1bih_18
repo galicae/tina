@@ -1,0 +1,22 @@
+REMARK 500 DVTIPCKV
+MODEL        1
+ATOM      0  CA  ASP A   0      43.885  87.449  89.717  1.00  0.00           C  
+ATOM      1  CA  VAL A   1      43.036  83.766  89.583  1.00  0.00           C  
+ATOM      2  CA  THR A   2      44.403  81.081  91.883  1.00  0.00           C  
+ATOM      3  CA  ILE A   3      44.094  77.561  90.522  1.00  0.00           C  
+ATOM      4  CA  PRO A   4      44.236  75.530  93.744  1.00  0.00           C  
+ATOM      5  CA  CYS A   5      46.230  72.317  94.068  1.00  0.00           C  
+ATOM      6  CA  LYS A   6      47.885  70.546  96.991  1.00  0.00           C  
+ATOM      7  CA  VAL A   7      49.355  67.047  96.743  1.00  0.00           C  
+ENDMDL
+REMARK 500 DAVIVCDV
+MODEL        2
+ATOM      0  CA  ASP A   0      43.840  87.357  89.665  1.00  0.00           C  
+ATOM      1  CA  ALA A   1      42.922  83.724  89.657  1.00  0.00           C  
+ATOM      2  CA  VAL A   2      44.774  81.199  91.747  1.00  0.00           C  
+ATOM      3  CA  ILE A   3      44.052  77.572  90.841  1.00  0.00           C  
+ATOM      4  CA  VAL A   4      44.447  75.418  93.905  1.00  0.00           C  
+ATOM      5  CA  CYS A   5      46.167  72.067  93.738  1.00  0.00           C  
+ATOM      6  CA  ASP A   6      47.356  70.502  97.009  1.00  0.00           C  
+ATOM      7  CA  VAL A   7      49.566  67.457  96.689  1.00  0.00           C  
+ENDMDL

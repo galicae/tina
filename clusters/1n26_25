@@ -1,0 +1,22 @@
+REMARK 500 TLITVLNI
+MODEL        1
+ATOM      0  CA  THR A   0      48.662  58.018  37.120  1.00  0.00           C  
+ATOM      1  CA  LEU A   1      49.867  58.012  40.716  1.00  0.00           C  
+ATOM      2  CA  ILE A   2      47.740  57.069  43.695  1.00  0.00           C  
+ATOM      3  CA  THR A   3      48.389  57.973  47.306  1.00  0.00           C  
+ATOM      4  CA  VAL A   4      45.702  56.724  49.658  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      45.550  58.495  53.005  1.00  0.00           C  
+ATOM      6  CA  ASN A   6      43.802  56.047  55.316  1.00  0.00           C  
+ATOM      7  CA  ILE A   7      42.052  57.253  58.431  1.00  0.00           C  
+ENDMDL
+REMARK 500 VHWVLRKP
+MODEL        2
+ATOM      0  CA  VAL A   0      48.580  58.024  37.023  1.00  0.00           C  
+ATOM      1  CA  HIS A   1      49.873  57.899  40.580  1.00  0.00           C  
+ATOM      2  CA  TRP A   2      47.729  57.327  43.620  1.00  0.00           C  
+ATOM      3  CA  VAL A   3      48.405  58.174  47.186  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      46.127  56.533  49.711  1.00  0.00           C  
+ATOM      5  CA  ARG A   5      45.583  58.181  53.103  1.00  0.00           C  
+ATOM      6  CA  LYS A   6      43.697  55.926  55.543  1.00  0.00           C  
+ATOM      7  CA  PRO A   7      41.770  57.525  58.482  1.00  0.00           C  
+ENDMDL

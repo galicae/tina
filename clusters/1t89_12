@@ -1,0 +1,22 @@
+REMARK 500 PEVISGEK
+MODEL        1
+ATOM      0  CA  PRO A   0      67.223  61.100 -19.235  1.00  0.00           C  
+ATOM      1  CA  GLU A   1      66.662  58.160 -16.890  1.00  0.00           C  
+ATOM      2  CA  VAL A   2      64.849  54.997 -18.024  1.00  0.00           C  
+ATOM      3  CA  ILE A   3      64.538  51.312 -17.227  1.00  0.00           C  
+ATOM      4  CA  SER A   4      65.380  48.595 -19.746  1.00  0.00           C  
+ATOM      5  CA  GLY A   5      62.465  48.109 -22.105  1.00  0.00           C  
+ATOM      6  CA  GLU A   6      61.387  51.722 -22.369  1.00  0.00           C  
+ATOM      7  CA  LYS A   7      61.408  53.133 -25.887  1.00  0.00           C  
+ENDMDL
+REMARK 500 YSVLEKDS
+MODEL        2
+ATOM      0  CA  TYR A   0      67.005  61.193 -19.224  1.00  0.00           C  
+ATOM      1  CA  SER A   1      66.999  58.192 -16.841  1.00  0.00           C  
+ATOM      2  CA  VAL A   2      64.991  55.177 -17.974  1.00  0.00           C  
+ATOM      3  CA  LEU A   3      64.285  51.491 -17.407  1.00  0.00           C  
+ATOM      4  CA  GLU A   4      65.098  48.668 -19.795  1.00  0.00           C  
+ATOM      5  CA  LYS A   5      62.434  47.715 -22.306  1.00  0.00           C  
+ATOM      6  CA  ASP A   6      61.632  51.450 -22.293  1.00  0.00           C  
+ATOM      7  CA  SER A   7      61.468  53.240 -25.643  1.00  0.00           C  
+ENDMDL

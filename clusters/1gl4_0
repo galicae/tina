@@ -1,0 +1,22 @@
+REMARK 500 VTERWRLP
+MODEL        1
+ATOM      0  CA  VAL A   0      16.452  24.743  61.011  1.00  0.00           C  
+ATOM      1  CA  THR A   1      14.973  27.326  58.658  1.00  0.00           C  
+ATOM      2  CA  GLU A   2      12.516  30.087  59.440  1.00  0.00           C  
+ATOM      3  CA  ARG A   3      10.663  31.937  56.707  1.00  0.00           C  
+ATOM      4  CA  TRP A   4       8.905  35.302  56.872  1.00  0.00           C  
+ATOM      5  CA  ARG A   5       6.345  36.774  54.456  1.00  0.00           C  
+ATOM      6  CA  LEU A   6       7.399  40.382  54.359  1.00  0.00           C  
+ATOM      7  CA  PRO A   7       5.275  43.445  55.151  1.00  0.00           C  
+ENDMDL
+REMARK 500 PIMVTVEE
+MODEL        2
+ATOM      0  CA  PRO A   0      16.758  24.591  60.905  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      14.884  27.192  58.833  1.00  0.00           C  
+ATOM      2  CA  MET A   2      12.447  30.066  59.428  1.00  0.00           C  
+ATOM      3  CA  VAL A   3      10.328  31.838  56.808  1.00  0.00           C  
+ATOM      4  CA  THR A   4       9.076  35.433  56.884  1.00  0.00           C  
+ATOM      5  CA  VAL A   5       6.546  36.944  54.482  1.00  0.00           C  
+ATOM      6  CA  GLU A   6       7.492  40.618  54.218  1.00  0.00           C  
+ATOM      7  CA  GLU A   7       4.998  43.314  55.095  1.00  0.00           C  
+ENDMDL

@@ -1,0 +1,22 @@
+REMARK 500 PDPECEWY
+MODEL        1
+ATOM      0  CA  PRO A   0      20.306   7.245  41.661  1.00  0.00           C  
+ATOM      1  CA  ASP A   1      20.543  11.031  41.390  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      18.940  11.856  38.029  1.00  0.00           C  
+ATOM      3  CA  GLU A   3      20.835  13.322  35.126  1.00  0.00           C  
+ATOM      4  CA  CYS A   4      19.438  16.532  33.764  1.00  0.00           C  
+ATOM      5  CA  GLU A   5      18.687  17.277  30.086  1.00  0.00           C  
+ATOM      6  CA  TRP A   6      17.409  20.486  28.540  1.00  0.00           C  
+ATOM      7  CA  TYR A   7      15.703  21.003  25.176  1.00  0.00           C  
+ENDMDL
+REMARK 500 PKPALQWF
+MODEL        2
+ATOM      0  CA  PRO A   0      20.476   7.437  41.893  1.00  0.00           C  
+ATOM      1  CA  LYS A   1      20.470  11.182  41.249  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      18.839  11.846  37.869  1.00  0.00           C  
+ATOM      3  CA  ALA A   3      20.790  13.063  34.846  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      19.197  16.397  33.781  1.00  0.00           C  
+ATOM      5  CA  GLN A   5      18.989  17.297  30.103  1.00  0.00           C  
+ATOM      6  CA  TRP A   6      17.288  20.412  28.732  1.00  0.00           C  
+ATOM      7  CA  PHE A   7      15.812  21.118  25.300  1.00  0.00           C  
+ENDMDL

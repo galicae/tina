@@ -1,0 +1,22 @@
+REMARK 500 QKHSLKLT
+MODEL        1
+ATOM      0  CA  GLN A   0      61.401  30.578 117.227  1.00  0.00           C  
+ATOM      1  CA  LYS A   1      61.449  34.321 116.448  1.00  0.00           C  
+ATOM      2  CA  HIS A   2      61.200  36.366 113.216  1.00  0.00           C  
+ATOM      3  CA  SER A   3      61.529  40.021 112.348  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      59.830  41.970 109.712  1.00  0.00           C  
+ATOM      5  CA  LYS A   5      59.750  45.675 108.918  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      56.448  46.951 107.479  1.00  0.00           C  
+ATOM      7  CA  THR A   7      56.952  50.147 105.512  1.00  0.00           C  
+ENDMDL
+REMARK 500 NRKVYELS
+MODEL        2
+ATOM      0  CA  ASN A   0      61.191  30.592 116.897  1.00  0.00           C  
+ATOM      1  CA  ARG A   1      61.591  34.369 116.530  1.00  0.00           C  
+ATOM      2  CA  LYS A   2      61.181  36.378 113.333  1.00  0.00           C  
+ATOM      3  CA  VAL A   3      61.515  40.091 112.629  1.00  0.00           C  
+ATOM      4  CA  TYR A   4      60.091  42.037 109.685  1.00  0.00           C  
+ATOM      5  CA  GLU A   5      59.715  45.616 108.609  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      56.332  47.008 107.748  1.00  0.00           C  
+ATOM      7  CA  SER A   7      56.942  49.938 105.429  1.00  0.00           C  
+ENDMDL

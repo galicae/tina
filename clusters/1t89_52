@@ -1,0 +1,22 @@
+REMARK 500 SISRMTQD
+MODEL        1
+ATOM      0  CA  SER A   0      65.708  55.512 -32.313  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      65.619  53.028 -29.466  1.00  0.00           C  
+ATOM      2  CA  SER A   2      62.896  50.390 -29.666  1.00  0.00           C  
+ATOM      3  CA  ARG A   3      63.845  48.517 -26.517  1.00  0.00           C  
+ATOM      4  CA  MET A   4      65.947  50.387 -23.950  1.00  0.00           C  
+ATOM      5  CA  THR A   5      68.801  48.360 -22.498  1.00  0.00           C  
+ATOM      6  CA  GLN A   6      71.716  49.117 -20.173  1.00  0.00           C  
+ATOM      7  CA  ASP A   7      74.314  49.222 -22.930  1.00  0.00           C  
+ENDMDL
+REMARK 500 FIDAATVN
+MODEL        2
+ATOM      0  CA  PHE A   0      65.223  55.250 -32.429  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      66.065  53.181 -29.368  1.00  0.00           C  
+ATOM      2  CA  ASP A   2      63.125  50.764 -29.475  1.00  0.00           C  
+ATOM      3  CA  ALA A   3      63.826  48.379 -26.554  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      66.133  50.329 -24.221  1.00  0.00           C  
+ATOM      5  CA  THR A   5      68.665  48.235 -22.335  1.00  0.00           C  
+ATOM      6  CA  VAL A   6      71.647  49.118 -20.174  1.00  0.00           C  
+ATOM      7  CA  ASN A   7      74.163  49.277 -22.956  1.00  0.00           C  
+ENDMDL

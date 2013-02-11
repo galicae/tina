@@ -1,0 +1,22 @@
+REMARK 500 HSWKNTAL
+MODEL        1
+ATOM      0  CA  HIS A   0      22.595  10.587  29.133  1.00  0.00           C  
+ATOM      1  CA  SER A   1      20.329   7.566  28.796  1.00  0.00           C  
+ATOM      2  CA  TRP A   2      16.524   7.556  29.036  1.00  0.00           C  
+ATOM      3  CA  LYS A   3      15.270   6.523  32.449  1.00  0.00           C  
+ATOM      4  CA  ASN A   4      19.024   6.481  33.171  1.00  0.00           C  
+ATOM      5  CA  THR A   5      19.255   2.889  31.977  1.00  0.00           C  
+ATOM      6  CA  ALA A   6      22.767   1.405  31.930  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      24.787   2.541  28.963  1.00  0.00           C  
+ENDMDL
+REMARK 500 HSWKDKPL
+MODEL        2
+ATOM      0  CA  HIS A   0      22.533  10.584  29.176  1.00  0.00           C  
+ATOM      1  CA  SER A   1      20.241   7.586  28.619  1.00  0.00           C  
+ATOM      2  CA  TRP A   2      16.452   7.538  28.934  1.00  0.00           C  
+ATOM      3  CA  LYS A   3      15.386   6.761  32.539  1.00  0.00           C  
+ATOM      4  CA  ASP A   4      19.089   6.312  33.307  1.00  0.00           C  
+ATOM      5  CA  LYS A   5      19.213   2.800  31.817  1.00  0.00           C  
+ATOM      6  CA  PRO A   6      22.795   1.354  32.005  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      24.842   2.613  29.058  1.00  0.00           C  
+ENDMDL

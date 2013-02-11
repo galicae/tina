@@ -1,0 +1,22 @@
+REMARK 500 VVSREASL
+MODEL        1
+ATOM      0  CA  VAL A   0       3.935   7.160  14.769  1.00  0.00           C  
+ATOM      1  CA  VAL A   1       1.549   9.071  17.035  1.00  0.00           C  
+ATOM      2  CA  SER A   2       2.229  10.241  20.578  1.00  0.00           C  
+ATOM      3  CA  ARG A   3       0.174   9.814  23.714  1.00  0.00           C  
+ATOM      4  CA  GLU A   4      -2.555  12.444  23.965  1.00  0.00           C  
+ATOM      5  CA  ALA A   5      -2.158  15.426  26.283  1.00  0.00           C  
+ATOM      6  CA  SER A   6      -5.025  17.415  27.772  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      -4.779  21.194  27.975  1.00  0.00           C  
+ENDMDL
+REMARK 500 YESEPLNI
+MODEL        2
+ATOM      0  CA  TYR A   0       3.972   7.205  14.796  1.00  0.00           C  
+ATOM      1  CA  GLU A   1       1.526   8.919  17.116  1.00  0.00           C  
+ATOM      2  CA  SER A   2       2.184  10.445  20.538  1.00  0.00           C  
+ATOM      3  CA  GLU A   3       0.170   9.890  23.697  1.00  0.00           C  
+ATOM      4  CA  PRO A   4      -2.608  12.476  23.928  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      -2.199  15.383  26.324  1.00  0.00           C  
+ATOM      6  CA  ASN A   6      -5.085  17.337  27.812  1.00  0.00           C  
+ATOM      7  CA  ILE A   7      -4.591  21.109  27.879  1.00  0.00           C  
+ENDMDL

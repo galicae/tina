@@ -1,0 +1,22 @@
+REMARK 500 LHWLHNGQ
+MODEL        1
+ATOM      0  CA  LEU A   0      35.023  -9.377  37.295  1.00  0.00           C  
+ATOM      1  CA  HIS A   1      31.658  -7.914  38.442  1.00  0.00           C  
+ATOM      2  CA  TRP A   2      29.746  -4.970  37.094  1.00  0.00           C  
+ATOM      3  CA  LEU A   3      27.524  -2.393  38.764  1.00  0.00           C  
+ATOM      4  CA  HIS A   4      25.112  -0.000  37.148  1.00  0.00           C  
+ATOM      5  CA  ASN A   5      24.818   3.121  39.327  1.00  0.00           C  
+ATOM      6  CA  GLY A   6      26.125   1.174  42.311  1.00  0.00           C  
+ATOM      7  CA  GLN A   7      23.614  -1.659  41.748  1.00  0.00           C  
+ENDMDL
+REMARK 500 LRWLFNGS
+MODEL        2
+ATOM      0  CA  LEU A   0      34.947  -9.450  37.311  1.00  0.00           C  
+ATOM      1  CA  ARG A   1      31.616  -7.933  38.391  1.00  0.00           C  
+ATOM      2  CA  TRP A   2      29.791  -4.875  37.082  1.00  0.00           C  
+ATOM      3  CA  LEU A   3      27.544  -2.395  38.804  1.00  0.00           C  
+ATOM      4  CA  PHE A   4      25.294   0.070  37.079  1.00  0.00           C  
+ATOM      5  CA  ASN A   5      24.676   3.122  39.245  1.00  0.00           C  
+ATOM      6  CA  GLY A   6      25.967   1.245  42.301  1.00  0.00           C  
+ATOM      7  CA  SER A   7      23.786  -1.801  41.916  1.00  0.00           C  
+ENDMDL

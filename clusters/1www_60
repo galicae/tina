@@ -1,0 +1,22 @@
+REMARK 500 YHGCLQLD
+MODEL        1
+ATOM      0  CA  TYR A   0      43.436  -9.032  30.676  1.00  0.00           C  
+ATOM      1  CA  HIS A   1      42.096  -6.655  28.023  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      38.343  -6.626  27.448  1.00  0.00           C  
+ATOM      3  CA  CYS A   3      35.153  -4.637  27.162  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      31.794  -4.482  28.821  1.00  0.00           C  
+ATOM      5  CA  GLN A   5      29.857  -4.934  25.546  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      26.490  -3.324  24.879  1.00  0.00           C  
+ATOM      7  CA  ASP A   7      24.417  -4.254  21.815  1.00  0.00           C  
+ENDMDL
+REMARK 500 RHGCLRLN
+MODEL        2
+ATOM      0  CA  ARG A   0      43.777  -9.020  30.684  1.00  0.00           C  
+ATOM      1  CA  HIS A   1      42.003  -6.666  28.256  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      38.313  -6.648  27.294  1.00  0.00           C  
+ATOM      3  CA  CYS A   3      34.995  -4.755  27.079  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      31.693  -4.438  28.783  1.00  0.00           C  
+ATOM      5  CA  ARG A   5      29.819  -4.990  25.490  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      26.526  -3.165  24.902  1.00  0.00           C  
+ATOM      7  CA  ASN A   7      24.460  -4.262  21.883  1.00  0.00           C  
+ENDMDL

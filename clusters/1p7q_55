@@ -1,0 +1,22 @@
+REMARK 500 SNATYKEI
+MODEL        1
+ATOM      0  CA  SER A   0     102.587  23.507  -5.874  1.00  0.00           C  
+ATOM      1  CA  ASN A   1      99.382  21.650  -5.113  1.00  0.00           C  
+ATOM      2  CA  ALA A   2      97.187  23.272  -7.780  1.00  0.00           C  
+ATOM      3  CA  THR A   3      93.553  23.760  -6.740  1.00  0.00           C  
+ATOM      4  CA  TYR A   4      90.248  24.664  -8.469  1.00  0.00           C  
+ATOM      5  CA  LYS A   5      91.200  28.337  -7.889  1.00  0.00           C  
+ATOM      6  CA  GLU A   6      93.904  27.965 -10.557  1.00  0.00           C  
+ATOM      7  CA  ILE A   7      91.407  26.778 -13.217  1.00  0.00           C  
+ENDMDL
+REMARK 500 PSITWEHA
+MODEL        2
+ATOM      0  CA  PRO A   0     102.599  23.676  -5.889  1.00  0.00           C  
+ATOM      1  CA  SER A   1      99.425  21.779  -5.057  1.00  0.00           C  
+ATOM      2  CA  ILE A   2      97.038  22.778  -7.838  1.00  0.00           C  
+ATOM      3  CA  THR A   3      93.477  23.661  -6.825  1.00  0.00           C  
+ATOM      4  CA  TRP A   4      90.314  24.801  -8.596  1.00  0.00           C  
+ATOM      5  CA  GLU A   5      91.298  28.385  -7.756  1.00  0.00           C  
+ATOM      6  CA  HIS A   6      93.836  28.259 -10.594  1.00  0.00           C  
+ATOM      7  CA  ALA A   7      91.482  26.593 -13.085  1.00  0.00           C  
+ENDMDL

@@ -1,0 +1,22 @@
+REMARK 500 GTITWYKD
+MODEL        1
+ATOM      0  CA  GLY A   0      29.200  34.146 150.709  1.00  0.00           C  
+ATOM      1  CA  THR A   1      26.526  34.380 148.013  1.00  0.00           C  
+ATOM      2  CA  ILE A   2      25.004  31.439 146.092  1.00  0.00           C  
+ATOM      3  CA  THR A   3      22.688  31.879 143.070  1.00  0.00           C  
+ATOM      4  CA  TRP A   4      20.599  29.542 140.886  1.00  0.00           C  
+ATOM      5  CA  TYR A   5      19.370  29.573 137.234  1.00  0.00           C  
+ATOM      6  CA  LYS A   6      17.625  27.429 134.543  1.00  0.00           C  
+ATOM      7  CA  ASP A   7      19.441  26.264 131.345  1.00  0.00           C  
+ENDMDL
+REMARK 500 GYYVCYPR
+MODEL        2
+ATOM      0  CA  GLY A   0      28.961  33.898 150.625  1.00  0.00           C  
+ATOM      1  CA  TYR A   1      26.571  34.471 147.764  1.00  0.00           C  
+ATOM      2  CA  TYR A   2      24.931  31.551 145.985  1.00  0.00           C  
+ATOM      3  CA  VAL A   3      22.578  31.835 143.014  1.00  0.00           C  
+ATOM      4  CA  CYS A   4      20.852  29.303 140.801  1.00  0.00           C  
+ATOM      5  CA  TYR A   5      19.322  29.753 137.381  1.00  0.00           C  
+ATOM      6  CA  PRO A   6      17.721  27.506 134.725  1.00  0.00           C  
+ATOM      7  CA  ARG A   7      19.516  26.335 131.597  1.00  0.00           C  
+ENDMDL

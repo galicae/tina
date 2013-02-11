@@ -1,0 +1,22 @@
+REMARK 500 QNVDFEDE
+MODEL        1
+ATOM      0  CA  GLN A   0       3.900  -0.151   2.113  1.00  0.00           C  
+ATOM      1  CA  ASN A   1       6.284   0.995   4.850  1.00  0.00           C  
+ATOM      2  CA  VAL A   2       5.054   4.586   4.876  1.00  0.00           C  
+ATOM      3  CA  ASP A   3       7.348   7.449   5.781  1.00  0.00           C  
+ATOM      4  CA  PHE A   4       6.967  11.195   6.119  1.00  0.00           C  
+ATOM      5  CA  GLU A   5       7.132  11.736   2.359  1.00  0.00           C  
+ATOM      6  CA  ASP A   6       3.904   9.760   1.945  1.00  0.00           C  
+ATOM      7  CA  GLU A   7       1.917  12.421   3.805  1.00  0.00           C  
+ENDMDL
+REMARK 500 RNVSFEDA
+MODEL        2
+ATOM      0  CA  ARG A   0       3.768  -0.129   2.117  1.00  0.00           C  
+ATOM      1  CA  ASN A   1       6.266   1.033   4.757  1.00  0.00           C  
+ATOM      2  CA  VAL A   2       5.049   4.614   4.875  1.00  0.00           C  
+ATOM      3  CA  SER A   3       7.278   7.589   5.745  1.00  0.00           C  
+ATOM      4  CA  PHE A   4       6.828  11.363   6.097  1.00  0.00           C  
+ATOM      5  CA  GLU A   5       7.148  11.809   2.332  1.00  0.00           C  
+ATOM      6  CA  ASP A   6       4.106   9.549   2.043  1.00  0.00           C  
+ATOM      7  CA  ALA A   7       2.061  12.164   3.883  1.00  0.00           C  
+ENDMDL

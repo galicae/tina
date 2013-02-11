@@ -1,0 +1,22 @@
+REMARK 500 MTSNAVRM
+MODEL        1
+ATOM      0  CA  MET A   0     -19.952  18.826  27.851  1.00  0.00           C  
+ATOM      1  CA  THR A   1     -19.455  22.099  29.822  1.00  0.00           C  
+ATOM      2  CA  SER A   2     -16.625  22.423  32.286  1.00  0.00           C  
+ATOM      3  CA  ASN A   3     -16.738  23.868  35.784  1.00  0.00           C  
+ATOM      4  CA  ALA A   4     -17.383  27.564  35.849  1.00  0.00           C  
+ATOM      5  CA  VAL A   5     -14.390  29.170  37.625  1.00  0.00           C  
+ATOM      6  CA  ARG A   6     -14.582  32.799  38.781  1.00  0.00           C  
+ATOM      7  CA  MET A   7     -11.408  34.832  38.188  1.00  0.00           C  
+ENDMDL
+REMARK 500 ASSRTATV
+MODEL        2
+ATOM      0  CA  ALA A   0     -20.101  18.945  27.744  1.00  0.00           C  
+ATOM      1  CA  SER A   1     -19.323  21.959  29.956  1.00  0.00           C  
+ATOM      2  CA  SER A   2     -16.509  22.344  32.464  1.00  0.00           C  
+ATOM      3  CA  ARG A   3     -17.081  23.815  35.884  1.00  0.00           C  
+ATOM      4  CA  THR A   4     -17.330  27.587  35.799  1.00  0.00           C  
+ATOM      5  CA  ALA A   5     -14.159  29.234  37.051  1.00  0.00           C  
+ATOM      6  CA  THR A   6     -14.449  32.610  38.774  1.00  0.00           C  
+ATOM      7  CA  VAL A   7     -11.580  35.086  38.513  1.00  0.00           C  
+ENDMDL

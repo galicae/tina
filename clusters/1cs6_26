@@ -1,0 +1,22 @@
+REMARK 500 LECFAFGN
+MODEL        1
+ATOM      0  CA  LEU A   0       4.211 -11.742  29.621  1.00  0.00           C  
+ATOM      1  CA  GLU A   1       8.000 -11.940  30.104  1.00  0.00           C  
+ATOM      2  CA  CYS A   2      10.546  -9.905  32.015  1.00  0.00           C  
+ATOM      3  CA  PHE A   3      14.185 -10.630  32.739  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      17.074  -8.518  33.963  1.00  0.00           C  
+ATOM      5  CA  PHE A   5      20.857  -8.501  34.278  1.00  0.00           C  
+ATOM      6  CA  GLY A   6      22.183  -7.615  37.728  1.00  0.00           C  
+ATOM      7  CA  ASN A   7      24.596  -8.570  40.498  1.00  0.00           C  
+ENDMDL
+REMARK 500 LTCRARAN
+MODEL        2
+ATOM      0  CA  LEU A   0       4.309 -11.813  30.185  1.00  0.00           C  
+ATOM      1  CA  THR A   1       8.087 -11.897  29.758  1.00  0.00           C  
+ATOM      2  CA  CYS A   2      10.620  -9.942  31.821  1.00  0.00           C  
+ATOM      3  CA  ARG A   3      14.321 -10.463  32.445  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      16.920  -8.174  33.991  1.00  0.00           C  
+ATOM      5  CA  ARG A   5      20.607  -8.944  34.478  1.00  0.00           C  
+ATOM      6  CA  ALA A   6      22.139  -7.769  37.747  1.00  0.00           C  
+ATOM      7  CA  ASN A   7      24.648  -8.419  40.520  1.00  0.00           C  
+ENDMDL

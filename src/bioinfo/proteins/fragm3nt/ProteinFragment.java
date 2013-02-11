@@ -181,6 +181,7 @@ public class ProteinFragment {
 		ProteinFragment result = new ProteinFragment(id, sequence, atoms,
 				fragLength);
 		result.setClusterIndex(clustered);
+		result.setSequence(sequence);
 		return result;
 	}
 
@@ -209,7 +210,7 @@ public class ProteinFragment {
 		}
 
 		this.coordinates = new double[coord.length + coordinates.length][3];
-		this.atoms = new Atom[coord.length + coordinates.length];
+		this.atoms = new Atom[coordinates.length];
 		for (int j = 0; j < coordinates.length; j++) {
 			atoms[j] = newAtoms[j];
 			for (int k = 0; k < 3; k++) {
@@ -221,5 +222,20 @@ public class ProteinFragment {
 
 	public Atom[] getAtoms() {
 		return this.atoms;
+	}
+	
+	public ProteinFragment getPart(int start, int end) {
+		if(end > atoms.length) {
+			end = atoms.length;
+		}
+		int size = end - start;
+		double[][] coord = new double[size][3];
+		String seq = this.sequence.substring(start, end);
+		for(int i = 0; i < size; i++) {
+			coord[i] = this.coordinates[i + start];
+		}
+		ProteinFragment result = new ProteinFragment("part" + start + "_" + end, coord, size);
+		result.setSequence(seq);
+		return result;
 	}
 }

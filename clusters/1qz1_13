@@ -1,0 +1,22 @@
+REMARK 500 ALGASRQL
+MODEL        1
+ATOM      0  CA  ALA A   0      20.791  43.234  -0.796  1.00  0.00           C  
+ATOM      1  CA  LEU A   1      23.985  41.265  -1.168  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      23.435  38.537  -3.756  1.00  0.00           C  
+ATOM      3  CA  ALA A   3      20.276  40.181  -5.194  1.00  0.00           C  
+ATOM      4  CA  SER A   4      19.905  42.199  -8.372  1.00  0.00           C  
+ATOM      5  CA  ARG A   5      18.856  45.632  -9.616  1.00  0.00           C  
+ATOM      6  CA  GLN A   6      18.677  47.305 -13.024  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      18.886  50.953 -13.850  1.00  0.00           C  
+ENDMDL
+REMARK 500 SVGESKFF
+MODEL        2
+ATOM      0  CA  SER A   0      20.880  43.384  -0.755  1.00  0.00           C  
+ATOM      1  CA  VAL A   1      23.955  41.214  -1.126  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      23.367  38.471  -3.643  1.00  0.00           C  
+ATOM      3  CA  GLU A   3      20.360  40.167  -5.239  1.00  0.00           C  
+ATOM      4  CA  SER A   4      19.950  42.068  -8.496  1.00  0.00           C  
+ATOM      5  CA  LYS A   5      18.725  45.495  -9.689  1.00  0.00           C  
+ATOM      6  CA  PHE A   6      18.758  47.445 -12.889  1.00  0.00           C  
+ATOM      7  CA  PHE A   7      18.816  51.062 -13.938  1.00  0.00           C  
+ENDMDL

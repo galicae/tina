@@ -1,0 +1,33 @@
+REMARK 500 WYKNGVKI
+MODEL        1
+ATOM      0  CA  TRP A   0      17.409  20.486  28.540  1.00  0.00           C  
+ATOM      1  CA  TYR A   1      15.703  21.003  25.176  1.00  0.00           C  
+ATOM      2  CA  LYS A   2      15.064  24.191  23.218  1.00  0.00           C  
+ATOM      3  CA  ASN A   3      12.226  23.661  20.678  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      12.832  19.934  20.908  1.00  0.00           C  
+ATOM      5  CA  VAL A   5      16.590  20.124  20.310  1.00  0.00           C  
+ATOM      6  CA  LYS A   6      18.806  18.851  23.132  1.00  0.00           C  
+ATOM      7  CA  ILE A   7      20.995  21.602  24.532  1.00  0.00           C  
+ENDMDL
+REMARK 500 WQHNDKNI
+MODEL        2
+ATOM      0  CA  TRP A   0      17.377  20.567  28.697  1.00  0.00           C  
+ATOM      1  CA  GLN A   1      15.707  20.885  25.296  1.00  0.00           C  
+ATOM      2  CA  HIS A   2      15.012  24.057  23.281  1.00  0.00           C  
+ATOM      3  CA  ASN A   3      12.336  23.737  20.575  1.00  0.00           C  
+ATOM      4  CA  ASP A   4      12.713  19.958  20.801  1.00  0.00           C  
+ATOM      5  CA  LYS A   5      16.491  20.118  20.341  1.00  0.00           C  
+ATOM      6  CA  ASN A   6      18.892  18.867  23.051  1.00  0.00           C  
+ATOM      7  CA  ILE A   7      21.096  21.663  24.452  1.00  0.00           C  
+ENDMDL
+REMARK 500 FFQNGKSK
+MODEL        3
+ATOM      0  CA  PHE A   0      17.378  20.322  28.618  1.00  0.00           C  
+ATOM      1  CA  PHE A   1      15.747  21.106  25.283  1.00  0.00           C  
+ATOM      2  CA  GLN A   2      15.076  24.191  23.161  1.00  0.00           C  
+ATOM      3  CA  ASN A   3      12.304  23.693  20.595  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      12.707  19.912  20.891  1.00  0.00           C  
+ATOM      5  CA  LYS A   5      16.462  19.998  20.338  1.00  0.00           C  
+ATOM      6  CA  SER A   6      18.909  18.938  23.040  1.00  0.00           C  
+ATOM      7  CA  LYS A   7      21.040  21.692  24.568  1.00  0.00           C  
+ENDMDL

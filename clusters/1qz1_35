@@ -1,0 +1,22 @@
+REMARK 500 WFSPNGEK
+MODEL        1
+ATOM      0  CA  TRP A   0      28.359  53.713 -18.270  1.00  0.00           C  
+ATOM      1  CA  PHE A   1      31.160  54.178 -15.748  1.00  0.00           C  
+ATOM      2  CA  SER A   2      31.447  52.289 -12.488  1.00  0.00           C  
+ATOM      3  CA  PRO A   3      32.169  54.004  -9.124  1.00  0.00           C  
+ATOM      4  CA  ASN A   4      35.905  53.452  -9.613  1.00  0.00           C  
+ATOM      5  CA  GLY A   5      35.839  55.523 -12.825  1.00  0.00           C  
+ATOM      6  CA  GLU A   6      36.137  52.712 -15.312  1.00  0.00           C  
+ATOM      7  CA  LYS A   7      34.050  52.475 -18.430  1.00  0.00           C  
+ENDMDL
+REMARK 500 VTAEDGTQ
+MODEL        2
+ATOM      0  CA  VAL A   0      28.631  53.405 -18.345  1.00  0.00           C  
+ATOM      1  CA  THR A   1      30.919  54.572 -15.585  1.00  0.00           C  
+ATOM      2  CA  ALA A   2      31.510  52.385 -12.494  1.00  0.00           C  
+ATOM      3  CA  GLU A   3      32.156  53.905  -9.042  1.00  0.00           C  
+ATOM      4  CA  ASP A   4      35.903  53.552  -9.675  1.00  0.00           C  
+ATOM      5  CA  GLY A   5      35.802  55.387 -13.002  1.00  0.00           C  
+ATOM      6  CA  THR A   6      36.148  52.371 -15.281  1.00  0.00           C  
+ATOM      7  CA  GLN A   7      33.998  52.769 -18.386  1.00  0.00           C  
+ENDMDL

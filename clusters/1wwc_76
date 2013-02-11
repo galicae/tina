@@ -1,0 +1,22 @@
+REMARK 500 YTLIAKNP
+MODEL        1
+ATOM      0  CA  TYR A   0      22.767  18.205  31.421  1.00  0.00           C  
+ATOM      1  CA  THR A   1      26.024  18.956  29.623  1.00  0.00           C  
+ATOM      2  CA  LEU A   2      28.650  16.480  28.679  1.00  0.00           C  
+ATOM      3  CA  ILE A   3      32.122  17.931  28.310  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      34.738  15.643  26.728  1.00  0.00           C  
+ATOM      5  CA  LYS A   5      38.411  16.697  26.440  1.00  0.00           C  
+ATOM      6  CA  ASN A   6      41.680  15.365  24.995  1.00  0.00           C  
+ATOM      7  CA  PRO A   7      44.985  17.110  24.120  1.00  0.00           C  
+ENDMDL
+REMARK 500 YTLLAANP
+MODEL        2
+ATOM      0  CA  TYR A   0      22.802  18.311  31.327  1.00  0.00           C  
+ATOM      1  CA  THR A   1      26.108  19.095  29.603  1.00  0.00           C  
+ATOM      2  CA  LEU A   2      28.686  16.396  28.807  1.00  0.00           C  
+ATOM      3  CA  LEU A   3      32.198  17.723  28.364  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      34.693  15.551  26.468  1.00  0.00           C  
+ATOM      5  CA  ALA A   5      38.327  16.599  26.589  1.00  0.00           C  
+ATOM      6  CA  ASN A   6      41.672  15.456  25.138  1.00  0.00           C  
+ATOM      7  CA  PRO A   7      44.890  17.256  24.019  1.00  0.00           C  
+ENDMDL

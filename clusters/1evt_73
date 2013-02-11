@@ -1,0 +1,22 @@
+REMARK 500 GNSIGLSH
+MODEL        1
+ATOM      0  CA  GLY A   0      18.245  41.204  18.020  1.00  0.00           C  
+ATOM      1  CA  ASN A   1      16.368  38.939  20.375  1.00  0.00           C  
+ATOM      2  CA  SER A   2      15.768  35.233  20.878  1.00  0.00           C  
+ATOM      3  CA  ILE A   3      13.324  35.177  17.952  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      15.344  37.047  15.348  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      17.300  40.181  14.597  1.00  0.00           C  
+ATOM      6  CA  SER A   6      16.675  43.407  12.670  1.00  0.00           C  
+ATOM      7  CA  HIS A   7      18.626  46.409  11.402  1.00  0.00           C  
+ENDMDL
+REMARK 500 KNPVGEDQ
+MODEL        2
+ATOM      0  CA  LYS A   0      18.313  41.407  18.195  1.00  0.00           C  
+ATOM      1  CA  ASN A   1      16.379  38.875  20.317  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      15.824  35.149  20.948  1.00  0.00           C  
+ATOM      3  CA  VAL A   3      13.339  35.066  18.024  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      15.237  36.972  15.292  1.00  0.00           C  
+ATOM      5  CA  GLU A   5      17.077  40.249  14.585  1.00  0.00           C  
+ATOM      6  CA  ASP A   6      16.713  43.412  12.460  1.00  0.00           C  
+ATOM      7  CA  GLN A   7      18.768  46.469  11.422  1.00  0.00           C  
+ENDMDL

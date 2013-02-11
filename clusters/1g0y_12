@@ -1,0 +1,22 @@
+REMARK 500 IEGRPFQL
+MODEL        1
+ATOM      0  CA  ILE A   0      10.462  11.456 141.020  1.00  0.00           C  
+ATOM      1  CA  GLU A   1       7.838  13.590 139.257  1.00  0.00           C  
+ATOM      2  CA  GLY A   2       5.123  15.530 141.078  1.00  0.00           C  
+ATOM      3  CA  ARG A   3       6.941  15.380 144.380  1.00  0.00           C  
+ATOM      4  CA  PRO A   4       8.941  17.931 146.430  1.00  0.00           C  
+ATOM      5  CA  PHE A   5      12.633  18.206 145.505  1.00  0.00           C  
+ATOM      6  CA  GLN A   6      15.694  20.182 146.484  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      19.232  20.646 145.187  1.00  0.00           C  
+ENDMDL
+REMARK 500 SANEIDVR
+MODEL        2
+ATOM      0  CA  SER A   0      10.387  11.141 140.810  1.00  0.00           C  
+ATOM      1  CA  ALA A   1       8.159  13.880 139.413  1.00  0.00           C  
+ATOM      2  CA  ASN A   2       5.085  15.385 141.083  1.00  0.00           C  
+ATOM      3  CA  GLU A   3       6.978  15.497 144.398  1.00  0.00           C  
+ATOM      4  CA  ILE A   4       8.917  18.071 146.385  1.00  0.00           C  
+ATOM      5  CA  ASP A   5      12.613  18.214 145.706  1.00  0.00           C  
+ATOM      6  CA  VAL A   6      15.686  20.189 146.603  1.00  0.00           C  
+ATOM      7  CA  ARG A   7      19.039  20.543 144.943  1.00  0.00           C  
+ENDMDL

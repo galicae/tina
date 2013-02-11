@@ -1,0 +1,22 @@
+REMARK 500 ESEPLNIT
+MODEL        1
+ATOM      0  CA  GLU A   0       1.526   8.919  17.116  1.00  0.00           C  
+ATOM      1  CA  SER A   1       2.184  10.445  20.538  1.00  0.00           C  
+ATOM      2  CA  GLU A   2       0.170   9.890  23.697  1.00  0.00           C  
+ATOM      3  CA  PRO A   3      -2.608  12.476  23.928  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      -2.199  15.383  26.324  1.00  0.00           C  
+ATOM      5  CA  ASN A   5      -5.085  17.337  27.812  1.00  0.00           C  
+ATOM      6  CA  ILE A   6      -4.591  21.109  27.879  1.00  0.00           C  
+ATOM      7  CA  THR A   7      -6.834  23.658  29.533  1.00  0.00           C  
+ENDMDL
+REMARK 500 SSKPVTIT
+MODEL        2
+ATOM      0  CA  SER A   0       1.728   8.748  17.035  1.00  0.00           C  
+ATOM      1  CA  SER A   1       2.139  10.384  20.444  1.00  0.00           C  
+ATOM      2  CA  LYS A   2      -0.209   9.750  23.421  1.00  0.00           C  
+ATOM      3  CA  PRO A   3      -2.518  12.708  24.046  1.00  0.00           C  
+ATOM      4  CA  VAL A   4      -1.969  15.442  26.646  1.00  0.00           C  
+ATOM      5  CA  THR A   5      -4.916  17.464  27.969  1.00  0.00           C  
+ATOM      6  CA  ILE A   6      -4.569  21.234  27.760  1.00  0.00           C  
+ATOM      7  CA  THR A   7      -7.123  23.487  29.507  1.00  0.00           C  
+ENDMDL

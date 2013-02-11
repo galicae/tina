@@ -1,0 +1,22 @@
+REMARK 500 ERIQSQTV
+MODEL        1
+ATOM      0  CA  GLU A   0       9.442  22.415  41.594  1.00  0.00           C  
+ATOM      1  CA  ARG A   1       8.529  22.846  37.948  1.00  0.00           C  
+ATOM      2  CA  ILE A   2      10.167  25.229  35.539  1.00  0.00           C  
+ATOM      3  CA  GLN A   3       8.442  28.543  34.899  1.00  0.00           C  
+ATOM      4  CA  SER A   4       8.100  30.498  31.665  1.00  0.00           C  
+ATOM      5  CA  GLN A   5      10.294  33.550  31.108  1.00  0.00           C  
+ATOM      6  CA  THR A   6       9.821  36.667  28.988  1.00  0.00           C  
+ATOM      7  CA  VAL A   7      13.256  38.244  28.689  1.00  0.00           C  
+ENDMDL
+REMARK 500 VEPKDLAV
+MODEL        2
+ATOM      0  CA  VAL A   0       9.307  22.563  41.565  1.00  0.00           C  
+ATOM      1  CA  GLU A   1       8.456  22.992  37.874  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      10.484  25.177  35.462  1.00  0.00           C  
+ATOM      3  CA  LYS A   3       8.832  28.525  34.793  1.00  0.00           C  
+ATOM      4  CA  ASP A   4       7.859  30.377  31.650  1.00  0.00           C  
+ATOM      5  CA  LEU A   5       9.833  33.625  31.318  1.00  0.00           C  
+ATOM      6  CA  ALA A   6       9.878  36.701  29.075  1.00  0.00           C  
+ATOM      7  CA  VAL A   7      13.401  38.031  28.694  1.00  0.00           C  
+ENDMDL

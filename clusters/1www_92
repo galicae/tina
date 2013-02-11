@@ -1,0 +1,22 @@
+REMARK 500 ISAHFMGW
+MODEL        1
+ATOM      0  CA  ILE A   0      33.152   5.435  34.357  1.00  0.00           C  
+ATOM      1  CA  SER A   1      30.139   7.495  33.240  1.00  0.00           C  
+ATOM      2  CA  ALA A   2      28.591   6.381  29.958  1.00  0.00           C  
+ATOM      3  CA  HIS A   3      26.041   8.140  27.805  1.00  0.00           C  
+ATOM      4  CA  PHE A   4      24.764   6.330  24.696  1.00  0.00           C  
+ATOM      5  CA  MET A   5      21.645   8.152  23.643  1.00  0.00           C  
+ATOM      6  CA  GLY A   6      19.909  11.292  24.820  1.00  0.00           C  
+ATOM      7  CA  TRP A   7      16.554  10.847  26.492  1.00  0.00           C  
+ENDMDL
+REMARK 500 IMAAFMDN
+MODEL        2
+ATOM      0  CA  ILE A   0      33.040   5.464  34.420  1.00  0.00           C  
+ATOM      1  CA  MET A   1      30.102   7.531  33.203  1.00  0.00           C  
+ATOM      2  CA  ALA A   2      28.660   6.435  29.865  1.00  0.00           C  
+ATOM      3  CA  ALA A   3      25.999   8.049  27.651  1.00  0.00           C  
+ATOM      4  CA  PHE A   4      24.837   6.162  24.600  1.00  0.00           C  
+ATOM      5  CA  MET A   5      21.755   8.208  23.846  1.00  0.00           C  
+ATOM      6  CA  ASP A   6      19.920  11.366  24.934  1.00  0.00           C  
+ATOM      7  CA  ASN A   7      16.482  10.856  26.493  1.00  0.00           C  
+ENDMDL

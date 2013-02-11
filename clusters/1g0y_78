@@ -1,0 +1,22 @@
+REMARK 500 SSYCLRIK
+MODEL        1
+ATOM      0  CA  SER A   0      33.940  39.420 145.900  1.00  0.00           C  
+ATOM      1  CA  SER A   1      37.208  38.343 144.293  1.00  0.00           C  
+ATOM      2  CA  TYR A   2      35.986  35.003 142.956  1.00  0.00           C  
+ATOM      3  CA  CYS A   3      32.901  33.452 141.345  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      32.037  29.867 140.451  1.00  0.00           C  
+ATOM      5  CA  ARG A   5      29.266  28.613 138.153  1.00  0.00           C  
+ATOM      6  CA  ILE A   6      28.229  24.928 138.441  1.00  0.00           C  
+ATOM      7  CA  LYS A   7      26.142  22.945 135.886  1.00  0.00           C  
+ENDMDL
+REMARK 500 AVEYQLHF
+MODEL        2
+ATOM      0  CA  ALA A   0      33.993  39.456 145.945  1.00  0.00           C  
+ATOM      1  CA  VAL A   1      37.170  38.081 144.356  1.00  0.00           C  
+ATOM      2  CA  GLU A   2      35.947  34.788 142.898  1.00  0.00           C  
+ATOM      3  CA  TYR A   3      32.681  33.527 141.362  1.00  0.00           C  
+ATOM      4  CA  GLN A   4      31.999  29.932 140.218  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      29.235  28.794 137.889  1.00  0.00           C  
+ATOM      6  CA  HIS A   6      28.287  25.146 138.556  1.00  0.00           C  
+ATOM      7  CA  PHE A   7      26.398  22.848 136.202  1.00  0.00           C  
+ENDMDL

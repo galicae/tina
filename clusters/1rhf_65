@@ -1,0 +1,22 @@
+REMARK 500 EAHNLKGL
+MODEL        1
+ATOM      0  CA  GLU A   0       0.390  30.202  15.973  1.00  0.00           C  
+ATOM      1  CA  ALA A   1      -3.042  28.519  16.217  1.00  0.00           C  
+ATOM      2  CA  HIS A   2      -5.101  27.211  13.293  1.00  0.00           C  
+ATOM      3  CA  ASN A   3      -8.668  26.108  12.642  1.00  0.00           C  
+ATOM      4  CA  LEU A   4     -10.821  25.991   9.503  1.00  0.00           C  
+ATOM      5  CA  LYS A   5     -11.435  29.739   9.712  1.00  0.00           C  
+ATOM      6  CA  GLY A   6      -7.722  30.642   9.723  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      -4.874  31.746  12.014  1.00  0.00           C  
+ENDMDL
+REMARK 500 LAANPFGQ
+MODEL        2
+ATOM      0  CA  LEU A   0       0.402  29.967  15.829  1.00  0.00           C  
+ATOM      1  CA  ALA A   1      -3.155  28.724  16.412  1.00  0.00           C  
+ATOM      2  CA  ALA A   2      -5.012  27.350  13.415  1.00  0.00           C  
+ATOM      3  CA  ASN A   3      -8.472  25.946  12.606  1.00  0.00           C  
+ATOM      4  CA  PRO A   4     -10.761  26.015   9.507  1.00  0.00           C  
+ATOM      5  CA  PHE A   5     -11.411  29.805   9.789  1.00  0.00           C  
+ATOM      6  CA  GLY A   6      -7.805  30.855   9.509  1.00  0.00           C  
+ATOM      7  CA  GLN A   7      -5.058  31.497  12.010  1.00  0.00           C  
+ENDMDL

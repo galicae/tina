@@ -1,0 +1,33 @@
+REMARK 500 DNPTHMNN
+MODEL        1
+ATOM      0  CA  ASP A   0      13.798  22.915  28.882  1.00  0.00           C  
+ATOM      1  CA  ASN A   1      12.652  23.929  32.351  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      13.437  20.551  33.984  1.00  0.00           C  
+ATOM      3  CA  THR A   3      12.505  19.927  37.644  1.00  0.00           C  
+ATOM      4  CA  HIS A   4      13.830  17.673  40.423  1.00  0.00           C  
+ATOM      5  CA  MET A   5      11.813  15.037  38.641  1.00  0.00           C  
+ATOM      6  CA  ASN A   6      14.459  14.945  35.878  1.00  0.00           C  
+ATOM      7  CA  ASN A   7      17.292  14.400  38.378  1.00  0.00           C  
+ENDMDL
+REMARK 500 NKPTHYNN
+MODEL        2
+ATOM      0  CA  ASN A   0      13.734  23.043  28.760  1.00  0.00           C  
+ATOM      1  CA  LYS A   1      12.786  23.922  32.326  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      13.507  20.586  33.996  1.00  0.00           C  
+ATOM      3  CA  THR A   3      12.262  19.946  37.589  1.00  0.00           C  
+ATOM      4  CA  HIS A   4      13.842  17.747  40.366  1.00  0.00           C  
+ATOM      5  CA  TYR A   5      11.970  14.821  38.835  1.00  0.00           C  
+ATOM      6  CA  ASN A   6      14.452  15.064  35.924  1.00  0.00           C  
+ATOM      7  CA  ASN A   7      17.233  14.248  38.384  1.00  0.00           C  
+ENDMDL
+REMARK 500 NQPTHVNN
+MODEL        3
+ATOM      0  CA  ASN A   0      13.532  23.004  28.785  1.00  0.00           C  
+ATOM      1  CA  GLN A   1      13.024  23.877  32.435  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      13.447  20.430  33.970  1.00  0.00           C  
+ATOM      3  CA  THR A   3      12.494  19.901  37.624  1.00  0.00           C  
+ATOM      4  CA  HIS A   4      13.735  17.665  40.424  1.00  0.00           C  
+ATOM      5  CA  VAL A   5      11.817  14.924  38.632  1.00  0.00           C  
+ATOM      6  CA  ASN A   6      14.458  15.014  35.905  1.00  0.00           C  
+ATOM      7  CA  ASN A   7      17.278  14.562  38.405  1.00  0.00           C  
+ENDMDL

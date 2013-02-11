@@ -1,0 +1,22 @@
+REMARK 500 SISGTTVI
+MODEL        1
+ATOM      0  CA  SER A   0      60.449 -10.263  27.562  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      57.906 -11.374  30.145  1.00  0.00           C  
+ATOM      2  CA  SER A   2      59.570 -12.556  33.334  1.00  0.00           C  
+ATOM      3  CA  GLY A   3      57.842 -12.739  36.687  1.00  0.00           C  
+ATOM      4  CA  THR A   4      55.858  -9.541  37.206  1.00  0.00           C  
+ATOM      5  CA  THR A   5      57.869  -7.415  34.779  1.00  0.00           C  
+ATOM      6  CA  VAL A   6      57.328  -6.985  31.051  1.00  0.00           C  
+ATOM      7  CA  ILE A   7      60.222  -5.528  29.051  1.00  0.00           C  
+ENDMDL
+REMARK 500 GSDEDHLS
+MODEL        2
+ATOM      0  CA  GLY A   0      60.200 -10.192  27.334  1.00  0.00           C  
+ATOM      1  CA  SER A   1      58.012 -11.290  30.211  1.00  0.00           C  
+ATOM      2  CA  ASP A   2      59.647 -12.439  33.467  1.00  0.00           C  
+ATOM      3  CA  GLU A   3      57.891 -12.735  36.834  1.00  0.00           C  
+ATOM      4  CA  ASP A   4      55.770  -9.592  37.223  1.00  0.00           C  
+ATOM      5  CA  HIS A   5      57.802  -7.616  34.633  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      57.279  -6.909  30.923  1.00  0.00           C  
+ATOM      7  CA  SER A   7      60.442  -5.627  29.190  1.00  0.00           C  
+ENDMDL

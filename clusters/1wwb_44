@@ -1,0 +1,22 @@
+REMARK 500 SKYICTKI
+MODEL        1
+ATOM      0  CA  SER A   0      10.437  15.302  22.694  1.00  0.00           C  
+ATOM      1  CA  LYS A   1       9.624  18.979  22.544  1.00  0.00           C  
+ATOM      2  CA  TYR A   2      11.024  19.376  26.122  1.00  0.00           C  
+ATOM      3  CA  ILE A   3      14.083  17.117  25.935  1.00  0.00           C  
+ATOM      4  CA  CYS A   4      16.189  16.455  22.867  1.00  0.00           C  
+ATOM      5  CA  THR A   5      19.688  15.952  21.472  1.00  0.00           C  
+ATOM      6  CA  LYS A   6      21.221  18.902  19.587  1.00  0.00           C  
+ATOM      7  CA  ILE A   7      24.554  18.748  17.804  1.00  0.00           C  
+ENDMDL
+REMARK 500 TSFIFTEF
+MODEL        2
+ATOM      0  CA  THR A   0      10.204  15.241  22.918  1.00  0.00           C  
+ATOM      1  CA  SER A   1      10.155  18.945  22.250  1.00  0.00           C  
+ATOM      2  CA  PHE A   2      11.386  19.537  25.832  1.00  0.00           C  
+ATOM      3  CA  ILE A   3      14.088  16.888  26.092  1.00  0.00           C  
+ATOM      4  CA  PHE A   4      15.982  16.449  22.851  1.00  0.00           C  
+ATOM      5  CA  THR A   5      19.494  15.896  21.523  1.00  0.00           C  
+ATOM      6  CA  GLU A   6      21.178  18.825  19.822  1.00  0.00           C  
+ATOM      7  CA  PHE A   7      24.332  19.049  17.736  1.00  0.00           C  
+ENDMDL

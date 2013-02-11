@@ -1,0 +1,22 @@
+REMARK 500 YLQIRGIK
+MODEL        1
+ATOM      0  CA  TYR A   0      63.781  -0.884  26.084  1.00  0.00           C  
+ATOM      1  CA  LEU A   1      60.536  -0.028  27.925  1.00  0.00           C  
+ATOM      2  CA  GLN A   2      60.228  -1.532  31.355  1.00  0.00           C  
+ATOM      3  CA  ILE A   3      56.736  -1.878  32.853  1.00  0.00           C  
+ATOM      4  CA  ARG A   4      57.048  -3.092  36.440  1.00  0.00           C  
+ATOM      5  CA  GLY A   5      54.302  -5.243  37.974  1.00  0.00           C  
+ATOM      6  CA  ILE A   6      52.536  -5.253  34.639  1.00  0.00           C  
+ATOM      7  CA  LYS A   7      48.739  -5.317  34.940  1.00  0.00           C  
+ENDMDL
+REMARK 500 HLSLKEFS
+MODEL        2
+ATOM      0  CA  HIS A   0      63.887  -0.649  26.203  1.00  0.00           C  
+ATOM      1  CA  LEU A   1      60.496   0.021  27.812  1.00  0.00           C  
+ATOM      2  CA  SER A   2      60.144  -1.584  31.270  1.00  0.00           C  
+ATOM      3  CA  LEU A   3      56.711  -2.250  32.730  1.00  0.00           C  
+ATOM      4  CA  LYS A   4      57.112  -3.326  36.337  1.00  0.00           C  
+ATOM      5  CA  GLU A   5      54.232  -4.981  38.196  1.00  0.00           C  
+ATOM      6  CA  PHE A   6      52.571  -5.270  34.821  1.00  0.00           C  
+ATOM      7  CA  SER A   7      48.753  -5.188  34.842  1.00  0.00           C  
+ENDMDL

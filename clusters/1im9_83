@@ -1,0 +1,22 @@
+REMARK 500 QVSAPSDP
+MODEL        1
+ATOM      0  CA  GLN A   0     102.844  33.662 -17.779  1.00  0.00           C  
+ATOM      1  CA  VAL A   1     104.748  30.403 -17.392  1.00  0.00           C  
+ATOM      2  CA  SER A   2     107.661  28.636 -19.083  1.00  0.00           C  
+ATOM      3  CA  ALA A   3     107.888  25.739 -21.490  1.00  0.00           C  
+ATOM      4  CA  PRO A   4     106.662  22.444 -20.039  1.00  0.00           C  
+ATOM      5  CA  SER A   5     108.972  19.783 -18.634  1.00  0.00           C  
+ATOM      6  CA  ASP A   6     109.076  16.519 -20.534  1.00  0.00           C  
+ATOM      7  CA  PRO A   7     105.950  14.532 -19.643  1.00  0.00           C  
+ENDMDL
+REMARK 500 EWSKSSDP
+MODEL        2
+ATOM      0  CA  GLU A   0     103.049  33.729 -17.818  1.00  0.00           C  
+ATOM      1  CA  TRP A   1     104.594  30.256 -17.399  1.00  0.00           C  
+ATOM      2  CA  SER A   2     107.606  28.551 -18.916  1.00  0.00           C  
+ATOM      3  CA  LYS A   3     107.894  25.798 -21.511  1.00  0.00           C  
+ATOM      4  CA  SER A   4     106.603  22.475 -20.168  1.00  0.00           C  
+ATOM      5  CA  SER A   5     108.880  19.803 -18.729  1.00  0.00           C  
+ATOM      6  CA  ASP A   6     109.153  16.507 -20.579  1.00  0.00           C  
+ATOM      7  CA  PRO A   7     106.022  14.599 -19.474  1.00  0.00           C  
+ENDMDL

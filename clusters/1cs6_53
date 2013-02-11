@@ -1,0 +1,22 @@
+REMARK 500 GELRFSKL
+MODEL        1
+ATOM      0  CA  GLY A   0      15.118  15.916  28.823  1.00  0.00           C  
+ATOM      1  CA  GLU A   1      17.885  17.403  30.956  1.00  0.00           C  
+ATOM      2  CA  LEU A   2      18.811  16.408  34.504  1.00  0.00           C  
+ATOM      3  CA  ARG A   3      21.488  18.346  36.389  1.00  0.00           C  
+ATOM      4  CA  PHE A   4      22.771  17.617  39.889  1.00  0.00           C  
+ATOM      5  CA  SER A   5      24.462  20.325  41.962  1.00  0.00           C  
+ATOM      6  CA  LYS A   6      27.195  18.925  44.210  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      26.383  15.212  44.284  1.00  0.00           C  
+ENDMDL
+REMARK 500 GQFPIPSI
+MODEL        2
+ATOM      0  CA  GLY A   0      15.394  16.066  28.863  1.00  0.00           C  
+ATOM      1  CA  GLN A   1      18.169  17.369  31.102  1.00  0.00           C  
+ATOM      2  CA  PHE A   2      18.440  16.262  34.731  1.00  0.00           C  
+ATOM      3  CA  PRO A   3      21.172  18.266  36.561  1.00  0.00           C  
+ATOM      4  CA  ILE A   4      22.949  17.610  39.830  1.00  0.00           C  
+ATOM      5  CA  PRO A   5      24.719  20.439  41.634  1.00  0.00           C  
+ATOM      6  CA  SER A   6      26.867  18.941  44.374  1.00  0.00           C  
+ATOM      7  CA  ILE A   7      26.402  15.198  43.921  1.00  0.00           C  
+ENDMDL

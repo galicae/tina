@@ -1,0 +1,22 @@
+REMARK 500 NHTYQLDV
+MODEL        1
+ATOM      0  CA  ASN A   0     -16.917  38.399  49.699  1.00  0.00           C  
+ATOM      1  CA  HIS A   1     -13.485  38.410  48.154  1.00  0.00           C  
+ATOM      2  CA  THR A   2     -11.834  40.481  45.465  1.00  0.00           C  
+ATOM      3  CA  TYR A   3      -9.271  39.473  42.844  1.00  0.00           C  
+ATOM      4  CA  GLN A   4      -7.142  41.810  40.760  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      -6.736  40.867  37.109  1.00  0.00           C  
+ATOM      6  CA  ASP A   6      -3.889  42.068  34.993  1.00  0.00           C  
+ATOM      7  CA  VAL A   7      -3.318  41.174  31.348  1.00  0.00           C  
+ENDMDL
+REMARK 500 YRCYGSVT
+MODEL        2
+ATOM      0  CA  TYR A   0     -16.952  38.493  49.430  1.00  0.00           C  
+ATOM      1  CA  ARG A   1     -13.384  38.321  48.217  1.00  0.00           C  
+ATOM      2  CA  CYS A   2     -11.809  40.584  45.623  1.00  0.00           C  
+ATOM      3  CA  TYR A   3      -9.402  39.424  42.935  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      -7.378  41.757  40.766  1.00  0.00           C  
+ATOM      5  CA  SER A   5      -6.288  40.672  37.286  1.00  0.00           C  
+ATOM      6  CA  VAL A   6      -3.807  42.252  34.884  1.00  0.00           C  
+ATOM      7  CA  THR A   7      -3.572  41.180  31.231  1.00  0.00           C  
+ENDMDL

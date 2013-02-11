@@ -1,0 +1,22 @@
+REMARK 500 RVRVETTK
+MODEL        1
+ATOM      0  CA  ARG A   0      -8.260  -1.972  -9.498  1.00  0.00           C  
+ATOM      1  CA  VAL A   1      -5.010  -0.620  -7.996  1.00  0.00           C  
+ATOM      2  CA  ARG A   2      -2.220   1.467  -9.581  1.00  0.00           C  
+ATOM      3  CA  VAL A   3       1.117   1.682  -7.718  1.00  0.00           C  
+ATOM      4  CA  GLU A   4       4.194   3.112  -9.490  1.00  0.00           C  
+ATOM      5  CA  THR A   5       7.476   4.680  -8.299  1.00  0.00           C  
+ATOM      6  CA  THR A   6       8.124   8.248  -9.519  1.00  0.00           C  
+ATOM      7  CA  LYS A   7      11.585   9.401 -10.694  1.00  0.00           C  
+ENDMDL
+REMARK 500 EYRLYREK
+MODEL        2
+ATOM      0  CA  GLU A   0      -8.564  -1.726  -9.519  1.00  0.00           C  
+ATOM      1  CA  TYR A   1      -5.195  -0.770  -7.999  1.00  0.00           C  
+ATOM      2  CA  ARG A   2      -2.172   0.894  -9.616  1.00  0.00           C  
+ATOM      3  CA  LEU A   3       1.204   1.604  -7.971  1.00  0.00           C  
+ATOM      4  CA  TYR A   4       4.246   3.509  -9.227  1.00  0.00           C  
+ATOM      5  CA  ARG A   5       7.651   4.752  -8.120  1.00  0.00           C  
+ATOM      6  CA  GLU A   6       8.313   8.312  -9.299  1.00  0.00           C  
+ATOM      7  CA  LYS A   7      11.522   9.423 -11.044  1.00  0.00           C  
+ENDMDL

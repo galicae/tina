@@ -1,0 +1,22 @@
+REMARK 500 RIEVSGGE
+MODEL        1
+ATOM      0  CA  ARG A   0      20.141  19.967  44.403  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      18.301  18.359  41.497  1.00  0.00           C  
+ATOM      2  CA  GLU A   2      16.879  20.360  38.603  1.00  0.00           C  
+ATOM      3  CA  VAL A   3      14.658  18.531  36.123  1.00  0.00           C  
+ATOM      4  CA  SER A   4      13.854  20.484  32.967  1.00  0.00           C  
+ATOM      5  CA  GLY A   5      12.622  18.503  29.990  1.00  0.00           C  
+ATOM      6  CA  GLY A   6      15.118  15.916  28.823  1.00  0.00           C  
+ATOM      7  CA  GLU A   7      17.885  17.403  30.956  1.00  0.00           C  
+ENDMDL
+REMARK 500 KVTNEGTT
+MODEL        2
+ATOM      0  CA  LYS A   0      20.235  20.123  44.405  1.00  0.00           C  
+ATOM      1  CA  VAL A   1      18.539  18.301  41.507  1.00  0.00           C  
+ATOM      2  CA  THR A   2      16.471  20.219  38.934  1.00  0.00           C  
+ATOM      3  CA  ASN A   3      14.736  18.600  35.967  1.00  0.00           C  
+ATOM      4  CA  GLU A   4      13.887  20.600  32.855  1.00  0.00           C  
+ATOM      5  CA  GLY A   5      12.494  18.506  29.948  1.00  0.00           C  
+ATOM      6  CA  THR A   6      15.119  16.080  28.681  1.00  0.00           C  
+ATOM      7  CA  THR A   7      17.978  17.095  31.065  1.00  0.00           C  
+ENDMDL

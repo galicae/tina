@@ -1,0 +1,22 @@
+REMARK 500 REVTVNVL
+MODEL        1
+ATOM      0  CA  ARG A   0     -18.841 169.118  58.179  1.00  0.00           C  
+ATOM      1  CA  GLU A   1     -22.630 169.000  58.307  1.00  0.00           C  
+ATOM      2  CA  VAL A   2     -24.505 167.069  55.573  1.00  0.00           C  
+ATOM      3  CA  THR A   3     -28.238 167.307  54.919  1.00  0.00           C  
+ATOM      4  CA  VAL A   4     -30.193 164.594  53.153  1.00  0.00           C  
+ATOM      5  CA  ASN A   5     -33.662 165.482  51.825  1.00  0.00           C  
+ATOM      6  CA  VAL A   6     -35.777 162.592  50.600  1.00  0.00           C  
+ATOM      7  CA  LEU A   7     -38.500 163.788  48.225  1.00  0.00           C  
+ENDMDL
+REMARK 500 GDYTLIAK
+MODEL        2
+ATOM      0  CA  GLY A   0     -18.940 169.209  57.985  1.00  0.00           C  
+ATOM      1  CA  ASP A   1     -22.717 168.973  58.219  1.00  0.00           C  
+ATOM      2  CA  TYR A   2     -24.485 166.882  55.640  1.00  0.00           C  
+ATOM      3  CA  THR A   3     -28.221 167.232  55.130  1.00  0.00           C  
+ATOM      4  CA  LEU A   4     -30.243 164.641  53.262  1.00  0.00           C  
+ATOM      5  CA  ILE A   5     -33.636 165.608  51.769  1.00  0.00           C  
+ATOM      6  CA  ALA A   6     -35.686 162.615  50.572  1.00  0.00           C  
+ATOM      7  CA  LYS A   7     -38.419 163.790  48.203  1.00  0.00           C  
+ENDMDL

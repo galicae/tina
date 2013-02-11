@@ -1,0 +1,22 @@
+REMARK 500 VLVEYEIK
+MODEL        1
+ATOM      0  CA  VAL A   0      43.833  24.723  87.024  1.00  0.00           C  
+ATOM      1  CA  LEU A   1      47.596  24.707  87.584  1.00  0.00           C  
+ATOM      2  CA  VAL A   2      48.207  21.374  89.291  1.00  0.00           C  
+ATOM      3  CA  GLU A   3      46.313  18.651  91.151  1.00  0.00           C  
+ATOM      4  CA  TYR A   4      47.374  16.499  94.075  1.00  0.00           C  
+ATOM      5  CA  GLU A   5      46.115  13.319  95.685  1.00  0.00           C  
+ATOM      6  CA  ILE A   6      47.188  12.278  99.158  1.00  0.00           C  
+ATOM      7  CA  LYS A   7      46.594   8.515  99.008  1.00  0.00           C  
+ENDMDL
+REMARK 500 LFAVDRPK
+MODEL        2
+ATOM      0  CA  LEU A   0      43.932  24.825  87.031  1.00  0.00           C  
+ATOM      1  CA  PHE A   1      47.703  24.647  87.500  1.00  0.00           C  
+ATOM      2  CA  ALA A   2      48.168  21.346  89.344  1.00  0.00           C  
+ATOM      3  CA  VAL A   3      46.297  18.676  91.288  1.00  0.00           C  
+ATOM      4  CA  ASP A   4      47.412  16.375  94.116  1.00  0.00           C  
+ATOM      5  CA  ARG A   5      45.511  13.403  95.594  1.00  0.00           C  
+ATOM      6  CA  PRO A   6      47.031  12.314  98.938  1.00  0.00           C  
+ATOM      7  CA  LYS A   7      47.166   8.479  99.166  1.00  0.00           C  
+ENDMDL

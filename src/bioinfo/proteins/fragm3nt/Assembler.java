@@ -9,7 +9,7 @@ import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.Transformation;
 
 public class Assembler {
-	private final int fragLength;
+	protected final int fragLength;
 
 	/**
 	 * the constructor of an assembler object, that with the appropriate input
@@ -36,7 +36,7 @@ public class Assembler {
 	 *            the aforementioned fragment library
 	 * @return a clone of the centroid of the best cluster match to query
 	 */
-	private ProteinFragment findFragment(String query,
+	protected ProteinFragment findFragment(String query,
 			LinkedList<FragmentCluster> clusters, ProteinFragment lastFrag) {		
 		ProteinFragment curFrag = new ProteinFragment("dada", new double[1][1],
 				1);
@@ -106,10 +106,10 @@ public class Assembler {
 		else {
 			double tempScore = Double.MAX_VALUE;
 			ProteinFragment secCopy = lastFrag.clone();
-			double[][][] kabschFood = new double[2][4][3];
-			int shove = secCopy.getAllResidues().length - 4;
-			for(int k = 0; k < 5; k++) {
-				for (int i = 0; i < 3; i++) {
+			double[][][] kabschFood = new double[2][5][3];
+			int shove = secCopy.getAllResidues().length - 5;
+			for(int k = 0; k < rank.size(); k++) {
+				for (int i = 0; i < 5; i++) {
 					kabschFood[0][i] = secCopy.getResidue(shove + i);
 					kabschFood[1][i] = rank.get(k).getResidue(i);
 				}
@@ -141,7 +141,7 @@ public class Assembler {
 	 * @param extent
 	 *            how many points are to be aligned
 	 */
-	private void alignFragments(ProteinFragment stable, ProteinFragment move,
+	protected void alignFragments(ProteinFragment stable, ProteinFragment move,
 			int extent) {
 		double[][][] kabschFood = new double[2][extent][3];
 		int shove = stable.getAllResidues().length - extent;
@@ -163,6 +163,7 @@ public class Assembler {
 		String moveSeq = move.getSequence().substring(extent);
 
 		stable.append(moveCoordinates, moveSeq);
+//		System.out.println();
 	}
 
 	/**
@@ -180,7 +181,7 @@ public class Assembler {
 	 * @param extent
 	 *            how many points have been aligned
 	 */
-	private void matchCoordinates(ProteinFragment stable, ProteinFragment move,
+	protected void matchCoordinates(ProteinFragment stable, ProteinFragment move,
 			int extent) {
 		int last = stable.getAllResidues().length - 1;
 		double[] correct = new double[3];
@@ -224,7 +225,7 @@ public class Assembler {
 	 * @return a list of the correct fragments, that only need to be brought in
 	 *         the right relative coordination now
 	 */
-	private LinkedList<ProteinFragment> collectFragments(String query,
+	protected LinkedList<ProteinFragment> collectFragments(String query,
 			LinkedList<FragmentCluster> clusters, int extent) {
 		String curSub = query.substring(0, fragLength);
 		ProteinFragment curFrag = findFragment(curSub, clusters, null);
@@ -259,7 +260,7 @@ public class Assembler {
 	 * @return the protein structure in the form of a (very large) protein
 	 *         fragment.
 	 */
-	private ProteinFragment assembleProtein(
+	protected ProteinFragment assembleProtein(
 			List<ProteinFragment> rightFragments, int extent, String query) {
 		ProteinFragment resultFragment = new ProteinFragment("res",
 				new double[1][1], fragLength);

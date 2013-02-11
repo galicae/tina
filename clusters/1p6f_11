@@ -1,0 +1,22 @@
+REMARK 500 GPEVISGE
+MODEL        1
+ATOM      0  CA  GLY A   0      24.640  37.483   6.918  1.00  0.00           C  
+ATOM      1  CA  PRO A   1      24.430  33.659   7.179  1.00  0.00           C  
+ATOM      2  CA  GLU A   2      27.821  33.191   5.524  1.00  0.00           C  
+ATOM      3  CA  VAL A   3      30.954  34.945   6.822  1.00  0.00           C  
+ATOM      4  CA  ILE A   4      34.725  34.637   6.853  1.00  0.00           C  
+ATOM      5  CA  SER A   5      36.727  34.339  10.068  1.00  0.00           C  
+ATOM      6  CA  GLY A   6      37.211  37.770  11.581  1.00  0.00           C  
+ATOM      7  CA  GLU A   7      33.839  39.225  10.688  1.00  0.00           C  
+ENDMDL
+REMARK 500 WYSVLEKD
+MODEL        2
+ATOM      0  CA  TRP A   0      24.632  37.467   6.464  1.00  0.00           C  
+ATOM      1  CA  TYR A   1      24.360  33.774   7.278  1.00  0.00           C  
+ATOM      2  CA  SER A   2      27.699  32.875   5.627  1.00  0.00           C  
+ATOM      3  CA  VAL A   3      30.723  34.833   6.824  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      34.513  35.028   6.863  1.00  0.00           C  
+ATOM      5  CA  GLU A   5      36.739  34.630   9.899  1.00  0.00           C  
+ATOM      6  CA  LYS A   6      37.605  37.770  11.823  1.00  0.00           C  
+ATOM      7  CA  ASP A   7      34.077  38.872  10.856  1.00  0.00           C  
+ENDMDL

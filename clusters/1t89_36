@@ -1,0 +1,22 @@
+REMARK 500 NGKDRKYF
+MODEL        1
+ATOM      0  CA  ASN A   0      65.330  59.028   3.821  1.00  0.00           C  
+ATOM      1  CA  GLY A   1      63.526  55.730   4.337  1.00  0.00           C  
+ATOM      2  CA  LYS A   2      60.505  57.829   5.419  1.00  0.00           C  
+ATOM      3  CA  ASP A   3      57.178  57.831   3.569  1.00  0.00           C  
+ATOM      4  CA  ARG A   4      56.527  61.374   2.299  1.00  0.00           C  
+ATOM      5  CA  LYS A   5      53.502  60.694   0.064  1.00  0.00           C  
+ATOM      6  CA  TYR A   6      50.963  57.903  -0.533  1.00  0.00           C  
+ATOM      7  CA  PHE A   7      48.922  57.151  -3.629  1.00  0.00           C  
+ENDMDL
+REMARK 500 NGKSKKFS
+MODEL        2
+ATOM      0  CA  ASN A   0      65.659  58.806   3.607  1.00  0.00           C  
+ATOM      1  CA  GLY A   1      63.410  55.798   4.268  1.00  0.00           C  
+ATOM      2  CA  LYS A   2      60.555  57.892   5.639  1.00  0.00           C  
+ATOM      3  CA  SER A   3      57.196  58.093   3.884  1.00  0.00           C  
+ATOM      4  CA  LYS A   4      56.305  61.438   2.311  1.00  0.00           C  
+ATOM      5  CA  LYS A   5      53.328  60.549   0.116  1.00  0.00           C  
+ATOM      6  CA  PHE A   6      51.106  57.576  -0.707  1.00  0.00           C  
+ATOM      7  CA  SER A   7      48.893  57.390  -3.770  1.00  0.00           C  
+ENDMDL

@@ -1,0 +1,22 @@
+REMARK 500 SEPSNLLD
+MODEL        1
+ATOM      0  CA  SER A   0      23.384  14.432  53.052  1.00  0.00           C  
+ATOM      1  CA  GLU A   1      23.715  18.126  52.230  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      21.715  19.157  49.181  1.00  0.00           C  
+ATOM      3  CA  SER A   3      23.048  18.702  45.663  1.00  0.00           C  
+ATOM      4  CA  ASN A   4      23.689  21.482  43.161  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      20.511  23.332  42.106  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      18.976  22.235  38.782  1.00  0.00           C  
+ATOM      7  CA  ASP A   7      16.653  24.546  36.854  1.00  0.00           C  
+ENDMDL
+REMARK 500 SFPSEPVK
+MODEL        2
+ATOM      0  CA  SER A   0      23.298  14.525  53.302  1.00  0.00           C  
+ATOM      1  CA  PHE A   1      23.941  18.017  51.919  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      21.596  19.156  49.176  1.00  0.00           C  
+ATOM      3  CA  SER A   3      23.025  18.727  45.685  1.00  0.00           C  
+ATOM      4  CA  GLU A   4      23.696  21.670  43.394  1.00  0.00           C  
+ATOM      5  CA  PRO A   5      20.395  23.001  41.975  1.00  0.00           C  
+ATOM      6  CA  VAL A   6      19.102  22.223  38.499  1.00  0.00           C  
+ATOM      7  CA  LYS A   7      16.639  24.693  37.079  1.00  0.00           C  
+ENDMDL

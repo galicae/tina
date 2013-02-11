@@ -1,0 +1,22 @@
+REMARK 500 PRGGSVLV
+MODEL        1
+ATOM      0  CA  PRO A   0       6.104  -1.035  -2.635  1.00  0.00           C  
+ATOM      1  CA  ARG A   1       8.042  -1.362   0.582  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      11.766  -1.959   0.432  1.00  0.00           C  
+ATOM      3  CA  GLY A   3      11.604  -0.687  -3.085  1.00  0.00           C  
+ATOM      4  CA  SER A   4      14.055   1.929  -4.221  1.00  0.00           C  
+ATOM      5  CA  VAL A   5      13.735   5.110  -6.209  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      15.978   7.642  -7.948  1.00  0.00           C  
+ATOM      7  CA  VAL A   7      15.547  11.403  -7.550  1.00  0.00           C  
+ENDMDL
+REMARK 500 PLDGSVKI
+MODEL        2
+ATOM      0  CA  PRO A   0       6.364  -1.022  -2.593  1.00  0.00           C  
+ATOM      1  CA  LEU A   1       7.869  -1.574   0.859  1.00  0.00           C  
+ATOM      2  CA  ASP A   2      11.618  -2.081   0.553  1.00  0.00           C  
+ATOM      3  CA  GLY A   3      11.675  -0.653  -2.963  1.00  0.00           C  
+ATOM      4  CA  SER A   4      13.723   2.146  -4.493  1.00  0.00           C  
+ATOM      5  CA  VAL A   5      13.804   5.261  -6.675  1.00  0.00           C  
+ATOM      6  CA  LYS A   6      16.402   7.674  -7.969  1.00  0.00           C  
+ATOM      7  CA  ILE A   7      15.376  11.288  -7.354  1.00  0.00           C  
+ENDMDL

@@ -1,0 +1,22 @@
+REMARK 500 VSGGELRF
+MODEL        1
+ATOM      0  CA  VAL A   0      58.045 -11.704  30.184  1.00  0.00           C  
+ATOM      1  CA  SER A   1      59.696 -12.635  33.475  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      57.481 -12.733  36.539  1.00  0.00           C  
+ATOM      3  CA  GLY A   3      55.854  -9.401  37.272  1.00  0.00           C  
+ATOM      4  CA  GLU A   4      58.110  -7.588  34.814  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      57.398  -6.905  31.145  1.00  0.00           C  
+ATOM      6  CA  ARG A   6      60.057  -5.285  28.958  1.00  0.00           C  
+ATOM      7  CA  PHE A   7      59.713  -4.346  25.294  1.00  0.00           C  
+ENDMDL
+REMARK 500 ISGTTVIL
+MODEL        2
+ATOM      0  CA  ILE A   0      57.906 -11.374  30.145  1.00  0.00           C  
+ATOM      1  CA  SER A   1      59.570 -12.556  33.334  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      57.842 -12.739  36.687  1.00  0.00           C  
+ATOM      3  CA  THR A   3      55.858  -9.541  37.206  1.00  0.00           C  
+ATOM      4  CA  THR A   4      57.869  -7.415  34.779  1.00  0.00           C  
+ATOM      5  CA  VAL A   5      57.328  -6.985  31.051  1.00  0.00           C  
+ATOM      6  CA  ILE A   6      60.222  -5.528  29.051  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      59.760  -4.460  25.427  1.00  0.00           C  
+ENDMDL

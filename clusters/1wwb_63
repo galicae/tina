@@ -1,0 +1,22 @@
+REMARK 500 LQLDNPTH
+MODEL        1
+ATOM      0  CA  LEU A   0      20.936  16.518  25.464  1.00  0.00           C  
+ATOM      1  CA  GLN A   1      18.824  19.665  26.027  1.00  0.00           C  
+ATOM      2  CA  LEU A   2      16.193  19.949  28.741  1.00  0.00           C  
+ATOM      3  CA  ASP A   3      13.798  22.915  28.882  1.00  0.00           C  
+ATOM      4  CA  ASN A   4      12.652  23.929  32.351  1.00  0.00           C  
+ATOM      5  CA  PRO A   5      13.437  20.551  33.984  1.00  0.00           C  
+ATOM      6  CA  THR A   6      12.505  19.927  37.644  1.00  0.00           C  
+ATOM      7  CA  HIS A   7      13.830  17.673  40.423  1.00  0.00           C  
+ENDMDL
+REMARK 500 LRLNQPTH
+MODEL        2
+ATOM      0  CA  LEU A   0      20.858  16.634  25.690  1.00  0.00           C  
+ATOM      1  CA  ARG A   1      18.600  19.718  25.914  1.00  0.00           C  
+ATOM      2  CA  LEU A   2      16.271  20.098  28.906  1.00  0.00           C  
+ATOM      3  CA  ASN A   3      13.647  22.867  28.710  1.00  0.00           C  
+ATOM      4  CA  GLN A   4      13.045  23.792  32.332  1.00  0.00           C  
+ATOM      5  CA  PRO A   5      13.516  20.383  33.938  1.00  0.00           C  
+ATOM      6  CA  THR A   6      12.502  19.896  37.581  1.00  0.00           C  
+ATOM      7  CA  HIS A   7      13.737  17.740  40.446  1.00  0.00           C  
+ENDMDL

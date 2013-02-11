@@ -1,0 +1,33 @@
+REMARK 500 AENKHGTV
+MODEL        1
+ATOM      0  CA  ALA A   0      11.504  27.616  52.715  1.00  0.00           C  
+ATOM      1  CA  GLU A   1      13.426  24.350  52.570  1.00  0.00           C  
+ATOM      2  CA  ASN A   2      16.882  22.915  53.087  1.00  0.00           C  
+ATOM      3  CA  LYS A   3      18.366  19.472  53.707  1.00  0.00           C  
+ATOM      4  CA  HIS A   4      17.256  19.688  57.354  1.00  0.00           C  
+ATOM      5  CA  GLY A   5      13.673  20.910  57.248  1.00  0.00           C  
+ATOM      6  CA  THR A   6      10.865  23.015  55.829  1.00  0.00           C  
+ATOM      7  CA  VAL A   7       8.849  25.968  57.087  1.00  0.00           C  
+ENDMDL
+REMARK 500 GSNMFAMD
+MODEL        2
+ATOM      0  CA  GLY A   0      11.338  27.532  52.778  1.00  0.00           C  
+ATOM      1  CA  SER A   1      13.456  24.394  52.469  1.00  0.00           C  
+ATOM      2  CA  ASN A   2      16.923  22.938  53.134  1.00  0.00           C  
+ATOM      3  CA  MET A   3      18.410  19.474  53.700  1.00  0.00           C  
+ATOM      4  CA  PHE A   4      17.244  19.545  57.338  1.00  0.00           C  
+ATOM      5  CA  ALA A   5      13.678  20.906  57.305  1.00  0.00           C  
+ATOM      6  CA  MET A   6      10.931  23.099  55.845  1.00  0.00           C  
+ATOM      7  CA  ASP A   7       8.842  26.047  57.027  1.00  0.00           C  
+ENDMDL
+REMARK 500 AENKAGEQ
+MODEL        3
+ATOM      0  CA  ALA A   0      11.511  27.611  52.649  1.00  0.00           C  
+ATOM      1  CA  GLU A   1      13.511  24.366  52.500  1.00  0.00           C  
+ATOM      2  CA  ASN A   2      16.987  22.969  53.021  1.00  0.00           C  
+ATOM      3  CA  LYS A   3      18.251  19.459  53.722  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      17.289  19.717  57.394  1.00  0.00           C  
+ATOM      5  CA  GLY A   5      13.661  20.739  57.154  1.00  0.00           C  
+ATOM      6  CA  GLU A   6      10.930  23.103  56.062  1.00  0.00           C  
+ATOM      7  CA  GLN A   7       8.683  25.971  57.094  1.00  0.00           C  
+ENDMDL

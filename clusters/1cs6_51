@@ -1,0 +1,22 @@
+REMARK 500 SGGELRFS
+MODEL        1
+ATOM      0  CA  SER A   0      13.854  20.484  32.967  1.00  0.00           C  
+ATOM      1  CA  GLY A   1      12.622  18.503  29.990  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      15.118  15.916  28.823  1.00  0.00           C  
+ATOM      3  CA  GLU A   3      17.885  17.403  30.956  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      18.811  16.408  34.504  1.00  0.00           C  
+ATOM      5  CA  ARG A   5      21.488  18.346  36.389  1.00  0.00           C  
+ATOM      6  CA  PHE A   6      22.771  17.617  39.889  1.00  0.00           C  
+ATOM      7  CA  SER A   7      24.462  20.325  41.962  1.00  0.00           C  
+ENDMDL
+REMARK 500 SGTTVILT
+MODEL        2
+ATOM      0  CA  SER A   0      13.858  20.213  33.142  1.00  0.00           C  
+ATOM      1  CA  GLY A   1      12.716  18.760  29.849  1.00  0.00           C  
+ATOM      2  CA  THR A   2      15.091  15.962  28.868  1.00  0.00           C  
+ATOM      3  CA  THR A   3      18.026  17.164  30.964  1.00  0.00           C  
+ATOM      4  CA  VAL A   4      18.790  16.359  34.590  1.00  0.00           C  
+ATOM      5  CA  ILE A   5      21.292  18.618  36.361  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      22.668  17.708  39.791  1.00  0.00           C  
+ATOM      7  CA  THR A   7      24.570  20.218  41.914  1.00  0.00           C  
+ENDMDL

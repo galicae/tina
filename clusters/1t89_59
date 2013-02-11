@@ -1,0 +1,22 @@
+REMARK 500 SGSYFCRG
+MODEL        1
+ATOM      0  CA  SER A   0      67.379  68.383   0.381  1.00  0.00           C  
+ATOM      1  CA  GLY A   1      67.419  64.591   0.642  1.00  0.00           C  
+ATOM      2  CA  SER A   2      67.394  61.036  -0.742  1.00  0.00           C  
+ATOM      3  CA  TYR A   3      64.259  59.876  -2.549  1.00  0.00           C  
+ATOM      4  CA  PHE A   4      62.881  56.650  -3.931  1.00  0.00           C  
+ATOM      5  CA  CYS A   5      59.399  55.317  -4.618  1.00  0.00           C  
+ATOM      6  CA  ARG A   6      57.790  51.901  -4.385  1.00  0.00           C  
+ATOM      7  CA  GLY A   7      54.391  50.248  -4.639  1.00  0.00           C  
+ENDMDL
+REMARK 500 NGSYSCST
+MODEL        2
+ATOM      0  CA  ASN A   0      67.474  68.351   0.335  1.00  0.00           C  
+ATOM      1  CA  GLY A   1      67.680  64.561   0.765  1.00  0.00           C  
+ATOM      2  CA  SER A   2      67.278  61.082  -0.792  1.00  0.00           C  
+ATOM      3  CA  TYR A   3      64.018  59.970  -2.425  1.00  0.00           C  
+ATOM      4  CA  SER A   4      62.735  56.627  -3.847  1.00  0.00           C  
+ATOM      5  CA  CYS A   5      59.396  55.308  -5.119  1.00  0.00           C  
+ATOM      6  CA  SER A   6      57.729  52.008  -4.093  1.00  0.00           C  
+ATOM      7  CA  THR A   7      54.603  50.095  -4.666  1.00  0.00           C  
+ENDMDL

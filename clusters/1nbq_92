@@ -1,0 +1,22 @@
+REMARK 500 PMTSNAVR
+MODEL        1
+ATOM      0  CA  PRO A   0     -21.412  18.951  24.297  1.00  0.00           C  
+ATOM      1  CA  MET A   1     -19.952  18.826  27.851  1.00  0.00           C  
+ATOM      2  CA  THR A   2     -19.455  22.099  29.822  1.00  0.00           C  
+ATOM      3  CA  SER A   3     -16.625  22.423  32.286  1.00  0.00           C  
+ATOM      4  CA  ASN A   4     -16.738  23.868  35.784  1.00  0.00           C  
+ATOM      5  CA  ALA A   5     -17.383  27.564  35.849  1.00  0.00           C  
+ATOM      6  CA  VAL A   6     -14.390  29.170  37.625  1.00  0.00           C  
+ATOM      7  CA  ARG A   7     -14.582  32.799  38.781  1.00  0.00           C  
+ENDMDL
+REMARK 500 LASSRTAT
+MODEL        2
+ATOM      0  CA  LEU A   0     -21.373  18.850  24.200  1.00  0.00           C  
+ATOM      1  CA  ALA A   1     -20.076  19.030  27.743  1.00  0.00           C  
+ATOM      2  CA  SER A   2     -19.355  22.014  30.014  1.00  0.00           C  
+ATOM      3  CA  SER A   3     -16.463  22.466  32.419  1.00  0.00           C  
+ATOM      4  CA  ARG A   4     -16.964  23.808  35.902  1.00  0.00           C  
+ATOM      5  CA  THR A   5     -17.399  27.564  35.944  1.00  0.00           C  
+ATOM      6  CA  ALA A   6     -14.263  29.330  37.119  1.00  0.00           C  
+ATOM      7  CA  THR A   7     -14.645  32.637  38.954  1.00  0.00           C  
+ENDMDL

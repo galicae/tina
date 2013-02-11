@@ -1,0 +1,22 @@
+REMARK 500 DSPYEWSK
+MODEL        1
+ATOM      0  CA  ASP A   0      89.750   1.944 -20.050  1.00  0.00           C  
+ATOM      1  CA  SER A   1      92.455   2.491 -17.425  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      95.870   2.603 -19.184  1.00  0.00           C  
+ATOM      3  CA  TYR A   3      97.330   3.916 -15.943  1.00  0.00           C  
+ATOM      4  CA  GLU A   4      96.237   1.162 -13.561  1.00  0.00           C  
+ATOM      5  CA  TRP A   5      98.517  -1.885 -13.947  1.00  0.00           C  
+ATOM      6  CA  SER A   6      98.721  -5.218 -12.178  1.00  0.00           C  
+ATOM      7  CA  LYS A   7     101.226  -6.588  -9.679  1.00  0.00           C  
+ENDMDL
+REMARK 500 RSPYLWSF
+MODEL        2
+ATOM      0  CA  ARG A   0      89.900   1.432 -19.776  1.00  0.00           C  
+ATOM      1  CA  SER A   1      92.580   2.512 -17.293  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      95.912   2.813 -19.204  1.00  0.00           C  
+ATOM      3  CA  TYR A   3      97.534   3.954 -15.973  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      96.140   1.261 -13.699  1.00  0.00           C  
+ATOM      5  CA  TRP A   5      98.459  -1.754 -13.872  1.00  0.00           C  
+ATOM      6  CA  SER A   6      98.537  -5.257 -12.374  1.00  0.00           C  
+ATOM      7  CA  PHE A   7     101.044  -6.537  -9.778  1.00  0.00           C  
+ENDMDL

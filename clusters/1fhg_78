@@ -1,0 +1,22 @@
+REMARK 500 EYTCLAGN
+MODEL        1
+ATOM      0  CA  GLU A   0      29.083  10.429  11.770  1.00  0.00           C  
+ATOM      1  CA  TYR A   1      26.829   9.941  14.778  1.00  0.00           C  
+ATOM      2  CA  THR A   2      23.043  10.037  15.113  1.00  0.00           C  
+ATOM      3  CA  CYS A   3      20.623  10.663  17.939  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      17.365   8.838  17.211  1.00  0.00           C  
+ATOM      5  CA  ALA A   5      14.148   9.358  19.143  1.00  0.00           C  
+ATOM      6  CA  GLY A   6      10.846   7.680  18.390  1.00  0.00           C  
+ATOM      7  CA  ASN A   7       7.356   7.281  19.755  1.00  0.00           C  
+ENDMDL
+REMARK 500 KYTCKAVN
+MODEL        2
+ATOM      0  CA  LYS A   0      29.079  10.397  11.829  1.00  0.00           C  
+ATOM      1  CA  TYR A   1      26.893  10.087  14.912  1.00  0.00           C  
+ATOM      2  CA  THR A   2      23.141  10.020  15.047  1.00  0.00           C  
+ATOM      3  CA  CYS A   3      20.661  10.407  17.897  1.00  0.00           C  
+ATOM      4  CA  LYS A   4      17.248   9.022  16.993  1.00  0.00           C  
+ATOM      5  CA  ALA A   5      14.096   9.388  19.052  1.00  0.00           C  
+ATOM      6  CA  VAL A   6      10.819   7.598  18.414  1.00  0.00           C  
+ATOM      7  CA  ASN A   7       7.357   7.307  19.956  1.00  0.00           C  
+ENDMDL

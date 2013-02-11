@@ -1,0 +1,22 @@
+REMARK 500 KTNYLTHR
+MODEL        1
+ATOM      0  CA  LYS A   0       9.927   9.118 147.801  1.00  0.00           C  
+ATOM      1  CA  THR A   1      13.335   7.389 147.838  1.00  0.00           C  
+ATOM      2  CA  ASN A   2      13.740   3.817 146.430  1.00  0.00           C  
+ATOM      3  CA  TYR A   3      16.351   1.224 147.470  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      17.231  -2.226 146.188  1.00  0.00           C  
+ATOM      5  CA  THR A   5      18.431  -4.630 148.898  1.00  0.00           C  
+ATOM      6  CA  HIS A   6      20.701  -7.424 147.746  1.00  0.00           C  
+ATOM      7  CA  ARG A   7      22.329 -10.358 149.576  1.00  0.00           C  
+ENDMDL
+REMARK 500 TRVIEFIT
+MODEL        2
+ATOM      0  CA  THR A   0       9.980   9.142 148.105  1.00  0.00           C  
+ATOM      1  CA  ARG A   1      13.119   7.173 147.621  1.00  0.00           C  
+ATOM      2  CA  VAL A   2      13.676   3.633 146.362  1.00  0.00           C  
+ATOM      3  CA  ILE A   3      16.630   1.517 147.413  1.00  0.00           C  
+ATOM      4  CA  GLU A   4      17.354  -1.965 146.037  1.00  0.00           C  
+ATOM      5  CA  PHE A   5      18.352  -4.455 148.778  1.00  0.00           C  
+ATOM      6  CA  ILE A   6      20.555  -7.546 148.083  1.00  0.00           C  
+ATOM      7  CA  THR A   7      22.378 -10.589 149.548  1.00  0.00           C  
+ENDMDL

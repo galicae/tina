@@ -1,0 +1,22 @@
+REMARK 500 ATNARGTV
+MODEL        1
+ATOM      0  CA  ALA A   0      15.328  14.354  34.539  1.00  0.00           C  
+ATOM      1  CA  THR A   1      16.315  10.732  33.972  1.00  0.00           C  
+ATOM      2  CA  ASN A   2      17.877   7.788  35.787  1.00  0.00           C  
+ATOM      3  CA  ALA A   3      17.758   3.982  35.674  1.00  0.00           C  
+ATOM      4  CA  ARG A   4      14.245   3.960  37.139  1.00  0.00           C  
+ATOM      5  CA  GLY A   5      12.676   6.375  34.657  1.00  0.00           C  
+ATOM      6  CA  THR A   6      12.088   9.861  33.263  1.00  0.00           C  
+ATOM      7  CA  VAL A   7       9.973  12.870  34.268  1.00  0.00           C  
+ENDMDL
+REMARK 500 AINIAGET
+MODEL        2
+ATOM      0  CA  ALA A   0      15.281  14.342  34.548  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      16.338  10.714  33.966  1.00  0.00           C  
+ATOM      2  CA  ASN A   2      17.928   7.832  35.856  1.00  0.00           C  
+ATOM      3  CA  ILE A   3      17.703   4.063  35.477  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      14.269   3.868  37.116  1.00  0.00           C  
+ATOM      5  CA  GLY A   5      12.527   6.361  34.822  1.00  0.00           C  
+ATOM      6  CA  GLU A   6      12.238   9.879  33.482  1.00  0.00           C  
+ATOM      7  CA  THR A   7       9.976  12.863  34.031  1.00  0.00           C  
+ENDMDL

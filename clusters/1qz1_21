@@ -1,0 +1,22 @@
+REMARK 500 FMCKVYSD
+MODEL        1
+ATOM      0  CA  PHE A   0      19.362  26.792  20.721  1.00  0.00           C  
+ATOM      1  CA  MET A   1      21.446  28.565  18.053  1.00  0.00           C  
+ATOM      2  CA  CYS A   2      20.566  31.381  15.741  1.00  0.00           C  
+ATOM      3  CA  LYS A   3      22.724  32.853  12.990  1.00  0.00           C  
+ATOM      4  CA  VAL A   4      21.783  36.364  11.839  1.00  0.00           C  
+ATOM      5  CA  TYR A   5      23.191  38.558   9.062  1.00  0.00           C  
+ATOM      6  CA  SER A   6      22.288  42.205   8.839  1.00  0.00           C  
+ATOM      7  CA  ASP A   7      24.014  45.319   7.461  1.00  0.00           C  
+ENDMDL
+REMARK 500 IVCDVVSS
+MODEL        2
+ATOM      0  CA  ILE A   0      19.593  27.169  20.757  1.00  0.00           C  
+ATOM      1  CA  VAL A   1      21.593  28.441  17.830  1.00  0.00           C  
+ATOM      2  CA  CYS A   2      20.286  31.194  15.610  1.00  0.00           C  
+ATOM      3  CA  ASP A   3      22.778  33.020  13.370  1.00  0.00           C  
+ATOM      4  CA  VAL A   4      21.495  36.119  11.636  1.00  0.00           C  
+ATOM      5  CA  VAL A   5      23.104  38.525   9.211  1.00  0.00           C  
+ATOM      6  CA  SER A   6      22.304  42.181   8.537  1.00  0.00           C  
+ATOM      7  CA  SER A   7      24.221  45.387   7.755  1.00  0.00           C  
+ENDMDL

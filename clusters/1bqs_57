@@ -1,0 +1,22 @@
+REMARK 500 TVRNASLS
+MODEL        1
+ATOM      0  CA  THR A   0      48.610  55.531  27.812  1.00  0.00           C  
+ATOM      1  CA  VAL A   1      44.861  55.791  27.571  1.00  0.00           C  
+ATOM      2  CA  ARG A   2      43.598  54.427  24.222  1.00  0.00           C  
+ATOM      3  CA  ASN A   3      40.144  54.706  22.615  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      39.012  56.399  25.872  1.00  0.00           C  
+ATOM      5  CA  SER A   5      35.788  55.418  27.601  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      33.873  57.267  30.321  1.00  0.00           C  
+ATOM      7  CA  SER A   7      35.629  54.789  32.655  1.00  0.00           C  
+ENDMDL
+REMARK 500 NIVNAKFE
+MODEL        2
+ATOM      0  CA  ASN A   0      48.646  55.568  27.864  1.00  0.00           C  
+ATOM      1  CA  ILE A   1      44.905  55.773  27.296  1.00  0.00           C  
+ATOM      2  CA  VAL A   2      43.583  54.256  24.092  1.00  0.00           C  
+ATOM      3  CA  ASN A   3      40.063  54.877  22.804  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      39.118  56.578  26.049  1.00  0.00           C  
+ATOM      5  CA  LYS A   5      35.957  55.211  27.639  1.00  0.00           C  
+ATOM      6  CA  PHE A   6      33.913  57.178  30.146  1.00  0.00           C  
+ATOM      7  CA  GLU A   7      35.330  54.886  32.777  1.00  0.00           C  
+ENDMDL

@@ -1,0 +1,22 @@
+REMARK 500 LGASRQLT
+MODEL        1
+ATOM      0  CA  LEU A   0      35.527  59.648  24.153  1.00  0.00           C  
+ATOM      1  CA  GLY A   1      37.178  57.071  21.899  1.00  0.00           C  
+ATOM      2  CA  ALA A   2      40.410  59.108  21.507  1.00  0.00           C  
+ATOM      3  CA  SER A   3      43.741  58.602  23.228  1.00  0.00           C  
+ATOM      4  CA  ARG A   4      46.224  60.374  25.493  1.00  0.00           C  
+ATOM      5  CA  GLN A   5      49.550  59.434  27.073  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      51.108  60.768  30.207  1.00  0.00           C  
+ATOM      7  CA  THR A   7      54.809  60.396  30.767  1.00  0.00           C  
+ENDMDL
+REMARK 500 VGESKFFL
+MODEL        2
+ATOM      0  CA  VAL A   0      35.452  59.589  24.211  1.00  0.00           C  
+ATOM      1  CA  GLY A   1      37.053  57.165  21.809  1.00  0.00           C  
+ATOM      2  CA  GLU A   2      40.325  59.091  21.575  1.00  0.00           C  
+ATOM      3  CA  SER A   3      43.740  58.491  23.114  1.00  0.00           C  
+ATOM      4  CA  LYS A   4      46.281  60.358  25.288  1.00  0.00           C  
+ATOM      5  CA  PHE A   5      49.444  59.525  27.117  1.00  0.00           C  
+ATOM      6  CA  PHE A   6      51.286  60.732  30.173  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      54.967  60.450  31.039  1.00  0.00           C  
+ENDMDL

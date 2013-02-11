@@ -1,0 +1,22 @@
+REMARK 500 DTYQGRII
+MODEL        1
+ATOM      0  CA  ASP A   0     -16.467  11.165 -10.067  1.00  0.00           C  
+ATOM      1  CA  THR A   1     -13.631  11.874  -7.651  1.00  0.00           C  
+ATOM      2  CA  TYR A   2     -13.029  11.880  -3.915  1.00  0.00           C  
+ATOM      3  CA  GLN A   3     -10.065  13.146  -1.894  1.00  0.00           C  
+ATOM      4  CA  GLY A   4      -8.731  12.526   1.592  1.00  0.00           C  
+ATOM      5  CA  ARG A   5      -5.482  13.013   3.461  1.00  0.00           C  
+ATOM      6  CA  ILE A   6      -2.837  10.779   4.984  1.00  0.00           C  
+ATOM      7  CA  ILE A   7      -0.931  12.359   7.877  1.00  0.00           C  
+ENDMDL
+REMARK 500 ATCTAELL
+MODEL        2
+ATOM      0  CA  ALA A   0     -16.358  11.298 -10.011  1.00  0.00           C  
+ATOM      1  CA  THR A   1     -13.555  11.858  -7.543  1.00  0.00           C  
+ATOM      2  CA  CYS A   2     -13.116  11.802  -3.798  1.00  0.00           C  
+ATOM      3  CA  THR A   3     -10.042  12.941  -1.913  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      -8.644  12.502   1.569  1.00  0.00           C  
+ATOM      5  CA  GLU A   5      -5.418  13.234   3.410  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      -2.956  10.778   4.862  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      -1.085  12.329   7.812  1.00  0.00           C  
+ENDMDL

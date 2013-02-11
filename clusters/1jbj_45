@@ -1,0 +1,22 @@
+REMARK 500 LVLQDFSE
+MODEL        1
+ATOM      0  CA  LEU A   0     -13.182   3.954 -13.017  1.00  0.00           C  
+ATOM      1  CA  VAL A   1     -13.181   0.296 -12.005  1.00  0.00           C  
+ATOM      2  CA  LEU A   2     -10.808  -2.374 -13.250  1.00  0.00           C  
+ATOM      3  CA  GLN A   3     -12.063  -5.861 -12.456  1.00  0.00           C  
+ATOM      4  CA  ASP A   4      -9.255  -8.410 -12.731  1.00  0.00           C  
+ATOM      5  CA  PHE A   5      -6.282  -6.111 -13.242  1.00  0.00           C  
+ATOM      6  CA  SER A   6      -3.532  -7.283 -15.585  1.00  0.00           C  
+ATOM      7  CA  GLU A   7      -0.257  -5.348 -15.664  1.00  0.00           C  
+ENDMDL
+REMARK 500 LSLKEFSE
+MODEL        2
+ATOM      0  CA  LEU A   0     -13.132   3.853 -13.076  1.00  0.00           C  
+ATOM      1  CA  SER A   1     -13.146   0.195 -11.946  1.00  0.00           C  
+ATOM      2  CA  LEU A   2     -10.698  -2.279 -13.443  1.00  0.00           C  
+ATOM      3  CA  LYS A   3     -11.627  -5.761 -12.284  1.00  0.00           C  
+ATOM      4  CA  GLU A   4      -9.170  -8.645 -12.651  1.00  0.00           C  
+ATOM      5  CA  PHE A   5      -6.603  -6.003 -13.466  1.00  0.00           C  
+ATOM      6  CA  SER A   6      -3.795  -7.091 -15.815  1.00  0.00           C  
+ATOM      7  CA  GLU A   7      -0.389  -5.407 -15.270  1.00  0.00           C  
+ENDMDL

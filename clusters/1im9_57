@@ -1,0 +1,22 @@
+REMARK 500 NFSISRMT
+MODEL        1
+ATOM      0  CA  ASN A   0     107.598  18.929  -4.518  1.00  0.00           C  
+ATOM      1  CA  PHE A   1     104.185  17.377  -4.856  1.00  0.00           C  
+ATOM      2  CA  SER A   2     103.787  14.646  -2.270  1.00  0.00           C  
+ATOM      3  CA  ILE A   3     101.549  11.601  -2.308  1.00  0.00           C  
+ATOM      4  CA  SER A   4     101.061   9.874   1.038  1.00  0.00           C  
+ATOM      5  CA  ARG A   5      98.669   7.203  -0.175  1.00  0.00           C  
+ATOM      6  CA  MET A   6      98.658   6.445  -3.907  1.00  0.00           C  
+ATOM      7  CA  THR A   7      95.199   6.078  -5.413  1.00  0.00           C  
+ENDMDL
+REMARK 500 QFPIPSIT
+MODEL        2
+ATOM      0  CA  GLN A   0     107.739  19.121  -4.453  1.00  0.00           C  
+ATOM      1  CA  PHE A   1     104.344  17.471  -4.920  1.00  0.00           C  
+ATOM      2  CA  PRO A   2     103.884  14.580  -2.418  1.00  0.00           C  
+ATOM      3  CA  ILE A   3     101.419  11.718  -2.374  1.00  0.00           C  
+ATOM      4  CA  PRO A   4     100.739   9.843   0.854  1.00  0.00           C  
+ATOM      5  CA  SER A   5      98.793   6.701   0.015  1.00  0.00           C  
+ATOM      6  CA  ILE A   6      98.580   6.773  -3.777  1.00  0.00           C  
+ATOM      7  CA  THR A   7      95.208   5.946  -5.336  1.00  0.00           C  
+ENDMDL

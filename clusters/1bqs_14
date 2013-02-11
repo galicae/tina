@@ -1,0 +1,22 @@
+REMARK 500 VALGASRQ
+MODEL        1
+ATOM      0  CA  VAL A   0      40.240  63.542  26.264  1.00  0.00           C  
+ATOM      1  CA  ALA A   1      37.389  62.909  23.819  1.00  0.00           C  
+ATOM      2  CA  LEU A   2      35.527  59.648  24.153  1.00  0.00           C  
+ATOM      3  CA  GLY A   3      37.178  57.071  21.899  1.00  0.00           C  
+ATOM      4  CA  ALA A   4      40.410  59.108  21.507  1.00  0.00           C  
+ATOM      5  CA  SER A   5      43.741  58.602  23.228  1.00  0.00           C  
+ATOM      6  CA  ARG A   6      46.224  60.374  25.493  1.00  0.00           C  
+ATOM      7  CA  GLN A   7      49.550  59.434  27.073  1.00  0.00           C  
+ENDMDL
+REMARK 500 ISVGESKF
+MODEL        2
+ATOM      0  CA  ILE A   0      40.351  63.274  26.246  1.00  0.00           C  
+ATOM      1  CA  SER A   1      37.363  63.014  23.927  1.00  0.00           C  
+ATOM      2  CA  VAL A   2      35.498  59.728  24.103  1.00  0.00           C  
+ATOM      3  CA  GLY A   3      37.099  57.154  21.862  1.00  0.00           C  
+ATOM      4  CA  GLU A   4      40.401  59.019  21.574  1.00  0.00           C  
+ATOM      5  CA  SER A   5      43.784  58.458  23.196  1.00  0.00           C  
+ATOM      6  CA  LYS A   6      46.320  60.407  25.303  1.00  0.00           C  
+ATOM      7  CA  PHE A   7      49.443  59.633  27.225  1.00  0.00           C  
+ENDMDL

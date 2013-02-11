@@ -1,0 +1,22 @@
+REMARK 500 SKSSDPLL
+MODEL        1
+ATOM      0  CA  SER A   0      85.389  15.956 -11.667  1.00  0.00           C  
+ATOM      1  CA  LYS A   1      87.607  12.985 -10.860  1.00  0.00           C  
+ATOM      2  CA  SER A   2      87.719  10.502 -13.747  1.00  0.00           C  
+ATOM      3  CA  SER A   3      85.542   7.398 -13.888  1.00  0.00           C  
+ATOM      4  CA  ASP A   4      87.245   4.017 -13.725  1.00  0.00           C  
+ATOM      5  CA  PRO A   5      88.473   3.461 -17.310  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      86.266   1.412 -19.618  1.00  0.00           C  
+ATOM      7  CA  LEU A   7      88.002  -1.149 -21.810  1.00  0.00           C  
+ENDMDL
+REMARK 500 SLPSDLLE
+MODEL        2
+ATOM      0  CA  SER A   0      85.290  15.764 -11.418  1.00  0.00           C  
+ATOM      1  CA  LEU A   1      87.534  12.797 -10.875  1.00  0.00           C  
+ATOM      2  CA  PRO A   2      87.810  10.705 -14.050  1.00  0.00           C  
+ATOM      3  CA  SER A   3      85.687   7.572 -14.149  1.00  0.00           C  
+ATOM      4  CA  ASP A   4      87.098   4.095 -13.917  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      88.743   3.178 -17.180  1.00  0.00           C  
+ATOM      6  CA  LEU A   6      86.163   1.477 -19.379  1.00  0.00           C  
+ATOM      7  CA  GLU A   7      87.918  -1.006 -21.657  1.00  0.00           C  
+ENDMDL

@@ -1,0 +1,22 @@
+REMARK 500 AAGTRVCV
+MODEL        1
+ATOM      0  CA  ALA A   0     -10.705  42.847  30.941  1.00  0.00           C  
+ATOM      1  CA  ALA A   1      -8.269  44.099  33.585  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      -9.690  45.276  36.867  1.00  0.00           C  
+ATOM      3  CA  THR A   3     -10.970  43.986  40.174  1.00  0.00           C  
+ATOM      4  CA  ARG A   4     -13.571  41.200  40.267  1.00  0.00           C  
+ATOM      5  CA  VAL A   5     -15.595  40.261  43.300  1.00  0.00           C  
+ATOM      6  CA  CYS A   6     -17.541  37.142  44.083  1.00  0.00           C  
+ATOM      7  CA  VAL A   7     -20.039  37.596  46.899  1.00  0.00           C  
+ENDMDL
+REMARK 500 DKGNYTCI
+MODEL        2
+ATOM      0  CA  ASP A   0     -10.745  42.921  30.918  1.00  0.00           C  
+ATOM      1  CA  LYS A   1      -8.241  44.200  33.519  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      -9.820  45.130  36.862  1.00  0.00           C  
+ATOM      3  CA  ASN A   3     -11.081  43.940  40.240  1.00  0.00           C  
+ATOM      4  CA  TYR A   4     -13.416  40.985  40.295  1.00  0.00           C  
+ATOM      5  CA  THR A   5     -15.440  40.325  43.373  1.00  0.00           C  
+ATOM      6  CA  CYS A   6     -17.418  37.277  44.213  1.00  0.00           C  
+ATOM      7  CA  ILE A   7     -20.219  37.629  46.696  1.00  0.00           C  
+ENDMDL

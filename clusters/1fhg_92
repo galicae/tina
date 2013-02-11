@@ -1,0 +1,22 @@
+REMARK 500 CTAELLVE
+MODEL        1
+ATOM      0  CA  CYS A   0      19.889  14.720  14.320  1.00  0.00           C  
+ATOM      1  CA  THR A   1      23.385  13.922  13.120  1.00  0.00           C  
+ATOM      2  CA  ALA A   2      26.829  15.422  13.520  1.00  0.00           C  
+ATOM      3  CA  GLU A   3      30.408  14.481  12.724  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      33.219  13.768  15.130  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      36.597  14.576  13.535  1.00  0.00           C  
+ATOM      6  CA  VAL A   6      39.491  13.132  15.490  1.00  0.00           C  
+ATOM      7  CA  GLU A   7      42.427  15.520  15.307  1.00  0.00           C  
+ENDMDL
+REMARK 500 SHAFLLVQ
+MODEL        2
+ATOM      0  CA  SER A   0      19.794  14.499  14.569  1.00  0.00           C  
+ATOM      1  CA  HIS A   1      23.200  14.215  12.868  1.00  0.00           C  
+ATOM      2  CA  ALA A   2      26.746  15.525  13.296  1.00  0.00           C  
+ATOM      3  CA  PHE A   3      30.251  14.275  12.813  1.00  0.00           C  
+ATOM      4  CA  LEU A   4      33.175  13.625  15.118  1.00  0.00           C  
+ATOM      5  CA  LEU A   5      36.559  14.632  13.594  1.00  0.00           C  
+ATOM      6  CA  VAL A   6      39.589  13.426  15.570  1.00  0.00           C  
+ATOM      7  CA  GLN A   7      42.930  15.346  15.319  1.00  0.00           C  
+ENDMDL

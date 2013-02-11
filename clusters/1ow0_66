@@ -1,0 +1,22 @@
+REMARK 500 VSGIYRCY
+MODEL        1
+ATOM      0  CA  VAL A   0      48.697  14.915 -44.575  1.00  0.00           C  
+ATOM      1  CA  SER A   1      45.456  14.981 -46.514  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      43.751  18.373 -46.530  1.00  0.00           C  
+ATOM      3  CA  ILE A   3      43.409  21.526 -48.604  1.00  0.00           C  
+ATOM      4  CA  TYR A   4      46.513  23.711 -49.004  1.00  0.00           C  
+ATOM      5  CA  ARG A   5      47.085  27.341 -50.001  1.00  0.00           C  
+ATOM      6  CA  CYS A   6      50.170  29.472 -50.539  1.00  0.00           C  
+ATOM      7  CA  TYR A   7      50.961  33.126 -49.737  1.00  0.00           C  
+ENDMDL
+REMARK 500 HRGTYRCF
+MODEL        2
+ATOM      0  CA  HIS A   0      48.787  14.960 -44.659  1.00  0.00           C  
+ATOM      1  CA  ARG A   1      45.360  14.926 -46.297  1.00  0.00           C  
+ATOM      2  CA  GLY A   2      43.791  18.354 -46.652  1.00  0.00           C  
+ATOM      3  CA  THR A   3      43.499  21.587 -48.571  1.00  0.00           C  
+ATOM      4  CA  TYR A   4      46.529  23.772 -49.143  1.00  0.00           C  
+ATOM      5  CA  ARG A   5      46.934  27.413 -50.104  1.00  0.00           C  
+ATOM      6  CA  CYS A   6      50.118  29.400 -50.328  1.00  0.00           C  
+ATOM      7  CA  PHE A   7      51.025  33.034 -49.750  1.00  0.00           C  
+ENDMDL

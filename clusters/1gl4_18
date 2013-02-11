@@ -1,0 +1,22 @@
+REMARK 500 MVTLECFA
+MODEL        1
+ATOM      0  CA  MET A   0       0.337  43.985  39.168  1.00  0.00           C  
+ATOM      1  CA  VAL A   1       0.989  42.428  42.590  1.00  0.00           C  
+ATOM      2  CA  THR A   2       4.308  41.459  44.162  1.00  0.00           C  
+ATOM      3  CA  LEU A   3       4.665  39.513  47.425  1.00  0.00           C  
+ATOM      4  CA  GLU A   4       7.949  38.899  49.289  1.00  0.00           C  
+ATOM      5  CA  CYS A   5       9.312  36.093  51.421  1.00  0.00           C  
+ATOM      6  CA  PHE A   6      12.812  35.516  52.728  1.00  0.00           C  
+ATOM      7  CA  ALA A   7      14.264  33.260  55.393  1.00  0.00           C  
+ENDMDL
+REMARK 500 DVTFICTA
+MODEL        2
+ATOM      0  CA  ASP A   0       0.315  43.766  39.004  1.00  0.00           C  
+ATOM      1  CA  VAL A   1       0.924  42.613  42.587  1.00  0.00           C  
+ATOM      2  CA  THR A   2       4.140  41.584  44.357  1.00  0.00           C  
+ATOM      3  CA  PHE A   3       4.701  39.509  47.515  1.00  0.00           C  
+ATOM      4  CA  ILE A   4       8.107  38.967  49.151  1.00  0.00           C  
+ATOM      5  CA  CYS A   5       9.453  36.015  51.134  1.00  0.00           C  
+ATOM      6  CA  THR A   6      12.760  35.619  53.016  1.00  0.00           C  
+ATOM      7  CA  ALA A   7      14.235  33.080  55.412  1.00  0.00           C  
+ENDMDL
