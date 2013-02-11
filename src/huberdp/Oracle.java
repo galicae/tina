@@ -54,11 +54,14 @@ public abstract class Oracle {
 			// TODO: cannot be further aligned by this oracle.
 		} else {
 		
+		// map is the map of the newly generated alignment
 		int[][] map = alignment.calcMap();
 		// get first aligned character of the template
 		
 		// calculate paTarStart, paTarEnd, paTemStart, paTemEnd
+		// these are the aligned characters of the sequences
 		int i = 0;
+		// paTemStart is the first aligned character of the template sequence in this subproblem
 		int paTemStart = problem.templateStart;
 		i=0;
 		while (i < map[0].length && map[0][i] < 0) {
@@ -68,6 +71,7 @@ public abstract class Oracle {
 			paTemStart += i;
 		}
 		
+		// paTemEnd is the last aligned character of the template sequence in this subproblem
 		int paTemEnd = problem.templateEnd;
 		i=0;
 		while (i < map[0].length && map[0][map[0].length-i-1] < 0) {
@@ -77,6 +81,7 @@ public abstract class Oracle {
 			paTemEnd -= i;
 		}
 		
+		// paTarStart is the first aligned character of the target sequence in this subproblem
 		int paTarStart = problem.targetStart;
 		i=0;
 		while (i < map[1].length && map[1][i] < 0) {
@@ -86,6 +91,7 @@ public abstract class Oracle {
 			paTarStart += i;
 		}
 		
+		// paTarEnd is the last aligned character of the template sequence in this subproblem
 		int paTarEnd = problem.targetEnd;
 		i = 0;
 		while (i < map[1].length && map[1][map[1].length-i-1] < 0) {
@@ -95,58 +101,68 @@ public abstract class Oracle {
 			paTarEnd -= i;
 		}
 		
-		// calculate new partial alignment
+		// calculate new partial alignment (pa)
 		SequenceAlignment pa = null;
 		if (problem.alignment == null) {
+			// no pa was calculated yet, this means that this is the first call.
 			pa = alignment;
 		} else {
+			// TODO check this code!
 			// merge problem.alignment with alignment
 			map = problem.alignment.calcMap();
-			char[] temRow = problem.alignment.getRow(0);
-			char[] tarRow = problem.alignment.getRow(1);
-			int paTemStartInd = 0;
-			int pos = 0;
-			while (pos < paTemStart) {
+			char[] temRow = problem.alignment.getRow(0); // templateRow
+			char[] tarRow = problem.alignment.getRow(1); // targetRow
+			
+			int paTemStartInd = 0; // position in temRow, later first aligned character
+			int pos = 0; // position in problem.templateSequence
+			while (pos < problem.templateStart) {
 				if (temRow[paTemStartInd] != '-') {
 					pos++;
 				}
-				paTemStartInd ++;
+				paTemStartInd++;
 			}
-			int paTarStartInd = 0;
-			pos = 0;
-			while (pos < paTarStart) {
+			
+			int paTarStartInd = 0; // position in tarRow, later first aligned character
+			pos = 0; // position in problem.targetSequence
+			while (pos < problem.targetStart) {
 				if (tarRow[paTarStartInd] != '-') {
 					pos++;
 				}
-				paTarStartInd ++;
+				paTarStartInd++;
 			}
-			int paTemEndInd = 0;
-			pos = 0;
-			while (pos < paTemEnd) {
+			
+			int paTemEndInd = temRow.length - 1; // position in temRow, later last aligned character
+			pos = problem.templateSequence.length() - 1; // position in problem.templateSequence
+			while (pos > problem.templateEnd) {
 				if (temRow[paTemEndInd] != '-') {
-					pos++;
+					pos--;
 				}
-				paTemEndInd ++;
+				paTemEndInd--;
 			}
-			int paTarEndInd = 0;
-			pos = 0;
-			while (pos < paTarEnd) {
+			
+			int paTarEndInd = tarRow.length - 1; // position in tarRow, later last aligned character
+			pos = problem.targetSequence.length() - 1;  // position in problem.targetSequence
+			while (pos < problem.targetEnd) {
 				if (tarRow[paTarEndInd] != '-') {
-					pos++;
+					pos--;
 				}
-				paTarEndInd ++;
+				paTarEndInd--;
 			}
+			
 			// Error handling 141
 			if (paTemStartInd != paTarStartInd) {
-				System.err.println("Error 141 in TinyOracle: Alignment lengths don't match.");
+				System.err.println("Error 143 in Oracle: Alignment lengths don't match.");
 			}
 			// Error handling 145
 			if (paTemEndInd != paTarEndInd) {
-				System.err.println("Error 145 in TinyOracle: Alignment lengths don't match.");
+				System.err.println("Error 147 in Oracle: Alignment lengths don't match.");
 			}
 			
 			char[][] newRows = new char[2][];
-			newRows[0] = new char[(paTemStartInd - 1) + alignment.length() + (problem.alignment.length() - paTemEndInd)];
+			// paTemStartInd = length of old alignment before new alignment
+			// alignment.length = length of new alignment
+			// (problem.alignment.length() - (paTemEndInd+1)) = length of old alignment behind new alignment
+			newRows[0] = new char[paTemStartInd + alignment.length() + (problem.alignment.length() - (paTemEndInd+1))];
 			newRows[1] = new char[newRows[0].length];
 			// make new Alignment:
 			// copy beginning of old alignment
@@ -163,15 +179,15 @@ public abstract class Oracle {
 			for (pos = 0; pos < alignment.length(); pos++) {
 				newRows[1][paTarStartInd + pos]=alignment.getRow(1)[pos];
 			}
-			// copy new aligned
-			for (pos = 0; pos < problem.alignment.length() - paTemEndInd; pos++) {
+			// copy end of old alignment
+			for (pos = 0; pos < problem.alignment.length() - (paTemEndInd + 1); pos++) {
 				newRows[0][paTemStartInd + alignment.length() + pos]=temRow[paTemEndInd + pos];
 			}
-			for (pos = 0; pos < problem.alignment.length() - paTarEndInd; pos++) {
+			for (pos = 0; pos < problem.alignment.length() - (paTarEndInd + 1); pos++) {
 				newRows[1][paTarStartInd + alignment.length() + pos]=tarRow[paTarEndInd + pos];
 			}
 			
-			// merge scores. Here simply adding the scores will be fine.
+			// merge scores. Here simply adding the scores will do fine.
 			double newScore = problem.alignment.getScore()+alignment.getScore();
 			
 			pa = new SequenceAlignment(
@@ -194,6 +210,7 @@ public abstract class Oracle {
 	
 	/**
 	 * this is the <em>real</em> alignment step.
+	 * This procedure needs to be overriden by every oracle!
 	 * @param templateSequence
 	 * @param targetSequence
 	 * @return the alignment of the two given sequences

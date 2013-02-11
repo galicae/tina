@@ -12,15 +12,15 @@ import bioinfo.proteins.PDBEntry;
 
 /**
  * @author huberste
- * @lastchange 2012-01-29
+ * @lastchange 2012-02-11
  *
  */
 public class PartialAlignment extends RDPProblem {
 
-	public int paTarStart;
-	public int paTarEnd;
 	public int paTemStart;
 	public int paTemEnd;
+	public int paTarStart;
+	public int paTarEnd;
 	
 	/**
 	 * Constructs a new PartialAlignment given the following parameters:
@@ -43,8 +43,10 @@ public class PartialAlignment extends RDPProblem {
 			SequenceAlignment partialAlignment,
 			int templateStart, int templateEnd, int targetStart, int targetEnd,
 			int paTemStart, int paTemEnd, int paTarStart, int paTarEnd) {
+		
 		super(templateSequence, templateStructure, targetSequence, targetStructure, 
-				partialAlignment, templateStart, templateEnd, targetStart, targetEnd);
+				partialAlignment,
+				templateStart, templateEnd, targetStart, targetEnd);
 		this.paTemStart = paTemStart;
 		this.paTemEnd = paTemEnd;
 		this.paTarStart = paTarStart;

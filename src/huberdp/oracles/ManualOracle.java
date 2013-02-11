@@ -42,10 +42,12 @@ public class ManualOracle extends Oracle {
 		    BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 		    System.out.print("insert template: ");
 		    templateInput = bufferRead.readLine();
-		    System.out.print("insert target:   ");
-		    targetInput   = bufferRead.readLine();
-		    System.out.print("insert score: ");
-		    score = Integer.parseInt(bufferRead.readLine());
+		    if (! templateInput.equals("")) {
+			    System.out.print("insert target:   ");
+			    targetInput   = bufferRead.readLine();
+			    System.out.print("insert score: ");
+			    score = Integer.parseInt(bufferRead.readLine());
+		    }
 		}
 		catch(IOException e)
 		{

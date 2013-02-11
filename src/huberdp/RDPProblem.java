@@ -35,15 +35,11 @@ public class RDPProblem {
 	public SequenceAlignment alignment;
 	
 	/**
-	 * start of the given (sub-)problem.
+	 * start and end of the given (sub-)problem.
 	 */
 	public int templateStart;
-	public int targetStart;
-	
-	/**
-	 * end of the given (sub-)problem.
-	 */
 	public int templateEnd;
+	public int targetStart;
 	public int targetEnd;
 	
 	/**
@@ -78,8 +74,8 @@ public class RDPProblem {
 	
 	public String toString() {
 		String result = "";
-		result += templateSequence.getSequenceAsString().substring(templateStart, templateEnd)+ "\n";
-		result += targetSequence.getSequenceAsString().substring(targetStart, targetEnd)+ "\n";
+		result += templateSequence.getSequenceAsString().substring(templateStart, templateEnd+1)+ "\n";
+		result += targetSequence.getSequenceAsString().substring(targetStart, targetEnd+1)+ "\n";
 		return result;
 	}
 }

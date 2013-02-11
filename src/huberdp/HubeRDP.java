@@ -65,21 +65,22 @@ public class HubeRDP {
 				// for each u := <PA, {}>^{\wedge} \in U do
 				for (RDPSolutionTreeAndNode u : uSet ) {
 					// if (Leaf(u)) do <PA,TA>^{\wedge} <-- Finish (u, T)
-					if (u.isLeaf()) { // TODO: u is always leaf?
-						finish(u,t);
-					} else {
+					// TODO this would always be correct, something's wrong here!
+//					if (u.isLeaf()) { // TODO: u is always leaf?
+//						finish(u,t);
+//					} else {
 						// V:= {<SP', {}>^{\vee}} <-- g_{\vee}(u, T)
 						RDPSolutionTreeOrNode[] vSet = gOR(u, t);
 						// T <-- insert (T, V)
 						u.addChildren(vSet);
 						// pq <-- insert(pq, V)
 						pq.add(vSet);
-					}
+//					}
 					
 				}
 				
 			}
-//			return rdp(t, pq);
+			rdp(t, pq);
 		}
 	}
 	
@@ -135,7 +136,7 @@ public class HubeRDP {
 			(RDPSolutionTreeAndNode u, RDPSolutionTree t) {
 		// for most oracles there are only 2 subproblems created: To the left
 		//  and to the right of the new aligned segment.
-		int nosp = 2; // Number Of Sub Problems
+		final int nosp = 2; // Number Of Sub Problems
 		RDPSolutionTreeOrNode[] results = new RDPSolutionTreeOrNode[nosp];
 		RDPProblem[] subproblems = u.getAlignment().getSubProblems();
 		
