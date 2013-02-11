@@ -56,6 +56,7 @@ public class ManualOracle extends Oracle {
 		
 		if (templateInput.equals("")) {
 //			result = null; // already happened in line 33
+			System.out.println("No further aligning is done.");
 		} else {		
 			result = new SequenceAlignment(
 					templateSequence,

@@ -16,7 +16,7 @@ import huberdp.oracles.TinyOracle;
 
 /**
  * @author huberste
- * @lastchange 2013-01-29
+ * @lastchange 2013-02-11
  * 
  */
 public class huberdptest {
@@ -24,8 +24,8 @@ public class huberdptest {
 	// set test data
 //	private static final Sequence template = new Sequence("1j2xA00","GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK");
 //	private static final Sequence target   = new Sequence("1dp7P00","TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK");
-	private static final Sequence template = new Sequence("test001","GGGGTTTAAA");
-	private static final Sequence target = new Sequence("test002","TTTGGGGAAA");
+	private static final Sequence template = new Sequence("test001","GGGGCA");
+	private static final Sequence target   = new Sequence("test002","TTTGGGGA");
 	
 	/**
 	 * main function
@@ -63,8 +63,8 @@ public class huberdptest {
 		HubeRDP rdp = new HubeRDP();
 		
 		// add oracles
-//		rdp.addOracle(new TinyOracle());
-		rdp.addOracle(new ManualOracle());
+		rdp.addOracle(new TinyOracle());
+//		rdp.addOracle(new ManualOracle());
 		
 		// execute rdp algorithm
 		System.out.println("HubeRDP will now be executed!");

@@ -25,7 +25,7 @@ public class RDPSolutionTreeOrNode
 	// SP = SubProblem
 	private RDPProblem problem;
 	// TA = TreeAlignment
-	private LinkedList<TreeAlignment> ta;
+	private LinkedList<RDPSolution> ta;
 	
 	private double score;
 	
@@ -80,14 +80,14 @@ public class RDPSolutionTreeOrNode
 	/**
 	 * @return the TreeALignments
 	 */
-	public LinkedList<TreeAlignment> getTa() {
+	public LinkedList<RDPSolution> getTa() {
 		return ta;
 	}
 
 	/**
 	 * @param ta the TreeAlignments to set
 	 */
-	public void setTa(LinkedList<TreeAlignment> ta) {
+	public void setTa(LinkedList<RDPSolution> ta) {
 		this.ta = ta;
 	}
 	
@@ -95,7 +95,7 @@ public class RDPSolutionTreeOrNode
 	 * 
 	 * @param ta the TreeAlignment to add
 	 */
-	public void addSolution(TreeAlignment ta) {
+	public void addSolution(RDPSolution ta) {
 		this.ta.add(ta);
 	}
 	

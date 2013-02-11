@@ -142,18 +142,18 @@ public abstract class Oracle {
 			
 			int paTarEndInd = tarRow.length - 1; // position in tarRow, later last aligned character
 			pos = problem.targetSequence.length() - 1;  // position in problem.targetSequence
-			while (pos < problem.targetEnd) {
+			while (pos > problem.targetEnd) {
 				if (tarRow[paTarEndInd] != '-') {
 					pos--;
 				}
 				paTarEndInd--;
 			}
 			
-			// Error handling 141
+			// Error handling 143
 			if (paTemStartInd != paTarStartInd) {
 				System.err.println("Error 143 in Oracle: Alignment lengths don't match.");
 			}
-			// Error handling 145
+			// Error handling 147
 			if (paTemEndInd != paTarEndInd) {
 				System.err.println("Error 147 in Oracle: Alignment lengths don't match.");
 			}
@@ -181,10 +181,10 @@ public abstract class Oracle {
 			}
 			// copy end of old alignment
 			for (pos = 0; pos < problem.alignment.length() - (paTemEndInd + 1); pos++) {
-				newRows[0][paTemStartInd + alignment.length() + pos]=temRow[paTemEndInd + pos];
+				newRows[0][paTemStartInd + alignment.length() + pos]=temRow[(paTemEndInd + 1) + pos];
 			}
 			for (pos = 0; pos < problem.alignment.length() - (paTarEndInd + 1); pos++) {
-				newRows[1][paTarStartInd + alignment.length() + pos]=tarRow[paTarEndInd + pos];
+				newRows[1][paTarStartInd + alignment.length() + pos]=tarRow[(paTarEndInd + 1) + pos];
 			}
 			
 			// merge scores. Here simply adding the scores will do fine.

@@ -6,12 +6,37 @@
  ******************************************************************************/
 package huberdp;
 
+import bioinfo.Sequence;
+import bioinfo.alignment.SequenceAlignment;
+import bioinfo.proteins.PDBEntry;
+
 /**
  * I have no Idea what I'm doing.
  * @author huberste
- * @lastchange 2013-01-29
+ * @lastchange 2013-02-11
  */
-public class TreeAlignment {
+public class RDPSolution{
+	
+	/**
+	 * Target == solution
+	 */
+	public Sequence targetSequence;
+	public PDBEntry targetStructure;
+	
+	/**
+	 * 
+	 * @param templateSequence
+	 * @param templateStructure
+	 * @param targetSequence
+	 * @param targetStructure
+	 * @param solution
+	 */
+	public RDPSolution(Sequence templateSequence, PDBEntry templateStructure,
+			Sequence targetSequence, PDBEntry targetStructure,
+			SequenceAlignment solution) {
+		this.targetSequence = targetSequence;
+		this.targetStructure = targetStructure;
+	}
 
 	
 	

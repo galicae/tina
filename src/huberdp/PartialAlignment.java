@@ -6,6 +6,8 @@
  ******************************************************************************/
 package huberdp;
 
+import java.util.LinkedList;
+
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.proteins.PDBEntry;
@@ -57,32 +59,45 @@ public class PartialAlignment extends RDPProblem {
 	 * 
 	 * @return the two subproblems that are defined by the partial alignment
 	 */
-	public RDPProblem[] getSubProblems() {
-		RDPProblem[] result = new RDPProblem[2];
+	public LinkedList<RDPProblem> getSubProblems() {
+		LinkedList<RDPProblem> results = new LinkedList<RDPProblem>();
 		
 		// TODO check if this is correct!
-		// TODO check sanity of subproblems! (begin < end, ...)
+		
 		int temStart = this.templateStart;
 		int temEnd = this.paTemStart-1;
 		int tarStart = this.targetStart;
 		int tarEnd = this.paTarStart-1;
-		result[0] = new RDPProblem
-				(this.templateSequence, this.templateStructure,
-						this.targetSequence, this.targetStructure,
-						this.alignment,
-						temStart, temEnd, tarStart, tarEnd);
+		
+		// DONE check sanity of subproblems! (begin < end, ...)
+		if (temStart <= temEnd && tarStart <= tarEnd) {
+			results.add (
+				new RDPProblem (
+					this.templateSequence, this.templateStructure,
+					this.targetSequence, this.targetStructure,
+					this.alignment,
+					temStart, temEnd, tarStart, tarEnd
+				)
+			);
+		}
 		
 		temStart = this.paTemEnd+1;
 		temEnd = this.templateEnd;
 		tarStart = this.paTarEnd+1;
 		tarEnd = this.targetEnd;
-		result[1] = new RDPProblem
-				(	this.templateSequence, this.templateStructure,
+		// DONE check sanity of subproblems! (begin < end, ...)
+		if (temStart <= temEnd && tarStart <= tarEnd) {
+			results.add (
+				new RDPProblem (
+					this.templateSequence, this.templateStructure,
 					this.targetSequence, this.targetStructure,
 					this.alignment,
-					temStart, temEnd, tarStart, tarEnd);
+					temStart, temEnd, tarStart, tarEnd
+				)
+			);
+		}
 		
-		return result;		
+		return results;
 	}
 	
 }

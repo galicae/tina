@@ -21,7 +21,7 @@ public class RDPSolutionTreeAndNode extends RDPSolutionTreeNode {
 	// PA = PartialAlignment
 	private PartialAlignment alignment;
 	// TA = TreeAlignment
-	private TreeAlignment ta;
+	private RDPSolution ta;
 	
 	/**
 	 * Constructs an RDPSolutionTreeAndNode
@@ -50,14 +50,14 @@ public class RDPSolutionTreeAndNode extends RDPSolutionTreeNode {
 	/**
 	 * @return the TreeAlignment
 	 */
-	public TreeAlignment getTA() {
+	public RDPSolution getTA() {
 		return ta;
 	}
 
 	/**
 	 * @param ta the TreeAlignment to set
 	 */
-	public void setTa(TreeAlignment ta) {
+	public void setTa(RDPSolution ta) {
 		this.ta = ta;
 	}
 	

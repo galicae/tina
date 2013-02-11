@@ -75,7 +75,7 @@ public class RDPProblem {
 	public String toString() {
 		String result = "";
 		result += templateSequence.getSequenceAsString().substring(templateStart, templateEnd+1)+ "\n";
-		result += targetSequence.getSequenceAsString().substring(targetStart, targetEnd+1)+ "\n";
+		result += targetSequence.getSequenceAsString().substring(targetStart, targetEnd+1);
 		return result;
 	}
 }

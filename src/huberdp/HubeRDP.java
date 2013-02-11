@@ -65,17 +65,21 @@ public class HubeRDP {
 				// for each u := <PA, {}>^{\wedge} \in U do
 				for (RDPSolutionTreeAndNode u : uSet ) {
 					// if (Leaf(u)) do <PA,TA>^{\wedge} <-- Finish (u, T)
-					// TODO this would always be correct, something's wrong here!
+					// TODO this would always be correct, something's wrong here
 //					if (u.isLeaf()) { // TODO: u is always leaf?
 //						finish(u,t);
 //					} else {
-						// V:= {<SP', {}>^{\vee}} <-- g_{\vee}(u, T)
-						RDPSolutionTreeOrNode[] vSet = gOR(u, t);
+					// V:= {<SP', {}>^{\vee}} <-- g_{\vee}(u, T)
+					RDPSolutionTreeOrNode[] vSet = gOR(u, t);
+					
+					if (vSet.length == 0) {
+						finish(u,t);
+					} else {
 						// T <-- insert (T, V)
 						u.addChildren(vSet);
 						// pq <-- insert(pq, V)
 						pq.add(vSet);
-//					}
+					}
 					
 				}
 				
@@ -136,16 +140,17 @@ public class HubeRDP {
 			(RDPSolutionTreeAndNode u, RDPSolutionTree t) {
 		// for most oracles there are only 2 subproblems created: To the left
 		//  and to the right of the new aligned segment.
-		final int nosp = 2; // Number Of Sub Problems
-		RDPSolutionTreeOrNode[] results = new RDPSolutionTreeOrNode[nosp];
-		RDPProblem[] subproblems = u.getAlignment().getSubProblems();
+		LinkedList<RDPSolutionTreeOrNode> results =
+				new LinkedList<RDPSolutionTreeOrNode>();
+		
+		LinkedList<RDPProblem> subproblems = u.getAlignment().getSubProblems();
 		
 		// Make new OrNodes
-		for (int i = 0; i < nosp; i++) {
-			results[i] = new RDPSolutionTreeOrNode(u, subproblems[i]);
+		for (RDPProblem subproblem : subproblems) {
+			results.add( new RDPSolutionTreeOrNode(u, subproblem) );
 		}
 		
-		return results;
+		return results.toArray(new RDPSolutionTreeOrNode[0]);
 	}
 	
 	/**
@@ -159,13 +164,18 @@ public class HubeRDP {
 		
 		// TODO remove very similiar nodes
 		
-		// TODO remove alignments contradicting biological and structural constraints
+		// TODO remove alignments contradicting biological and structural
+		//	constraints
 		
 	}
 	
 	
 	private void finish(RDPSolutionTreeNode u, RDPSolutionTree t) {
-		// TODO
+		if (u instanceof RDPSolutionTreeOrNode) {
+			
+		} else if (u instanceof RDPSolutionTreeAndNode) {
+			
+		}
 	}
 	
 }
