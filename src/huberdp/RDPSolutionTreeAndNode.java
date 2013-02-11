@@ -13,7 +13,7 @@ package huberdp;
 
 /**
  * @author huberste
- * @lastchange 2013-01-17
+ * @lastchange 2013-02-11
  *
  */
 public class RDPSolutionTreeAndNode extends RDPSolutionTreeNode {

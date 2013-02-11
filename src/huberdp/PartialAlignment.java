@@ -14,14 +14,26 @@ import bioinfo.proteins.PDBEntry;
 
 /**
  * @author huberste
- * @lastchange 2012-02-11
+ * @lastchange 2013-02-11
  *
  */
 public class PartialAlignment extends RDPProblem {
 
+	/**
+	 * start of the partial alignment in the template sequence
+	 */
 	public int paTemStart;
+	/**
+	 * end of the partial alignment in the template sequence
+	 */
 	public int paTemEnd;
+	/**
+	 * start of the partial alignment in the target sequence
+	 */
 	public int paTarStart;
+	/**
+	 * end of the partial alignment in the target sequence
+	 */
 	public int paTarEnd;
 	
 	/**
@@ -62,7 +74,8 @@ public class PartialAlignment extends RDPProblem {
 	public LinkedList<RDPProblem> getSubProblems() {
 		LinkedList<RDPProblem> results = new LinkedList<RDPProblem>();
 		
-		// TODO check if this is correct!
+		// DONE check if this is correct!
+		// this seems correct. ~huberste 2013-02-11
 		
 		int temStart = this.templateStart;
 		int temEnd = this.paTemStart-1;
@@ -100,9 +113,12 @@ public class PartialAlignment extends RDPProblem {
 		return results;
 	}
 	
+	/**
+	 * toString() function. Mainly for debugging purposes.
+	 * @return String representation of the partial alignment.
+	 */
 	public String toString() {
-		// TODO
-		return null; 
+		return this.alignment.toStringVerbose(); 
 	}
 	
 }

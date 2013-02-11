@@ -10,16 +10,22 @@ import java.util.LinkedList;
 
 /**
  * @author huberste
- * @lastchange 2013-01-29
- *
+ * @lastchange 2013-02-11
  */
 public abstract class RDPSolutionTreeNode {
 
 	private RDPSolutionTreeNode parent; // for dual link
 	private LinkedList<RDPSolutionTreeNode> childs; // for dual link
 	
-	// TA = TreeAlignment
+	/**
+	 *  TA = TreeAlignment
+	 */
 	protected LinkedList<RDPSolution> ta;
+	
+	/**
+	 * states finished if the node can was finished
+	 */
+	private boolean finished;
 	
 	/**
 	 * costructs a new Node with the given parent
@@ -29,6 +35,7 @@ public abstract class RDPSolutionTreeNode {
 		this.setParent(parent);
 		this.childs = new LinkedList<RDPSolutionTreeNode>();
 		this.setTA(new LinkedList<RDPSolution>());
+		this.setFinished(false);
 	}
 
 	/**
@@ -76,7 +83,7 @@ public abstract class RDPSolutionTreeNode {
 	public LinkedList<RDPSolutionTreeNode> getChilds() {
 		return childs;
 	}
-
+	
 	/**
 	 * 
 	 * @return true if this node has no childs
@@ -88,14 +95,14 @@ public abstract class RDPSolutionTreeNode {
 			return false;
 		}
 	}
-
+	
 	/**
 	 * @return the parent
 	 */
 	public RDPSolutionTreeNode getParent() {
 		return parent;
 	}
-
+	
 	/**
 	 * @param parent the parent to set
 	 */
@@ -104,7 +111,7 @@ public abstract class RDPSolutionTreeNode {
 	}
 
 	/**
-	 * @return the ta
+	 * @return the TA
 	 */
 	public LinkedList<RDPSolution> getTA() {
 		return ta;
@@ -113,19 +120,56 @@ public abstract class RDPSolutionTreeNode {
 	/**
 	 * @param
 	 */
-	public void setTA(LinkedList<RDPSolution> ta) {
+	private void setTA(LinkedList<RDPSolution> ta) {
 		this.ta = ta;
 	}
 	
+	/**
+	 * adds a TA to this node.
+	 * @param ta
+	 */
 	public void addTA(RDPSolution ta) {
 		this.ta.add(ta);
 	}
 	
+	/**
+	 * Adds multiple TAs to this node.
+	 * @param tas
+	 */
 	public void addTAs(LinkedList<RDPSolution> tas) {
 		for (RDPSolution ta : tas) {
 			this.addTA(ta);
 		}
+	}
+	
+	/**
+	 * @param finished the finished to set
+	 */
+	public void setFinished(boolean finished) {
+		this.finished = finished;
+	}
+	
+	/**
+	 * @return true if node is finished
+	 */
+	public boolean isFinished() {
+		return finished;
+	}
+
+	/**
+	 * checks if all child are finished
+	 * @return true if all child are finished, false else.
+	 */
+	public boolean checkFinal() {
+		// if leaf: final. 
+		if (this.isLeaf()) return true;
 		
+		for (RDPSolutionTreeNode child : childs) {
+			if (! child.isFinished()) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 }
