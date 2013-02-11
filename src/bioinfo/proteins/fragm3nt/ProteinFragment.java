@@ -8,6 +8,7 @@ import bioinfo.proteins.PDBEntry;
 public class ProteinFragment {
 	private String id;
 	private String sequence;
+	private String secStruct;
 	private double[][] coordinates;
 	private Atom[] atoms;
 	public final int fragLength;
@@ -18,8 +19,10 @@ public class ProteinFragment {
 								// lot of time during the initialization of the
 								// clusters.
 
-	public ProteinFragment(String id, Atom[] atoms, int fragLength) {
+	public ProteinFragment(String id, String secStruct, Atom[] atoms,
+			int fragLength) {
 		this.fragLength = fragLength;
+		this.secStruct = secStruct;
 		this.id = id;
 		this.atoms = atoms;
 		coordinates = new double[atoms.length][3];
@@ -28,8 +31,10 @@ public class ProteinFragment {
 		}
 	}
 
-	public ProteinFragment(String id, String seq, Atom[] atoms, int fragLength) {
+	public ProteinFragment(String id, String secStruct, String seq,
+			Atom[] atoms, int fragLength) {
 		this.fragLength = fragLength;
+		this.secStruct = secStruct;
 		this.id = id;
 		this.sequence = seq;
 		this.atoms = atoms;
@@ -38,8 +43,9 @@ public class ProteinFragment {
 			coordinates[i] = atoms[i].getPosition();
 		}
 	}
-	
-	public ProteinFragment(String id, String seq, double[][] newCentroid, int fragLength) {
+
+	public ProteinFragment(String id, String seq, String secStruct, double[][] newCentroid,
+			int fragLength) {
 		this.fragLength = fragLength;
 		this.id = id;
 		this.sequence = seq;
@@ -66,6 +72,10 @@ public class ProteinFragment {
 		return coordinates[i];
 	}
 
+	public String getSecStruct() {
+		return this.secStruct;
+	}
+
 	public double[][] getAllResidues() {
 		return coordinates;
 	}
@@ -80,6 +90,10 @@ public class ProteinFragment {
 
 	public void setClusterIndex(int i) {
 		clustered = i;
+	}
+
+	public void setStruct(String struct) {
+		this.secStruct = struct;
 	}
 
 	public int getClusterIndex() {
@@ -129,6 +143,14 @@ public class ProteinFragment {
 		return result.toString();
 	}
 
+	/**
+	 * this function compares two ProteinFragment objects on the basis of their
+	 * coordinates
+	 * 
+	 * @param other
+	 *            the ProteinFragment to compare to
+	 * @return true if the coordinates are the same, false otherwise
+	 */
 	public boolean equals(ProteinFragment other) {
 		for (int i = 0; i < other.getFragmentLength(); i++) {
 			for (int j = 0; j < 3; j++) {
@@ -140,9 +162,8 @@ public class ProteinFragment {
 		return true;
 	}
 
-	private static final double epsilon = 0.0001d;
-
 	private static boolean isInEpsilon(double a, double b) {
+		double epsilon = 0.0001d;
 		return (a > (b - epsilon)) && (a < (b + epsilon));
 	}
 
@@ -170,21 +191,31 @@ public class ProteinFragment {
 		this.noise = noise;
 	}
 
+	/**
+	 * this function clones the essential components of a ProteinFragment
+	 */
 	@Override
 	public ProteinFragment clone() {
 		String id = this.id;
+		String secStruct = this.secStruct;
 		String sequence = this.sequence;
 		Atom[] atoms = new Atom[this.atoms.length];
 		for (int i = 0; i < atoms.length; i++) {
 			atoms[i] = new Atom(this.atoms[i].getType(), coordinates[i]);
 		}
-		ProteinFragment result = new ProteinFragment(id, sequence, atoms,
-				fragLength);
+		ProteinFragment result = new ProteinFragment(id, secStruct, sequence,
+				atoms, fragLength);
 		result.setClusterIndex(clustered);
 		result.setSequence(sequence);
 		return result;
 	}
 
+	/**
+	 * this function corrects the coordinates by subtracting correct
+	 * 
+	 * @param correct
+	 *            the correction array
+	 */
 	public void translateCoordinates(double[] correct) {
 		for (int i = 0; i < coordinates.length; i++) {
 			for (int j = 0; j < coordinates[0].length; j++) {
@@ -194,6 +225,15 @@ public class ProteinFragment {
 		}
 	}
 
+	/**
+	 * expands the current ProteinFragment by adding the coordinates saved in
+	 * coord and adding the corresponding atoms
+	 * 
+	 * @param coord
+	 *            the coordinates to be added to the ProteinFragment
+	 * @param seq
+	 *            the sequence corresponding to the new positions
+	 */
 	public void append(double[][] coord, String seq) {
 		double[][] newCoordinates = new double[coord.length
 				+ coordinates.length][3];
@@ -223,18 +263,31 @@ public class ProteinFragment {
 	public Atom[] getAtoms() {
 		return this.atoms;
 	}
-	
+
+	/**
+	 * this function creates a new ProteinFragment object containing the
+	 * positions from start to end. Useful for comparing a control fragment to a
+	 * fragment being currently built
+	 * 
+	 * @param start
+	 *            from which point do we want to copy (starts at 0)
+	 * @param end
+	 *            to which point we want to copy. If index is too high it
+	 *            defaults on length of Fragment coordinate array.
+	 * @return the aforementioned ProteinFragment
+	 */
 	public ProteinFragment getPart(int start, int end) {
-		if(end > atoms.length) {
+		if (end > atoms.length) {
 			end = atoms.length;
 		}
 		int size = end - start;
 		double[][] coord = new double[size][3];
 		String seq = this.sequence.substring(start, end);
-		for(int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++) {
 			coord[i] = this.coordinates[i + start];
 		}
-		ProteinFragment result = new ProteinFragment("part" + start + "_" + end, coord, size);
+		ProteinFragment result = new ProteinFragment(
+				"part" + start + "_" + end, coord, size);
 		result.setSequence(seq);
 		return result;
 	}

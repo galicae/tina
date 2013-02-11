@@ -18,7 +18,7 @@ public class KMeansMain {
 		int fragLength = Integer.parseInt(args[1]);
 		double acc = Double.parseDouble(args[2]);
 		String pre = args[3];
-		
+
 		long startTime = System.currentTimeMillis();
 		long readTime = 0;
 		long crunchTime = 0;
@@ -26,10 +26,12 @@ public class KMeansMain {
 		long updateTime = 0;
 		long writeTime = 0;
 		long finishTime = 0;
-		PDBFileReader reader = new PDBFileReader("/home/p/papadopoulos/Desktop/proteins");
+		PDBFileReader reader = new PDBFileReader(
+				"/home/p/papadopoulos/Desktop/proteins");
 		List<PDBEntry> files = new LinkedList<PDBEntry>();
 
-		System.out.println("=========================================================");
+		System.out
+				.println("=========================================================");
 		System.out.println("KMeans clustering with fragment length of "
 				+ fragLength + " and " + updCycles + " update cycles.");
 
@@ -44,7 +46,9 @@ public class KMeansMain {
 		LinkedList<ProteinFragment> pList = new LinkedList<ProteinFragment>();
 		System.out.println("crunching records...");
 		for (PDBEntry e : files) {
-			Fragmenter.crunchBackboneSeq(e, pList, fragLength);
+			// TODO: use reeeeal function
+			String secStruct = "HHHHHHHHHHH";
+			Fragmenter.crunchBackboneSeq(e, secStruct, pList, fragLength);
 		}
 		initTime = System.currentTimeMillis();
 
@@ -54,22 +58,25 @@ public class KMeansMain {
 		KMeansAllvsAll clusterAlgorithm = new KMeansAllvsAll(pList, acc);
 		System.out.println("initializing clusters...");
 		clusterAlgorithm.initializeClusters(1);
-//		clusterAlgorithm.checkAllFragments();
+		// clusterAlgorithm.checkAllFragments();
 		updateTime = System.currentTimeMillis();
 
 		System.out.println("Cluster initialization in (ms) "
 				+ (updateTime - initTime));
-		System.out.println("updating " + clusterAlgorithm.getClusters().size() + " clusters...");
+		System.out.println("updating " + clusterAlgorithm.getClusters().size()
+				+ " clusters...");
 		clusterAlgorithm.update(updCycles);
-//		clusterAlgorithm.checkAllFragments();
+		// clusterAlgorithm.checkAllFragments();
 		writeTime = System.currentTimeMillis();
-		System.out.println("Updated " + updCycles + " times in (ms) " + (writeTime - updateTime));
-		
-//		System.out.println(clusterAlgorithm.getClusters().getFirst().toString());
-		
+		System.out.println("Updated " + updCycles + " times in (ms) "
+				+ (writeTime - updateTime));
+
+		// System.out.println(clusterAlgorithm.getClusters().getFirst().toString());
+
 		for (FragmentCluster c : clusterAlgorithm.getClusters()) {
 			try {
-				BufferedWriter br = new BufferedWriter(new FileWriter("./" + pre + "_" + c.getCentroid().getID()));
+				BufferedWriter br = new BufferedWriter(new FileWriter("./"
+						+ pre + "_" + c.getCentroid().getID()));
 				br.write(c.toString());
 				br.close();
 			} catch (Exception e) {
@@ -78,9 +85,11 @@ public class KMeansMain {
 		}
 		finishTime = System.currentTimeMillis();
 		System.out.println("Printed in (ms) " + (finishTime - writeTime));
-		System.out.println("=========================================================");
+		System.out
+				.println("=========================================================");
 		System.out.println("Started at " + startTime);
 		System.out.println("Finished at " + finishTime);
-		System.out.println("Total time of " + (finishTime - startTime) + " (ms)");
+		System.out.println("Total time of " + (finishTime - startTime)
+				+ " (ms)");
 	}
 }
