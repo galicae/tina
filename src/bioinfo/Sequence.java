@@ -39,7 +39,11 @@ public class Sequence implements Alignable{
 	}
 	
 	public String getSequenceAsString() {
-		return sequence.toString();
+		String result = "";
+		for (int i = 0; i < sequence.length; i++) {
+			result += sequence[i];
+		}
+		return result;
 	}
 	
 	@Override

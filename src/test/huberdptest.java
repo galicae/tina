@@ -11,6 +11,7 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 import huberdp.*;
+import huberdp.oracles.ManualOracle;
 import huberdp.oracles.TinyOracle;
 
 /**
@@ -21,8 +22,10 @@ import huberdp.oracles.TinyOracle;
 public class huberdptest {
 
 	// set test data
-	private static final Sequence target = new Sequence("1dp7P00","TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK");
-	private static final Sequence template = new Sequence("1j2xA00","GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK");
+//	private static final Sequence target = new Sequence("1dp7P00","TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK");
+//	private static final Sequence template = new Sequence("1j2xA00","GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK");
+	private static final Sequence template = new Sequence("1j2xA00","G");
+	private static final Sequence target = new Sequence("1dp7P00","T");
 	
 	/**
 	 * main function
@@ -60,7 +63,8 @@ public class huberdptest {
 		HubeRDP rdp = new HubeRDP();
 		
 		// add oracles
-		rdp.addOracle(new TinyOracle());
+//		rdp.addOracle(new TinyOracle());
+		rdp.addOracle(new ManualOracle());
 		
 		// execute rdp algorithm
 		System.out.println("HubeRDP will now be executed!");

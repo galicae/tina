@@ -6,53 +6,49 @@
  ******************************************************************************/
 package huberdp.oracles;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.LocalSequenceGotoh;
 
 import huberdp.Oracle;
-import huberdp.PartialAlignment;
-import huberdp.RDPProblem;
 
 /**
  * @author huberste
- * @lastchange 2013-01-29
+ * @lastchange 2013-02-11
  *
  */
-public class TinyOracle implements Oracle {
+public class TinyOracle extends Oracle {
 
-	/* (non-Javadoc)
-	 * @see huberdp.Oracle#findSimiliarSegments(huberdp.RDPProblem, int)
+	/**
+	 * this is the _real_ alignment step.
+	 * @param templateSequence
+	 * @param targetSequence
+	 * @return the alignment of the two given sequences
 	 */
 	@Override
-	public LinkedList<PartialAlignment> findSimiliarSegments
-			(RDPProblem problem, int m) {
-		
-		// set Sequences for Gotoh
-		char[] templateChars = Arrays.copyOfRange
-				(problem.templateSequence.getSequence(),
-						problem.templateStart, problem.templateEnd+1);
+	protected SequenceAlignment align(Sequence templateSequence, Sequence targetSequence) {
+		// TODO check if correct!
 				
-		char[] targetChars = Arrays.copyOfRange
-				(problem.targetSequence.getSequence(),
-						problem.targetStart, problem.targetEnd+1);
-		
-		Sequence templateSequence = new Sequence(
-				problem.templateSequence.getID(),
-				templateChars);
-		Sequence targetSequence = new Sequence(
-				problem.targetSequence.getID(),
-				targetChars);
-		
 		// Create new Gotoh
 		LocalSequenceGotoh gotoh = new LocalSequenceGotoh(
 				-10.0, -2.0,
 				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX);
-		SequenceAlignment alignment = gotoh.align
+		// start debugging
+//				System.out.println(templateSequence + "\n" + targetSequence);
+		// end debugging
+		SequenceAlignment result = gotoh.align
 				(templateSequence, targetSequence);
+		// begin debugging
+		System.out.println("Gotoh Alignment worked fine:\n"+result.toStringVerbose());
+		// end debugging
+		
+		return result;
+	}
+	
+	/*
+	public LinkedList<PartialAlignment> findSimiliarSegments
+			(RDPProblem problem, int m) {
+		
 		
 		LinkedList<PartialAlignment> results = new LinkedList<PartialAlignment>();
 		
@@ -72,7 +68,7 @@ public class TinyOracle implements Oracle {
 		
 		int paTemEnd = problem.templateEnd;
 		i=0;
-		while (i >= 0 && map[0][map[0].length-i-1] < 0) {
+		while (i < map[0].length && map[0][map[0].length-i-1] < 0) {
 			i++;
 		}
 		if (i < map[0].length) {
@@ -102,7 +98,7 @@ public class TinyOracle implements Oracle {
 		if (problem.alignment == null) {
 			pa = alignment;
 		} else {
-			// TODO merge problem.alignment with alignment
+			// merge problem.alignment with alignment
 			map = problem.alignment.calcMap();
 			char[] temRow = problem.alignment.getRow(0);
 			char[] tarRow = problem.alignment.getRow(1);
@@ -191,5 +187,6 @@ public class TinyOracle implements Oracle {
 		
 		return results;
 	}
+	*/
 
 }

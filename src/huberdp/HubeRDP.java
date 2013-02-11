@@ -22,6 +22,13 @@ public class HubeRDP {
 	private LinkedList<Oracle> oracles;
 	
 	/**
+	 * constructs an HubeRDP
+	 */
+	public HubeRDP() {
+		oracles = new LinkedList<Oracle>();
+	}
+	
+	/**
 	 * adds an oracle to the List of oracles
 	 * @param oracle
 	 */
