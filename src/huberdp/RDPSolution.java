@@ -11,7 +11,7 @@ import bioinfo.alignment.Alignment;
 import bioinfo.proteins.PDBEntry;
 
 /**
- * I have no Idea what I'm doing.
+ * This class is the solution of an RDPProblem.
  * @author huberste
  * @lastchange 2013-02-11
  */
@@ -24,15 +24,18 @@ public class RDPSolution{
 	public PDBEntry templateStructure;
 	
 	/**
-	 * Target == solution
+	 * Target
 	 */
 	public Sequence targetSequence;
 	public PDBEntry targetStructure;
 	
+	/**
+	 * the solution alignment
+	 */
 	public Alignment solution;
 	
 	/**
-	 * 
+	 * constructs a  new RDPSolution
 	 * @param targetSequence
 	 * @param targetStructure
 	 */

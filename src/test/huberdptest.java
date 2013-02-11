@@ -22,10 +22,10 @@ import huberdp.oracles.TinyOracle;
 public class huberdptest {
 
 	// set test data
-//	private static final Sequence template = new Sequence("1j2xA00","GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK");
-//	private static final Sequence target   = new Sequence("1dp7P00","TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK");
-	private static final Sequence template = new Sequence("test001","GGGGCA");
-	private static final Sequence target   = new Sequence("test002","TTTGGGGA");
+	private static final Sequence template = new Sequence("1j2xA00","GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK");
+	private static final Sequence target   = new Sequence("1dp7P00","TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK");
+//	private static final Sequence template = new Sequence("test001","GGGGCA");
+//	private static final Sequence target   = new Sequence("test002","TTTGGGGA");
 	
 	/**
 	 * main function
@@ -73,7 +73,7 @@ public class huberdptest {
 		// Solution is now in t.getRoot();
 		
 		// TODO output of t.getRoot();
-		System.out.println(t.getRoot().getTA().get(0).targetSequence);
+//		System.out.println(t.getRoot().getTA().get(0).targetSequence);
 
 	}
 

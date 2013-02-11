@@ -59,7 +59,7 @@ public abstract class Oracle {
 		// get first aligned character of the template
 		
 		// calculate paTarStart, paTarEnd, paTemStart, paTemEnd
-		// these are the aligned characters of the sequences
+		// these are the first/last aligned characters of the sequences
 		int i = 0;
 		// paTemStart is the first aligned character of the template sequence in this subproblem
 		int paTemStart = problem.templateStart;

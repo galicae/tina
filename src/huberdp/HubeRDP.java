@@ -6,7 +6,6 @@
  ******************************************************************************/
 package huberdp;
 
-
 import java.util.LinkedList;
 
 /**
@@ -171,47 +170,42 @@ public class HubeRDP {
 	
 	
 	private void finish(RDPSolutionTreeNode node, RDPSolutionTree t) {
-		if (node instanceof RDPSolutionTreeOrNode) {
-			for (RDPSolutionTreeNode child : node.getChilds()) {
-				((RDPSolutionTreeOrNode) node).addTAs(((RDPSolutionTreeAndNode) child).getTA());
-			}
-			
-		} else if (node instanceof RDPSolutionTreeAndNode) {
-			if (node.getChilds().isEmpty()) {
-				((RDPSolutionTreeAndNode) node).addTA(
-					new RDPSolution(
-						((RDPSolutionTreeAndNode) node).getPA().templateSequence,
-						((RDPSolutionTreeAndNode) node).getPA().templateStructure,
-						((RDPSolutionTreeAndNode) node).getPA().targetSequence,
-						((RDPSolutionTreeAndNode) node).getPA().targetStructure,
-						((RDPSolutionTreeAndNode) node).getPA().alignment
-					)
-				);
-			} else {
-				// TODO
-			}
-		}
 		
-		boolean finished = true;
-		if (node.getParent() != null) {
-			for (RDPSolutionTreeNode sibling : node.getParent().getChilds()) {
-				if (sibling instanceof RDPSolutionTreeAndNode) {
-					if (((RDPSolutionTreeAndNode)sibling).getTA() == null) {
-						finished = false;
-						break;
-					}
+		// checkFinal() checks if the node can be finished
+		if (node.checkFinal() ) {
+			if (node instanceof RDPSolutionTreeOrNode) {
+				for (RDPSolutionTreeNode child : node.getChilds()) {
+					((RDPSolutionTreeOrNode) node).addTAs(((RDPSolutionTreeAndNode) child).getTA());
 				}
-				if (sibling instanceof RDPSolutionTreeOrNode) {
-					if (((RDPSolutionTreeOrNode)sibling).getTA().isEmpty()) {
-						finished = false;
-						break;
+			} else if (node instanceof RDPSolutionTreeAndNode) {
+				if (node.isLeaf()) {
+					((RDPSolutionTreeAndNode) node).addTA(
+						new RDPSolution(
+							((RDPSolutionTreeAndNode) node).getPA().templateSequence,
+							((RDPSolutionTreeAndNode) node).getPA().templateStructure,
+							((RDPSolutionTreeAndNode) node).getPA().targetSequence,
+							((RDPSolutionTreeAndNode) node).getPA().targetStructure,
+							((RDPSolutionTreeAndNode) node).getPA().alignment
+						)
+					);
+				} else {
+					for (RDPSolutionTreeNode child : node.getChilds()) {
+						mergeTAs((RDPSolutionTreeAndNode) node, (RDPSolutionTreeOrNode) child);
 					}
 				}
 			}
-			if (finished) { 
+			node.setFinished(true);
+			
+			// finish parent node (if exists)
+			if (node.getParent() != null) {
 				finish (node.getParent(), t);
 			}
 		}
+	}
+	
+	private PartialAlignment mergeTAs(RDPSolutionTreeAndNode u, RDPSolutionTreeOrNode v) {
+		// TODO
+		return null;
 	}
 	
 }
