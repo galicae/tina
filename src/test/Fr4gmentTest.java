@@ -33,7 +33,9 @@ public class Fr4gmentTest {
 		try {
 			BufferedWriter wr = new BufferedWriter(new FileWriter(
 					"famTestResults"));
+			wr.write("index\tpdbId\trmsd\tlength\n");
 			for (PDBEntry pdb : fileList) {
+				System.out.print(fileList.indexOf(pdb) + "\t");
 				CheatAssembler ass = new CheatAssembler(fragLength, pdb);
 				BufferedWriter wr2 = new BufferedWriter(new FileWriter(
 						"famTest/" + pdb.getID() + ".pdb"));
@@ -52,7 +54,7 @@ public class Fr4gmentTest {
 					Transformation t = Kabsch
 							.calculateTransformation(kabschFood);
 					result.setCoordinates(t.transform(kabschFood[0]));
-					wr.write(fileList.indexOf(pdb) + "\t" + pdb.getID() + "\t" + Double.toString(t.getRmsd()) + "\n");
+					wr.write(fileList.indexOf(pdb) + "\t" + pdb.getID() + "\t" + Double.toString(t.getRmsd()) + "\t" + pdb.length() + "\n");
 					System.out.println(t.getRmsd());
 					sum += t.getRmsd();
 
