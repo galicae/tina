@@ -4,7 +4,7 @@ public enum SecStructThree {
 
 	H('H'), E('E'), C('C');
 
-	static SecStructThree[] map = new SecStructThree['Z'-'A'];
+//	static SecStructThree[] map = new SecStructThree['Z'-'A'];
 	private final char charRepres;
 
 	private SecStructThree(char charRepres) {
@@ -17,9 +17,9 @@ public enum SecStructThree {
 		return this.charRepres;
 	}
 
-	public static SecStructThree(char charRepres) {
+	public static SecStructThree defSecStructThree(char charRepres) {
 		for (SecStructThree ssE : SecStructThree.values()) {
-			if (ssE.getCharRespres() == charRepres) {
+			if (ssE.getCharRepres() == charRepres) {
 				return ssE;
 			}
 		}

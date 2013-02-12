@@ -1,11 +1,14 @@
 package bioinfo.proteins;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+
+import bioinfo.alignment.kerbsch.temp.SecStructScores;
 
 public class ReProf {
 
@@ -72,11 +75,21 @@ public class ReProf {
 			String line;
 			ArrayList<SecStructThree> resList = new ArrayList<SecStructThree>();
 			while ((line = br.readLine()) != null) {
-				if(Character.isDigit(line.charAt(0))){
+				if (Character.isDigit(line.charAt(0))) {
 					String[] lineArr = line.split("\t");
-					resList.add();
+					resList.add(SecStructThree.defSecStructThree(lineArr[2]
+							.charAt(0)));
 				}
 			}
+			br.close();
+			SecStructThree[] result = new SecStructThree[resList.size()];
+			for (int i = 0; i < resList.size(); i++) {
+				result[i] = resList.get(i);
+			}
+			File file = new File(out + "_ORI");
+			file.delete();
+			return result;
+
 		} catch (Exception e) {
 
 		}

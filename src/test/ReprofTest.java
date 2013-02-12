@@ -4,12 +4,17 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 
 import bioinfo.proteins.ReProf;
+import bioinfo.proteins.SecStructThree;
 
 public class ReprofTest {
 
 	public static void main(String[] args) throws Exception {
-		ReProf.predictSecStruct("lib/reprof", "/home/galicae/Desktop/example.fasta",
+		SecStructThree[] d = ReProf.predictSecStructVerb("lib/reprof",
+				"/home/galicae/Desktop/example.fasta",
 				"/home/galicae/Desktop/example");
+		for(int i = 0; i < d.length; i++) {
+			System.out.print(d[i].getCharRepres());
+		}
 	}
 
 	public static void reprof(String reprofDir, String input, String out)
