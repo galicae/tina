@@ -245,6 +245,7 @@ public class HubeRDP {
 		// paTemEnd is the last aligned character of the template sequence in this subproblem
 		int paTemEnd = prob.templateEnd;
 		i=0;
+		//                          noch nicht aligniert
 		while (i < map[0].length && map[0][map[0].length-i-1] < 0) {
 			i++;
 		}
