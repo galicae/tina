@@ -185,7 +185,7 @@ public class HubeRDP {
 			} else if (node instanceof RDPSolutionTreeAndNode) {
 				if (node.isLeaf()) {
 					((RDPSolutionTreeAndNode) node).addTA(
-						new RDPSolution(
+						new TreeAlignment(
 							((RDPSolutionTreeAndNode) node).getPA().templateSequence,
 							((RDPSolutionTreeAndNode) node).getPA().templateStructure,
 							((RDPSolutionTreeAndNode) node).getPA().targetSequence,
@@ -195,7 +195,13 @@ public class HubeRDP {
 					);
 				} else {
 					for (RDPSolutionTreeNode child : node.getChilds()) {
-//						mergePaA((RDPSolutionTreeAndNode) node, (RDPSolutionTreeOrNode) child);
+						for (TreeAlignment solution : child.getTA()) {
+							// TODO Look in debug mode what we have right here!
+							
+							// TODO FIXME
+//							LinkedList<PartialAlignment> temp = mergePaA(((RDPSolutionTreeAndNode) node).getPA(), (SequenceAlignment) solution.solution);
+//							node.getTA() , solution.solution);
+						}
 					}
 				}
 			}

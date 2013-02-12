@@ -73,6 +73,12 @@ public class RDPSolutionTreeOrNode
 		return problem;
 	}
 	
+	public String toString() {
+		String result = "RDPSolutionTreeOrNode. SP:\n";
+		result += this.problem.toString();
+		return result;
+	}
+	
 }
 
 /******************************************************************************

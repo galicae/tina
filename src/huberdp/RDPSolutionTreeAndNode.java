@@ -45,6 +45,13 @@ public class RDPSolutionTreeAndNode extends RDPSolutionTreeNode {
 		this.pa = pa;
 	}
 	
+	public String toString() {
+		String result = "RDPSolutionTreeAndNode. PA:\n";
+		result += this.pa.alignment.getRowAsString(0)+"\n";
+		result += this.pa.alignment.getRowAsString(1)+"\n";
+		return result;
+	}
+	
 }
 
 /******************************************************************************

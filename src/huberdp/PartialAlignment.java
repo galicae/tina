@@ -118,7 +118,9 @@ public class PartialAlignment extends RDPProblem {
 	 * @return String representation of the partial alignment.
 	 */
 	public String toString() {
-		return this.alignment.toStringVerbose(); 
+		String result = alignment.getRowAsString(0)+"\n";
+		result += alignment.getRowAsString(1);
+		return result;
 	}
 	
 }
