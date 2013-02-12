@@ -1,5 +1,5 @@
 /******************************************************************************
- * RDP is the interface for rdp implementations.                              *
+ * Scoring is an abstract class for scoring OR-Nodes                          *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -7,18 +7,24 @@
 package huberdp;
 
 /**
- * @author huberste
- * @lastchange 2013-01-17
+ * Scoring is an abstract class for scoring OR-Nodes
  *
+ * Possible Scoring features:
+ * * unclosable gaps
+ * * large gaps
+ * ...
+ * 
+ * @author huberste
+ * @lastchange 2013-02-12
  */
-public interface RDP {
-	
+public interface Scoring {
+
 	/**
-	 * 
-	 * @param t SolutionTree
-	 * @param pq PriorityQueue
+	 * scores an OR node
+	 * @param node
+	 * @return
 	 */
-	public RDPSolutionTreeNode rdp(RDPSolutionTree t, RDPPriorityQueue pq);
+	public double score(RDPSolutionTreeOrNode node);
 	
 }
 

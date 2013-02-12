@@ -6,9 +6,10 @@
  ******************************************************************************/
 package huberdp;
 
-import java.util.LinkedList;
-
 import bioinfo.alignment.SequenceAlignment;
+import huberdp.scoring.SimpleScoring;
+
+import java.util.LinkedList;
 
 /**
  * @author huberste
@@ -22,11 +23,14 @@ public class HubeRDP {
 	
 	private LinkedList<Oracle> oracles;
 	
+	private Scoring scoring;
+	
 	/**
 	 * constructs an HubeRDP
 	 */
 	public HubeRDP() {
 		oracles = new LinkedList<Oracle>();
+		scoring = new SimpleScoring();
 	}
 	
 	/**
@@ -147,7 +151,7 @@ public class HubeRDP {
 		
 		// Make new OrNodes
 		for (RDPProblem subproblem : subproblems) {
-			results.add( new RDPSolutionTreeOrNode(u, subproblem) );
+			results.add( new RDPSolutionTreeOrNode(u, subproblem, scoring) );
 		}
 		
 		return results.toArray(new RDPSolutionTreeOrNode[0]);
@@ -485,6 +489,20 @@ public class HubeRDP {
 				0,0,0,0);
 		
 		return result;
+	}
+
+	/**
+	 * @return the scoring
+	 */
+	public Scoring getScoring() {
+		return scoring;
+	}
+
+	/**
+	 * @param scoring the scoring to set
+	 */
+	public void setScoring(Scoring scoring) {
+		this.scoring = scoring;
 	}
 	
 }

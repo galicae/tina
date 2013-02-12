@@ -39,7 +39,7 @@ public class TinyOracle extends Oracle {
 		SequenceAlignment result = gotoh.align
 				(templateSequence, targetSequence);
 		// begin debugging
-		System.out.println("Gotoh Alignment worked fine:\n"+result.toStringVerbose());
+//		System.out.println("Gotoh Alignment worked fine:\n"+result.toStringVerbose());
 		// end debugging
 		
 		return result;
