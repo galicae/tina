@@ -185,22 +185,19 @@ public class HubeRDP {
 			} else if (node instanceof RDPSolutionTreeAndNode) {
 				if (node.isLeaf()) {
 					((RDPSolutionTreeAndNode) node).addTA(
-						new TreeAlignment(
-							((RDPSolutionTreeAndNode) node).getPA().templateSequence,
-							((RDPSolutionTreeAndNode) node).getPA().templateStructure,
-							((RDPSolutionTreeAndNode) node).getPA().targetSequence,
-							((RDPSolutionTreeAndNode) node).getPA().targetStructure,
-							((RDPSolutionTreeAndNode) node).getPA().alignment
-						)
-					);
+						new TreeAlignment(((RDPSolutionTreeAndNode) node).getPA()));
 				} else {
 					for (RDPSolutionTreeNode child : node.getChilds()) {
-						for (TreeAlignment solution : child.getTA()) {
-							// TODO Look in debug mode what we have right here!
-							
-							// TODO FIXME
-//							LinkedList<PartialAlignment> temp = mergePaA(((RDPSolutionTreeAndNode) node).getPA(), (SequenceAlignment) solution.solution);
-//							node.getTA() , solution.solution);
+						if (node.ta.isEmpty()) {
+							node.addTAs(child.getTA()); // They are already merged
+						} else {
+							LinkedList<TreeAlignment> newTAs = new LinkedList<TreeAlignment>();
+							for (TreeAlignment ta1 : child.getTA()) {
+								for (TreeAlignment ta2 : node.getTA()) {
+									newTAs.add(TreeAlignment.merge(ta1, ta2));
+								}
+							}
+							node.setTA(newTAs);
 						}
 					}
 				}
@@ -220,9 +217,9 @@ public class HubeRDP {
 	 * @param ali An SequenceAlignment for this Problem
 	 * @return a LinkedList with all the possible PartialAlignments
 	 */
-	static public LinkedList<PartialAlignment> mergePaA(RDPProblem prob, SequenceAlignment ali) {
+	static public PartialAlignment mergePaA(RDPProblem prob, SequenceAlignment ali) {
 		
-		LinkedList<PartialAlignment> results = new LinkedList<PartialAlignment>();
+		PartialAlignment result = null;
 		
 		// map is the map of the newly generated alignment
 		int[][] map = ali.calcMap();
@@ -365,15 +362,15 @@ public class HubeRDP {
 			
 		}
 		
-		results.add(new PartialAlignment
+		result = new PartialAlignment
 				(prob.templateSequence, prob.templateStructure,
 				prob.targetSequence, prob.targetStructure,
 				pa,
 				prob.templateStart, prob.templateEnd,
 				prob.targetStart, prob.targetEnd,
-				paTemStart, paTemEnd, paTarStart, paTarEnd));
+				paTemStart, paTemEnd, paTarStart, paTarEnd);
 		
-		return results;
+		return result;
 	}
 	
 }

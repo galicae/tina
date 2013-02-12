@@ -66,6 +66,22 @@ public class PartialAlignment extends RDPProblem {
 		this.paTarStart = paTarStart;
 		this.paTarEnd = paTarEnd;
 	}
+	
+	/**
+	 * Constructs a new PartialAlignment which is the same as the given one. 
+	 * @param pa
+	 */
+	public PartialAlignment(PartialAlignment pa) {
+		this(
+			pa.templateSequence, pa.templateStructure,
+			pa.targetSequence, pa.targetStructure,
+			pa.alignment,
+			pa.templateStart, pa.templateEnd,
+			pa.targetStart, pa.targetEnd,
+			pa.paTemStart, pa.paTemEnd,
+			pa.paTarStart, pa.paTarEnd
+		);
+	}
 
 	/**
 	 * 

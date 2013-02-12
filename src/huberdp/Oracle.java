@@ -48,13 +48,68 @@ public abstract class Oracle {
 		SequenceAlignment alignment = align(templateSequence, targetSequence);
 // CALL ALIGN -->
 		
-		LinkedList<PartialAlignment> results;
+		LinkedList<PartialAlignment> results = new LinkedList<PartialAlignment>();
 		
-		if (alignment == null) {
-			results = new LinkedList<PartialAlignment>();
-		} else {
-			results = HubeRDP.mergePaA(problem, alignment);
+		// map is the map of the newly generated alignment
+		int[][] map = alignment.calcMap();
+		// get first aligned character of the template
+		
+		// calculate paTarStart, paTarEnd, paTemStart, paTemEnd
+		// these are the first/last aligned characters of the sequences
+		int i = 0;
+		// paTemStart is the first aligned character of the template sequence in this subproblem
+		int paTemStart = problem.templateStart;
+		i=0;
+		while (i < map[0].length && map[0][i] < 0) {
+			i++;
 		}
+		if (i < map[0].length) {
+			paTemStart += i;
+		}
+		
+		// paTemEnd is the last aligned character of the template sequence in this subproblem
+		int paTemEnd = problem.templateEnd;
+		i=0;
+		while (i < map[0].length && map[0][map[0].length-i-1] < 0) {
+			i++;
+		}
+		if (i < map[0].length) {
+			paTemEnd -= i;
+		}
+		
+		// paTarStart is the first aligned character of the target sequence in this subproblem
+		int paTarStart = problem.targetStart;
+		i=0;
+		while (i < map[1].length && map[1][i] < 0) {
+			i++;
+		}
+		if (i < map[1].length) {
+			paTarStart += i;
+		}
+		
+		// paTarEnd is the last aligned character of the template sequence in this subproblem
+		int paTarEnd = problem.targetEnd;
+		i = 0;
+		while (i < map[1].length && map[1][map[1].length-i-1] < 0) {
+			i++;
+		}
+		if (i < map[1].length) {
+			paTarEnd -= i;
+		}
+		
+		results.add(new PartialAlignment
+				(problem.templateSequence, problem.templateStructure,
+				problem.targetSequence, problem.targetStructure,
+				alignment,
+				problem.templateStart, problem.templateEnd,
+				problem.targetStart, problem.targetEnd,
+				paTemStart, paTemEnd, paTarStart, paTarEnd));
+		
+//		if (alignment == null) {
+//			results = new LinkedList<PartialAlignment>();
+//		} else {
+//			results = HubeRDP.mergePaA(problem, alignment);
+//		}
 		return results;
 	}
 	

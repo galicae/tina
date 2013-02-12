@@ -120,7 +120,7 @@ public abstract class RDPSolutionTreeNode {
 	/**
 	 * @param
 	 */
-	private void setTA(LinkedList<TreeAlignment> ta) {
+	public void setTA(LinkedList<TreeAlignment> ta) {
 		this.ta = ta;
 	}
 	

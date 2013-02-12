@@ -69,9 +69,27 @@ public class RDPProblem {
 		this.templateEnd = templateEnd;
 		this.targetStart = targetStart;
 		this.targetEnd = targetEnd;
-		
 	}
 	
+	/**
+	 * Constructs a new RDPProblem which is a copy of the given one.
+	 * @param problem
+	 */
+	public RDPProblem(RDPProblem problem) {
+		this.templateSequence = problem.templateSequence;
+		this.templateStructure = problem.templateStructure;
+		this.targetSequence = problem.targetSequence;
+		this.targetStructure = problem.targetStructure;
+		this.alignment = problem.alignment;
+		this.templateStart = problem.templateStart;
+		this.templateEnd = problem.templateEnd;
+		this.targetStart = problem.targetStart;
+		this.targetEnd = problem.targetEnd;
+	}
+	
+	/**
+	 * toString() function. mainly for debugging.
+	 */
 	public String toString() {
 		String result = "";
 		result += templateSequence.getSequenceAsString().substring(templateStart, templateEnd+1)+ "\n";
