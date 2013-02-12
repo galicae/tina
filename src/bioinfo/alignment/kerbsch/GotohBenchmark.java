@@ -50,6 +50,9 @@ public class GotohBenchmark {
 		else if(args[3].equals("global")){
 			gotoh = new GlobalSequenceGotoh(go, ge, matrix);
 		}
+		else if(args[3].equals("glocal")){
+			gotoh = new GLocalSequenceGotoh(go, ge, matrix);
+		}
 		
 		HashMap<String,char[]> seqlib = SeqLibrary.read(args[4]);
 		ArrayList<String[]> pairs = PairReader.parse(args[5]);

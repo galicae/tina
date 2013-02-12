@@ -47,7 +47,7 @@ public class MusterBenchmark {
 		if(args[2].equals("freeshift")){
 			gotoh = new FreeshiftMusterLite(go, ge,hbMatrix,polMatrix,secStructMatrix,substMatrix);
 		}
-		else if(args[2].equals("local")){
+		else if(args[2].equals("glocal")){
 			gotoh = new GLocalMusterLite(go, ge, SeqLibrary.read(args[7]),hbMatrix,polMatrix,secStructMatrix,substMatrix,0.1,0.1,0.3,0.1);
 		}
 		else if(args[2].equals("global")){

@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 public class PairBuilder {
@@ -27,10 +28,13 @@ public class PairBuilder {
 			}
 			in.close();
 			
-			out = new BufferedWriter(new FileWriter("410List.pairs"));
+			List<String> pairs = new ArrayList<String>();
+			
+			out = new BufferedWriter(new FileWriter("410List.unique_pairs"));
 			for (int i = 0; i < ids.size(); i++) {
 				for (int j = 0; j < ids.size(); j++) {
-					if(ids.get(i) != ids.get(j)){
+					pairs.add(ids.get(i)+ids.get(j));
+					if(ids.get(i) != ids.get(j) && !pairs.contains(ids.get(j)+ids.get(i))){		
 						out.append(ids.get(i) + "\t" + ids.get(j) + "\n");
 					}
 				}
