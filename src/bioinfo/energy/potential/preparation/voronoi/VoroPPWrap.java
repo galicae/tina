@@ -31,7 +31,7 @@ public class VoroPPWrap {
 	 * @param data input points in value object of type VoronoiData
 	 * @return data instance of VoronoiData, which is just the same as input data with some additional values 
 	 */
-	public VoronoiData decomposite(VoronoiData data){
+	public void decomposite(VoronoiData data){
 				
 		String tmpfile = TMPDIR+data.getID()+".lst";
 		File tmpfileF = new File(tmpfile);
@@ -106,11 +106,9 @@ public class VoroPPWrap {
 				e.printStackTrace();
 			}
 		}
-		
-	    data.endCalc();
-	    //tmpfileF.delete();
-	    //resultfileF.delete();
-		return data;
+
+	    tmpfileF.delete();
+	    resultfileF.delete();
 	}
 	
 

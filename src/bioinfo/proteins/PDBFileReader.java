@@ -1,11 +1,18 @@
 package bioinfo.proteins;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import org.jmol.adapter.readers.cifpdb.PdbReader;
 
 /**
  * PDBFileReader read PDBFile and returns it as internal PDBEntry
@@ -391,8 +398,162 @@ public class PDBFileReader {
 		}
 		return new PDBEntry(newPdbId, aminoacids);
 	}
-}
 
 
-//private PDBEntry parseEntry(BufferedReader br, String pdbId){
+
+
+	/**
+	 * 
+	 * @param br BufferedReader to read from
+	 * @param pdbId pdbId of format aaaa
+	 * @return PDbEntries representing the read file splitted by chain ids
+	 */
+	public Set<PDBEntry> parseSplittedEntries(BufferedReader br, String pdbId){
+		Set<PDBEntry> entries = new HashSet<PDBEntry>();
+		List<AminoAcid> aminoacids = new ArrayList<AminoAcid>();
+		List<Atom> atoms = new ArrayList<Atom>();
+		char chain = 0;
+		
+		try{
+			String line;
+			boolean firstflag = true;
+			String name;
+			String resName = "";
+			String lastResName = "";
+			char chainId;
+			int resSeq = 0;
+			double[] coord;
+			
+			int lastResSeq = 0;
+					
+			while((line = br.readLine()) != null){
+				if(line.startsWith("ATOM")){
+								
+					chainId = line.charAt(21);
+					if(chainId != chain && chain != 0){
+						aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(resName),resSeq,atoms.toArray(new Atom[atoms.size()])));
+						entries.add(new PDBEntry(pdbId+chain+"00",aminoacids));
+						aminoacids = new ArrayList<AminoAcid>();
+						atoms = new ArrayList<Atom>();
+						chain = chainId;
+						continue;
+					}else{
+						chain = chainId;
+					}
 	
+					resSeq = Integer.parseInt(line.substring(22,26).trim());
+					resName = line.substring(17,20).trim();
+					
+					//first residue fix
+					if(firstflag){
+						firstflag = false;
+						lastResSeq = resSeq;
+						lastResName = resName;
+					}
+					
+					
+					name = line.substring(12,16).trim();	
+					coord = new double[3];
+					coord[0] = Double.parseDouble(line.substring(30,38).trim());
+					coord[1] = Double.parseDouble(line.substring(38,46).trim());
+					coord[2] = Double.parseDouble(line.substring(46,54).trim());
+					
+					if(lastResSeq != resSeq){
+						aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(lastResName),lastResSeq,atoms.toArray(new Atom[atoms.size()])));
+						atoms = new ArrayList<Atom>();
+						lastResSeq = resSeq;
+						lastResName = resName;
+					}
+					
+					atoms.add(new Atom(name,coord));
+				} else{
+					
+				}
+			}
+			
+			//lastresidue fix
+			if(atoms != null && atoms.size() != 0){
+				aminoacids.add(new AminoAcid(AminoAcidName.getAAFromTLC(resName),resSeq,atoms.toArray(new Atom[atoms.size()])));
+				entries.add(new PDBEntry(pdbId+chain+"00",aminoacids));
+			}
+			br.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return entries;
+	}
+	
+	/**
+	 * 
+	 * @param filename where PDB is located
+	 * @return set of pdbs containing single chains of pdb file
+	 */
+	public Set<PDBEntry> getPDBfromFileSplittedByChain(String filename){
+		BufferedReader br = null;
+		try{
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		String id = filename.split("/")[filename.split("/").length-1].split("\\.")[0];
+		if(br == null){
+			System.err.println("Buffered Reader was not initialised!");
+			return null;
+		}
+		return parseSplittedEntries(br, id);
+	}
+	
+	/**
+	 * 
+	 * @return all pdb-chains in all pdb files in previously set folder
+	 */
+	public Set<PDBEntry> getPDBfromFolderSplittedByChain(){
+		Set<PDBEntry> result = new HashSet<PDBEntry>();
+		BufferedReader br = null;
+		String id;
+		try{
+			if(folder == null){
+				return null;
+			}
+			File[] files = new File(folder).listFiles();
+			if(files.length == 0){
+				return null;
+			}
+			for(File file : files){
+				br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+				id = file.getName().split("\\.")[0];
+				for(PDBEntry entry: parseSplittedEntries(br,id)){
+					result.add(entry);
+				}
+			}
+			return result;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static void main(String[] args) {
+		String line = null;
+		try{
+			BufferedReader listStream = new BufferedReader(new InputStreamReader(new FileInputStream("/Users/andreseitz/Desktop/tmpPDB")));
+			while((line = listStream.readLine()) != null){
+				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("/Users/andreseitz/Desktop/repPDB/"+line.trim()+".pdb")));
+				PDBFileReader reader = new PDBFileReader();
+				Set<PDBEntry> entries = reader.parseSplittedEntries(br, line.trim().toLowerCase());
+				for(PDBEntry entry : entries){
+					BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/Users/andreseitz/Desktop/strConsTestSet/"+entry.getID()+entry.getChainID()+String.format("%02d",entry.getChainIDNum())+".pdb")));
+					bw.append(entry.getAtomSectionAsString());
+					bw.flush();
+					bw.close();
+				}
+				br.close();
+			}
+			listStream.close();
+		}catch(Exception e){
+			System.out.println(line);
+			e.printStackTrace();
+		}
+	}
+	
+}

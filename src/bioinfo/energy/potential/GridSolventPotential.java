@@ -17,13 +17,12 @@ import java.util.regex.Pattern;
 
 import bioinfo.energy.potential.preparation.voronoi.VoroPPWrap;
 import bioinfo.energy.potential.preparation.voronoi.VoroPrepType;
-import bioinfo.energy.potential.preparation.voronoi.VoroPrepare;
 import bioinfo.energy.potential.preparation.voronoi.VoronoiData;
 import bioinfo.proteins.AminoAcidName;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 
-public class GridSolvensPotential implements IEnergy{
+public class GridSolventPotential extends AVoroPotential{
 
 	/**
 	 * potential contains the actual mean force potential
@@ -33,119 +32,114 @@ public class GridSolvensPotential implements IEnergy{
 	 * c contains area of face between the two partners with the following classes
 	 * smaller then 25,50,75,100,125,150,bigger then 150, where all values smaller then 1 have to be ignored
 	 */
-	private double[][][] potential = new double[26][26][7];
-	//private int[] aminoCount = new int[26];
 	private final String pdbFolder;
 	private final VoroPrepType type;
-	private final double MINCONTACT = 1.0d;
+	
+	private final double minContact;
+	private final double gridHullExtend;
+	private final double gridDensity;
+	private final double gridClash;
 	private final double mkT = -0.582d;
-	private final double gridHullExtend = 2.0d;
-	private final double gridDensity = 1.0d;
-	private final double gridClash = 4.0d;
 	
 	private final String[] mappingKeys = {"aminoacid1","aminoacid2","faceArea"};
-	private String vorobin;
-	private String tmpdir;
 	
-	public GridSolvensPotential(String vorobin, String pdbFolder, List<String> pdbIds, VoroPrepType type){
+	public GridSolventPotential(String vorobin, String pdbFolder, List<String> pdbIds, VoroPrepType type){
+		super(vorobin);
+		this.potential = new double[26][26][7];
 		this.pdbFolder = pdbFolder;
 		this.type = type;
-		this.vorobin = vorobin;
+		
+		minContact = 1.0d;
+		gridHullExtend = 2.0d;
+		gridDensity = 3.0d;
+		gridClash = 4.0d;
+		
 		calculateFromDATA(pdbIds);
+		
 	}
 	
-	public GridSolvensPotential(String vorobin, String tmpdir, String pdbFolder, List<String> pdbIds, VoroPrepType type){
+	public GridSolventPotential(String vorobin, String tmpdir, String pdbFolder, List<String> pdbIds, VoroPrepType type){
+		super(vorobin,tmpdir);
+		this.potential = new double[26][26][7];
 		this.pdbFolder = pdbFolder;
 		this.type = type;
-		this.vorobin = vorobin;
-		this.tmpdir = tmpdir;
+		
+		minContact = 1.0d;
+		gridHullExtend = 2.0d;
+		gridDensity = 3.0d;
+		gridClash = 4.0d;
+		
 		calculateFromDATA(pdbIds);
 
 	}
 	
-	public GridSolvensPotential(String filename,String vorobin, String tmpdir,VoroPrepType type){
-		this.type=type;
-		this.pdbFolder=null;
-		this.vorobin = vorobin;
-		this.tmpdir = tmpdir;
-		this.readFromFile(filename);
+	public GridSolventPotential(String vorobin, String pdbFolder, List<String> pdbIds, VoroPrepType type, double minContact, double gridHullExtend, double gridDensity, double gridClash){
+		super(vorobin);
+		this.potential = new double[26][26][7];
+		this.pdbFolder = pdbFolder;
+		this.type = type;
+		
+		this.minContact = minContact;
+		this.gridHullExtend = gridHullExtend;
+		this.gridDensity = gridDensity;
+		this.gridClash = gridClash;
+		
+		calculateFromDATA(pdbIds);
+		
 	}
 	
-	public GridSolvensPotential(String filename,String vorobin,VoroPrepType type){
-		this.type=type;
-		this.pdbFolder=null;
-		this.vorobin = vorobin;
-		this.readFromFile(filename);
+	public GridSolventPotential(String vorobin, String tmpdir, String pdbFolder, List<String> pdbIds, VoroPrepType type, double minContact, double gridHullExtend, double gridDensity, double gridClash){
+		super(vorobin, tmpdir);
+		this.potential = new double[26][26][7];
+		this.pdbFolder = pdbFolder;
+		this.type = type;
+
+		this.minContact = minContact;
+		this.gridHullExtend = gridHullExtend;
+		this.gridDensity = gridDensity;
+		this.gridClash = gridClash;
+		
+		calculateFromDATA(pdbIds);
+
 	}
 	
-	@Override
-	public void writeToFile(String filename) {
-		BufferedWriter bw;
-		try {
-			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename)));
-			
-			for(int k = 0; k != potential[0][0].length; k++){
-				bw.append("=="+k+"==\n");
-				for(int i = 0; i != potential.length; i++){
-					for(int j = 0; j != potential[0].length; j++){
-						bw.append(potential[i][j][k]+"\t");
-					}
-					bw.append("\n");
-				}
-				bw.append("\n");
-			}
-			
-			bw.flush();
-			bw.close();
-		} catch(Exception e){
-			e.printStackTrace();
-		}
+	public GridSolventPotential(String filename,String vorobin, String tmpdir,VoroPrepType type){
+		super(vorobin,tmpdir);
+		this.potential = new double[26][26][7];
+		this.type=type;
+		this.pdbFolder=null;
+		
+		this.minContact = 1.0d;
+		this.gridHullExtend = 2.0d;
+		this.gridDensity = 3.0d;
+		this.gridClash = 4.0d;
+		
+		readFromFile(filename);
+	}
+	
+	public GridSolventPotential(String filename,String vorobin,VoroPrepType type){
+		super(vorobin);
+		this.potential = new double[26][26][7];
+		this.type=type;
+		this.pdbFolder=null;
+		
+		minContact = 1.0d;
+		gridHullExtend = 2.0d;
+		gridDensity = 3.0d;
+		gridClash = 4.0d;
+		
+		readFromFile(filename);
 	}
 
-	@Override
-	public void readFromFile(String filename) {
-		try{
-			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
-			String line = null;
-			Pattern classPattern = Pattern.compile("==(\\d)==");
-			Matcher classMatcher = null;
-			int k = 0;
-			String[] fields = null;
-			while((line = br.readLine())!= null){
-				classMatcher = classPattern.matcher(line);
-				if(classMatcher.find()){
-					k = Integer.parseInt(classMatcher.group(1));
-					for(int i = 0; i != 26; i++){
-						line = br.readLine();
-						fields = line.trim().split("\t");
-						for(int j = 0; j != 26; j++){
-							this.potential[i][j][k] = Double.parseDouble(fields[j]);
-						}
-					}
-				}
-			}
-			
-			br.close();
-			
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
-
-	@Override
 	public void calculateFromDATA(List<String> pdbIds) {
 		PDBEntry pdb = null;
 		PDBFileReader reader = new PDBFileReader(pdbFolder);
 		VoronoiData data = null;
-		VoroPrepare vprep = new VoroPrepare();
-		Set<Integer> gridIds = null;
+		Set<Integer> solventIds = null;
 		Set<Integer> pepIds = null;
 		HashMap<Integer, AminoAcidName> amino;
 		HashMap<Integer, HashMap<Integer,Double>> faces;
 		HashMap<Integer,Double> neighbors;
-		HashMap<Integer, Double> neighborsNeighbors;
-		boolean solvensNeighbor;
 		boolean surfaceFlag = false;
 		List<Integer> surfaceIds = new ArrayList<Integer>();
 		int tmp = 0;
@@ -162,19 +156,12 @@ public class GridSolvensPotential implements IEnergy{
 			
 			//read from files, can be changed to db later!
 			pdb = reader.readFromFolderById(pdbId);
-			data = new VoronoiData(pdbId, type);
-			data = vprep.reducePDB(type, pdb);
-			pepIds = data.getAllInsertedIds();
-			gridIds = data.fillGridWithoutClashes(data.extendHull(gridHullExtend), gridDensity, gridClash);
-			VoroPPWrap voro;
-			if(tmpdir == null){
-				voro = new VoroPPWrap(vorobin);
-			}else{
-				voro = new VoroPPWrap(tmpdir,vorobin);
-			}
-			data = voro.decomposite(data);
+			data = this.prepareWithGrid(pdb, type, gridHullExtend, gridDensity, gridClash, minContact);
+			
+			pepIds = data.getPepIds();
+			solventIds = data.getOuterGridIds();
 			faces = data.getFaces();
-			amino = data.getAmino();
+			amino = data.getPoints();
 			
 			System.out.println("\tdecomp done ... "+faces.size()+" faces");
 			
@@ -186,33 +173,23 @@ public class GridSolvensPotential implements IEnergy{
 				surfaceFlag = false;
 				surfaceArea = 0.0d;
 				for(int id2 : neighbors.keySet()){
-					if(gridIds.contains(id2) && neighbors.get(id2) > MINCONTACT){
+					if(solventIds.contains(id2) && neighbors.get(id2) > minContact){
 						surfaceArea += neighbors.get(id2);
-						neighborsNeighbors = faces.get(id2);
-						solvensNeighbor = false;
-						for(int id3 : neighborsNeighbors.keySet()){
-							if(gridIds.contains(id3) && neighborsNeighbors.get(id3) > MINCONTACT){
-								solvensNeighbor = true;
-							}
-						}
-						if(solvensNeighbor){
-							surfaceFlag = true;
-						}
+						surfaceFlag = true;
 					}
 				}
 				if(surfaceFlag){
-					System.err.println(surfaceArea);
+					//System.err.println(surfaceArea);
 					surfaceIds.add(id1);
-					if(surfaceArea > MINCONTACT){
+					if(surfaceArea > minContact){
 						for(int id2 : neighbors.keySet()){
-							if(pepIds.contains(id2) && neighbors.get(id2) > MINCONTACT){
-								tmp = 0;
-								for(int i = 25; i <= 150; i += 25){
-									if(surfaceArea <= i*1.0d){
-										break;
-									}
-									tmp++;
+							tmp = 0;
+							for(int i = 25; i <= 150; i += 25){
+								if(surfaceArea <= i*1.0d){
+									break;
 								}
+								tmp++;
+							}
 								p1 = amino.get(id1).getOneLetterCode().charAt(0)-65;
 								p2 = amino.get(id2).getOneLetterCode().charAt(0)-65;
 								potential[p1][p2][tmp]++;
@@ -224,7 +201,7 @@ public class GridSolvensPotential implements IEnergy{
 				}
 			}
 			
-		}
+		
 		
 		for(int i = 0; i != 26; i++){
 			for(int j = 0; j != 26; j++){
@@ -284,15 +261,12 @@ public class GridSolvensPotential implements IEnergy{
 
 	@Override
 	public double scoreModel(PDBEntry model) {
-		VoroPrepare prep = new VoroPrepare();
-		VoronoiData data = prep.reducePDB(type, model);
-		Set<Integer> pepIds = data.getAllInsertedIds();
-		Set<Integer> gridIds = data.fillGridWithoutClashes(data.extendHull(gridHullExtend), gridDensity, gridClash);
+		VoronoiData data = prepareWithGrid(model, type, gridHullExtend, gridDensity, gridClash, minContact);
+		Set<Integer> pepIds = data.getPepIds();
+		Set<Integer> gridIds = data.getOuterGridIds();
 		HashMap<Integer, AminoAcidName> amino;
 		HashMap<Integer, HashMap<Integer,Double>> faces;
 		HashMap<Integer,Double> neighbors;
-		HashMap<Integer, Double> neighborsNeighbors;
-		boolean solvensNeighbor;
 		boolean surfaceFlag = false;
 		List<Integer> surfaceIds = new ArrayList<Integer>();
 		int tmp = 0;
@@ -301,16 +275,9 @@ public class GridSolvensPotential implements IEnergy{
 		double score = 0.0d;
 		double surfaceArea = 0.0d;
 		
-		
-		VoroPPWrap voro;
-		if(tmpdir == null){
-			voro = new VoroPPWrap(vorobin);
-		}else{
-			voro = new VoroPPWrap(tmpdir,vorobin);
-		}
-		data = voro.decomposite(data);
+		voro.decomposite(data);
 		faces = data.getFaces();
-		amino = data.getAmino();
+		amino = data.getPoints();
 		
 		System.out.println("\tdecomp done ... "+faces.size()+" faces");
 		
@@ -322,37 +289,30 @@ public class GridSolvensPotential implements IEnergy{
 			surfaceFlag = false;
 			surfaceArea = 0.0d;
 			for(int id2 : neighbors.keySet()){
-				if(gridIds.contains(id2) && neighbors.get(id2) > MINCONTACT){
+				if(gridIds.contains(id2) && neighbors.get(id2) > minContact){
 					surfaceArea += neighbors.get(id2);
-					neighborsNeighbors = faces.get(id2);
-					solvensNeighbor = false;
-					for(int id3 : neighborsNeighbors.keySet()){
-						if(gridIds.contains(id3) && neighborsNeighbors.get(id3) > MINCONTACT){
-							solvensNeighbor = true;
-						}
-					}
-					if(solvensNeighbor){
-						surfaceFlag = true;
-					}
+					surfaceFlag = true;
 				}
 			}
 			if(surfaceFlag){
 				//System.err.println(surfaceArea);
 				surfaceIds.add(id1);
-				if(surfaceArea > MINCONTACT){
+				if(surfaceArea > minContact){
 					for(int id2 : neighbors.keySet()){
-						if(pepIds.contains(id2) && neighbors.get(id2) > MINCONTACT){
-							tmp = 0;
-							for(int i = 25; i <= 150; i += 25){
-								if(surfaceArea <= i*1.0d){
-									break;
-								}
-								tmp++;
-							}
-							p1 = amino.get(id1).getOneLetterCode().charAt(0)-65;
-							p2 = amino.get(id2).getOneLetterCode().charAt(0)-65;
-							score += potential[p1][p2][tmp];
+						if(!surfaceIds.contains(id2)){
+							continue;
 						}
+						tmp = 0;
+						for(int i = 25; i <= 150; i += 25){
+							if(surfaceArea <= i*1.0d){
+								break;
+							}
+							tmp++;
+						}
+						p1 = amino.get(id1).getOneLetterCode().charAt(0)-65;
+						p2 = amino.get(id2).getOneLetterCode().charAt(0)-65;
+						score += potential[p1][p2][tmp];
+						
 					}
 				}
 			}
@@ -374,7 +334,7 @@ public class GridSolvensPotential implements IEnergy{
 			pdbIds.add(f.getName().substring(0, 7));
 		}
 		
-		GridSolvensPotential pot = new GridSolvensPotential(args[1],pdbLoc, pdbIds, VoroPrepType.CA);
+		GridSolventPotential pot = new GridSolventPotential(args[1],pdbLoc, pdbIds, VoroPrepType.CA, Double.parseDouble(args[3]), Double.parseDouble(args[4]), Double.parseDouble(args[5]), Double.parseDouble(args[6]));
 		pot.writeToFile(args[2]);
 		System.out.println("done");
 		

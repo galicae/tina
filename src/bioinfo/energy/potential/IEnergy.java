@@ -22,10 +22,10 @@ public interface IEnergy {
 	/**
 	 * calculates energy from data in a Boltzmann-based mean force way
 	 * should only have to be done once, written to file and then reused from there
-	 * @param List of pdb ids, which should be used to generate energy function
+	 * @param List of ids, which should be used to generate energy function
 	 * location of data can be implemented in abstract class
 	 */
-	public void calculateFromDATA(List<String> pdbIds);
+	public void calculateFromDATA(List<String> Ids);
 	
 	/**
 	 * 
