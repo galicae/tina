@@ -189,7 +189,11 @@ public class HubeRDP {
 				} else {
 					for (RDPSolutionTreeNode child : node.getChilds()) {
 						if (node.ta.isEmpty()) {
-							node.addTAs(child.getTA()); // They are already merged
+//							node.addTAs(child.getTA()); // They are already merged
+							// WRONG!
+							for (TreeAlignment ta1 : child.getTA()) {
+									node.addTA(new TreeAlignment(HubeRDP.mergePaA(((RDPSolutionTreeAndNode) node).getPA(), ta1.alignment)));
+							}
 						} else {
 							LinkedList<TreeAlignment> newTAs = new LinkedList<TreeAlignment>();
 							for (TreeAlignment ta1 : child.getTA()) {
