@@ -29,8 +29,7 @@ public class CollectiveClustering {
 		files = reader.readPdbFolder();
 		// files.add(pdb1);
 		for (PDBEntry e : files) {
-			// TODO: insert method here
-			Fragmenter.crunchBackboneSeq(e, "HHHHHHHH", pList, fragLength);
+			Fragmenter.crunchBackboneSeq(e, pList, fragLength);
 		}
 		KMeansAllvsAll clustah = new KMeansAllvsAll(pList, acc);
 		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();
@@ -57,8 +56,7 @@ public class CollectiveClustering {
 		
 		// next make fragments out of all PDBs and save them in pList
 		for(PDBEntry e: files) {
-			// TODO: insert real method here
-			Fragmenter.crunchBackboneSeq(e, "HHHHHHHH", pList, 5);
+			Fragmenter.crunchBackboneSeq(e, pList, 5);
 		}
 		DBScan clustah = new DBScan();
 		LinkedList<FragmentCluster> clusters = new LinkedList<FragmentCluster>();

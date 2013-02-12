@@ -52,11 +52,11 @@ public class Fr4gmentTest {
 					Transformation t = Kabsch
 							.calculateTransformation(kabschFood);
 					result.setCoordinates(t.transform(kabschFood[0]));
-					wr.write(Double.toString(t.getRmsd()) + "\n");
+					wr.write(fileList.indexOf(pdb) + "\t" + pdb.getID() + "\t" + Double.toString(t.getRmsd()) + "\n");
 					System.out.println(t.getRmsd());
 					sum += t.getRmsd();
 
-					ProteinFragment prot = new ProteinFragment("real", query,"HHHHHH", new double[0][0], fragLength);
+					ProteinFragment prot = new ProteinFragment("real", query, new double[0][0], fragLength);
 					prot.append(PDBReduce.reduceSinglePDB(pdb), "");
 					prot.setCoordinates(kabschFood[1]);
 

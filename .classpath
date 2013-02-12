@@ -45,5 +45,6 @@
 	<classpathentry kind="lib" path="/ZKs/ZKReleases/zkee-bin-eval-6.5.1/libsrc/zul-sources.jar"/>
 	<classpathentry kind="lib" path="/ZKs/ZKReleases/zkee-bin-eval-6.5.1/libsrc/zweb-sources.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.22-bin.jar"/>
+	<classpathentry kind="lib" path="lib/commons-exec-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

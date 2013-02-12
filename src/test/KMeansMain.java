@@ -47,8 +47,7 @@ public class KMeansMain {
 		System.out.println("crunching records...");
 		for (PDBEntry e : files) {
 			// TODO: use reeeeal function
-			String secStruct = "HHHHHHHHHHH";
-			Fragmenter.crunchBackboneSeq(e, secStruct, pList, fragLength);
+			Fragmenter.crunchBackboneSeq(e, pList, fragLength);
 		}
 		initTime = System.currentTimeMillis();
 
