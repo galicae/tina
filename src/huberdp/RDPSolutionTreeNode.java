@@ -20,7 +20,7 @@ public abstract class RDPSolutionTreeNode {
 	/**
 	 *  TA = TreeAlignment
 	 */
-	protected LinkedList<RDPSolution> ta;
+	protected LinkedList<TreeAlignment> ta;
 	
 	/**
 	 * states finished if the node can was finished
@@ -34,7 +34,7 @@ public abstract class RDPSolutionTreeNode {
 	public RDPSolutionTreeNode(RDPSolutionTreeNode parent) {
 		this.setParent(parent);
 		this.childs = new LinkedList<RDPSolutionTreeNode>();
-		this.setTA(new LinkedList<RDPSolution>());
+		this.setTA(new LinkedList<TreeAlignment>());
 		this.setFinished(false);
 	}
 
@@ -113,14 +113,14 @@ public abstract class RDPSolutionTreeNode {
 	/**
 	 * @return the TA
 	 */
-	public LinkedList<RDPSolution> getTA() {
+	public LinkedList<TreeAlignment> getTA() {
 		return ta;
 	}
 	
 	/**
 	 * @param
 	 */
-	private void setTA(LinkedList<RDPSolution> ta) {
+	private void setTA(LinkedList<TreeAlignment> ta) {
 		this.ta = ta;
 	}
 	
@@ -128,7 +128,7 @@ public abstract class RDPSolutionTreeNode {
 	 * adds a TA to this node.
 	 * @param ta
 	 */
-	public void addTA(RDPSolution ta) {
+	public void addTA(TreeAlignment ta) {
 		this.ta.add(ta);
 	}
 	
@@ -136,8 +136,8 @@ public abstract class RDPSolutionTreeNode {
 	 * Adds multiple TAs to this node.
 	 * @param tas
 	 */
-	public void addTAs(LinkedList<RDPSolution> tas) {
-		for (RDPSolution ta : tas) {
+	public void addTAs(LinkedList<TreeAlignment> tas) {
+		for (TreeAlignment ta : tas) {
 			this.addTA(ta);
 		}
 	}

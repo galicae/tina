@@ -43,6 +43,8 @@ public class huberdptest {
 		PDBFileReader fr = new PDBFileReader();
 		templateStructure = fr.readPDBFromFile
 				("/home/h/huberste/gobi/webserver/pdb/1J2XA00.pdb");
+		// nullify fr for the Garbage Collector
+		fr = null;
 		System.out.println(" done!");
 		
 		// construct rdp tree

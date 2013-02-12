@@ -15,7 +15,7 @@ import bioinfo.proteins.PDBEntry;
  * @author huberste
  * @lastchange 2013-02-11
  */
-public class RDPSolution{
+public class TreeAlignment{
 	
 	/**
 	 * Template
@@ -30,23 +30,29 @@ public class RDPSolution{
 	public PDBEntry targetStructure;
 	
 	/**
-	 * the solution alignment
+	 * the tree alignment
 	 */
-	public Alignment solution;
+	public Alignment alignment;
 	
 	/**
 	 * constructs a  new RDPSolution
 	 * @param targetSequence
 	 * @param targetStructure
 	 */
-	public RDPSolution(Sequence templateSequence, PDBEntry templateStructure,
+	public TreeAlignment(Sequence templateSequence, PDBEntry templateStructure,
 			Sequence targetSequence, PDBEntry targetStructure,
-			Alignment solution) {
+			Alignment alignment) {
 		this.templateSequence = templateSequence;
 		this.templateStructure = templateStructure;
 		this.targetSequence = targetSequence;
 		this.targetStructure = targetStructure;
-		this.solution = solution;
+		this.alignment = alignment;
+	}
+	
+	public String toString() {
+		String result = "RDPSolution\n";
+		result += alignment.toStringVerbose();
+		return result;
 	}
 	
 }
