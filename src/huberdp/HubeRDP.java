@@ -12,7 +12,7 @@ import bioinfo.alignment.SequenceAlignment;
 
 /**
  * @author huberste
- * @lastchange 2013-02-11
+ * @lastchange 2013-02-12
  */
 public class HubeRDP {
 
@@ -192,7 +192,7 @@ public class HubeRDP {
 //							node.addTAs(child.getTA()); // They are already merged
 							// WRONG!
 							for (TreeAlignment ta1 : child.getTA()) {
-									node.addTA(new TreeAlignment(HubeRDP.mergePaA(((RDPSolutionTreeAndNode) node).getPA(), ta1.alignment)));
+									node.addTA(new TreeAlignment(HubeRDP.mergePaT(((RDPSolutionTreeAndNode) node).getPA(), ta1)));
 							}
 						} else {
 							LinkedList<TreeAlignment> newTAs = new LinkedList<TreeAlignment>();
@@ -219,11 +219,11 @@ public class HubeRDP {
 	 * merges a Problem and an Alignment
 	 * @param prob a RDPPloblem
 	 * @param ali An SequenceAlignment for this Problem
-	 * @return a LinkedList with all the possible PartialAlignments
+	 * @return a with all the possible PartialAlignments
 	 */
-	static public PartialAlignment mergePaA(RDPProblem prob, SequenceAlignment ali) {
+	/*static public TreeAlignment mergePaA(RDPProblem prob, SequenceAlignment ali) {
 		
-		PartialAlignment result = null;
+		TreeAlignment result = null;
 		
 		// map is the map of the newly generated alignment
 		int[][] map = ali.calcMap();
@@ -367,13 +367,122 @@ public class HubeRDP {
 			
 		}
 		
-		result = new PartialAlignment
+		result = new TreeAlignment
 				(prob.templateSequence, prob.templateStructure,
 				prob.targetSequence, prob.targetStructure,
 				pa,
 				prob.templateStart, prob.templateEnd,
-				prob.targetStart, prob.targetEnd,
-				paTemStart, paTemEnd, paTarStart, paTarEnd);
+				prob.targetStart, prob.targetEnd);
+		
+		return result;
+	}
+	*/
+	
+	/**
+	 * merges a Problem and an TreeAlignment
+	 * @param p1 a RDP(sub-)Problem
+	 * @param p2 a TreeAlignment for this (sub-)problem
+	 * @return a LinkedList with all the possible PartialAlignments
+	 */
+	static public PartialAlignment mergePaT(RDPProblem p1, RDPProblem p2) {
+		
+		// switch them if needed!
+		if (p1.alignment.length() < p2.alignment.length() ) {
+			RDPProblem temp = p1;
+			p1 = p2; p2 = temp;
+		}
+		
+		PartialAlignment result = null;
+		
+//		int[] alipos = calculateAlignedPositions(ta.alignment);
+		
+		char[][] taAliRows = new char[2][];
+		taAliRows[0] = p2.alignment.getRow(0);
+		taAliRows[1] = p2.alignment.getRow(1);
+		
+		char[][] pAliRows = new char[2][];
+		pAliRows[0] = p1.alignment.getRow(0);
+		pAliRows[1] = p1.alignment.getRow(1);
+		
+		int copyTemSeqBefore = p2.templateStart - p1.templateStart + 1;
+		int copyTemRowBefore = 0; // length of the part of the p array that needs to be copied before the ta alignment
+		int i = 0;
+		for (i = 0; i < p1.alignment.length(); i++) {
+			if (pAliRows[0][i] != '-') {
+				copyTemSeqBefore--;
+				if (copyTemSeqBefore == 0) {
+					break;
+		}	}	}
+		copyTemRowBefore = i;
+		
+		int copyTemSeqBehind = p1.templateEnd - p2.templateEnd + 1;
+		int copyTemRowBehind = 0;
+		
+		for (i = 0; i < p1.alignment.length(); i++) {
+			if (pAliRows[0][p1.alignment.length()-1-i] != '-') {
+				copyTemSeqBehind--;
+				if (copyTemSeqBehind == 0) {
+					break;
+		}	}	}
+		copyTemRowBehind = i;
+		
+		int copyTarSeqBefore = p2.targetStart - p1.targetStart +1;
+		int copyTarRowBefore = 0;
+		
+		for (i = 0; i < p1.alignment.length(); i++) {
+			if (pAliRows[1][i] != '-') {
+				copyTarSeqBefore--;
+				if (copyTarSeqBefore == 0) {
+					break;
+		}	}	}
+		copyTarRowBefore = i;
+		
+		int copyTarSeqBehind = p1.targetEnd - p2.targetEnd + 1;
+		int copyTarRowBehind = 0;
+		
+		for (i = 0; i < p1.alignment.length(); i++) {
+			if (pAliRows[1][p1.alignment.length()-1-i] != '-') {
+				copyTarSeqBehind--;
+				if (copyTarSeqBehind == 0) {
+					break;
+		}	}	}
+		copyTarRowBehind = i;
+		
+		int copyBefore = Math.min(copyTemRowBefore, copyTarRowBefore);
+		int copyBehind = Math.min(copyTemRowBehind, copyTarRowBehind);
+		
+		char[][] newRows = new char[2][];
+		newRows[0] = new char[copyBefore + taAliRows[0].length + copyBehind];
+		newRows[1] = new char[newRows[0].length];
+		
+		// make new Alignment:
+		// copy beginning of old alignment
+		for (int pos = 0; pos < copyBefore; pos++) {
+			newRows[0][pos]=pAliRows[0][pos]; // template row
+			newRows[1][pos]=pAliRows[1][pos]; // target   row
+		}
+		// copy ta.alignment
+		for (int pos = 0; pos < taAliRows[0].length; pos++) {
+			newRows[0][copyBefore+pos]=taAliRows[0][pos]; // template row
+			newRows[1][copyBefore+pos]=taAliRows[1][pos]; // target   row
+		}
+		// copy end of old alignment
+		for (int pos = 0; pos < copyBehind; pos++) {
+			newRows[0][newRows[0].length - pos - 1] =
+					pAliRows[0][pAliRows[0].length - pos - 1]; // template row
+			newRows[1][newRows[1].length - pos - 1] =
+					pAliRows[1][pAliRows[1].length - pos - 1]; // target   row
+		}
+		
+		//TODO merge score
+		double newScore = p2.alignment.getScore() + p1.alignment.getScore();
+		
+		result = new PartialAlignment(
+				p1.templateSequence, p1.templateStructure,
+				p1.targetSequence, p1.targetStructure,
+				new SequenceAlignment(p1.templateSequence, p1.targetSequence, newRows, newScore),
+				p1.templateStart, p1.templateEnd, p1.targetStart, p1.targetEnd,
+				0,0,0,0);
 		
 		return result;
 	}

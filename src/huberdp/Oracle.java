@@ -15,7 +15,7 @@ import bioinfo.alignment.SequenceAlignment;
 
 /**
  * @author huberste
- * @lastchange 2013-02-11
+ * @lastchange 2013-02-12
  */
 public abstract class Oracle {
 	

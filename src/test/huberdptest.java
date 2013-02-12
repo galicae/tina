@@ -16,7 +16,7 @@ import huberdp.oracles.TinyOracle;
 
 /**
  * @author huberste
- * @lastchange 2013-02-11
+ * @lastchange 2013-02-12
  * 
  */
 public class huberdptest {

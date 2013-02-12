@@ -11,7 +11,7 @@ import bioinfo.Sequence;
 
 /**
  * @author gobi_4
- * @lastchange 2013-02-01
+ * @lastchange 2013-02-12
  */
 public class SequenceAlignment implements Alignment {
 
@@ -261,6 +261,53 @@ public class SequenceAlignment implements Alignment {
 	 */
 	public SequenceAlignment duplicate() {
 		return new SequenceAlignment(seq1, seq2, rows, score);
+	}
+	
+	/**
+	 * this neat function calculates the first / last aligned positions in an
+	 * alignment (in both rows)
+	 * @author huberste
+	 * @param ali the alignment
+	 * @return an int[4] with result[0] the number of the first aligned position
+	 * in the 1st sequence, result[1] the number of the last aligned position 
+	 * in the 1st sequence, result[2] the number of the first aligned position
+	 * in the 2nd sequence and result[3] the number of the last aligned position
+	 * in the 2nd sequence.
+	 */
+	public static int[] calculateAlignedPositions(Alignment ali) {
+		int[] result = new int[4];
+		
+		int[][] map = ali.calcMap();
+		
+		for (int i = 0; i < map[0].length; i++) {
+			if ( map[0][i] >= 0 ) {
+				result[0] = i;
+				break;
+			}
+		}
+		
+		for (int i = map[0].length-1; i >=0; i++) {
+			if ( map[0][i] >= 0 ) {
+				result[1] = i;
+				break;
+			}
+		}
+		
+		for (int i = 0; i < map[1].length; i++) {
+			if ( map[1][i] >= 0 ) {
+				result[2] = i;
+				break;
+			}
+		}
+		
+		for (int i = map[1].length-1; i >=0; i++) {
+			if ( map[1][i] >= 0 ) {
+				result[3] = i;
+				break;
+			}
+		}
+		
+		return result;
 	}
 
 }
