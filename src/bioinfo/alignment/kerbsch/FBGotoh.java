@@ -9,6 +9,7 @@ import java.util.List;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.Alignable;
+import bioinfo.alignment.kerbsch.temp.LocalCore;
 import bioinfo.alignment.kerbsch.temp.LocalMatch;
 
 public class FBGotoh {
@@ -134,11 +135,11 @@ public class FBGotoh {
 			}
 		}
 		
-		for (int i = 0; i < xsize; i++) {
-			for (int j = 0; j < ysize; j++) {
-				hybridM[i][j] = M[i][j] + revM[xsize - 1 - i][ysize - 1 - j]; 
+		for (int i = 1; i < xsize; i++) {
+			for (int j = 1; j < ysize; j++) {
+				hybridM[i][j] = M[i][j] + revM[xsize - i][ysize - j]; 
 			}
-		}
+		}		
 	}
 	
 	private int calcScoreAndLength(int startIndex, int endIndex, List<LocalMatch> localmatches){
@@ -155,123 +156,135 @@ public class FBGotoh {
 		return length;
 	}
 	
-	private void traceback(List<LocalMatch> localmatches){
-		int x,y;
+	private List<LocalCore> traceback(List<LocalMatch> localmatches){
+		int x,y,revX,revY;
 		int actScore;
+		List<LocalCore> result = new ArrayList<LocalCore>();
+		ArrayList<int[]> lastcoreCoords;
 		
 		int[][] used = new int[xsize][ysize];
-		LocalMatch lm;
-		for (int i = 0; i < localmatches.size(); i++) {
-			lm = localmatches.get(i);	
+
+		for (LocalMatch lm : localmatches) {
+			
+			x = lm.getCoords()[0];
+			y = lm.getCoords()[1];	
+			revX = xsize - x;
+			revY = ysize - y;
+			
 			//do reverse traceback
-			x = xsize - 1 - lm.getCoords()[0];
-			y = ysize - 1 - lm.getCoords()[1];
-			used[x][y] = -1;
-			while(x > 0 && y > 0 && revM[x][y] != 0){
-				actScore = revM[x][y];
+			if(used[x][y] == -1){
+				continue;
+			}else{
+				result.add(new LocalCore(lm.getScore()));
+				lastcoreCoords = result.get(result.size()-1).getCoords();
+				lastcoreCoords.add(new int[]{xsize-revX,ysize-revY});
+				used[xsize-revX][ysize-revY] = -1;
 				
-				if (actScore == revM[x - 1][y - 1] + tempScore[xsize-x][ysize-y]) {
-					y--;
-					x--;
-					if(used[x][y] != -1){
-						localmatches.add(new LocalMatch(lm.getScore(),new int[]{x,y}));
-						used[x][y] = -1;
-					}else{
-						break;
-					}
+				while(revX > 0 && revY > 0 && revM[revX][revY] != 0){
+					actScore = revM[revX][revY];
 					
-				} else if (actScore == revD[x][y]) {
-					while (revD[x][y] == revD[x][y - 1] + gapExtend && y > 0) {
+					if (actScore == revM[revX - 1][revY - 1] + tempScore[xsize-revX][ysize-revY]) {
+						revY--;
+						revX--;
+						if(used[xsize-revX][ysize-revY] != -1){
+							lastcoreCoords.add(new int[]{xsize-revX,ysize-revY});
+							used[xsize-revX][ysize-revY] = -1;
+						}else{
+							break;
+						}
+						
+					} else if (actScore == revD[revX][revY]) {
+						while (revY > 0 && revD[revX][revY] == revD[revX][revY - 1] + gapExtend) {
+							revY--;
+							if(used[xsize-revX][ysize-revY] != -1){
+								lastcoreCoords.add(new int[]{xsize-revX,ysize-revY});
+								used[xsize-revX][ysize-revY] = -1;
+							} else {
+								break;
+							}
+						}
+						revY--;
+						if(used[xsize-revX][ysize-revY] != -1){
+							lastcoreCoords.add(new int[]{xsize-revX,ysize-revY});
+							used[xsize-revX][ysize-revY] = -1;	
+						} else {
+							break;
+						}
+						
+					} else if (actScore == revI[revX][revY]) {
+						while (revX > 0 && revI[revX][revY] == revI[revX - 1][revY] + gapExtend) {					
+							revX--;
+							if(used[xsize-revX][ysize-revY] != -1){
+								lastcoreCoords.add(new int[]{xsize-revX,ysize-revY});
+								used[xsize-revX][ysize-revY] = -1;	
+							} else {
+								break;
+							}
+						}
+						revX--;					
+						if(used[xsize-revX][ysize-revY] != -1){
+							lastcoreCoords.add(new int[]{xsize-revX,ysize-revY});
+							used[xsize-revX][ysize-revY] = -1;
+						} else {
+							break;
+						}
+					}
+				}
+				
+				//do normal traceback
+				while(x > 0 && y > 0 && M[x][y] != 0){
+					actScore = M[x][y];
+					
+					if (actScore == M[x - 1][y - 1] + tempScore[x][y]) {
+						y--;
+						x--;
+						if(used[x][y] != -1){
+							lastcoreCoords.add(new int[]{x,y});
+							used[x][y] = -1;
+						}else{
+							break;
+						}
+						
+					} else if (actScore == D[x][y]) {
+						while (D[x][y] == D[x][y - 1] + gapExtend && y > 0) {
+							y--;
+							if(used[x][y] != -1){
+								lastcoreCoords.add(new int[]{x,y});
+								used[x][y] = -1;
+							} else {
+								break;
+							}
+						}
 						y--;
 						if(used[x][y] != -1){
-							localmatches.add(new LocalMatch(lm.getScore(),new int[]{x,y}));
+							lastcoreCoords.add(new int[]{x,y});
+							used[x][y] = -1;	
+						} else {
+							break;
+						}
+						
+					} else if (actScore == I[x][y]) {
+						while (I[x][y] == I[x - 1][y] + gapExtend && x > 0) {					
+							x--;
+							if(used[x][y] != -1){
+								lastcoreCoords.add(new int[]{x,y});
+								used[x][y] = -1;	
+							} else {
+								break;
+							}
+						}
+						x--;					
+						if(used[x][y] != -1){
+							lastcoreCoords.add(new int[]{x,y});
 							used[x][y] = -1;
 						} else {
 							break;
 						}
 					}
-					y--;
-					if(used[x][y] != -1){
-						localmatches.add(new LocalMatch(lm.getScore(),new int[]{x,y}));
-						used[x][y] = -1;	
-					} else {
-						break;
-					}
-					
-				} else if (actScore == revI[x][y]) {
-					while (revI[x][y] == revI[x - 1][y] + gapExtend && x > 0) {					
-						x--;
-						if(used[x][y] != -1){
-							localmatches.add(new LocalMatch(lm.getScore(),new int[]{x,y}));
-							used[x][y] = -1;	
-						} else {
-							break;
-						}
-					}
-					x--;					
-					if(used[x][y] != -1){
-						localmatches.add(new LocalMatch(lm.getScore(),new int[]{x,y}));
-						used[x][y] = -1;	
-					} else {
-						break;
-					}
-				}
-			}
-			
-			//do normal traceback
-			x = lm.getCoords()[0];
-			y = lm.getCoords()[1];
-			used[x][y] = -1;
-			while(x > 0 && y > 0 && M[x][y] != 0){
-				actScore = M[x][y];
-				
-				if (actScore == M[x - 1][y - 1] + tempScore[x][y]) {					
-						y--;
-						x--;
-					if(used[x][y] != -1){
-						localmatches.add(new LocalMatch(lm.getScore(),new int[]{x,y}));
-						used[x][y] = -1;
-					}else{
-						break;
-					}
-					
-				} else if (actScore == D[x][y]) {
-					while (D[x][y] == D[x][y - 1] + gapExtend && y > 0) {
-						y--;
-						if(used[x][y] != -1){
-							localmatches.add(new LocalMatch(lm.getScore(),new int[]{x,y}));
-							used[x][y] = -1;	
-						} else {
-							break;
-						}
-					}
-					y--;
-					if(used[x][y] != -1){	
-						localmatches.add(new LocalMatch(lm.getScore(),new int[]{x,y}));
-						used[x][y] = -1;
-					} else {
-						break;
-					}
-				} else if (actScore == I[x][y]) {
-					while (I[x][y] == I[x - 1][y] + gapExtend && x > 0) {						
-						x--;
-						if(used[x][y] != -1){
-							localmatches.add(new LocalMatch(lm.getScore(),new int[]{x,y}));
-							used[x][y] = -1;	
-						} else {
-							break;
-						}
-					}					
-					x--;
-					if(used[x][y] != -1){
-						localmatches.add(new LocalMatch(lm.getScore(),new int[]{x,y}));
-						used[x][y] = -1;
-					} else {
-						break;
-					}
 				}
 			}
 		}
+		return result;
 	}
 	
 	private class sortScore implements Comparator<LocalMatch>{
@@ -284,7 +297,7 @@ public class FBGotoh {
 	}
 	
 	private void findLocals(){
-		int lengthCutOff = 5;
+		int lengthCutOff = 3;
 		int scoreCutOff = (int) (10.0 * FACTOR);
 		List<LocalMatch> localmatches = new ArrayList<LocalMatch>();
 		
@@ -302,30 +315,33 @@ public class FBGotoh {
 		//sort scorelist
 		Collections.sort(localmatches, new sortScore());
 
-		traceback(localmatches);
+		List<LocalCore> localcores = traceback(localmatches);
 
 		//sort scorelist
-		Collections.sort(localmatches, new sortScore());
+//		Collections.sort(localmatches, new sortScore());
 				
 		try {
-			int lastscore = localmatches.get(0).getScore();
-			int actscore;
-			int startIndex = 0;
-			int endIndex = 0;
-			int result;
-			for (LocalMatch ue : localmatches) {			
-				actscore = ue.getScore();
-				if(actscore == lastscore){
-					endIndex++;
-				} else {	
-					result = calcScoreAndLength(startIndex,endIndex,localmatches);
-					if(result >= lengthCutOff){
-						out.write(lastscore + ": "+ result+"\n");
-					}
-					lastscore = actscore;
-					endIndex++;
-					startIndex = endIndex;
+//			int lastscore = localmatches.get(0).getScore();
+//			int actscore;
+//			int startIndex = 0;
+//			int endIndex = 0;
+//			int result;
+			for (LocalCore ue : localcores) {
+				if(ue.getCoords().size() >= lengthCutOff){
+					out.write(ue.getScore() + ": "+ ue.getCoords().size()+"\n");
 				}
+//				actscore = ue.getScore();
+//				if(actscore == lastscore){
+//					endIndex++;
+//				} else {	
+//					result = calcScoreAndLength(startIndex,endIndex,localmatches);
+//					if(result >= lengthCutOff){
+//						out.write(lastscore + ": "+ result+"\n");
+//					}
+//					lastscore = actscore;
+//					endIndex++;
+//					startIndex = endIndex;
+//				}
 			}
 		} catch (IOException e) {
 			System.out.println("failure");
@@ -337,6 +353,15 @@ public class FBGotoh {
 		for (int i = 0; i < xsize; i++) {
 			for (int j = 0; j < ysize; j++) {
 				System.out.print(hybridM[i][j]+"\t");
+			}
+			System.out.println();
+		}
+	}
+	
+	public void printM(){
+		for (int i = 0; i < xsize; i++) {
+			for (int j = 0; j < ysize; j++) {
+				System.out.print(M[i][j]+"\t");
 			}
 			System.out.println();
 		}

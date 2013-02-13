@@ -55,12 +55,12 @@ public class Kerbsch extends Gotoh {
 			HashMap<String, char[]> seclib) {
 		super(gapOpen, gapExtend);
 
-		hbCore = new FBGotoh(hbGapOpen, hbGapExtend, hbMatrix);
-		polCore = new FBGotoh(polGapOpen, polGapExtend, polMatrix);
-		secStructCore = new FBGotoh(secStructGapOpen, secStructGapExtend,
-				secStructMatrix);
-		seqCore = new FBGotoh(seqGapOpen, seqGapExtend, seqMatrix);
-		this.seclib = seclib;
+//		hbCore = new FBGotoh(hbGapOpen, hbGapExtend, hbMatrix);
+//		polCore = new FBGotoh(polGapOpen, polGapExtend, polMatrix);
+//		secStructCore = new FBGotoh(secStructGapOpen, secStructGapExtend,
+//				secStructMatrix);
+//		seqCore = new FBGotoh(seqGapOpen, seqGapExtend, seqMatrix);
+//		this.seclib = seclib;
 	}
 
 	public Kerbsch(double gapOpen, double gapExtend, double[][] seqMatrix,
@@ -77,13 +77,13 @@ public class Kerbsch extends Gotoh {
 			}
 		}
 
-		this.seclib = seclib;
+//		this.seclib = seclib;
 
-		hbCore = new FBGotoh(hbGapOpen, hbGapExtend, hbMatrix);
-		polCore = new FBGotoh(polGapOpen, polGapExtend, polMatrix);
-		secStructCore = new FBGotoh(secStructGapOpen, secStructGapExtend,
-				secStructMatrix);
-		seqCore = new FBGotoh(seqGapOpen, seqGapExtend, seqMatrix);
+//		hbCore = new FBGotoh(hbGapOpen, hbGapExtend, hbMatrix);
+//		polCore = new FBGotoh(polGapOpen, polGapExtend, polMatrix);
+//		secStructCore = new FBGotoh(secStructGapOpen, secStructGapExtend,
+//				secStructMatrix);
+//		seqCore = new FBGotoh(seqGapOpen, seqGapExtend, seqMatrix);
 	}
 
 	public SequenceAlignment align(Alignable sequence1, Alignable sequence2) {

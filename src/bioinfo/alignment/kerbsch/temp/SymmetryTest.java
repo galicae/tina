@@ -14,21 +14,25 @@ import bioinfo.alignment.matrices.QuasarMatrix;
 public class SymmetryTest {
 
 	public static void main(String[] args) throws IOException {
-        Sequence seq1 = new Sequence("id1","ABCCDEF");
-        Sequence seq2 = new Sequence("id2","CCABBFE");
-        Sequence seq1_rev = new Sequence("id3","FEDCCBA");
-        Sequence seq2_rev = new Sequence("id4","EFBBACC");
+        Sequence seq1 = new Sequence("id1","YYYCCYY");
+        Sequence seq2 = new Sequence("id2","SSSCC");
+        Sequence seq1_rev = new Sequence("id3","");
+        Sequence seq2_rev = new Sequence("id4","");
         LocalSequenceGotoh gotoh = new LocalSequenceGotoh(-12.0,-1.0,QuasarMatrix.DAYHOFF_MATRIX);
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
-    
-        FBGotoh fbgotoh = new FBGotoh(-12.0,-1.0,QuasarMatrix.DAYHOFF_MATRIX,writer);
         
+
+        FBGotoh fbgotoh = new FBGotoh(-12.0,-1.0,QuasarMatrix.DAYHOFF_MATRIX,writer);
+        SequenceAlignment normal = gotoh.align(seq1, seq2);
+        System.out.println(normal.toStringVerbose());
         fbgotoh.align(seq1, seq2);
         fbgotoh.printHM();
+        System.out.println();
+        fbgotoh.printM();
         writer.close();
 	}
         
-//        SequenceAlignment normal = gotoh.align(seq1, seq2);
+        
 //        System.out.println("normal: "+normal.getScore());
 //        System.out.println(normal.getRowAsString(0));
 //        System.out.println(normal.getRowAsString(1));
