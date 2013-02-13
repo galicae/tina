@@ -3,9 +3,9 @@
               Any modifications will be overwritten.
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. -->
-<project basedir="." default="build" name="tina">
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="tina">
     <property environment="env"/>
+    <property name="ZKs.location" value="../../workspace/ZKs"/>
     <property name="ECLIPSE_HOME" value="../../../../opt/eclipse"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
@@ -15,12 +15,58 @@
         <pathelement location="lib/colt.jar"/>
         <pathelement location="lib/concurrent.jar"/>
         <pathelement location="lib/Jmol.jar"/>
-    	<pathelement location="lib/mysql-connector-java-5.1.22-bin.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/bsh.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/commons-collections.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/commons-fileupload.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/commons-io.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/commons-logging.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/Filters.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/flashchart.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/gmapsz.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/itext.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/jasperreports.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/jcommon.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/jfreechart.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/jxl.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/poi.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/sapphire.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/silvertail.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/timelinez.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/timeplotz.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/zcommon.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/zel.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/zhtml.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/zk.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/zkbind.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/zkex.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/zkmax.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/zkplus.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/zml.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/zul.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/zuljsp.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/WebContent/WEB-INF/lib/zweb.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/libsrc/zcommon-sources.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/libsrc/zel-sources.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/libsrc/zhtml-sources.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/libsrc/zk-sources.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/libsrc/zkbind-sources.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/libsrc/zkplus-sources.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/libsrc/zul-sources.jar"/>
+        <pathelement location="${ZKs.location}/ZKReleases/zkee-bin-eval-6.5.1/libsrc/zweb-sources.jar"/>
+        <pathelement location="lib/mysql-connector-java-5.1.22-bin.jar"/>
+        <pathelement location="lib/commons-exec-1.1.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="tools">
+                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -35,6 +81,7 @@
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
+            <src path="tools"/>
             <classpath refid="tina.classpath"/>
         </javac>
     </target>
@@ -51,5 +98,26 @@
     <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
+    </target>
+    <target name="HubeRDPValidator">
+        <java classname="validation.huberdp.HubeRDPValidator" failonerror="true" fork="yes">
+            <arg line="--seqlib /home/h/huberste/gobi/data/domains.seqlib --pairs /home/h/huberste/gobi/data/few.pairs --pdbpath /home/h/huberste/gobi/data/pdb/"/>
+            <classpath refid="tina.classpath"/>
+        </java>
+    </target>
+    <target name="huberdptest">
+        <java classname="test.huberdptest" failonerror="true" fork="yes">
+            <classpath refid="tina.classpath"/>
+        </java>
+    </target>
+    <target name="ServerPipelineTest">
+        <java classname="test.ServerPipelineTest" failonerror="true" fork="yes">
+            <classpath refid="tina.classpath"/>
+        </java>
+    </target>
+    <target name="TinaWorker">
+        <java classname="webservice.workers.TinaWorker" failonerror="true" fork="yes">
+            <classpath refid="tina.classpath"/>
+        </java>
     </target>
 </project>
