@@ -11,9 +11,8 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 import huberdp.*;
-import huberdp.oracles.ManualOracle;
-import huberdp.oracles.TinyOracle;
-import huberdp.scoring.ManualScoring;
+import huberdp.oracles.*;
+import huberdp.scoring.*;
 
 /**
  * @author huberste
@@ -70,6 +69,7 @@ public class huberdptest {
 //		rdp.addOracle(new ManualOracle());
 		
 		// set scoring
+		rdp.setScoring(new SimpleScoring());
 //		rdp.setScoring(new ManualScoring());
 		
 		// execute rdp algorithm
@@ -78,7 +78,6 @@ public class huberdptest {
 		System.out.println("HubeRDP was successfully executed!");
 		// Solution is now in t.getRoot();
 		
-		// TODO output of t.getRoot();
 		System.out.println(t.getRoot().getTA().toString());
 
 	}

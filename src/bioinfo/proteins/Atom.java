@@ -14,6 +14,11 @@ import java.text.DecimalFormat;
  */
 public class Atom implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3326166733645976909L;
+	
 	private final AtomType type;
 	private double[] position;
 
