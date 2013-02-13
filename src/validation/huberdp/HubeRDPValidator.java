@@ -16,14 +16,9 @@ import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.pdb.PDBFile;
-import bioinfo.proteins.AminoAcid;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 import bioinfo.proteins.structure.SimpleCoordMapper;
-import bioinfo.superpos.Kabsch;
-import bioinfo.superpos.PDBReduce;
-import bioinfo.superpos.TMMain;
-import bioinfo.superpos.Transformation;
 
 import files.PairFile;
 import files.SeqlibFile;
@@ -61,9 +56,8 @@ public class HubeRDPValidator {
 	/**
 	 * Validates the HubeRDP.
 	 * @param args
-	 * @throws Exception 
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		
 //		Locale.setDefault(Locale.US);
 		
@@ -96,11 +90,12 @@ public class HubeRDPValidator {
 		
 		FreeshiftSequenceGotoh gotoh =
 				new FreeshiftSequenceGotoh(
-					-10.0, -2.0,
+					10.0, -2.0,
 					bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX
 				);
 		
 		for (String[] job : joblist) {
+<<<<<<< HEAD
 			try {
 				String templatePDBID = job[0].substring(0, 4);
 				String targetPDBID = job[1].substring(0, 4);
@@ -154,20 +149,44 @@ public class HubeRDPValidator {
 				System.err.println("Error while working on job "+ job[0]+" " + job[1]);
 				e.printStackTrace();
 			}
+=======
+			String pdbid = job[0].substring(0, 4);
+			Sequence template = library.get(job[0]);
+			Sequence target = library.get(job[1]);
+			PDBEntry templateStructure =
+				new PDBFileReader(pdbpath).readPDBFromFile(
+					PDBFile.getFile(pdbpath, pdbid), job[0].charAt(4)
+				);
+			System.out.println(">" + job[0] + " " + job[1]);
+			
+			// align Sequences with HubeRDP
+			System.out.println("HubeRDP:");
+			SequenceAlignment rdpAlignment =
+					HubeRDP.hubeRDPAlign(template, target);
+			System.out.println(rdpAlignment.toStringVerbose());
+			
+			// use CoordMapper on HubeRDP Alignment
+			PDBEntry rdpStructure =
+					SimpleCoordMapper.map(rdpAlignment, templateStructure);
+			
+			// align Sequences with Gotoh
+			System.out.println("Gotoh:");
+			SequenceAlignment gotohAlignment =
+					gotoh.align(template, target);
+			System.out.println(gotohAlignment.toStringVerbose());
+			
+			// use CoordMapper on Gotoh Alignment
+			PDBEntry gotohStructure =
+					SimpleCoordMapper.map(gotohAlignment, templateStructure);
+			
+			// TODO measure TMScore for each Alignment
+			
+			// TODO compare TMScores
+>>>>>>> bb544c940799e3bbb79457270061fa3b98039383
 			
 		}
 		
-		// begin debugging
-		System.err.println("DONE");
-		// end debugging
-		
 	}
-	
-	
-//	public void test() {
-//		
-//		AminoAcid x = new AminoAcid(null, null);
-//	}
 
 }
 

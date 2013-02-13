@@ -206,17 +206,4 @@ public class PDBEntry implements Alignable, Serializable {
 		return backbone;
 	}
 	
-	/**
-	 * simple toString() method. mainly for debugging. 
-	 */
-	public String toString() {
-		String result = "";
-		
-		for (int i = 0; i < this.length; i++) {
-			result += this.aminoAcids[i].toString();
-		}
-		
-		return result;
-	}
-	
 }
