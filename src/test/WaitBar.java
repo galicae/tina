@@ -47,7 +47,9 @@ public class WaitBar {
 		for(SequenceAlignment a: alignments) {
 			for(int i = 0; i < a.length(); i++) {
 				if(a.getRow(0)[i] == a.getRow(1)[i])
-					match++;
+					match++;				
+				if(a.getRow(0)[i] == '-' || a.getRow(1)[i] == '-')
+					continue;
 				total++;
 			}
 		}

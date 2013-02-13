@@ -38,7 +38,7 @@ public class Fr4gmentTest {
 				System.out.print(fileList.indexOf(pdb) + "\t");
 				CheatAssembler ass = new CheatAssembler(fragLength, pdb);
 				BufferedWriter wr2 = new BufferedWriter(new FileWriter(
-						"famTest/" + pdb.getID() + ".pdb"));
+						"famTest/" + pdb.getID() + pdb.getChainID() + pdb.getChainIDNum() + ".pdb"));
 				query = "";
 				for (int i = 0; i < pdb.length(); i++) {
 					query += pdb.getAminoAcid(i).getName().getOneLetterCode();
@@ -54,7 +54,7 @@ public class Fr4gmentTest {
 					Transformation t = Kabsch
 							.calculateTransformation(kabschFood);
 					result.setCoordinates(t.transform(kabschFood[0]));
-					wr.write(fileList.indexOf(pdb) + "\t" + pdb.getID() + "\t" + Double.toString(t.getRmsd()) + "\t" + pdb.length() + "\n");
+					wr.write(fileList.indexOf(pdb) + "\t" + pdb.getID() + pdb.getChainID() + pdb.getChainIDNum() + "\t" + Double.toString(t.getRmsd()) + "\t" + pdb.length() + "\n");
 					System.out.println(t.getRmsd());
 					sum += t.getRmsd();
 
