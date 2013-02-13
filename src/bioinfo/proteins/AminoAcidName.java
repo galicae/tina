@@ -1,5 +1,10 @@
 package bioinfo.proteins;
 
+/**
+ * enum with all the AminoAcidNames. Also contains methods to convert from
+ * one- to three-letter codes.
+ * @author gobi_4
+ */	
 public enum AminoAcidName {
 	A("A", "ALA", "Alanine"), 
 	R("R", "ARG", "Arginine"), 

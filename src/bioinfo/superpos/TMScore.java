@@ -80,7 +80,9 @@ public class TMScore {
 	/**
 	 * remember that args looks like in Help
 	 * 
-	 * @param args
+	 * @param pdb1 native structure
+	 * @param pdb2 predicted struture
+	 * @param nLeng length that shall be used for normalizing
 	 * @throws Exception
 	 */
 	public static double[][] doStuff(PDBEntry pdb1, PDBEntry pdb2, int nLeng) throws Exception {
