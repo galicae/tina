@@ -34,7 +34,8 @@ import bioinfo.superpos.Transformation;
 public class aligntest {
 
 	public static void main(String[] args) throws Exception {
-		BufferedWriter out = new BufferedWriter(new FileWriter("sec_glocal-global.aligns"));
+		BufferedWriter out = null;
+		out = new BufferedWriter(new FileWriter("sec_glocal-global.aligns"));
 		HashMap<String,char[]> seqlib = SeqLibrary.read("../GoBi_old/referenz/domains.seqlib");
 		HashMap<String,char[]> sec_seqlib = SeqLibrary.read("secstruct.seqlib");
 		ArrayList<String[]> pairs = PairReader.parse("410List.unique_pairs");
@@ -71,17 +72,17 @@ public class aligntest {
 		PDBEntry q = pdbreader.readFromFolderById(pdb2);
 		Transformation tr1 = superpos.calculateTransformation(align1, p, q);
 		Transformation tr2 = superpos.calculateTransformation(align2, p, q);
-		System.out.println("TMScore für Muster: " + tr1.getTmscore());
-		System.out.println("TMScore für Sequence: " + tr2.getTmscore());
-		System.out.println("RMSD für Muster: " + tr1.getRmsd());
-		System.out.println("RMSD für Sequence: " + tr2.getRmsd());
+		System.out.println("TMScore fï¿½r Muster: " + tr1.getTmscore());
+		System.out.println("TMScore fï¿½r Sequence: " + tr2.getTmscore());
+		System.out.println("RMSD fï¿½r Muster: " + tr1.getRmsd());
+		System.out.println("RMSD fï¿½r Sequence: " + tr2.getRmsd());
 	
 //		out.append(tr1.getRmsd()+"\t"+tr2.getRmsd()+"\n");
 		
 //		out.append(align1.toStringVerbose()+"\n");
 //		out.append(align2.toStringVerbose()+"\n\n");
 //		}
-//		out.close();
+		out.close();
 	
 //		PDBReduce reduce = new PDBReduce();
 //		PDBEntry[] result1 = PDBReduce.reducePDB(align1, p, tr1.transform(q));

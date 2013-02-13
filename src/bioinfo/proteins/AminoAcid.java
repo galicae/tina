@@ -16,11 +16,16 @@ import java.io.Serializable;
 public class AminoAcid implements Serializable{
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6808776190281449279L;
+	
+	
+	/**
 	 * enum with all the AminoAcidNames. Also contains methods to convert from
 	 * one- to three-letter codes.
 	 * @author gobi_4
-	 */
-	
+	 */	
 	
 	private final AminoAcidName name;
 	private int resIndex;
@@ -181,8 +186,5 @@ public class AminoAcid implements Serializable{
 		}
 		return result;
 	}
-	
-	
-	
 	
 }

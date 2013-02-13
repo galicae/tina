@@ -1,6 +1,9 @@
-/**
- * 
- */
+/******************************************************************************
+ * bioinfo.proteins.structure.SimpleCoordMapper                               *
+ *                                                                            *
+ * This file is best read at line width 80 and tab width 4.                   *
+ *                                                                   huberste *
+ ******************************************************************************/
 package bioinfo.proteins.structure;
 
 import java.util.LinkedList;
@@ -12,11 +15,19 @@ import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;
 
 /**
+ * SimpleCoordMapper provides a static function to map an PDBEntry onto an
+ * alignment.
  * @author huberste
- * 
+ * @lastchange 2013-02-13
  */
 public class SimpleCoordMapper {
 
+	/**
+	 * maps an PDBEntry onto an SequenceAlignment
+	 * @param arg1 a SequenceAlignment with row[0] the target and row[1] the template.
+	 * @param arg2 the PDBEntry for the template
+	 * @return the PDBEntry for the target
+	 */
 	public static PDBEntry map(SequenceAlignment arg1, PDBEntry arg2) {
 
 		int[][] map = arg1.calcMap();
@@ -25,10 +36,12 @@ public class SimpleCoordMapper {
 		for (int i = 0; i < map[0].length; i++) {
 			if (map[0][i] != -1) { // this aminoacid is aligned!
 				// AminoAcid temp = arg2.getAminoAcid(map[0][i]);
-				// TODO debugging: is the PDBEntry given at all?
+				// debugging: is the PDBEntry given at all?
 				if (arg2 == null) {
-					System.err
-							.println("debugging: The given PDBEntry is null!");
+//					System.err.println(
+//						"debugging: The given PDBEntry is null!"
+//					);
+					throw new NullPointerException();
 				}
 				if (arg2.getAminoAcid(map[0][i]) != null) {
 					// DONE: only map correct CA or Backbone or fitting AAs
@@ -56,7 +69,7 @@ public class SimpleCoordMapper {
 					if (tempatom != null) {
 						tempAtoms.add(tempatom);
 					}
-
+					
 					AminoAcid temp = new AminoAcid(arg2.getAminoAcid(map[0][i])
 							.getName(), arg2.getAminoAcid(map[0][i])
 							.getResIndex(), tempAtoms.toArray(new Atom[0]));

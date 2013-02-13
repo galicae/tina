@@ -34,6 +34,24 @@ public class PDBFileReader {
 	}
 	
 	/**
+	 * Reads an PDBEntry with the given chainID from a pdbFile
+	 * @author huberste
+	 * @param filename representing pdb file to read in format: relpath/AAAA.pdb
+	 * @param chainID the chain that shall be read
+	 * @return
+	 */
+	public PDBEntry readPDBFromFile(String filename, char chainID){
+		BufferedReader br = null;
+		try{
+			 br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		String id = filename.split("/")[filename.split("/").length-1].split("\\.")[0];
+		return parseEntry(br, id, chainID);
+	}
+	
+	/**
 	 * 
 	 * @param filename representing pdb file to read in format: relpath/aaaaA00.pdb
 	 * @return
@@ -116,15 +134,15 @@ public class PDBFileReader {
 			return null;
 		}
 		// huberste: PDBFiles normally are named without the ChainID!
-		//String filename = folder+id.substring(0, 4).toUpperCase()+".pdb"; 
-		//String filename = folder+id.substring(0, 4).toUpperCase()+".pdb"; 
+//		String filename = folder+id.substring(0, 4).toUpperCase()+".pdb"; 
+//		String filename = folder+id.substring(0, 4).toUpperCase()+".pdb"; 
 		// seitza: but our f*cking files are ^^ searched the mistake in my code a whole night
 		// galicae: I had the same problem with my clusters - I wrote the parseRealEntry for 
 		//			this exact reason!
 		String filename = folder+id+".pdb";
 		BufferedReader br = null;
 		try{
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(folder+id+".pdb")));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
 		}catch(Exception e){
 			return null;
 		}
@@ -236,6 +254,17 @@ public class PDBFileReader {
 	}
 	
 	/**
+	 * calls parseEntry with the chainID added to pdbID.
+	 * @param br
+	 * @param pdbId
+	 * @param chainID
+	 * @return
+	 */
+	private PDBEntry parseEntry(BufferedReader br, String pdbId, char chainID) {
+		return parseEntry(br, pdbId+chainID+"00");
+	}
+	
+	/**
 	 * 
 	 * @param br BufferedReader to read from
 	 * @param pdbId pdbId of format aaaaA00
@@ -309,11 +338,18 @@ public class PDBFileReader {
 			}
 			br.close();
 		}catch(Exception e){
+			System.err.println(e.getMessage());
 			e.printStackTrace();
 		}
 		return new PDBEntry(pdbId, aminoacids);
 	}
 
+	/**
+	 * 
+	 * @param br
+	 * @param pdbId
+	 * @return
+	 */
 	private PDBEntry parseRealEntry(BufferedReader br, String pdbId){			
 		List<AminoAcid> aminoacids = new ArrayList<AminoAcid>();
 		String newPdbId = pdbId;
@@ -391,8 +427,5 @@ public class PDBFileReader {
 		}
 		return new PDBEntry(newPdbId, aminoacids);
 	}
+
 }
-
-
-//private PDBEntry parseEntry(BufferedReader br, String pdbId){
-	
