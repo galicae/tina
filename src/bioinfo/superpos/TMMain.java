@@ -5,15 +5,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import bioinfo.alignment.Alignment;
-import bioinfo.alignment.SequenceAlignment;
-//import bioinfo.proteins.Atom;
 import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;
+
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleFactory2D;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
 
+/**
+ * 
+ * @author papadopoulos
+ */
 public class TMMain {
 
 	/**
@@ -41,7 +44,7 @@ public class TMMain {
 		writeToFile("TM" + qFile, pdbs[1]);
 
 		// actual calculation of TM score and corresponding rotation matrix
-		String[] bla = {"TM" + pFile, " TM" + qFile};
+//		String[] bla = {"TM" + pFile, " TM" + qFile};
 		double[][] tmResult = TMOriginal.calculateTmScore("TM" + pFile, " TM" + qFile, 5);
 
 		// remember that rmResult is [5][4], and that [i][0] is empty
@@ -160,4 +163,5 @@ public class TMMain {
 		DoubleMatrix2D R = factory.make(doubleR);
 		return R;
 	}
+
 }

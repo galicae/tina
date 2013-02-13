@@ -229,7 +229,7 @@ public class GlobalAngleAligner extends Gotoh {
 //		PDBEntry q = pdbreader.readFromFolderById("1wq2B00");
 //		Transformation tr1 = superpos.calculateTransformation(align1, p, q);
 //		Transformation tr2 = superpos.calculateTransformation(align2, p, q);
-//		System.out.println("TMScore für Angles: " + tr1.getTmscore());
-//		System.out.println("TMScore für Sequence: " + tr2.getTmscore());
+//		System.out.println("TMScore fÃ¼r Angles: " + tr1.getTmscore());
+//		System.out.println("TMScore fÃ¼r Sequence: " + tr2.getTmscore());
 //	}
 }
