@@ -435,10 +435,6 @@ public class PDBFileReader {
 		return new PDBEntry(newPdbId, aminoacids);
 	}
 
-<<<<<<< HEAD
-
-
-
 	/**
 	 * 
 	 * @param br BufferedReader to read from
@@ -594,6 +590,3 @@ public class PDBFileReader {
 	}
 	
 }
-=======
-}
->>>>>>> branch 'master' of https://github.com/galicae/tina.git
