@@ -10,14 +10,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import bioinfo.energy.potential.preparation.voronoi.VoroPPWrap;
-import bioinfo.energy.potential.preparation.voronoi.VoronoiData;
+import bioinfo.energy.potential.voroEval.VoroEvalDataPoint;
+import bioinfo.energy.potential.voroEval.VoroEvalTree;
+import bioinfo.energy.potential.voronoi.VoroPPWrap;
+import bioinfo.energy.potential.voronoi.VoronoiData;
 import bioinfo.proteins.AminoAcidName;
 import bioinfo.proteins.DSSPEntry;
 import bioinfo.proteins.DSSPFileReader;
@@ -50,7 +53,7 @@ public class DSSPSolventPotential extends AVoroPotential{
 	private String vorobin;
 	private String tmpdir;
 	
-	public DSSPSolventPotential(String vorobin, String dsspFolder, List<String> dsspIds){
+	public DSSPSolventPotential(String vorobin, String dsspFolder){
 		super(vorobin);
 		this.potential = new double[26][26][7];
 		this.dsspFolder = dsspFolder;
@@ -59,11 +62,9 @@ public class DSSPSolventPotential extends AVoroPotential{
 		this.gridHullExtend = 2.0d;
 		this.gridDensity = 3.0d;
 		this.gridClash = 4.0d;
-		
-		calculateFromDATA(dsspIds);
 	}
 	
-	public DSSPSolventPotential(String vorobin, String tmpdir, String dsspFolder, List<String> dsspIds){
+	public DSSPSolventPotential(String vorobin, String tmpdir, String dsspFolder){
 		super(vorobin,tmpdir);
 		this.potential = new double[26][26][7];
 		this.dsspFolder = dsspFolder;
@@ -72,12 +73,10 @@ public class DSSPSolventPotential extends AVoroPotential{
 		this.gridHullExtend = 2.0d;
 		this.gridDensity = 3.0d;
 		this.gridClash = 4.0d;
-		
-		calculateFromDATA(dsspIds);
 
 	}
 	
-	public DSSPSolventPotential(String vorobin, String dsspFolder, List<String> dsspIds, double minContact, double gridHullExtend, double gridDensity, double gridClash){
+	public DSSPSolventPotential(String vorobin, String dsspFolder, double minContact, double gridHullExtend, double gridDensity, double gridClash){
 		super(vorobin);
 		this.potential = new double[26][26][7];
 		this.dsspFolder = dsspFolder;
@@ -86,11 +85,9 @@ public class DSSPSolventPotential extends AVoroPotential{
 		this.gridHullExtend = gridHullExtend;
 		this.gridDensity = gridDensity;
 		this.gridClash = gridClash;
-		
-		calculateFromDATA(dsspIds);
 	}
 	
-	public DSSPSolventPotential(String vorobin, String tmpdir, String dsspFolder, List<String> dsspIds, double minContact, double gridHullExtend, double gridDensity, double gridClash){
+	public DSSPSolventPotential(String vorobin, String tmpdir, String dsspFolder, double minContact, double gridHullExtend, double gridDensity, double gridClash){
 		super(vorobin, tmpdir);
 		this.potential = new double[26][26][7];
 		this.dsspFolder = dsspFolder;
@@ -99,36 +96,269 @@ public class DSSPSolventPotential extends AVoroPotential{
 		this.gridHullExtend = gridHullExtend;
 		this.gridDensity = gridDensity;
 		this.gridClash = gridClash;
-		
-		calculateFromDATA(dsspIds);
 
 	}
 	
-	public DSSPSolventPotential(String filename,String vorobin, String tmpdir){
-		super(vorobin, tmpdir);
-		this.potential = new double[26][26][7];
-		this.dsspFolder = null;
+//	public DSSPSolventPotential(String filename,String vorobin, String tmpdir){
+//		super(vorobin, tmpdir);
+//		this.potential = new double[26][26][7];
+//		this.dsspFolder = null;
+//		
+//		this.minContact = 1.0d;
+//		this.gridHullExtend = 2.0d;
+//		this.gridDensity = 3.0d;
+//		this.gridClash = 4.0d;
+//		
+//		this.readFromFile(filename);
+//	}
+//	
+//	public DSSPSolventPotential(String filename,String vorobin){
+//		super(vorobin);
+//		this.potential = new double[26][26][7];
+//		this.dsspFolder = null;
+//		
+//		this.minContact = 1.0d;
+//		this.gridHullExtend = 2.0d;
+//		this.gridDensity = 3.0d;
+//		this.gridClash = 4.0d;
+//		
+//		this.readFromFile(filename);
+//	}
+	
+	public void calculateEval(List<String> dsspIds, VoroEvalTree tree) {
+		DSSPEntry dssp = null;
+		DSSPFileReader reader = new DSSPFileReader(dsspFolder);
+		VoronoiData data = null;
+		Set<Integer> solventIds = null;
+		Set<Integer> pepIds = null;
+		int[] acc;
+		HashMap<Integer, AminoAcidName> point;
+		HashMap<Integer, HashMap<Integer,Double>> faces;
+		HashMap<Integer,Double> neighbors;
+		boolean surfaceFlag = false;
+		List<Integer> surfaceIds = new ArrayList<Integer>();
+		double surfaceArea = 0.0d;
+		AminoAcidName[] names;
+		//int[] index;
+		HashMap<Integer, Double> surfaces;
+				
+		for(String dsspId: dsspIds){
+						
+			//read from files, can be changed to db later!
+			dssp = reader.readFromFolderById(dsspId);
+			names = dssp.getNames();
+			//index = dssp.getResIndex();
+			surfaces = new HashMap<Integer,Double>();			
 		
-		this.minContact = 1.0d;
-		this.gridHullExtend = 2.0d;
-		this.gridDensity = 3.0d;
-		this.gridClash = 4.0d;
+			data = this.prepareWithGrid(dssp, gridHullExtend, gridDensity, gridClash, minContact);
+			acc = dssp.getAccesability();
+			pepIds = data.getPepIds();
+			solventIds = data.getOuterGridIds();
+			faces = data.getFaces();
+			point = data.getAminos();
+			
+			
+			//System.out.println("\tdecomp done ... "+faces.size()+" faces");
+			
+			
+			
+			for(int id1: pepIds){
+				if(faces.get(id1) == null){
+					continue;
+				}
+				neighbors = faces.get(id1);
+				surfaceFlag = false;
+				surfaceArea = 0.0d;
+				for(int id2 : neighbors.keySet()){
+					if(solventIds.contains(id2) && neighbors.get(id2) > minContact){
+						surfaceArea += neighbors.get(id2);
+						surfaceFlag = true;
+					}
+				}
+				if(surfaceFlag){
+					surfaces.put(id1,surfaceArea);
+					surfaceIds.add(id1);
+				}
+			}
+			
+			for(int i = 0; i != pepIds.size(); i++){
+				if(surfaces.containsKey(i)){
+					tree.insertData(new VoroEvalDataPoint(names[i], dsspId, i, acc[i], surfaces.get(i)));
+				}else{
+					tree.insertData(new VoroEvalDataPoint(names[i], dsspId, i, acc[i], 0.0));
+				}
+			}
+		}
 		
-		this.readFromFile(filename);
 	}
 	
-	public DSSPSolventPotential(String filename,String vorobin){
-		super(vorobin);
-		this.potential = new double[26][26][7];
-		this.dsspFolder = null;
+	public void calculateEval(List<String> dsspIds, String outLoc) {
+		DSSPEntry dssp = null;
+		DSSPFileReader reader = new DSSPFileReader(dsspFolder);
+		VoronoiData data = null;
+		Set<Integer> solventIds = null;
+		Set<Integer> pepIds = null;
+		int[] acc;
+		HashMap<Integer, AminoAcidName> point;
+		HashMap<Integer, HashMap<Integer,Double>> faces;
+		HashMap<Integer,Double> neighbors;
+		boolean surfaceFlag = false;
+		List<Integer> surfaceIds = new ArrayList<Integer>();
+		double surfaceArea = 0.0d;
+		AminoAcidName[] names;
+		//int[] index;
+		HashMap<Integer, Double> surfaces;
+		BufferedWriter bw = null;
+				
+		for(String dsspId: dsspIds){
+			
+			
+			try {
+				bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outLoc+dsspId+".res")));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+						
+			//read from files, can be changed to db later!
+			dssp = reader.readFromFolderById(dsspId);
+			names = dssp.getNames();
+			//index = dssp.getResIndex();
+			surfaces = new HashMap<Integer,Double>();			
 		
-		this.minContact = 1.0d;
-		this.gridHullExtend = 2.0d;
-		this.gridDensity = 3.0d;
-		this.gridClash = 4.0d;
+			data = this.prepareWithGrid(dssp, gridHullExtend, gridDensity, gridClash, minContact);
+			acc = dssp.getAccesability();
+			pepIds = data.getPepIds();
+			solventIds = data.getOuterGridIds();
+			faces = data.getFaces();
+			point = data.getAminos();
+			
+			
+			//System.out.println("\tdecomp done ... "+faces.size()+" faces");
+			
+			
+			
+			for(int id1: pepIds){
+				if(faces.get(id1) == null){
+					continue;
+				}
+				neighbors = faces.get(id1);
+				surfaceFlag = false;
+				surfaceArea = 0.0d;
+				for(int id2 : neighbors.keySet()){
+					if(solventIds.contains(id2) && neighbors.get(id2) > minContact){
+						surfaceArea += neighbors.get(id2);
+						surfaceFlag = true;
+					}
+				}
+				if(surfaceFlag){
+					surfaces.put(id1,surfaceArea);
+					surfaceIds.add(id1);
+				}
+			}
+			try{
+				for(int i = 0; i != pepIds.size(); i++){
+					if(surfaces.containsKey(i)){
+						bw.append(names[i]+"\t"+i+"\t"+acc[i]+"\t"+surfaces.get(i)+"\t"+Math.abs(acc[i]-surfaces.get(i))+"\n");
+					}else{
+						bw.append(names[i]+"\t"+i+"\t"+acc[i]+"\t"+0.0+"\t"+Math.abs(acc[i])+"\n");
+					}
+				}
+				bw.flush();
+				bw.close();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
 		
-		this.readFromFile(filename);
 	}
+	
+	public void calculateEval(List<String> dsspIds, VoroEvalTree tree, String outLoc) {
+		DSSPEntry dssp = null;
+		DSSPFileReader reader = new DSSPFileReader(dsspFolder);
+		VoronoiData data = null;
+		Set<Integer> solventIds = null;
+		Set<Integer> pepIds = null;
+		int[] acc;
+		HashMap<Integer, AminoAcidName> point;
+		HashMap<Integer, HashMap<Integer,Double>> faces;
+		HashMap<Integer,Double> neighbors;
+		boolean surfaceFlag = false;
+		List<Integer> surfaceIds = new ArrayList<Integer>();
+		int accessability = 0;
+		double surfaceArea = 0.0d;
+		AminoAcidName[] names;
+		//int[] index;
+		HashMap<Integer, Double> surfaces;
+		BufferedWriter bw = null;
+		
+		
+		for(String dsspId: dsspIds){
+			
+			
+			try {
+				bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outLoc+dsspId+".res")));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+						
+			//read from files, can be changed to db later!
+			dssp = reader.readFromFolderById(dsspId);
+			names = dssp.getNames();
+			//index = dssp.getResIndex();
+			surfaces = new HashMap<Integer,Double>();			
+		
+			data = this.prepareWithGrid(dssp, gridHullExtend, gridDensity, gridClash, minContact);
+			acc = dssp.getAccesability();
+			pepIds = data.getPepIds();
+			solventIds = data.getOuterGridIds();
+			faces = data.getFaces();
+			point = data.getAminos();
+			
+			
+			//System.out.println("\tdecomp done ... "+faces.size()+" faces");
+			
+			
+			
+			for(int id1: pepIds){
+				if(faces.get(id1) == null){
+					continue;
+				}
+				neighbors = faces.get(id1);
+				surfaceFlag = false;
+				surfaceArea = 0.0d;
+				for(int id2 : neighbors.keySet()){
+					if(solventIds.contains(id2) && neighbors.get(id2) > minContact){
+						surfaceArea += neighbors.get(id2);
+						surfaceFlag = true;
+					}
+				}
+				if(surfaceFlag){
+					accessability = acc[id1];
+					surfaces.put(id1,surfaceArea);
+					surfaceIds.add(id1);
+				}
+			}
+			
+			try{
+				for(int i = 0; i != pepIds.size(); i++){
+					if(surfaces.containsKey(i)){
+						tree.insertData(new VoroEvalDataPoint(names[i], dsspId, i, acc[i], surfaces.get(i)));
+						bw.append(names[i]+"\t"+i+"\t"+acc[i]+"\t"+surfaces.get(i)+"\t"+Math.abs(acc[i]-surfaces.get(i))+"\t"+dsspId+"\n");
+	
+					}else{
+						tree.insertData(new VoroEvalDataPoint(names[i], dsspId, i, acc[i], 0.0));
+						bw.append(names[i]+"\t"+i+"\t"+acc[i]+"\t"+0.0+"\t"+Math.abs(acc[i])+"\t"+dsspId+"\n");
+					}
+				}
+				bw.flush();
+				bw.close();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
 
 	@Override
 	public void calculateFromDATA(List<String> dsspIds) {
@@ -178,7 +408,7 @@ public class DSSPSolventPotential extends AVoroPotential{
 			pepIds = data.getPepIds();
 			solventIds = data.getOuterGridIds();
 			faces = data.getFaces();
-			point = data.getPoints();
+			point = data.getAminos();
 			
 			
 			System.out.println("\tdecomp done ... "+faces.size()+" faces");
@@ -232,9 +462,9 @@ public class DSSPSolventPotential extends AVoroPotential{
 			for(int i = 0; i != pepIds.size(); i++){
 				try{
 					if(surfaces.containsKey(i)){
-						bw.append(names[i]+"\t"+index[i]+"\t"+acc[i]+"\t"+surfaces.get(i)+"\t"+(surfaces.get(i)-acc[i])+"\n");
+						bw.append(names[i]+"\t"+index[i]+"\t"+acc[i]+"\t"+surfaces.get(i)+"\t"+(surfaces.get(i)-acc[i])+"\t"+"S"+"\n");
 					}else{
-						bw.append(names[i]+"\t"+index[i]+"\t"+acc[i]+"\t"+0+"\t"+((-1)*acc[i])+"\n");	
+						bw.append(names[i]+"\t"+index[i]+"\t"+acc[i]+"\t"+0+"\t"+((-1)*acc[i])+"\t"+"I"+"\n");	
 					}
 				}catch(Exception e){
 					e.printStackTrace();
@@ -324,15 +554,21 @@ public class DSSPSolventPotential extends AVoroPotential{
 		String gridExtend = args[4];
 		String gridDensity = args[5];
 		String gridClash = args[6];
+		String outLocation = "/Users/andreseitz/Desktop/";
 		
 		File file = new File(dsspLoc);
 		for(File f : file.listFiles()){
 			dsspIds.add(f.getName().substring(0, 7));
 		}
+//		dsspIds.add("1gaiA00");
 		
-		DSSPSolventPotential pot = new DSSPSolventPotential(vorobin, dsspLoc, dsspIds ,Double.parseDouble(minContact), Double.parseDouble(gridExtend), Double.parseDouble(gridDensity), Double.parseDouble(gridClash));
-		pot.writeToFile(outfile);
-		System.out.println("done");
+		DSSPSolventPotential pot = new DSSPSolventPotential(vorobin, dsspLoc,Double.parseDouble(minContact), Double.parseDouble(gridExtend), Double.parseDouble(gridDensity), Double.parseDouble(gridClash));
+		VoroEvalTree eval = new VoroEvalTree(Double.parseDouble(minContact));
+		pot.calculateEval(dsspIds, eval, outLocation);
+		eval.printTree();
+		
+//		pot.writeToFile(outfile);
+//		System.out.println("done");
 		
 //		GridSolvensPotential pot = new GridSolvensPotential(args[2],args[1],VoroPrepType.CC);
 //		PDBFileReader reader = new PDBFileReader(pdbLoc);

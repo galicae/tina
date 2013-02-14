@@ -1,5 +1,7 @@
 /******************************************************************************
- * TreeAlignment is part of the problem solution of RDP.                      *
+ * huberdp.TreeAlignment.java                                                 *
+ * Contains the class TreeAlignment which is part of the problem solution of  *
+ * RDP.                                                                       *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -11,11 +13,11 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.proteins.PDBEntry;
 
 /**
- * This class is the solution of an RDPProblem.
+ * TreeAlignment represents the TreeAlignment structure of RDP.
  * @author huberste
  * @lastchange 2013-02-12
  */
-public class TreeAlignment extends PartialAlignment {
+public class TreeAlignment extends RDPProblem {
 	
 	/**
 	 * Constructs a new TreeAlignment
@@ -28,27 +30,37 @@ public class TreeAlignment extends PartialAlignment {
 	 * @param templateEnd
 	 * @param targetStart
 	 * @param targetEnd
-	 * @param paTemStart
-	 * @param paTemEnd
-	 * @param paTarStart
-	 * @param paTarEnd
 	 */
 	public TreeAlignment(Sequence templateSequence, PDBEntry templateStructure,
 			Sequence targetSequence, PDBEntry targetStructure,
 			SequenceAlignment partialAlignment,
-			int templateStart, int templateEnd, int targetStart, int targetEnd,
-			int paTemStart, int paTemEnd, int paTarStart, int paTarEnd) {
+			int templateStart, int templateEnd, int targetStart, int targetEnd) {
 		super(templateSequence, templateStructure,
 				targetSequence, targetStructure,
 				partialAlignment,
-				templateStart, templateEnd, targetStart, targetEnd,
-				paTemStart, paTemEnd, paTarStart, paTarEnd);
+				templateStart, templateEnd, targetStart, targetEnd);
 	}
 	
+	public TreeAlignment(TreeAlignment ta) {
+		this(ta.templateSequence, ta.templateStructure,
+				ta.targetSequence, ta.targetStructure,
+				ta.alignment,
+				ta.templateStart, ta.templateEnd, ta.targetStart, ta.targetEnd);
+	}
+	
+	/**
+	 * 
+	 * @param pa
+	 */
 	public TreeAlignment(PartialAlignment pa) {
-		super(pa);
+		this(
+				pa.templateSequence, pa.templateStructure,
+				pa.targetSequence, pa.targetStructure,
+				pa.alignment,
+				pa.templateStart, pa.templateEnd,
+				pa.targetStart, pa.targetEnd);
 	}
-	
+
 	/**
 	 * toString() method. mostly for debugging.
 	 */
@@ -67,7 +79,7 @@ public class TreeAlignment extends PartialAlignment {
 	public static TreeAlignment merge(TreeAlignment ta1, TreeAlignment ta2) {
 		// TODO
 		
-		return new TreeAlignment(HubeRDP.mergePaA(ta1, ta2.alignment));
+		return new TreeAlignment(HubeRDP.mergePaT(ta1, ta2));
 /*
 		SequenceAlignment alignment = null;
 		 

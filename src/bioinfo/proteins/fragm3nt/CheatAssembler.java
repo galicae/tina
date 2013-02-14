@@ -68,6 +68,9 @@ public class CheatAssembler extends Assembler {
 		// that provides the minimum RMSD from the native structure
 		double maxClusterSeqScore = Integer.MIN_VALUE; // we also want to
 		// capture the fragment that would be selected by the "normal" method
+		
+		double minClusterSeqScore = Integer.MAX_VALUE; // we also want to
+		// capture the fragment that would be selected by the "normal" method
 		double curClusterSeqScore = 0; // temporary variable for the sequence
 										// score
 		double actualClusterSeqScore = 0; // this stores the value of the
@@ -76,6 +79,8 @@ public class CheatAssembler extends Assembler {
 								// up
 		double maxScore = 0; // the cumulative score of the fragments the
 		// method would normally pick up
+		double minScore = 0;
+		
 		double curClusterRMScore = 0; // temporary variable for the RMSD score
 		// between a cluster and the predicted prefix
 
@@ -89,6 +94,7 @@ public class CheatAssembler extends Assembler {
 
 			minClusterRMScore = Double.MAX_VALUE;
 			maxClusterSeqScore = Integer.MIN_VALUE;
+			minClusterSeqScore = Integer.MAX_VALUE;
 
 			// ...go through all clusters...
 			for (int i = 0; i < size; i++) {
@@ -123,6 +129,10 @@ public class CheatAssembler extends Assembler {
 				if (maxClusterSeqScore < curClusterSeqScore) {
 					maxClusterSeqScore = curClusterSeqScore;
 				}
+				if (minClusterSeqScore > curClusterSeqScore) {
+					minClusterSeqScore = curClusterSeqScore;
+				}
+				
 				// save minimum RMSD of the round and the sequence score
 				// of the same fragment
 				if (minClusterRMScore > curClusterRMScore) {
@@ -135,7 +145,7 @@ public class CheatAssembler extends Assembler {
 			// increment the cumulative scores
 			actualScore += actualClusterSeqScore;
 			maxScore += maxClusterSeqScore;
-
+			minScore += minClusterSeqScore;
 			// and save the best-scoring fragment
 			resultFragment = tempResult.clone();
 			// update index or you get an infinite loop
@@ -170,6 +180,9 @@ public class CheatAssembler extends Assembler {
 			if (maxClusterSeqScore < curClusterSeqScore) {
 				maxClusterSeqScore = curClusterSeqScore;
 			}
+			if (minClusterSeqScore < curClusterSeqScore) {
+				minClusterSeqScore = curClusterSeqScore;
+			}
 			if (minClusterRMScore > curClusterRMScore) {
 				minClusterRMScore = curClusterRMScore;
 				tempResult = temp.clone();
@@ -178,14 +191,14 @@ public class CheatAssembler extends Assembler {
 		}
 		actualScore += actualClusterSeqScore;
 		maxScore += maxClusterSeqScore;
+		minScore += minClusterSeqScore;
 		resultFragment = tempResult.clone();
 		index = resultFragment.getAllResidues().length;
 
 		// print results. This is not really clean, but I see no other way
 		// that wouldn't involve major restructuring of ProteinFragment
 		// and there's no need to do that, the class is already overblown
-		System.out.println("actual score: " + actualScore + " max score: "
-				+ maxScore);
+		System.out.print(actualScore + "\t" + maxScore + "\t" + minScore + "\t");
 		resultFragment.setSequence(query);
 		return resultFragment;
 	}

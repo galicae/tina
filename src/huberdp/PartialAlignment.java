@@ -1,5 +1,7 @@
 /******************************************************************************
- * PartialAlignment is the definition of an oracle's segment.                 *
+ * huberdp.PartialAlignment.java                                              *
+ * Contains the PartialAlignment class which is the definition of an oracle's *
+ * partial alignment.                                                                   *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -13,9 +15,10 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.proteins.PDBEntry;
 
 /**
+ * PartialAlignment is an implementation of the Partial Alignment needed for the
+ * RDP data structure.
  * @author huberste
- * @lastchange 2013-02-11
- *
+ * @lastchange 2013-02-14
  */
 public class PartialAlignment extends RDPProblem {
 
@@ -140,3 +143,9 @@ public class PartialAlignment extends RDPProblem {
 	}
 	
 }
+
+/******************************************************************************
+ * "A question that sometimes drives me hazy:                                 *
+ *  Am I or are the others crazy?"                                            *
+ *     - Albert Einstein (1979 - 1966)                                        *
+ ******************************************************************************/

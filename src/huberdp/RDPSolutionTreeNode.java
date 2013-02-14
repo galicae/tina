@@ -1,5 +1,8 @@
 /******************************************************************************
- * RDPSolutionTreeNode is part of the data structure of RDP's solution tree.  *
+ * huberdp.RDPSolutionTreeNode.java                                           *
+ * Contains the abstract class RDPSolutionTreeNode which is part of the data  *
+ * structure of RDP's solution tree.                                          *
+ * It needs to be inherited by AND and OR nodes.                              *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -9,6 +12,8 @@ package huberdp;
 import java.util.LinkedList;
 
 /**
+ * RDPSolutionTreeNode is the abstract class that needs to be extended by AND
+ * and OR nodes.
  * @author huberste
  * @lastchange 2013-02-11
  */

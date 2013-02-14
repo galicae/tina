@@ -1,10 +1,11 @@
 /******************************************************************************
- * RDPSolutionTreeOrNode is part of the data structure of RDP's solution      *
- * tree.                                                                      *
+ * huberdp.RDPSolutionTreeAndNode.java                                        *
+ * Contains the class RDPSolutionTreeAndNode which is part of the tree data   *
+ * structure of RDP's solution tree.                                          *
  *                                                                            *
- * An And node of a RDPSolutionTree represents a solution to the supbroblem   *
- * that the nodes father depicts.                                             * 
- * An Or node of a RDPSolutionTree represents a subproblem to be solved.      *
+ * An AND node of a RDPSolutionTree represents a solution to the supbroblem   *
+ * that the node's father depicts.                                            * 
+ * An OR node of a RDPSolutionTree represents a (sub-)problem to be solved.   *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -12,9 +13,10 @@
 package huberdp;
 
 /**
+ * RDPSolutionTreeAndNode represents a solution to the supbroblem that the
+ * node's father depicts.
  * @author huberste
- * @lastchange 2013-02-11
- *
+ * @lastchange 2013-02-12
  */
 public class RDPSolutionTreeAndNode extends RDPSolutionTreeNode {
 

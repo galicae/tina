@@ -1,5 +1,7 @@
 /******************************************************************************
- * RDPSolutionTree is one part of the the data structure of RDP.              *
+ * huberdp.RDPSolutionTree.java                                               *
+ * Contains the class RDPSolutionTree which is an implementation of the tree  *
+ * data structure of RDP.                                                     *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -7,9 +9,9 @@
 package huberdp;
 
 /**
+ * 
  * @author huberste
  * @lastchange 2013-01-17
- *
  */
 public class RDPSolutionTree {
 	
@@ -20,7 +22,7 @@ public class RDPSolutionTree {
 	 * @param problem
 	 */
 	public RDPSolutionTree(RDPProblem problem) {
-		root = new RDPSolutionTreeOrNode(null, problem);
+		root = new RDPSolutionTreeOrNode(null, problem, Double.POSITIVE_INFINITY);
 	}
 	
 	/**

@@ -33,10 +33,12 @@ public class Fr4gmentTest {
 		try {
 			BufferedWriter wr = new BufferedWriter(new FileWriter(
 					"famTestResults"));
+			wr.write("index\tpdbId\trmsd\tlength\n");
 			for (PDBEntry pdb : fileList) {
+				System.out.print(fileList.indexOf(pdb) + "\t");
 				CheatAssembler ass = new CheatAssembler(fragLength, pdb);
 				BufferedWriter wr2 = new BufferedWriter(new FileWriter(
-						"famTest/" + pdb.getID() + ".pdb"));
+						"famTest/" + pdb.getID() + pdb.getChainID() + pdb.getChainIDNum() +  ".pdb"));
 				query = "";
 				for (int i = 0; i < pdb.length(); i++) {
 					query += pdb.getAminoAcid(i).getName().getOneLetterCode();
@@ -51,8 +53,9 @@ public class Fr4gmentTest {
 						continue;
 					Transformation t = Kabsch
 							.calculateTransformation(kabschFood);
-					result.setCoordinates(t.transform(kabschFood[0]));
-					wr.write(fileList.indexOf(pdb) + "\t" + pdb.getID() + "\t" + Double.toString(t.getRmsd()) + "\n");
+					kabschFood[1] = t.transform(kabschFood[1]);
+//					result.setCoordinates(t.transform(kabschFood[0]));
+					wr.write(fileList.indexOf(pdb) + "\t" + pdb.getID() + pdb.getChainID() + pdb.getChainIDNum() + "\t" + Double.toString(t.getRmsd()) + "\t" + pdb.length() + "\n");
 					System.out.println(t.getRmsd());
 					sum += t.getRmsd();
 
@@ -68,6 +71,7 @@ public class Fr4gmentTest {
 					wr2.write("ENDMDL\n");
 					wr2.close();
 				} catch (Exception e) {
+					e.printStackTrace();
 					continue;
 				}
 			}

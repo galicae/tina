@@ -15,9 +15,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import bioinfo.energy.potential.preparation.voronoi.VoroPPWrap;
-import bioinfo.energy.potential.preparation.voronoi.VoroPrepType;
-import bioinfo.energy.potential.preparation.voronoi.VoronoiData;
+import bioinfo.energy.potential.voronoi.VoroPPWrap;
+import bioinfo.energy.potential.voronoi.VoroPrepType;
+import bioinfo.energy.potential.voronoi.VoronoiData;
 import bioinfo.proteins.AminoAcidName;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
@@ -161,7 +161,7 @@ public class GridSolventPotential extends AVoroPotential{
 			pepIds = data.getPepIds();
 			solventIds = data.getOuterGridIds();
 			faces = data.getFaces();
-			amino = data.getPoints();
+			amino = data.getAminos();
 			
 			System.out.println("\tdecomp done ... "+faces.size()+" faces");
 			
@@ -277,7 +277,7 @@ public class GridSolventPotential extends AVoroPotential{
 		
 		voro.decomposite(data);
 		faces = data.getFaces();
-		amino = data.getPoints();
+		amino = data.getAminos();
 		
 		System.out.println("\tdecomp done ... "+faces.size()+" faces");
 		

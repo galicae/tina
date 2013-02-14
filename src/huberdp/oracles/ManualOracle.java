@@ -1,5 +1,7 @@
 /******************************************************************************
- * ManualOracle is an oracle for the RDP featuring manual input.              *
+ * huberdp.oracles.ManualOracle.java                                          *
+ * Contains the class ManualOracle which is an oracle for the RDP featuring   *
+ * manual input.                                                              *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -16,9 +18,9 @@ import bioinfo.alignment.SequenceAlignment;
 import huberdp.Oracle;
 
 /**
+ * ManualOracle is an Oracle for the HubeRDP which features manual input.
  * @author huberste
- * @lastchange 2013-02-11
- *
+ * @lastchange 2013-02-14
  */
 public class ManualOracle extends Oracle {
 
@@ -71,3 +73,9 @@ public class ManualOracle extends Oracle {
 	
 
 }
+
+/******************************************************************************
+ * "A question that sometimes drives me hazy:                                 *
+ *  Am I or are the others crazy?"                                            *
+ *     - Albert Einstein (1979 - 1966)                                        *
+ ******************************************************************************/

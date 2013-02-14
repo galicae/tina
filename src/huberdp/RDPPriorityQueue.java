@@ -1,5 +1,7 @@
 /******************************************************************************
- * RDPPriorityQueue is one part of the data structure of RDP                  *
+ * huberdp.RDPPriorityQueue.java                                              *
+ * Contains the Class RDPPriorityQueue which is a part of the data structure  *
+ * of RDP.                                                                    *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -9,9 +11,9 @@ package huberdp;
 import java.util.PriorityQueue;
 
 /**
+ * RDPPriorityQueue is an implementation of RDP's PriorityQueue.
  * @author huberste
- * @lastchange 2013-01-17
- *
+ * @lastchange 2013-02-14
  */
 public class RDPPriorityQueue {
 
@@ -61,3 +63,9 @@ public class RDPPriorityQueue {
 	}
 	
 }
+
+/******************************************************************************
+ * "A question that sometimes drives me hazy:                                 *
+ *  Am I or are the others crazy?"                                            *
+ *     - Albert Einstein (1979 - 1966)                                        *
+ ******************************************************************************/

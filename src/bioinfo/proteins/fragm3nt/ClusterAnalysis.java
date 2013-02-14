@@ -1,8 +1,10 @@
 package bioinfo.proteins.fragm3nt;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 
@@ -48,10 +50,10 @@ public class ClusterAnalysis {
 			e.printStackTrace();
 		}
 	}
-	
-//	public ClusterAnalysis(LinkedList<FragmentCluster> clusters) {
-//		
-//	}
+
+	// public ClusterAnalysis(LinkedList<FragmentCluster> clusters) {
+	//
+	// }
 
 	/**
 	 * this function takes care of the actual parsing of cluster files, as
@@ -122,8 +124,14 @@ public class ClusterAnalysis {
 		return this.clusters;
 	}
 
-	
-	public double calcClusterRMSD(FragmentCluster c) {
+	/**
+	 * calculates the mean of the RMS distances of all fragments in a cluster
+	 * 
+	 * @param c
+	 *            the cluster in question
+	 * @return the mean of the RMS distances of all fragments
+	 */
+	public double calcIntraClusterRMSD(FragmentCluster c) {
 		double[][][] kabschFood = new double[2][c.getFragmentLength()][3];
 		Transformation t;
 		double temp = 0;
@@ -142,22 +150,59 @@ public class ClusterAnalysis {
 		double result = temp / ((size - 1) * size / 2);
 		return result;
 	}
-	
-	
-//	/**
-//	 * shortcut to retrieve a two-dimensional position from the one-dimensional
-//	 * array.
-//	 * 
-//	 * @param i
-//	 *            the x-coordinate
-//	 * @param j
-//	 *            the y-coordinate
-//	 * @return
-//	 */
-//	private int getDistAt(int i, int j, int[] distance) {
-//		if (j > i)
-//			return distance[((j * (j - 1)) / 2) + i];
-//		else
-//			return distance[((i * (i - 1)) / 2) + j];
-//	}
+
+	// /**
+	// * shortcut to retrieve a two-dimensional position from the
+	// one-dimensional
+	// * array.
+	// *
+	// * @param i
+	// * the x-coordinate
+	// * @param j
+	// * the y-coordinate
+	// * @return
+	// */
+	// private int getDistAt(int i, int j, int[] distance) {
+	// if (j > i)
+	// return distance[((j * (j - 1)) / 2) + i];
+	// else
+	// return distance[((i * (i - 1)) / 2) + j];
+	// }
+
+	public double calcInterClusterRMSD() {
+		try {
+			BufferedWriter w = new BufferedWriter(new FileWriter("/home/galicae/Documents/interCluster2"));
+			BufferedWriter w1 = new BufferedWriter(new FileWriter("/home/galicae/Documents/interClusterGuide2"));
+			double temp = 0;
+			for (int i = 0; i < clusters.size(); i++) {
+				w1.write(i + " " + clusters.get(i).getID() + "\n");
+				for (int j = 0; j < clusters.size(); j++) {
+					double cur = calcDistance(clusters.get(i), clusters.get(j));
+					if(Double.isNaN(cur))
+						cur=0;
+//					if(cur < 0.4 && cur > 0.01)
+//						System.err.println("bad cluster");
+					temp += cur;
+					w.write(cur + "\t");
+				}
+				w.write("\n");
+			}
+			double result = temp
+					/ ((clusters.size() - 1) * clusters.size() / 2);
+			w.close();
+			w1.close();
+			return result / 2;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	private double calcDistance(FragmentCluster p, FragmentCluster q) {
+		double[][][] kabschFood = new double[2][p.getFragmentLength()][3];
+		kabschFood[0] = p.getCentroid().getAllResidues();
+		kabschFood[1] = q.getCentroid().getAllResidues();
+		Transformation t = Kabsch.calculateTransformation(kabschFood);
+		return t.getRmsd();
+	}
 }

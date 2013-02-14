@@ -14,10 +14,16 @@ import bioinfo.alignment.Alignable;
 
 /**
  * @author gobi_4
- * @date November 24, 2012
+ * @lastchange 2013-02-13
  */
 public class PDBEntry implements Alignable, Serializable {
 
+	/**
+	 * needed for class check. for serialization. please increase in case of
+	 * editing this file
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private final String id;
 	private final char chainID;
 	private final int chainIDNum;

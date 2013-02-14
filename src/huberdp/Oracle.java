@@ -1,11 +1,11 @@
 /******************************************************************************
- * Oracle is the abstract class to inherit from for oracles for a rdp.        *
+ * huberdp.Oracle                                                             *
+ * Contains the abstract class Oracle to be inherited from oracles for a rdp. *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
  ******************************************************************************/
 package huberdp;
-
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -14,8 +14,9 @@ import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 
 /**
+ * Abstract class to be inherited by RDP Oracles.
  * @author huberste
- * @lastchange 2013-02-11
+ * @lastchange 2013-02-14
  */
 public abstract class Oracle {
 	
@@ -105,11 +106,6 @@ public abstract class Oracle {
 				problem.targetStart, problem.targetEnd,
 				paTemStart, paTemEnd, paTarStart, paTarEnd));
 		
-//		if (alignment == null) {
-//			results = new LinkedList<PartialAlignment>();
-//		} else {
-//			results = HubeRDP.mergePaA(problem, alignment);
-//		}
 		return results;
 	}
 	
