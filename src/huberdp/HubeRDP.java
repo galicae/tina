@@ -1,5 +1,7 @@
 /******************************************************************************
- * hubeRDP is a RDP implementation for the GoBi 2012/13.                      *
+ * huberdp.HubeRDP.java                                                       *
+ * This file contains the class HubeRDP which is an RDP implementation for    *
+ * the GoBi 2012/13.                                                          *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -15,7 +17,7 @@ import java.util.LinkedList;
 
 /**
  * @author huberste
- * @lastchange 2013-02-12
+ * @lastchange 2013-02-14
  */
 public class HubeRDP {
 
@@ -541,8 +543,8 @@ public class HubeRDP {
 //		System.out.println("HubeRDP will now be executed!");
 		rdp.rdp(t, pq);
 //		System.out.println("HubeRDP was successfully executed!");
-		// Solution is now in t.getRoot();
 		
+		// Solution is now in t.getRoot();
 		return t.getRoot().getTA().get(0).alignment;
 	}
 	

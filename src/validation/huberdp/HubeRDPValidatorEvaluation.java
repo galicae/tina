@@ -16,7 +16,7 @@ import java.util.Locale;
  * HubeRDPValitadorEvaluation reads the output of an HubeRDPValidator and
  * generates an evaluation.
  * @author huberste
- * @lastchange 2013-02-13
+ * @lastchange 2013-02-14
  */
 public class HubeRDPValidatorEvaluation {
 	
@@ -37,8 +37,6 @@ public class HubeRDPValidatorEvaluation {
 		String result = "";
 		double huberdprmsd = 0.0;
 		double gotohrmsd = 0.0;
-		
-		boolean huberdp = false;
 		
 		try {
 			br = new BufferedReader(new FileReader(inputfile));

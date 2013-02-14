@@ -6,11 +6,8 @@
  ******************************************************************************/
 package validation.huberdp;
 
-import huberdp.HubeRDP;
-
 import java.util.HashMap;
 import java.util.LinkedList;
-//import java.util.Locale;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
@@ -19,16 +16,19 @@ import bioinfo.pdb.PDBFile;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 import bioinfo.proteins.structure.SimpleCoordMapper;
-
+import bioinfo.superpos.Kabsch;
+import bioinfo.superpos.PDBReduce;
+import bioinfo.superpos.Transformation;
 import files.PairFile;
 import files.SeqlibFile;
+import huberdp.HubeRDP;
 import util.CommandLineParser;
 
 /**
  * HubeRDPValidator validates HubeRDP as an Sequence Alignment Tool against
  * Gotoh.
  * @author huberste
- * @lastchange 2013-02-12
+ * @lastchange 2013-02-14
  */
 public class HubeRDPValidator {
 
@@ -51,30 +51,23 @@ public class HubeRDPValidator {
 	"\t-check\t\tueberprueft die berechneten Scores anhand des Alignments\n\n"+
 */
 	"Beispiel-Aufruf:\n"+
-	"java HubeRDPValidator --seqlib domains.seqlib --pairs cathscop.inpairs";
+	"java HubeRDPValidator --seqlib domains.seqlib --pairs cathscop.inpairs \n"+
+		"\t--pdbpath";
 	
 	/**
 	 * Validates the HubeRDP.
 	 * @param args
+	 * @throws Exception 
 	 */
-	public static void main(String[] args) {
-		
-//		Locale.setDefault(Locale.US);
+	public static void main(String[] args) throws Exception {
 		
 		// get command line arguments
 		CommandLineParser clp = new CommandLineParser(args);
 		String seqlib = clp.getStringArg("--seqlib");
 		String pairs = clp.getStringArg("--pairs");
 		String pdbpath = clp.getStringArg("--pdbpath");
-		/*String matrixname = clp.getStringArg("-m");
-		double gapopen = clp.getDoubleArg("-go",-10.0);
-		double gapextend = clp.getDoubleArg("-ge", -1.0);
-		String mode = clp.getStringArg("-mode", "freeshift");
-		boolean printali = clp.getBoolArg("-printali", false);
-		String printmatrices = clp.getStringArg("-printmatrices", null);
-		boolean check = clp.getBoolArg("-check", false);*/
 		
-		if (pairs == null || seqlib == null) {
+		if (pairs == null || seqlib == null || pdbpath == null) {
 			System.out.println(usage);
 			System.exit(1);
 		}
@@ -90,12 +83,11 @@ public class HubeRDPValidator {
 		
 		FreeshiftSequenceGotoh gotoh =
 				new FreeshiftSequenceGotoh(
-					10.0, -2.0,
+					-10.0, -2.0,
 					bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX
 				);
 		
 		for (String[] job : joblist) {
-<<<<<<< HEAD
 			try {
 				String templatePDBID = job[0].substring(0, 4);
 				String targetPDBID = job[1].substring(0, 4);
@@ -149,40 +141,6 @@ public class HubeRDPValidator {
 				System.err.println("Error while working on job "+ job[0]+" " + job[1]);
 				e.printStackTrace();
 			}
-=======
-			String pdbid = job[0].substring(0, 4);
-			Sequence template = library.get(job[0]);
-			Sequence target = library.get(job[1]);
-			PDBEntry templateStructure =
-				new PDBFileReader(pdbpath).readPDBFromFile(
-					PDBFile.getFile(pdbpath, pdbid), job[0].charAt(4)
-				);
-			System.out.println(">" + job[0] + " " + job[1]);
-			
-			// align Sequences with HubeRDP
-			System.out.println("HubeRDP:");
-			SequenceAlignment rdpAlignment =
-					HubeRDP.hubeRDPAlign(template, target);
-			System.out.println(rdpAlignment.toStringVerbose());
-			
-			// use CoordMapper on HubeRDP Alignment
-			PDBEntry rdpStructure =
-					SimpleCoordMapper.map(rdpAlignment, templateStructure);
-			
-			// align Sequences with Gotoh
-			System.out.println("Gotoh:");
-			SequenceAlignment gotohAlignment =
-					gotoh.align(template, target);
-			System.out.println(gotohAlignment.toStringVerbose());
-			
-			// use CoordMapper on Gotoh Alignment
-			PDBEntry gotohStructure =
-					SimpleCoordMapper.map(gotohAlignment, templateStructure);
-			
-			// TODO measure TMScore for each Alignment
-			
-			// TODO compare TMScores
->>>>>>> bb544c940799e3bbb79457270061fa3b98039383
 			
 		}
 		
