@@ -1,4 +1,5 @@
 bin/*
+!lib/reprof/bin/
 *.war
 *.class
 *.pdb
@@ -22,3 +23,5 @@ init*
 upd*
 DBS*
 clusters/*
+clusters2/*
+proteins*/
