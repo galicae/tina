@@ -85,7 +85,7 @@ public class PDBFileReader {
 			for(File file : files){
 				br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 				id = file.getName().split("\\.")[0];
-				result.add(parseRealEntry(br,id));
+				result.add(parseEntry(br,id));
 			}
 			return result;
 		}catch(Exception e){
