@@ -7,8 +7,14 @@
  ******************************************************************************/
 package huberdp.scoring;
 
+import java.util.HashMap;
+import java.util.Set;
+
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
+import bioinfo.energy.potential.voronoi.VoroPPWrap;
+import bioinfo.energy.potential.voronoi.VoroPrepType;
+import bioinfo.energy.potential.voronoi.VoronoiData;
 import bioinfo.proteins.PDBEntry;
 import huberdp.RDPSolutionTreeOrNode;
 import huberdp.Scoring;
@@ -61,6 +67,11 @@ public class RDPScoring implements Scoring {
 	double[][] mutationMatrix;
 	
 	/**
+	 * vorobin absolute path to location of voro++ binary (dont have one? look at ./tools/voro++)
+	 */
+	String vorobin;
+	
+	/**
 	 * constructs a RDPScoring object with given paramters
 	 * @param gamma weight of the mutation matrix score
 	 * @param delta weight of the contact capacity score
@@ -70,13 +81,14 @@ public class RDPScoring implements Scoring {
 	 */
 	public RDPScoring(
 			double gamma, double delta, double epsilon, double zeta,
-			double[][] mutationMatrix
+			double[][] mutationMatrix, String vorobin
 	) {
 		this.gamma = gamma;
 		this.delta = delta;
 		this.epsilon = epsilon;
 		this.zeta = zeta;
 		this.mutationMatrix = mutationMatrix;
+		this.vorobin = vorobin;
 	}
 	
 	/**
@@ -85,7 +97,7 @@ public class RDPScoring implements Scoring {
 	public RDPScoring() {
 		this(
 				GAMMA, DELTA, EPSILON, ZETA,
-				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX
+				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX,null
 		);
 	}
 	
@@ -96,10 +108,15 @@ public class RDPScoring implements Scoring {
 	public RDPScoring(RDPScoring arg) {
 		this(
 				arg.gamma, arg.delta, arg.epsilon, arg.zeta,
-				arg.mutationMatrix
+				arg.mutationMatrix,null
 		);
 	}
 	
+	
+	public void setVorobin(String vorobin) {
+		this.vorobin = vorobin;
+	}
+
 	/**
 	 * \phi (f, A, B) = \gamma * \phi^S(f,A,B) +	// mutation matrix (e.g. DAYHOFF)
 	 * 					\delta * \phi^C(f,A,B) +	// contact capacity potential (see 123D)
@@ -259,9 +276,37 @@ public class RDPScoring implements Scoring {
 	 * @return the degree of burial [0..1]
 	 */
 	private double dob(PDBEntry structure, int pos) {
-		// TODO Voronoi decomposition for "degree of burial" =
-		// solvent-accessible-surface / complete surface
-		return 0.0;
+		return dob(structure, pos, 8.9, 1.0, 6.5);
+	}
+	
+	/**
+	 * calculates the degree of burial (dob) for the given amino acid in the
+	 * given structure
+	 * @param structure the 3d structure of the template
+	 * @param pos the position of the amino acid in the template
+	 * @param gridExtend value in Angstrom, additional space which will be filled by grid, CAVE: MUST be greater then gridClash!!
+	 * @param gridDensisty value in Angstrom, denisty of solvent points with which grid will be filled
+	 * @param gridClash value in Angstrom, distance every solvent must have to every peptide atom!
+	 * @return the degree of burial [0..1]
+	 */
+	private double dob(PDBEntry structure, int pos, double gridExtend, double gridDensity, double gridClash) {
+		VoroPPWrap voro = new VoroPPWrap(vorobin);
+		VoronoiData data = new VoronoiData(structure.getID());
+		data.reducePDB(VoroPrepType.CA, structure);
+		data.fillGridWithoutClashes(8.9, 1.0, 6.5);
+		voro.decomposite(data);
+		HashMap<Integer,Double> faces = data.getFaces().get(pos);
+		Set<Integer> solvents = data.getOuterGridIds();
+		double outer = 0.0d;
+		double inner = 0.0d;
+		for(int neighbor : faces.keySet()){
+			if(solvents.contains(neighbor)){
+				outer += faces.get(neighbor);
+			}else{
+				inner += faces.get(neighbor);
+			}
+		}
+		return outer/(outer+inner);
 	}
 
 }
