@@ -1,5 +1,7 @@
 /******************************************************************************
- * RDPProblem is the problem definition for RDP.                              *
+ * huberdp.RDPProblem.java                                                    *
+ * Contains the class RDPProblem which is the (sub-)problem definition for an *
+ * OR node of RDP.                                                            *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -11,9 +13,9 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.proteins.PDBEntry;
 
 /**
+ * RDPProblem is an implementation of an (sub-)problem defined by an OR node.
  * @author huberste
- * @lastchange 2013-02-12
- * 
+ * @lastchange 2013-02-14
  */
 public class RDPProblem {
 	

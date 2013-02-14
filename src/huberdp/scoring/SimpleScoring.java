@@ -1,6 +1,7 @@
 /******************************************************************************
- * SimpleScoring is a class that provides a simple scoring function for OR    *
- * nodes.                                                                     *
+ * huberdp.scoring.SimpleScoring.java                                         *
+ * Contains the class SimpleScoring that provides a simple scoring function   *
+ * for OR nodes.                                                              *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -14,7 +15,7 @@ import huberdp.Scoring;
 /**
  * SimpleScoring provides a simple scoring function for OR nodes.
  * @author huberste
- * @lastchange 2013-02-12
+ * @lastchange 2013-02-14
  */
 public class SimpleScoring implements Scoring {
 

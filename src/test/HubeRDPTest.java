@@ -1,5 +1,6 @@
 /******************************************************************************
- * hubeRDPTest is mainly a test routine for calling hubeRDP.                  *
+ * test.HubeRDPTest.java                                                      *
+ * HubeRDPTest is mainly a test routine for calling hubeRDP.                  *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -15,11 +16,11 @@ import huberdp.oracles.*;
 import huberdp.scoring.*;
 
 /**
- * @author huberste
- * @lastchange 2013-02-12
  * 
+ * @author huberste
+ * @lastchange 2013-02-14
  */
-public class huberdptest {
+public class HubeRDPTest {
 
 	// set test data
 	private static final Sequence template = new Sequence("1j2xA00","GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK");
@@ -29,7 +30,7 @@ public class huberdptest {
 	
 	/**
 	 * main function
-	 * @param args
+	 * @param args no args needed
 	 */
 	public static void main(String[] args) {
 		

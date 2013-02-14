@@ -1,5 +1,7 @@
 /******************************************************************************
- * Scoring is an abstract class for scoring OR-Nodes                          *
+ * huberdp.Scoring.java                                                       *
+ * Contains the interface Scoring which is to be implemented by every Scoring *
+ * class for scoring OR-Nodes                                                 *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *

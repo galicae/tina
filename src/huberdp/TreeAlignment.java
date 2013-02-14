@@ -1,5 +1,7 @@
 /******************************************************************************
- * TreeAlignment is part of the problem solution of RDP.                      *
+ * huberdp.TreeAlignment.java                                                 *
+ * Contains the class TreeAlignment which is part of the problem solution of  *
+ * RDP.                                                                       *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -11,7 +13,7 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.proteins.PDBEntry;
 
 /**
- * This class is the solution of an RDPProblem.
+ * TreeAlignment represents the TreeAlignment structure of RDP.
  * @author huberste
  * @lastchange 2013-02-12
  */

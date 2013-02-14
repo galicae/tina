@@ -1,6 +1,7 @@
 /******************************************************************************
- * ManualScoring is a class that provides a function to manually score OR     *
- * nodes.                                                                     *
+ * huberdp.scoring.ManualScoring.java                                         *
+ * Contains the class ManualScoring that provides a function to manually      *
+ * score OR nodes.                                                            *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -17,7 +18,7 @@ import huberdp.Scoring;
 /**
  * ManualScoring provides a function to manually score OR nodes.
  * @author huberste
- * @lastchange 2013-02-12
+ * @lastchange 2013-02-14
  */
 public class ManualScoring implements Scoring {
 
