@@ -12,7 +12,6 @@ bin/*
 ccp*
 *.scores
 *.config
-src/test/Test.java
 WebContent/WEB-INF/classes
 WebContent/WEB-INF/lib/Jmol.jar
 WebContent/WEB-INF/lib/TMscore.jar
@@ -24,5 +23,3 @@ upd*
 DBS*
 clusters/*
 clusters2/*
-proteins*/
-lib/.gitignore
