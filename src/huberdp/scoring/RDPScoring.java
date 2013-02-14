@@ -115,7 +115,7 @@ public class RDPScoring implements Scoring {
 	}
 	
 	/**
-	 * setz binary for voro++
+	 * sets binary path of voro++
 	 * @param vorobin
 	 * @author seitza
 	 */
