@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 /**
  * HubeRDPValitadorEvaluation reads the output of an HubeRDPValidator and
@@ -18,16 +19,16 @@ import java.text.DecimalFormat;
  * @lastchange 2013-02-13
  */
 public class HubeRDPValidatorEvaluation {
-
-	/**
-	 * DecimalFormat for formatting RMSD outputs
-	 */
-	private static final DecimalFormat DFLONG = new DecimalFormat("0.0000");
 	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
+		// For unified output
+		Locale.setDefault(Locale.US);
+		// DecimalFormat for formatting RMSD outputs
+		DecimalFormat df = new DecimalFormat("0.0000");
 		
 		String inputfile = args[0];
 		
@@ -50,10 +51,10 @@ public class HubeRDPValidatorEvaluation {
 					
 				} else if (line.startsWith("> HubeRDP RMSD:")) {
 					huberdprmsd = Double.parseDouble(line.substring(16));
-					result += "\t" + DFLONG.format(huberdprmsd);
+					result += "\t" + df.format(huberdprmsd);
 				} else if (line.startsWith("> Gotoh RMSD:")) {
 					gotohrmsd = Double.parseDouble(line.substring(14));
-					result += "\t" + DFLONG.format(gotohrmsd);
+					result += "\t" + df.format(gotohrmsd);
 					System.out.println(result);
 					result = "";
 				}
