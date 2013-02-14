@@ -101,11 +101,14 @@ public class RDPScoring implements Scoring {
 	}
 	
 	/**
+	 * calculates the score for a given OR node
 	 * \phi (f, A, B) = \gamma * \phi^S(f,A,B) +	// mutation matrix (e.g. DAYHOFF)
 	 * 					\delta * \phi^C(f,A,B) +	// contact capacity potential (see 123D)
 	 * 					\epsilon * \phi^H(f,A,B) +	// hydrophobicity
 	 * 					\zeta * \phi^P(f,A,B) -		// pair interaction
 	 * 					GAP(f,A,B)					// insertions and deletions
+	 * @param node the OR node that must be scored
+	 * @return the score for the OR node (or rather the node's alignment)
 	 */
 	@Override
 	public double score(RDPSolutionTreeOrNode node) {
@@ -139,10 +142,10 @@ public class RDPScoring implements Scoring {
 		
 		char[][] rows = f.getRows();
 		
-		for (int pos = 0; pos < rows.length; pos++) {
+		for (int pos = 0; pos < rows[0].length; pos++) {
 			// if positions are aligned
 			if((rows[0][pos] != '-') && (rows[1][pos] != '-')) {
-				// sup up score from mutation matrix
+				// sum up score from mutation matrix
 				result += mutationMatrix[rows[0][pos]][rows[0][pos]];
 			}
 		}
@@ -162,7 +165,13 @@ public class RDPScoring implements Scoring {
 	private double phiC(SequenceAlignment f, Sequence a, PDBEntry b) {
 
 		double result = 0.0;
-		// TODO
+		
+		char[][] rows = f.getRows();
+		
+		for (int pos = 0; pos < rows[0].length; pos++) {
+			// TODO
+			
+		}
 		
 		return result;
 	}
@@ -185,7 +194,7 @@ public class RDPScoring implements Scoring {
 		int temppos = 0;	// position in template
 		int targpos = 0;	// position in target
 		
-		for (int pos = 0; pos < rows.length; pos++) {
+		for (int pos = 0; pos < rows[0].length; pos++) {
 			
 			if (rows[0][pos] == '-') {
 				targpos++;
@@ -230,13 +239,36 @@ public class RDPScoring implements Scoring {
 		
 		double result = 0.0;
 		
-//		for (int i = )
-		// TODO find which gap is a real gap (i.e. don't calculate on not-yet
-		// aligned parts)
+		char[][] rows = f.getRows();
 		
-		// TODO if deletion: result += phiC(f, a, b) at position pos
-		// TODO if insertion: result += phiP(f, a, b) at position pos
+		int temppos = 0;	// position in template
+		int targpos = 0;	// position in target
 		
+		for (int pos = 0; pos < rows[0].length; pos++) {
+			
+			if (rows[0][pos] == '-') {
+				targpos++;
+				if (gap.aligned) {
+					// TODO find which gap is a real gap (i.e. don't calculate on not-yet
+					// aligned parts)
+					// insertion: target has aa, template not.
+					// TODO result += phiP(f, a, b) at position pos
+				}
+			} else if ((rows[1][pos] != '-')) {
+				temppos++;
+				if (gap.aligned) {
+					// TODO find which gap is a real gap (i.e. don't calculate on not-yet
+					// aligned parts)
+					// insertion: target has aa, template not.
+					// TODO result += phiP(f, a, b) at position pos
+				}
+				// TODO result += phiC(f, a, b) at position pos
+			} else {
+				// result must not be changed here
+				temppos++;
+				targpos++;
+			}
+		}
 		return result;
 	}
 	
