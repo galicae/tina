@@ -260,4 +260,5 @@ public class Kabsch {
 		}
 		result.assign(t);
 	}
+	
 }

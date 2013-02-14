@@ -15,21 +15,27 @@ import java.io.Serializable;
  */
 public class AminoAcid implements Serializable{
 
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6808776190281449279L;
 	
-	
 	/**
-	 * enum with all the AminoAcidNames. Also contains methods to convert from
-	 * one- to three-letter codes.
-	 * @author gobi_4
-	 */	
-	
+	 * name of the AminoAcid
+	 */
 	private final AminoAcidName name;
+	/**
+	 * Residue Index: index of the AminoAcid in the Protein (for PDB output)
+	 */
 	private int resIndex;
+	/**
+	 * number of atoms currently in the AminoAcid
+	 */
 	private int numberOfAtoms;
+	/**
+	 * Array of Atoms currently assigned to this AminoAcid 
+	 */
 	private Atom[] atoms;
 	
 	/**
@@ -50,8 +56,7 @@ public class AminoAcid implements Serializable{
 	public AminoAcid(AminoAcidName arg, int resIndex, Atom[] atoms) {
 		this.name = arg;
 		this.resIndex = resIndex;
-		this.atoms = atoms;
-		this.numberOfAtoms = atoms.length;
+		setAtoms(atoms);
 	}
 	
 	/**
@@ -60,6 +65,16 @@ public class AminoAcid implements Serializable{
 	 * @param oneLetterCode
 	 */
 	public AminoAcid(String oneLetterCode, int resIndex) {
+		this.name = AminoAcidName.getAAFromOLC(oneLetterCode);
+		this.resIndex = resIndex;
+	}
+	
+	/**
+	 * Constructor for the AminoAcid Class. Takes the OneLetterCode of the
+	 * AminoAcid as arg.
+	 * @param oneLetterCode
+	 */
+	public AminoAcid(char oneLetterCode, int resIndex) {
 		this.name = AminoAcidName.getAAFromOLC(oneLetterCode);
 		this.resIndex = resIndex;
 	}
@@ -90,6 +105,15 @@ public class AminoAcid implements Serializable{
 	 */
 	public int getResIndex() {
 		return resIndex;
+	}
+	
+	/**
+	 * sets the AtomArray
+	 * @param arg
+	 */
+	public void setAtoms(Atom[] arg) {
+		this.atoms = arg;
+		this.numberOfAtoms = atoms.length;
 	}
 	
 	/**
@@ -158,6 +182,10 @@ public class AminoAcid implements Serializable{
 		return result.toString();
 	}
 	
+	/**
+	 * 
+	 * @return number of Atoms in this AminoAcid
+	 */
 	public int getAtomNumber() {
 		return numberOfAtoms;
 	}

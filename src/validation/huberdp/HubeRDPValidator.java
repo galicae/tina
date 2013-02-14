@@ -1,5 +1,5 @@
 /******************************************************************************
- * HubeRDPValidator.java                                                      *
+ * validation.huberdp.HubeRDPValidator.java                                   *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -95,6 +95,61 @@ public class HubeRDPValidator {
 				);
 		
 		for (String[] job : joblist) {
+<<<<<<< HEAD
+			try {
+				String templatePDBID = job[0].substring(0, 4);
+				String targetPDBID = job[1].substring(0, 4);
+				Sequence template = library.get(job[0]);
+				Sequence target = library.get(job[1]);
+				PDBEntry templateStructure =
+					new PDBFileReader(pdbpath).readPDBFromFile(
+						PDBFile.getFile(pdbpath, templatePDBID), job[0].charAt(4)
+					);
+				PDBEntry targetStructure =
+						new PDBFileReader(pdbpath).readPDBFromFile(
+							PDBFile.getFile(pdbpath, targetPDBID), job[1].charAt(4)
+						);
+				
+				System.out.println(">>> " + job[0] + " " + job[1]);
+				
+				// align Sequences with HubeRDP
+				System.out.println(">>> HubeRDP:");
+				SequenceAlignment rdpAlignment =
+						HubeRDP.hubeRDPAlign(template, target);
+				System.out.println(rdpAlignment.toStringVerbose());
+				
+				// use CoordMapper on HubeRDP Alignment
+				PDBEntry rdpStructure =
+						SimpleCoordMapper.map(templateStructure, rdpAlignment);
+				
+				// measure RMSD for HubeRDP Alignment
+				double[][][] rdppoints = PDBReduce.reducePDBs(rdpStructure, targetStructure);
+				Transformation rdptr = Kabsch.calculateTransformation(rdppoints);
+				double rdprmsd = rdptr.getRmsd();
+				
+				System.out.println("> HubeRDP RMSD: "+rdprmsd);
+				
+				// align Sequences with Gotoh
+				System.out.println(">>> Gotoh:");
+				SequenceAlignment gotohAlignment =
+						gotoh.align(template, target);
+				System.out.println(gotohAlignment.toStringVerbose());
+				
+				// use CoordMapper on Gotoh Alignment
+				PDBEntry gotohStructure =
+						SimpleCoordMapper.map(templateStructure, gotohAlignment);
+				
+				// measure RMSD for Gotoh Alignment
+				double[][][] gotohpoints = PDBReduce.reducePDBs(gotohStructure, targetStructure);
+				Transformation gotohtr = Kabsch.calculateTransformation(gotohpoints);
+				double gotohrmsd = gotohtr.getRmsd();
+				
+				System.out.println("> Gotoh RMSD: "+gotohrmsd);
+			} catch (Exception e) {
+				System.err.println("Error while working on job "+ job[0]+" " + job[1]);
+				e.printStackTrace();
+			}
+=======
 			String pdbid = job[0].substring(0, 4);
 			Sequence template = library.get(job[0]);
 			Sequence target = library.get(job[1]);
@@ -127,6 +182,7 @@ public class HubeRDPValidator {
 			// TODO measure TMScore for each Alignment
 			
 			// TODO compare TMScores
+>>>>>>> bb544c940799e3bbb79457270061fa3b98039383
 			
 		}
 		

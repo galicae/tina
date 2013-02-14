@@ -12,33 +12,53 @@ import bioinfo.superpos.TMMain;
 import bioinfo.superpos.TMOriginal;
 import bioinfo.superpos.Transformation;
 
+/**
+ * 
+ * comments by huberste
+ * @author papadopoulos
+ */
 public class TMPipeline {
+	
+	// TODO make these class variables and make own Pipeline object in main() 
 	static String p1;
 	static String p2;
 
+	/**
+	 * 
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		String protDir = "/home/p/papadopoulos/Desktop/STRUCTURES/";
 		SequenceAlignmentFileReader aliReader = new SequenceAlignmentFileReader(
 				"/home/p/papadopoulos/Dokumente/assignment1/out/freeshift.alignments");
 		aliReader.initSequentialRead();
 
+		// 
 		PDBEntry[] tmOr = new PDBEntry[2];
 
+		
 		TMCollective tmc = new TMCollective();
 		PDBFileReader pdbReader = new PDBFileReader();
 		SequenceAlignment curAli = aliReader.nextAlignment();
+		// skip first Alignment
 		curAli = aliReader.nextAlignment();
 		curAli = aliReader.nextAlignment();
 
+		// PDBEntry of the first aligned protein
 		PDBEntry pdb1 = pdbReader.readPDBFromFile(protDir
 				+ curAli.getComponent(0).getID() + ".pdb");
+		// PDBEntry of the second aligned protein
 		PDBEntry pdb2 = pdbReader.readPDBFromFile(protDir
 				+ curAli.getComponent(1).getID() + ".pdb");
 
+		// create new TMMain object
 		TMMain main = new TMMain();
 		double[][] result = new double[5][4];
+		// begin debugging
 		// System.out.println(curAli.toStringVerbose() + "\n");
 		// System.err.println("OBJECT ORIENTED#########################");
+		// end debugging
 		Transformation tr1 = main.calculateTransformation(curAli, pdb1, pdb2);
 		// System.out.println(tr1.getTmscore());
 		//
