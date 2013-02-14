@@ -245,7 +245,11 @@ public class SequenceAlignment implements Alignment {
 	}
 
 	public char[] getRow(int n) {
-		return rows[n];
+		return rows[n].clone();
+	}
+	
+	public char[][] getRows() {
+		return rows.clone();
 	}
 
 	public String getRowAsString(int n) {

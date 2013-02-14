@@ -22,9 +22,10 @@ import huberdp.RDPProblem;
 public class TinyThreadOracle extends Oracle {
 
 	/**
-	 * 
+	 * the function that is called by gAND.
+	 * It is the main function of the oracle.
 	 * @author huberste
-	 * @param problem a (sub-)problem
+	 * @param problem a (sub-)problem for which PartialAlignments are to be found
 	 * @param m maximum number of PartialAlignments to be returned
 	 * @return a LinkedList of at most m PartialAlignments
 	 */
@@ -35,3 +36,9 @@ public class TinyThreadOracle extends Oracle {
 	}
 
 }
+
+/******************************************************************************
+ * "A question that sometimes drives me hazy:                                 *
+ *  Am I or are the others crazy?"                                            *
+ *     - Albert Einstein (1979 - 1966)                                        *
+ ******************************************************************************/

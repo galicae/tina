@@ -1,10 +1,14 @@
-/**
- * 
- */
+/******************************************************************************
+ * huberdp.Scoring.RDPScoring.java                                            *
+ * This file contains the class RDPScoring which is RDP's scoring function.   *
+ *                                                                            *
+ * This file is best read at line width 80 and tab width 4.                   *
+ *                                                                   huberste *
+ ******************************************************************************/
 package huberdp.scoring;
 
 import bioinfo.Sequence;
-import bioinfo.alignment.Alignment;
+import bioinfo.alignment.SequenceAlignment;
 import bioinfo.proteins.PDBEntry;
 import huberdp.RDPSolutionTreeOrNode;
 import huberdp.Scoring;
@@ -51,18 +55,49 @@ public class RDPScoring implements Scoring {
 	 */
 	double zeta;
 	
-	public RDPScoring() {
-		this.gamma = GAMMA;
-		this.delta = DELTA;
-		this.epsilon = EPSILON;
-		this.zeta = ZETA;
-	}
+	/**
+	 * mutation matrix for phiS
+	 */
+	double[][] mutationMatrix;
 	
-	public RDPScoring(double gamma, double delta, double epsilon, double zeta) {
+	/**
+	 * constructs a RDPScoring object with given paramters
+	 * @param gamma weight of the mutation matrix score
+	 * @param delta weight of the contact capacity score
+	 * @param epsilon weight of the hydrophobicity score
+	 * @param zeta weight of the pair interaction score
+	 * @param mutationMatrix
+	 */
+	public RDPScoring(
+			double gamma, double delta, double epsilon, double zeta,
+			double[][] mutationMatrix
+	) {
 		this.gamma = gamma;
 		this.delta = delta;
 		this.epsilon = epsilon;
 		this.zeta = zeta;
+		this.mutationMatrix = mutationMatrix;
+	}
+	
+	/**
+	 * construcs a RDPScoring object with standard parameters
+	 */
+	public RDPScoring() {
+		this(
+				GAMMA, DELTA, EPSILON, ZETA,
+				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX
+		);
+	}
+	
+	/**
+	 * constructs a RDPScoring object with the same parameters as the given one
+	 * @param arg the RDPScore which parameters shall be used
+	 */
+	public RDPScoring(RDPScoring arg) {
+		this(
+				arg.gamma, arg.delta, arg.epsilon, arg.zeta,
+				arg.mutationMatrix
+		);
 	}
 	
 	/**
@@ -75,7 +110,7 @@ public class RDPScoring implements Scoring {
 	@Override
 	public double score(RDPSolutionTreeOrNode node) {
 		
-		Alignment f = node.getProblem().alignment;
+		SequenceAlignment f = node.getProblem().alignment;
 		Sequence a = node.getProblem().targetSequence;
 		PDBEntry b = node.getProblem().templateStructure;
 		
@@ -88,29 +123,91 @@ public class RDPScoring implements Scoring {
 		return result;
 	}
 	
-	private double phiS(Alignment f, Sequence a, PDBEntry b) {
+	/**
+	 * "phiS scores the alignment f with respect to well-known sequence based
+	 * mutation matrices"
+	 * (From: Protein Threading by Recursive Dynamic Programming. JMB 290,
+	 * 757-779)
+	 * @param f the alignment (so far)
+	 * @param a the target sequence
+	 * @param b the template structure
+	 * @return the calculated sequence-based score
+	 */
+	private double phiS(SequenceAlignment f, Sequence a, PDBEntry b) {
+		
+		double result = 0.0d;
+		
+		char[][] rows = f.getRows();
+		
+		for (int pos = 0; pos < rows.length; pos++) {
+			if((rows[0][pos] != '-') && (rows[0][pos] != '-')) {
+				result += mutationMatrix[rows[0][pos]][rows[0][pos]];
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * "(...) contact-capacity-potential phiC (...)"
+	 * (From: Protein Threading by Recursive Dynamic Programming. JMB 290,
+	 * 757-779)
+	 * @param f the alignment (so far)
+	 * @param a the target sequence
+	 * @param b the template structure
+	 * @return the calculated contact-capacity based score
+	 */
+	private double phiC(SequenceAlignment f, Sequence a, PDBEntry b) {
 		// TODO
 		return 0.0;
 	}
 	
-	private double phiC(Alignment f, Sequence a, PDBEntry b) {
+	/**
+	 * "phiH [scores] (...) the hydrophobicity (...)"
+	 * (From: Protein Threading by Recursive Dynamic Programming. JMB 290,
+	 * 757-779)
+	 * @param f the alignment (so far)
+	 * @param a the target sequence
+	 * @param b the template structure
+	 * @return the calculated hydrophobicity based score
+	 */
+	private double phiH(SequenceAlignment f, Sequence a, PDBEntry b) {
 		// TODO
 		return 0.0;
 	}
 	
-	private double phiH(Alignment f, Sequence a, PDBEntry b) {
+	/**
+	 * "phiP denotes the pair interaction term (...)"
+	 * (From: Protein Threading by Recursive Dynamic Programming. JMB 290,
+	 * 757-779)
+	 * @param f the alignment (so far)
+	 * @param a the target sequence
+	 * @param b the template structure
+	 * @return the calculated pair interaction based score
+	 */
+	private double phiP(SequenceAlignment f, Sequence a, PDBEntry b) {
 		// TODO
 		return 0.0;
 	}
 	
-	private double phiP(Alignment f, Sequence a, PDBEntry b) {
-		// TODO
-		return 0.0;
-	}
-	
-	private double gap(Alignment f, Sequence a, PDBEntry b) {
+	/**
+	 * "GAP penalizes insertions and deletions."
+	 * (From: Protein Threading by Recursive Dynamic Programming. JMB 290,
+	 * 757-779)
+	 * @param f the alignment (so far)
+	 * @param a the target sequence
+	 * @param b the template structure
+	 * @return the calculated pair interaction based score
+	 */
+	private double gap(SequenceAlignment f, Sequence a, PDBEntry b) {
 		// TODO
 		return 0.0;
 	}
 
 }
+
+/******************************************************************************
+ * "A question that sometimes drives me hazy:                                 *
+ *  Am I or are the others crazy?"                                            *
+ *     - Albert Einstein (1979 - 1966)                                        *
+ ******************************************************************************/
