@@ -67,7 +67,7 @@ public class RDPScoring implements Scoring {
 	double[][] mutationMatrix;
 	
 	/**
-	 * vorobin absolute path to location of voro++ binary (dont have one? look at ./tools/voro++)
+	 * absolute path to location of voro++ binary (dont have one? look at ./tools/voro++)
 	 */
 	String vorobin;
 	
@@ -78,6 +78,7 @@ public class RDPScoring implements Scoring {
 	 * @param epsilon weight of the hydrophobicity score
 	 * @param zeta weight of the pair interaction score
 	 * @param mutationMatrix
+	 * @param vorobin absolute path to location of voro++ binary
 	 */
 	public RDPScoring(
 			double gamma, double delta, double epsilon, double zeta,
@@ -97,7 +98,8 @@ public class RDPScoring implements Scoring {
 	public RDPScoring() {
 		this(
 				GAMMA, DELTA, EPSILON, ZETA,
-				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX,null
+				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX,
+				null
 		);
 	}
 	
@@ -108,11 +110,15 @@ public class RDPScoring implements Scoring {
 	public RDPScoring(RDPScoring arg) {
 		this(
 				arg.gamma, arg.delta, arg.epsilon, arg.zeta,
-				arg.mutationMatrix,null
+				arg.mutationMatrix, arg.vorobin
 		);
 	}
 	
-	
+	/**
+	 * setz binary for voro++
+	 * @param vorobin
+	 * @author seitza
+	 */
 	public void setVorobin(String vorobin) {
 		this.vorobin = vorobin;
 	}
@@ -265,7 +271,7 @@ public class RDPScoring implements Scoring {
 			
 			if (rows[0][pos] == '-') {
 				targpos++;
-				if (gap.aligned) {
+				if (true) {
 					// TODO find which gap is a real gap (i.e. don't calculate on not-yet
 					// aligned parts)
 					// insertion: target has aa, template not.
@@ -273,7 +279,7 @@ public class RDPScoring implements Scoring {
 				}
 			} else if ((rows[1][pos] != '-')) {
 				temppos++;
-				if (gap.aligned) {
+				if (true) {
 					// TODO find which gap is a real gap (i.e. don't calculate on not-yet
 					// aligned parts)
 					// insertion: target has aa, template not.
@@ -314,6 +320,7 @@ public class RDPScoring implements Scoring {
 	/**
 	 * calculates the degree of burial (dob) for the given amino acid in the
 	 * given structure
+	 * @author seitza
 	 * @param structure the 3d structure of the template
 	 * @param pos the position of the amino acid in the template
 	 * @param gridExtend value in Angstrom, additional space which will be filled by grid, CAVE: MUST be greater then gridClash!!
@@ -329,8 +336,8 @@ public class RDPScoring implements Scoring {
 		voro.decomposite(data);
 		HashMap<Integer,Double> faces = data.getFaces().get(pos);
 		Set<Integer> solvents = data.getOuterGridIds();
-		double outer = 0.0d;
-		double inner = 0.0d;
+		double outer = 0.0;
+		double inner = 0.0;
 		for(int neighbor : faces.keySet()){
 			if(solvents.contains(neighbor)){
 				outer += faces.get(neighbor);
@@ -346,5 +353,5 @@ public class RDPScoring implements Scoring {
 /******************************************************************************
  * "A question that sometimes drives me hazy:                                 *
  *  Am I or are the others crazy?"                                            *
- *     - Albert Einstein (1979 - 1966)                                        *
+ *     - Albert Einstein (1879 - 1955)                                        *
  ******************************************************************************/

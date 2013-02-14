@@ -126,5 +126,5 @@ public abstract class Oracle {
 /******************************************************************************
  * "A question that sometimes drives me hazy:                                 *
  *  Am I or are the others crazy?"                                            *
- *     - Albert Einstein (1979 - 1966)                                        *
+ *     - Albert Einstein (1879 - 1955)                                        *
  ******************************************************************************/
