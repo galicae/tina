@@ -1,4 +1,4 @@
-package bioinfo.energy.potential.preparation.voronoi;
+package bioinfo.energy.potential.voronoi;
 
 public enum VoroPrepType {
 

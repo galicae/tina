@@ -1,4 +1,4 @@
-package bioinfo.energy.potential.preparation.voronoi;
+package bioinfo.energy.potential.voronoi;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -31,7 +31,7 @@ public class VoroPPWrap {
 	 * @param data input points in value object of type VoronoiData
 	 * @return data instance of VoronoiData, which is just the same as input data with some additional values 
 	 */
-	public VoronoiData decomposite(VoronoiData data){
+	public void decomposite(VoronoiData data){
 				
 		String tmpfile = TMPDIR+data.getID()+".lst";
 		File tmpfileF = new File(tmpfile);
@@ -48,21 +48,21 @@ public class VoroPPWrap {
 		try{
 			double[][] hull = data.calcHull();
 			String sHull = hull[0][0]+" "+hull[0][1]+" "+hull[1][0]+" "+hull[1][1]+" "+hull[2][0]+" "+hull[2][1];
-			System.out.println("\twill process -> "+VOROBIN+" -c %i#%n#%f "+sHull+" "+tmpfile);
+			//System.out.println("\twill process -> "+VOROBIN+" -c %i#%n#%f "+sHull+" "+tmpfile);
 			pHull = Runtime.getRuntime().exec(VOROBIN+" -c %i#%n#%f "+sHull+" "+tmpfile);
 			pHull.waitFor();
 		
 			String line;
 	    	BufferedReader bri = new BufferedReader(new InputStreamReader(pHull.getInputStream()));
 	    	BufferedReader bre = new BufferedReader(new InputStreamReader(pHull.getErrorStream()));
-	    	System.out.println("<error>");
+	    	//System.out.println("<error>");
 	    	try{
 		    	while ((line = bri.readLine()) != null) {
-		    		System.out.println(line);
+		    		System.err.println(line);
 		    	}
 		    	bri.close();
 		    	while ((line = bre.readLine()) != null) {
-		    		System.out.println(line);
+		    		System.err.println(line);
 		    	}
 		    	bre.close();
 		    	
@@ -72,7 +72,7 @@ public class VoroPPWrap {
 		} catch (Exception e){	
 			e.printStackTrace();
 		}
-		System.out.println("<error>");
+		//System.out.println("<error>");
 		
 		String resultfile = tmpfile+".vol";
 		File resultfileF = new File(resultfile);
@@ -102,15 +102,14 @@ public class VoroPPWrap {
 					}
 					data.addValues(point, neighbors, areas);
 				}
+				br.close();
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 		}
-		
-	    data.endCalc();
-	    //tmpfileF.delete();
-	    //resultfileF.delete();
-		return data;
+
+	    tmpfileF.delete();
+	    resultfileF.delete();
 	}
 	
 

@@ -14,10 +14,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import bioinfo.energy.potential.preparation.voronoi.VoroPPWrap;
-import bioinfo.energy.potential.preparation.voronoi.VoroPrepType;
-import bioinfo.energy.potential.preparation.voronoi.VoroPrepare;
-import bioinfo.energy.potential.preparation.voronoi.VoronoiData;
+import bioinfo.energy.potential.voronoi.VoroPPWrap;
+import bioinfo.energy.potential.voronoi.VoroPrepType;
+import bioinfo.energy.potential.voronoi.VoronoiData;
 import bioinfo.proteins.AminoAcidName;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;

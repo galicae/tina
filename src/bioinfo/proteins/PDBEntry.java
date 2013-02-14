@@ -6,7 +6,9 @@
 package bioinfo.proteins;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import bioinfo.alignment.Alignable;
 
@@ -89,7 +91,7 @@ public class PDBEntry implements Alignable, Serializable {
 			this.length = arg2.size();
 		}
 	}
-	
+
 	/**
 	 * Constructor for an the PDBEntry
 	 * 
@@ -176,12 +178,7 @@ public class PDBEntry implements Alignable, Serializable {
 				// TODO Some Entries have no 7-letter ID (1TIMA00) but four
 				// letters (1TIM)
 				// ==> make some Method for IDs without chainID!
-				out += aminoAcids[i]
-						.getAtom(j)
-						.toString(lineCounter++, i,
-								aminoAcids[i].getName().getThreeLetterCode(),
-								chainID).trim()
-						+ "\n";
+				out += aminoAcids[i].getAtom(j).toString(lineCounter++, i, aminoAcids[i].getName().getThreeLetterCode(), chainID).trim() + "\n";
 			}
 		}
 		return out;
@@ -189,21 +186,21 @@ public class PDBEntry implements Alignable, Serializable {
 
 	/**
 	 * 
-	 * @return all backbone atoms as Atom[]
-	 * not existing atoms are written as null and have to be checked in all following methods
+	 * @return all backbone atoms as Atom[] not existing atoms are written as
+	 *         null and have to be checked in all following methods
 	 */
-	public Atom[] getBackboneAtoms(){
+	public Atom[] getBackboneAtoms() {
 		AminoAcid tmp;
-		Atom[] backbone = new Atom[aminoAcids.length*4];
+		Atom[] backbone = new Atom[aminoAcids.length * 4];
 		Atom[] temp;
-		for(int i = 0; i != aminoAcids.length; i++){
+		for (int i = 0; i != aminoAcids.length; i++) {
 			tmp = aminoAcids[i];
 			temp = tmp.getBackboneAtoms();
-			for(int j = 0; j != 4; j++){
-				backbone[i*4+j] = temp[j];
+			for (int j = 0; j != 4; j++) {
+				backbone[i * 4 + j] = temp[j];
 			}
 		}
 		return backbone;
 	}
-	
+
 }
