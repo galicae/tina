@@ -25,3 +25,4 @@ DBS*
 clusters/*
 clusters2/*
 proteins*/
+lib/.gitignore
