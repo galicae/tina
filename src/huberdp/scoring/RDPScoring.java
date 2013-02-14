@@ -135,12 +135,14 @@ public class RDPScoring implements Scoring {
 	 */
 	private double phiS(SequenceAlignment f, Sequence a, PDBEntry b) {
 		
-		double result = 0.0d;
+		double result = 0.0;
 		
 		char[][] rows = f.getRows();
 		
 		for (int pos = 0; pos < rows.length; pos++) {
-			if((rows[0][pos] != '-') && (rows[0][pos] != '-')) {
+			// if positions are aligned
+			if((rows[0][pos] != '-') && (rows[1][pos] != '-')) {
+				// sup up score from mutation matrix
 				result += mutationMatrix[rows[0][pos]][rows[0][pos]];
 			}
 		}
@@ -158,8 +160,11 @@ public class RDPScoring implements Scoring {
 	 * @return the calculated contact-capacity based score
 	 */
 	private double phiC(SequenceAlignment f, Sequence a, PDBEntry b) {
+
+		double result = 0.0;
 		// TODO
-		return 0.0;
+		
+		return result;
 	}
 	
 	/**
@@ -172,8 +177,30 @@ public class RDPScoring implements Scoring {
 	 * @return the calculated hydrophobicity based score
 	 */
 	private double phiH(SequenceAlignment f, Sequence a, PDBEntry b) {
-		// TODO
-		return 0.0;
+		
+		double result = 0.0;
+		
+		char[][] rows = f.getRows();
+		
+		int temppos = 0;	// position in template
+		int targpos = 0;	// position in target
+		
+		for (int pos = 0; pos < rows.length; pos++) {
+			
+			if (rows[0][pos] == '-') {
+				targpos++;
+			} else if ((rows[1][pos] != '-')) {
+				temppos++;
+			} else {
+				// sum up score
+				result += hydrophobicity(a.getComp(targpos)) * 
+						dob(b, temppos);
+				temppos++;
+				targpos++;
+			}
+		}
+		
+		return result;
 	}
 	
 	/**
@@ -200,7 +227,40 @@ public class RDPScoring implements Scoring {
 	 * @return the calculated pair interaction based score
 	 */
 	private double gap(SequenceAlignment f, Sequence a, PDBEntry b) {
+		
+		double result = 0.0;
+		
+//		for (int i = )
+		// TODO find which gap is a real gap (i.e. don't calculate on not-yet
+		// aligned parts)
+		
+		// TODO if deletion: result += phiC(f, a, b) at position pos
+		// TODO if insertion: result += phiP(f, a, b) at position pos
+		
+		return result;
+	}
+	
+	/**
+	 * returns the hydrophobicity of an amino acid with given one letter code
+	 * @param c
+	 * @return the hydrophobicity of given amino acid
+	 */
+	private double hydrophobicity (char c) {
 		// TODO
+		
+		return 0.0;
+	}
+	
+	/**
+	 * calculates the degree of burial (dob) for the given amino acid in the
+	 * given structure
+	 * @param structure the 3d structure of the template
+	 * @param pos the position of the amino acid in the template
+	 * @return the degree of burial [0..1]
+	 */
+	private double dob(PDBEntry structure, int pos) {
+		// TODO Voronoi decomposition for "degree of burial" =
+		// solvent-accessible-surface / complete surface
 		return 0.0;
 	}
 

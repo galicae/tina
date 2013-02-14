@@ -9,8 +9,8 @@ import bioinfo.proteins.SSCCEntry;
 import bioinfo.proteins.SSCCLine;
 
 /**
- * 
- * @author gruppe_4 Freeshift version of 123D
+ * Freeshift version of 123D
+ * @author gruppe_4
  */
 public class FreeshiftSequence123D extends Gotoh {
 
@@ -21,7 +21,7 @@ public class FreeshiftSequence123D extends Gotoh {
 	private int[][][] contactPot;
 
 	/**
-	 * 
+	 * constructs a new FreeshiftSequence123D object
 	 * @param weights
 	 *            the weights for sequence, secondary structure and contact
 	 *            potential scores
@@ -431,7 +431,7 @@ public class FreeshiftSequence123D extends Gotoh {
 	}
 
 	/**
-	 * flips a char[] on itself
+	 * flips a char[] on itself (reverse the order of the given array)
 	 * @param in the character array in question
 	 * @return the reversed array
 	 */
