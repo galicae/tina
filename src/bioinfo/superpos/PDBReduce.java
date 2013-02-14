@@ -68,7 +68,7 @@ public class PDBReduce {
 	 *            the first pdb (p)
 	 * @param pdb2
 	 *            the second pdb (q)
-	 * @return two reduced pdb entries, where only the aligned Ca atons
+	 * @return two reduced pdb entries, where only the aligned Ca atoms
 	 */
 	public static PDBEntry[] reducePDB(Alignment alignment, PDBEntry pdb1,
 			PDBEntry pdb2) {

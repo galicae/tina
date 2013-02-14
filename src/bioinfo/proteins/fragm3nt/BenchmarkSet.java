@@ -61,9 +61,11 @@ public class BenchmarkSet {
 		BufferedReader r = new BufferedReader(new FileReader("spnf"));
 		BufferedWriter w = new BufferedWriter(new FileWriter("spnfTM"));
 		String line = "";
+		String alignOut = "";
 		StringBuilder call = new StringBuilder();
 		String desktop = "/home/galicae/Desktop/STRUCTURES/";
 		String[] pair = new String[2];
+		double tempTM = 0;
 
 		while ((line = r.readLine()) != null) {
 			pair = line.split(" ");
@@ -72,10 +74,10 @@ public class BenchmarkSet {
 			call.append("./lib/TMalign ");
 			call.append(desktop + pair[0] + ".pdb ");
 			call.append(desktop + pair[1] + ".pdb -a");
-			line = execToString(call.toString());
-			
-			if (findMeTmScore(line) >= 0.5) {
-				w.write(line);
+			alignOut = execToString(call.toString());
+			tempTM = findMeTmScore(alignOut);
+			if (tempTM >= 0.5) {
+				w.write(line + " " + tempTM + "\n");
 				System.err.println("got a pair");
 			}
 		}
