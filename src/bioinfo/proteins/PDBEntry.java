@@ -203,4 +203,11 @@ public class PDBEntry implements Alignable, Serializable {
 		return backbone;
 	}
 
+	public String getSequence() {
+		StringBuilder seq = new StringBuilder();
+		for(int i = 0; i < length; i++) {
+			seq.append(aminoAcids[i].getName());
+		}
+		return seq.toString();
+	}
 }

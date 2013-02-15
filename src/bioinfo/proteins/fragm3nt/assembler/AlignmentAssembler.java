@@ -1,6 +1,7 @@
 package bioinfo.proteins.fragm3nt.assembler;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
@@ -9,9 +10,12 @@ import bioinfo.alignment.matrices.QuasarMatrix;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 import bioinfo.proteins.fragm3nt.ProteinFragment;
+import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.PDBReduce;
+import bioinfo.superpos.Transformation;
 
 public class AlignmentAssembler extends Assembler {
+	private LinkedList<ProteinFragment> frags = new LinkedList<ProteinFragment>();
 
 	public AlignmentAssembler(int fragLength) {
 		super(fragLength);
@@ -54,9 +58,14 @@ public class AlignmentAssembler extends Assembler {
 
 		// collect fragments
 		result = collectFragmentsFromAl(alignments, structures, extent);
-
-		ProteinFragment resultFragment = assembleProtein(result, extent, seqs
+		for(int i = 0; i < result.size(); i++) {
+			frags.add(result.get(i).clone());
+		}
+		ProteinFragment tempResFragment = assembleProtein(result, extent, seqs
 				.get(0).getSequenceAsString());
+		ProteinFragment resultFragment = new ProteinFragment("RE", new double[1][1], extent);
+		resultFragment = tempResFragment.clone();
+		resultFragment.setID(seqs.get(0).getID());
 		return resultFragment;
 	}
 
@@ -70,6 +79,7 @@ public class AlignmentAssembler extends Assembler {
 	protected LinkedList<ProteinFragment> collectFragmentsFromAl(
 			LinkedList<SequenceAlignment> alignments,
 			LinkedList<ProteinFragment> structures, int extent) {
+		int count = 0;
 
 		// define query only once - no need to spend three lines every time
 		String query = alignments.get(0).getComponent(0).getSequenceAsString();
@@ -81,24 +91,29 @@ public class AlignmentAssembler extends Assembler {
 		LinkedList<ProteinFragment> result = new LinkedList<ProteinFragment>();
 		LinkedList<ProteinFragment> positSolutions = new LinkedList<ProteinFragment>();
 		result.add(curFrag);
-		// if (curFrag.getID().startsWith(structures.get(0).getID()))
-		// System.out.println("home fragment!");
+		if (curFrag.getID().startsWith(structures.get(0).getID())) {
+			count++;
+		}
 		int add = fragLength - extent;
 
 		// now loop over bulk of protein
-		for (int i = add; i < query.length() - fragLength; i += add) {
+		for (int i = add; i < query.length() - fragLength;) {
 			positSolutions.clear();
 			curFrag = findFragFromAli(i, alignments, structures, curFrag);
-			// if (curFrag.getID().startsWith(structures.get(0).getID()))
-			// System.out.println("home framgnet!");
+			if (curFrag.getID().startsWith(structures.get(0).getID())) {
+				count++;
+			}
 			result.add(curFrag);
+			i += add;
 		}
 		// and now the last
 		curFrag = findFragFromAli(query.length() - fragLength, alignments,
 				structures, curFrag);
 		result.add(curFrag);
-		// if (curFrag.getID().startsWith(structures.get(0).getID()))
-		// System.out.println("home fragment!");
+		if (curFrag.getID().startsWith(structures.get(0).getID())) {
+			count++;
+		}
+		System.out.print(count / (1.0 * result.size()) + "\t");
 		return result;
 	}
 
@@ -181,9 +196,38 @@ public class AlignmentAssembler extends Assembler {
 			return result;
 		} else {
 			map = alignments.get(maxIndex).getAlignedResidues();
-			ProteinFragment result = structures.get(maxIndex).getPart(
+			ProteinFragment result = structures.get(maxIndex + 1).getPart(
 					map[1][start], map[1][start + fragLength]);
 			return result;
 		}
 	}
+	
+	protected void alignFragments(ProteinFragment stable, ProteinFragment move,
+			int extent) {
+		double[][][] kabschFood = new double[2][extent][3];
+		int shove = stable.getAllResidues().length - extent;
+		for (int i = 0; i < extent; i++) {
+			kabschFood[0][i] = stable.getResidue(shove + i);
+			kabschFood[1][i] = move.getResidue(i);
+		}
+		Transformation t = Kabsch.calculateTransformation(kabschFood);
+		move.setCoordinates(t.transform(move.getAllResidues()));
+		matchCoordinates(stable, move, extent);
+
+		double[][] moveCoordinates = new double[(fragLength - extent)][3];
+		double[][] allResidues = move.getAllResidues();
+		for (int i = 0; i < moveCoordinates.length; i++) {
+			moveCoordinates[i][0] = allResidues[extent + i][0];
+			moveCoordinates[i][1] = allResidues[extent + i][1];
+			moveCoordinates[i][2] = allResidues[extent + i][2];
+		}
+		String moveSeq = move.getSequence().substring(extent);
+		stable.append(moveCoordinates, moveSeq);
+//		System.out.println();
+	}
+	
+	public LinkedList<ProteinFragment> getFragments() {
+		return this.frags;
+	}
 }
+ 
