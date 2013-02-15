@@ -78,6 +78,7 @@ public class AlignmentAssemblyTest {
 					new double[0][0], 8);
 			prot.setSequence(query);
 			prot.append(PDBReduce.reduceSinglePDB(pdb), "");
+			pdb = t.transform(pdb);
 			prot.setCoordinates(kabschFood[1]);
 
 			wr2.write("MODEL        1\n");
@@ -87,7 +88,7 @@ public class AlignmentAssemblyTest {
 			wr2.write(prot.toString());
 			wr2.write("ENDMDL\n");
 			
-			kabschFood[0] = PDBReduce.reduceSinglePDB(pdb);
+//			kabschFood[0] = prot.getAllResidues();
 			Sequence seq1 = new Sequence(pdb.getID(), pdb.getSequence());
 			for (int i = 1; i < seqs.size(); i++) {
 				PDBEntry pdb1 = read.readFromFolderById(seqs.get(i).getID());
@@ -96,15 +97,18 @@ public class AlignmentAssemblyTest {
 				SequenceAlignment ali = got.align(seq1, seq2);
 				System.out.println(ali.toStringVerbose());
 				
+				prot = new ProteinFragment(pdb1.getID(), "D", new double[0][0], 8);
+				prot.setSequence(pdb1.getSequence());
+				prot.append(PDBReduce.reduceSinglePDB(pdb1), "");
+				
+				kabschFood[1] = prot.getAllResidues();
 				kabschFood = PDBReduce.reduce(ali, pdb, pdb1);
 				t = Kabsch.calculateTransformation(kabschFood);
 				kabschFood[1] = t.transform(kabschFood[1]);
-				prot = new ProteinFragment("real", "D", new double[0][0], 8);
-				prot.setSequence(pdb1.getSequence());
-				prot.append(PDBReduce.reduceSinglePDB(pdb1), "");
+				
 				prot.setCoordinates(kabschFood[1]);
 				wr2.write("MODEL        " + (i + 2) + "\n");
-				wr2.write(prot.toString(ass.getFragments(), extent));
+				wr2.write(prot.toString());
 				wr2.write("ENDMDL\n");
 			}
 			wr2.close();
