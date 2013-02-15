@@ -307,6 +307,10 @@ public class VoronoiData {
 	 * @param type VoroPrpType to be used
 	 * @param pdb entry that will be represented by the data object
 	 */
+	public void reducePDB(PDBEntry pdb){
+		this.reducePDB(VoroPrepType.CA, pdb);
+	}
+	
 	public void reducePDB(VoroPrepType type, PDBEntry pdb) {
 		switch (type) {
 		case CA: {
