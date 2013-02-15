@@ -223,16 +223,21 @@ public class ProteinFragment {
 	}
 	
 	public ProteinFragment getPart(int start, int end) {
-		if(end > atoms.length) {
+		String seq = "";
+		if(end == atoms.length)
+			seq = this.sequence.substring(start);
+		else {
+		if(end > atoms.length)
 			end = atoms.length;
+		seq = this.sequence.substring(start, end);
 		}
 		int size = end - start;
 		double[][] coord = new double[size][3];
-		String seq = this.sequence.substring(start, end);
+		
 		for(int i = 0; i < size; i++) {
 			coord[i] = this.coordinates[i + start];
 		}
-		ProteinFragment result = new ProteinFragment("part" + start + "_" + end, coord, size);
+		ProteinFragment result = new ProteinFragment(this.id + "part" + start + "_" + end, coord, size);
 		result.setSequence(seq);
 		return result;
 	}
