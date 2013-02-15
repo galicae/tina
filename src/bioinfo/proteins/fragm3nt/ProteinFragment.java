@@ -1,5 +1,7 @@
 package bioinfo.proteins.fragm3nt;
 
+import java.util.LinkedList;
+
 import bioinfo.proteins.Atom;
 import bioinfo.proteins.AtomType;
 
@@ -36,8 +38,9 @@ public class ProteinFragment {
 			coordinates[i] = atoms[i].getPosition();
 		}
 	}
-	
-	public ProteinFragment(String id, String seq, double[][] newCentroid, int fragLength) {
+
+	public ProteinFragment(String id, String seq, double[][] newCentroid,
+			int fragLength) {
 		this.fragLength = fragLength;
 		this.id = id;
 		this.sequence = seq;
@@ -101,6 +104,36 @@ public class ProteinFragment {
 		for (int i = 0; i < coordinates.length; i++) {
 			result.append(atoms[i].toString(i, i,
 					String.valueOf(sequence.charAt(i)), 'A')
+					+ "\n");
+		}
+		return result.toString();
+	}
+
+	/**
+	 * override the normal toString() so that we get PDB Atom lines with correct
+	 * spacing and amino acid names. Then change the chain of all fragments that
+	 * aren't from the native structure so that we can change their color.
+	 */
+	public String toString(LinkedList<ProteinFragment> fragments, int extent) {
+		StringBuilder result = new StringBuilder();
+		char chain = 'A';
+		int curFrag = 0;
+		double curPos = (0 - fragLength) / (extent * 1.0);
+		for (int i = 0; i < coordinates.length; i++) {
+			// find if we are past position curFrag
+			curPos = (i - fragLength) / (extent * 1.0);
+			if (curPos >= curFrag) {
+				// if we are past it move pointer
+				curFrag++;
+			}
+			// check if current fragment belongs to native or not
+			if(id.contains(fragments.get(curFrag).getID().substring(0, 4))) {
+				chain = 'A';
+			}
+			else
+				chain = 'J';
+			result.append(atoms[i].toString(i, i,
+					String.valueOf(sequence.charAt(i)), chain)
 					+ "\n");
 		}
 		return result.toString();
@@ -221,24 +254,29 @@ public class ProteinFragment {
 	public Atom[] getAtoms() {
 		return this.atoms;
 	}
-	
+
 	public ProteinFragment getPart(int start, int end) {
 		String seq = "";
-		if(end == atoms.length)
+		if (end == atoms.length)
 			seq = this.sequence.substring(start);
 		else {
-		if(end > atoms.length)
-			end = atoms.length;
-		seq = this.sequence.substring(start, end);
+			if (end > atoms.length)
+				end = atoms.length;
+			seq = this.sequence.substring(start, end);
 		}
 		int size = end - start;
 		double[][] coord = new double[size][3];
-		
-		for(int i = 0; i < size; i++) {
+
+		for (int i = 0; i < size; i++) {
 			coord[i] = this.coordinates[i + start];
 		}
-		ProteinFragment result = new ProteinFragment(this.id + "part" + start + "_" + end, coord, size);
+		ProteinFragment result = new ProteinFragment(this.id + "part" + start
+				+ "_" + end, coord, size);
 		result.setSequence(seq);
 		return result;
+	}
+	
+	public void setID(String id) {
+		this.id = id;
 	}
 }
