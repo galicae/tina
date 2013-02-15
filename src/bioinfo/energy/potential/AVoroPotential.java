@@ -104,9 +104,9 @@ public abstract class AVoroPotential implements IEnergy{
 		return data;
 	}
 	
-	public VoronoiData prepareWithGrid(PDBEntry pdb, VoroPrepType type, double gridExtend, double gridDensity, double gridClash, double minContact){
+	public VoronoiData prepareWithGrid(PDBEntry pdb, double gridExtend, double gridDensity, double gridClash, double minContact){
 		data = new VoronoiData(pdb.getID());
-		data.reducePDB(type, pdb);
+		data.reducePDB(pdb);
 		data.fillGridWithoutClashes(gridExtend, gridDensity, gridClash);
 		voro.decomposite(data);
 		data.detectOuterGrid(minContact);

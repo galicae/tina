@@ -510,7 +510,6 @@ public class HubeRDP {
 	}
 	
 	public static SequenceAlignment hubeRDPAlign(Sequence template, Sequence target){
-		// TODO
 		// construct rdp tree
 //		System.out.print("Constructing RDP Tree structure...");
 		RDPProblem root = new RDPProblem (

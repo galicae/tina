@@ -32,6 +32,11 @@ public class RDPSolutionTree {
 	public RDPSolutionTreeOrNode getRoot() {
 		return root;
 	}
+
+	public int getDepth() {
+		// TODO
+		return root.getDepth();
+	}
 	
 }
 

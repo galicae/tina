@@ -177,6 +177,21 @@ public abstract class RDPSolutionTreeNode {
 		return true;
 	}
 	
+	/**
+	 * for RDPSolutionTree.getDepth();
+	 * @return the depth of this node's subtree
+	 */
+	public int getDepth() {
+		int result = 0;
+		for(RDPSolutionTreeNode child: childs) {
+			int temp = child.getDepth();
+			if (temp > result)
+				result = temp;
+//			result = (temp > result) ? temp : result;
+		}
+		return result+1;
+	}
+	
 }
 
 /******************************************************************************

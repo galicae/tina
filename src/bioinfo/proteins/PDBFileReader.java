@@ -435,8 +435,6 @@ public class PDBFileReader {
 		return new PDBEntry(newPdbId, aminoacids);
 	}
 
-
-
 	/**
 	 * 
 	 * @param br BufferedReader to read from

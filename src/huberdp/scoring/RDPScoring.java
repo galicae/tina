@@ -17,6 +17,7 @@ import bioinfo.energy.potential.voronoi.VoroPrepType;
 import bioinfo.energy.potential.voronoi.VoronoiData;
 import bioinfo.proteins.PDBEntry;
 import huberdp.RDPSolutionTreeOrNode;
+import huberdp.RDPSolutionTreeAndNode;
 import huberdp.Scoring;
 
 /**
@@ -26,6 +27,11 @@ import huberdp.Scoring;
  * @lastchange 2013-02-14
  */
 public class RDPScoring implements Scoring {
+	
+	// TODO optimize Voronoi call. It would be possible to save the voronoi
+	//	decomposition for one complete structure.
+	
+	// TODO optimize scoring. Only one for() is needed.
 
 	/**
 	 * empirically calibratet weight of the mutation matrix score
@@ -44,32 +50,39 @@ public class RDPScoring implements Scoring {
 	 */
 	private final static double ZETA = 1.0;
 	
+	private final static String VOROPATH = "/home/h/huberste/gobi/tina/tools/voro++";
+	
 	/**
 	 * weight of the mutation matrix score
 	 */
-	double gamma;
+	private double gamma;
 	/**
 	 * weight of the contact capacity score
 	 */
-	double delta;
+	private double delta;
 	/**
 	 * weight of the hydrophobicity score
 	 */
-	double epsilon;
+	private double epsilon;
 	/**
 	 * weight of the pair interaction score
 	 */
-	double zeta;
+	private double zeta;
 	
 	/**
 	 * mutation matrix for phiS
 	 */
-	double[][] mutationMatrix;
+	private double[][] mutationMatrix;
+	
+	/**
+	 * structure of the template
+	 */
+	private PDBEntry templateStructure;
 	
 	/**
 	 * absolute path to location of voro++ binary (dont have one? look at ./tools/voro++)
 	 */
-	String vorobin;
+	private String vorobin;
 	
 	/**
 	 * constructs a RDPScoring object with given paramters
@@ -77,12 +90,15 @@ public class RDPScoring implements Scoring {
 	 * @param delta weight of the contact capacity score
 	 * @param epsilon weight of the hydrophobicity score
 	 * @param zeta weight of the pair interaction score
-	 * @param mutationMatrix
+	 * @param mutationMatrix the mutation matrix that is to be used
+	 * @param templatestructure the template's structure
 	 * @param vorobin absolute path to location of voro++ binary
 	 */
 	public RDPScoring(
 			double gamma, double delta, double epsilon, double zeta,
-			double[][] mutationMatrix, String vorobin
+			double[][] mutationMatrix,
+			PDBEntry templatestructure,
+			String vorobin
 	) {
 		this.gamma = gamma;
 		this.delta = delta;
@@ -99,7 +115,8 @@ public class RDPScoring implements Scoring {
 		this(
 				GAMMA, DELTA, EPSILON, ZETA,
 				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX,
-				null
+				null,
+				VOROPATH
 		);
 	}
 	
@@ -110,12 +127,12 @@ public class RDPScoring implements Scoring {
 	public RDPScoring(RDPScoring arg) {
 		this(
 				arg.gamma, arg.delta, arg.epsilon, arg.zeta,
-				arg.mutationMatrix, arg.vorobin
+				arg.mutationMatrix, arg.templateStructure, arg.vorobin
 		);
 	}
 	
 	/**
-	 * setz binary for voro++
+	 * sets binary path of voro++
 	 * @param vorobin
 	 * @author seitza
 	 */
@@ -135,17 +152,25 @@ public class RDPScoring implements Scoring {
 	 */
 	@Override
 	public double score(RDPSolutionTreeOrNode node) {
+		// TODO if node.templateStructure has changed: reinitialize Voronoi
+		// TODO add parent's alignment's score to parent's parent's score
+		double result = 0.0;
 		
-		SequenceAlignment f = node.getProblem().alignment;
+		if (node.getParent() != null) {	// node is not root
+			double grandparentsscore =
+					((RDPSolutionTreeOrNode) node.getParent().getParent())
+						.getScore();
+		
+		SequenceAlignment f = ((RDPSolutionTreeAndNode)node.getParent()).getPA().alignment;
 		Sequence a = node.getProblem().targetSequence;
 		PDBEntry b = node.getProblem().templateStructure;
 		
-		double result = gamma * phiS(f, a, b) +
-						delta * phiC(f, a, b) +
-						epsilon * phiH(f, a, b) +
-						zeta * phiP(f, a, b) -
-						gap(f, a, b);
-		
+		result = gamma * phiS(f, a, b) +
+				delta * phiC(f, a, b) +
+				epsilon * phiH(f, a, b) +
+				zeta * phiP(f, a, b) -
+				gap(f, a, b);
+		}
 		return result;
 	}
 	
@@ -272,7 +297,7 @@ public class RDPScoring implements Scoring {
 			if (rows[0][pos] == '-') {
 				targpos++;
 				if (true) {
-					// TODO find which gap is a real gap (i.e. don't calculate on not-yet
+					// TODO find if gap is a real gap (i.e. don't calculate on not-yet
 					// aligned parts)
 					// insertion: target has aa, template not.
 					// TODO result += phiP(f, a, b) at position pos
@@ -280,14 +305,14 @@ public class RDPScoring implements Scoring {
 			} else if ((rows[1][pos] != '-')) {
 				temppos++;
 				if (true) {
-					// TODO find which gap is a real gap (i.e. don't calculate on not-yet
+					// TODO find if gap is a real gap (i.e. don't calculate on not-yet
 					// aligned parts)
-					// insertion: target has aa, template not.
-					// TODO result += phiP(f, a, b) at position pos
+					// deletion: template has aa, target not.
+					// TODO result += phiC(f, a, b) at position pos
 				}
-				// TODO result += phiC(f, a, b) at position pos
+				// 
 			} else {
-				// result must not be changed here
+				// result need not to be changed here
 				temppos++;
 				targpos++;
 			}
