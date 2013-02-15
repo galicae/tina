@@ -6,8 +6,10 @@
  ******************************************************************************/
 package validation.huberdp;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
@@ -16,8 +18,7 @@ import bioinfo.pdb.PDBFile;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 import bioinfo.proteins.structure.SimpleCoordMapper;
-import bioinfo.superpos.Kabsch;
-import bioinfo.superpos.PDBReduce;
+import bioinfo.superpos.TMMain;
 import bioinfo.superpos.Transformation;
 import files.PairFile;
 import files.SeqlibFile;
@@ -77,6 +78,10 @@ public class HubeRDPValidator {
 			System.exit(1);
 		}
 		
+		// initialize important stuff	
+		Locale.setDefault(Locale.US);
+		DecimalFormat df = new DecimalFormat("0.0000");
+		
 		// load joblist
 		PairFile pairfile = new PairFile(pairs);
 		LinkedList<String[]> joblist = pairfile.getJoblist();
@@ -91,75 +96,101 @@ public class HubeRDPValidator {
 					-10.0, -2.0,
 					bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX
 				);
+// Print out Header		
+		System.out.println("target\ttemplate\t\"HubeRDP RMSD\"\t\"HubeRDP TMScore\"\t\"HubeRDP GDT\"\t\"Gotoh RMSD\"\t\"Gotoh TMScore\"\t\"Gotoh GDT\"\t\"HubeRDP tree depth\"");
+		
+		// initialise loop stuff
+		String line = "";
+		int rdpdepth = 0;
+		
+		// initialize HubeRDP stuff
+		HubeRDP rdp = new HubeRDP();
+		rdp.addOracle(new TinyOracle());
+		rdp.setScoring(new SimpleScoring());
+		
+		// initialize TM stuff
+		TMMain tmmain = new TMMain();
 		
 		for (String[] job : joblist) {
 			try {
+				// load new job
 				String templatePDBID = job[0].substring(0, 4);
 				String targetPDBID = job[1].substring(0, 4);
 				Sequence template = library.get(job[0]);
 				Sequence target = library.get(job[1]);
+				SequenceAlignment ali =
+						new SequenceAlignment(
+								target, target,
+								target.getSequence(), target.getSequence(),
+								0.0
+						);
 				PDBEntry templateStructure =
 					new PDBFileReader(pdbpath).readPDBFromFile(
-						PDBFile.getFile(pdbpath, templatePDBID), job[0].charAt(4)
+							PDBFile.getFile(pdbpath, templatePDBID),
+							job[0].charAt(4)
 					);
 				PDBEntry targetStructure =
 						new PDBFileReader(pdbpath).readPDBFromFile(
-							PDBFile.getFile(pdbpath, targetPDBID), job[1].charAt(4)
+								PDBFile.getFile(pdbpath, targetPDBID),
+								job[1].charAt(4)
 						);
 				
-				System.out.println(">>> " + job[0] + " " + job[1]);
+//output				target			template
+				line = job[1] + "\t" + job[0]+"\t";
 				
-				// align Sequences with HubeRDP
-				System.out.println(">>> HubeRDP:");
+			// align sequences with HubeRDP
+				// initialize HubeRDP
+				RDPProblem root =
+						new RDPProblem (
+								template, null,
+								target, null,
+								null,
+								0, template.length() - 1,
+								0, target.length() - 1
+						);
+				RDPSolutionTree t = new RDPSolutionTree(root);
+				RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
+				// run HubeRDP
+				rdp.rdp(t, pq);
+				// save for output
+				rdpdepth = t.getDepth()/2;
 				
-					RDPProblem root = new RDPProblem (
-							template, null,
-							target, null,
-							null,
-							0, template.length() - 1,
-							0, target.length() - 1
-					);
-					RDPSolutionTree t = new RDPSolutionTree(root);
-					RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
-					HubeRDP rdp = new HubeRDP();
-					rdp.addOracle(new TinyOracle());
-					rdp.setScoring(new SimpleScoring());
-					rdp.rdp(t, pq);
-				
+				// get HubeRDP's alignment
 				SequenceAlignment rdpAlignment =
 						t.getRoot().getTA().get(0).alignment;
-				
-				System.out.println("> HubeRDP solution tree depth: "+(t.getDepth()/2));
-				System.out.println(rdpAlignment.toStringVerbose());
-				
-				
-				// use CoordMapper on HubeRDP Alignment
+			// use CoordMapper on HubeRDP Alignment
 				PDBEntry rdpStructure =
 						SimpleCoordMapper.map(templateStructure, rdpAlignment);
 				
-				// measure RMSD for HubeRDP Alignment
-				double[][][] rdppoints = PDBReduce.reducePDBs(rdpStructure, targetStructure);
-				Transformation rdptr = Kabsch.calculateTransformation(rdppoints);
-				double rdprmsd = rdptr.getRmsd();
+			// calculate TM stuff
+				Transformation rdptmtr = tmmain.calculateTransformation(
+						ali, rdpStructure, targetStructure);
 				
-				System.out.println("> HubeRDP RMSD: "+rdprmsd);
+// output
+				line += df.format(rdptmtr.getRmsd()) + "\t" +
+						df.format(rdptmtr.getTmscore()) + "\t" +
+						df.format(rdptmtr.getGdt()) + "\t";
 				
-				// align Sequences with Gotoh
-				System.out.println(">>> Gotoh:");
+			// align Sequences with Gotoh
 				SequenceAlignment gotohAlignment =
 						gotoh.align(template, target);
-				System.out.println(gotohAlignment.toStringVerbose());
 				
-				// use CoordMapper on Gotoh Alignment
+			// use CoordMapper on Gotoh Alignment
 				PDBEntry gotohStructure =
 						SimpleCoordMapper.map(templateStructure, gotohAlignment);
+
+				// calculate TM stuff
+				Transformation gotohtmtr = tmmain.calculateTransformation(
+						ali, gotohStructure, targetStructure);
 				
-				// measure RMSD for Gotoh Alignment
-				double[][][] gotohpoints = PDBReduce.reducePDBs(gotohStructure, targetStructure);
-				Transformation gotohtr = Kabsch.calculateTransformation(gotohpoints);
-				double gotohrmsd = gotohtr.getRmsd();
+// output
+				line += df.format(gotohtmtr.getRmsd()) + "\t" +
+						df.format(gotohtmtr.getTmscore()) + "\t" +
+						df.format(gotohtmtr.getGdt()) + "\t";
 				
-				System.out.println("> Gotoh RMSD: "+gotohrmsd);
+				line += rdpdepth;
+				System.out.println(line);
+				
 			} catch (Exception e) {
 				System.err.println("Error while working on job "+ job[0]+" " + job[1]);
 				e.printStackTrace();
