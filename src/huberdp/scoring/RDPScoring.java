@@ -54,7 +54,7 @@ public class RDPScoring implements Scoring {
 	 * static reference to voro++ path
 	 */
 	private final static String VOROPATH =
-			"/home/h/huberste/gobi/tina/tools/voro++";
+			"/home/h/huberste/gobi/tina/tools/voro++_ubuntuquantal";
 	
 	/**
 	 * empirically calibratet value for voro++
@@ -99,6 +99,7 @@ public class RDPScoring implements Scoring {
 	/**
 	 * absolute path to location of voro++ binary
 	 * (dont have one? look at ./tools/voro++)
+	 * @see http://math.lbl.gov/voro++/download/
 	 */
 	private String vorobin;
 	
@@ -326,20 +327,25 @@ public class RDPScoring implements Scoring {
 		char[][] rows = f.getRows();
 		
 		int temppos = 0;	// position in template
-		int targpos = 0;	// position in target
+//		int targpos = 0;	// position in target
 		
 		for (int pos = 0; pos < rows[0].length; pos++) {
 			
-			if (rows[0][pos] == '-') {
-				targpos++;
-			} else if ((rows[1][pos] != '-')) {
+			if (rows[0][pos] == '-') { // if insertion
+//				targpos++;
+			} else if ((rows[1][pos] == '-')) { // if deletion
 				temppos++;
-			} else {
+			} else { // if match
 				// sum up score
-				result += hydrophobicity(a.getComp(targpos)) * 
-						dob(b, temppos);
+				double hydro = hydrophobicity(rows[1][pos]);
+				double dob = dob(b, temppos);
+				// TODO check if this makes sense
+				//	huberste: I fear it doesn't. Look at this when fully awake.
+				result += hydro > dob ? dob / hydro : hydro / dob;
+//				result += hydrophobicity(a.getComp(targpos)) * 
+//						dob(b, temppos);
 				temppos++;
-				targpos++;
+//				targpos++;
 			}
 		}
 		

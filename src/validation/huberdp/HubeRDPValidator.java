@@ -105,9 +105,9 @@ public class HubeRDPValidator {
 		
 		// initialize HubeRDP stuff
 		// TODO
-//		HubeRDP rdp = new HubeRDP();
-		HubeRDP rdp;
-//		rdp.addOracle(new TinyOracle());
+		HubeRDP rdp = new HubeRDP();
+		rdp.addOracle(new TinyOracle());
+		rdp.setScoring(new SimpleScoring());
 //		rdp.setScoring(new RDPScoring());
 		
 		// initialize TM stuff
@@ -153,9 +153,6 @@ public class HubeRDPValidator {
 				RDPSolutionTree t = new RDPSolutionTree(root);
 				RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
 				// run HubeRDP
-				rdp = new HubeRDP();
-				rdp.setScoring(new RDPScoring());
-				rdp.addOracle(new TinyOracle());
 				rdp.rdp(t, pq);
 				// save for output
 				rdpdepth = t.getDepth()/2;

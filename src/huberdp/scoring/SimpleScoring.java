@@ -8,7 +8,8 @@
  ******************************************************************************/
 package huberdp.scoring;
 
-import bioinfo.alignment.gotoh.LocalSequenceGotoh;
+//import bioinfo.alignment.gotoh.LocalSequenceGotoh;
+import huberdp.RDPSolutionTreeAndNode;
 import huberdp.RDPSolutionTreeOrNode;
 import huberdp.Scoring;
 
@@ -24,15 +25,17 @@ public class SimpleScoring implements Scoring {
 	 */
 	@Override
 	public double score(RDPSolutionTreeOrNode node) {
-		LocalSequenceGotoh gotoh = new LocalSequenceGotoh(
-				-10.0, -2.0,
-				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX);
+//		LocalSequenceGotoh gotoh = new LocalSequenceGotoh(
+//				-10.0, -2.0,
+//				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX);
 		
 		return ((RDPSolutionTreeOrNode)node.getParent().getParent()).getScore()
-				+ gotoh.align(
-						node.getProblem().templateSequence,
-						node.getProblem().targetSequence
-				).getScore();
+				+ ((RDPSolutionTreeAndNode)node.getParent()).
+					getPA().alignment.getScore();
+//				+ gotoh.align(
+//						node.getProblem().templateSequence,
+//						node.getProblem().targetSequence
+//				).getScore();
 	}
 
 }
