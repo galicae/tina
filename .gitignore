@@ -1,4 +1,5 @@
 bin/*
+src/test/Test.java
 !lib/reprof/bin/
 *.war
 *.class

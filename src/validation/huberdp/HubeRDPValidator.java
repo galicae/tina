@@ -11,7 +11,7 @@ import java.util.LinkedList;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
-import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
+import bioinfo.alignment.gotoh.LocalSequenceGotoh;
 import bioinfo.pdb.PDBFile;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
@@ -22,6 +22,11 @@ import bioinfo.superpos.Transformation;
 import files.PairFile;
 import files.SeqlibFile;
 import huberdp.HubeRDP;
+import huberdp.RDPPriorityQueue;
+import huberdp.RDPProblem;
+import huberdp.RDPSolutionTree;
+import huberdp.oracles.TinyOracle;
+import huberdp.scoring.SimpleScoring;
 import util.CommandLineParser;
 
 /**
@@ -81,8 +86,8 @@ public class HubeRDPValidator {
 		SeqlibFile seqlibfile = new SeqlibFile(seqlib);
 		HashMap<String, Sequence> library = seqlibfile.getLibrary();
 		
-		FreeshiftSequenceGotoh gotoh =
-				new FreeshiftSequenceGotoh(
+		LocalSequenceGotoh gotoh =
+				new LocalSequenceGotoh(
 					-10.0, -2.0,
 					bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX
 				);
@@ -106,9 +111,27 @@ public class HubeRDPValidator {
 				
 				// align Sequences with HubeRDP
 				System.out.println(">>> HubeRDP:");
+				
+					RDPProblem root = new RDPProblem (
+							template, null,
+							target, null,
+							null,
+							0, template.length() - 1,
+							0, target.length() - 1
+					);
+					RDPSolutionTree t = new RDPSolutionTree(root);
+					RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
+					HubeRDP rdp = new HubeRDP();
+					rdp.addOracle(new TinyOracle());
+					rdp.setScoring(new SimpleScoring());
+					rdp.rdp(t, pq);
+				
 				SequenceAlignment rdpAlignment =
-						HubeRDP.hubeRDPAlign(template, target);
+						t.getRoot().getTA().get(0).alignment;
+				
+				System.out.println("> HubeRDP solution tree depth: "+(t.getDepth()/2));
 				System.out.println(rdpAlignment.toStringVerbose());
+				
 				
 				// use CoordMapper on HubeRDP Alignment
 				PDBEntry rdpStructure =
