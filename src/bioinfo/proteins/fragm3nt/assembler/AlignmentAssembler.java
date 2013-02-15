@@ -28,6 +28,7 @@ public class AlignmentAssembler extends Assembler {
 	public ProteinFragment predStrucFromAl(LinkedList<Sequence> seqs,
 			int extent, String pdbDirectory) {
 		String query = seqs.get(0).getSequenceAsString();
+
 		PDBFileReader reader = new PDBFileReader(pdbDirectory);
 		LinkedList<ProteinFragment> result = new LinkedList<ProteinFragment>();
 
@@ -35,9 +36,9 @@ public class AlignmentAssembler extends Assembler {
 		LinkedList<ProteinFragment> structures = new LinkedList<ProteinFragment>();
 		for (int i = 0; i < seqs.size(); i++) {
 			String id = seqs.get(i).getID();
+			// query = seqs.get(i).getSequenceAsString();
 			PDBEntry temp = reader.readFromFolderById(id);
-			ProteinFragment tempFrag = new ProteinFragment(temp.getID()
-					+ temp.getChainID() + temp.getChainIDNum(),
+			ProteinFragment tempFrag = new ProteinFragment(temp.getID(),
 					PDBReduce.reduceSinglePDB(temp), extent);
 			tempFrag.setSequence(query);
 			structures.add(tempFrag);
@@ -59,6 +60,13 @@ public class AlignmentAssembler extends Assembler {
 		return resultFragment;
 	}
 
+	/**
+	 * 
+	 * @param alignments
+	 * @param structures
+	 * @param extent
+	 * @return
+	 */
 	protected LinkedList<ProteinFragment> collectFragmentsFromAl(
 			LinkedList<SequenceAlignment> alignments,
 			LinkedList<ProteinFragment> structures, int extent) {
@@ -73,19 +81,24 @@ public class AlignmentAssembler extends Assembler {
 		LinkedList<ProteinFragment> result = new LinkedList<ProteinFragment>();
 		LinkedList<ProteinFragment> positSolutions = new LinkedList<ProteinFragment>();
 		result.add(curFrag);
+		// if (curFrag.getID().startsWith(structures.get(0).getID()))
+		// System.out.println("home fragment!");
 		int add = fragLength - extent;
 
 		// now loop over bulk of protein
 		for (int i = add; i < query.length() - fragLength; i += add) {
 			positSolutions.clear();
 			curFrag = findFragFromAli(i, alignments, structures, curFrag);
-
+			// if (curFrag.getID().startsWith(structures.get(0).getID()))
+			// System.out.println("home framgnet!");
 			result.add(curFrag);
 		}
 		// and now the last
 		curFrag = findFragFromAli(query.length() - fragLength, alignments,
 				structures, curFrag);
 		result.add(curFrag);
+		// if (curFrag.getID().startsWith(structures.get(0).getID()))
+		// System.out.println("home fragment!");
 		return result;
 	}
 
@@ -101,32 +114,46 @@ public class AlignmentAssembler extends Assembler {
 			LinkedList<SequenceAlignment> alignments,
 			LinkedList<ProteinFragment> structures, ProteinFragment lastFrag) {
 
+		int saveStart = start;
 		double[][] matrix = QuasarMatrix.DAYHOFF_MATRIX;
-		String query = "";
 		/*
 		 * for all alignments, check if the fragment starting (in the query) at
 		 * start with length fragLength (no gaps) has a 100% match. If yes, then
 		 * score it. If not, save the score as negative infinity.
 		 */
-		char[][] ali = new char[1][1];
 		int[][] map = new int[1][1];
 		SequenceAlignment temp = alignments.get(0);
 		double[] scores = new double[alignments.size()];
 		for (int i = 0; i < alignments.size(); i++) {
+
 			temp = alignments.get(i);
-			ali = temp.getRows();
 			map = temp.getAlignedResidues();
-			int diff1 = map[0][start + fragLength - 1] - map[0][start];
-			int diff2 = map[1][start + fragLength - 1] - map[1][start];
-			// if one of the two sequences contains a gap continue
-			if (diff1 != fragLength || diff2 != fragLength) {
+			// find start:
+			boolean found = false;
+			for (int j = 0; j < map[0].length; j++) {
+				if (map[0][j] == start) {
+					start = j;
+					found = true;
+					break;
+				}
+			}
+			if (start < map[0].length - fragLength && found) {
+				int diff1 = map[0][start + fragLength] - map[0][start];
+				int diff2 = map[1][start + fragLength] - map[1][start];
+
+				// if one of the two sequences contains a gap continue
+				if (diff1 != fragLength || diff2 != fragLength) {
+					scores[i] = Double.NEGATIVE_INFINITY;
+					continue;
+				}
+			} else {
 				scores[i] = Double.NEGATIVE_INFINITY;
 				continue;
 			}
 			// else score the aligned part
 			for (int j = 0; j < fragLength; j++) {
-				char x = ali[0][map[0][start + j]];
-				char y = ali[1][map[1][start + j]];
+				char x = temp.getComponent(0).getSequence()[map[0][start + j]];
+				char y = temp.getComponent(1).getSequence()[map[1][start + j]];
 				scores[i] += matrix[x - 65][y - 65];
 			}
 		}
@@ -149,8 +176,8 @@ public class AlignmentAssembler extends Assembler {
 		 * been found in the alignments) then return this fragment.
 		 */
 		if (maxIndex == -1) {
-			ProteinFragment result = structures.get(0).getPart(start,
-					start + fragLength);
+			ProteinFragment result = structures.get(0).getPart(saveStart,
+					saveStart + fragLength);
 			return result;
 		} else {
 			map = alignments.get(maxIndex).getAlignedResidues();
