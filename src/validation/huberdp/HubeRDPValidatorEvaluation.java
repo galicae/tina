@@ -47,6 +47,8 @@ public class HubeRDPValidatorEvaluation {
 						result = temp[1] + "\t" + temp[2];
 					}
 					
+				} else if (line.startsWith("> HubeRDP solution tree depth: ")) {
+					result += "\t" + line.substring(31);
 				} else if (line.startsWith("> HubeRDP RMSD:")) {
 					huberdprmsd = Double.parseDouble(line.substring(16));
 					result += "\t" + df.format(huberdprmsd);

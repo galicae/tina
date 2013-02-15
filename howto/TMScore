@@ -1,0 +1,19 @@
+/**
+ * HOW TO... USE TM SCORE
+ * ----------------------
+ */
+
+import bioinfo.superpos.TMMain;
+import bioinfo.superpos.Transformation;
+
+// 1) Create new TMMain object:
+TMMain tmmain = new TMMain();
+
+// 2) make transformation
+Transformation tr = tmmain.calculateTransformation(SequenceAlignment ali, PDBEntry prediction, PDBEntry native);
+
+// 3) Ergebnisse sind in tr gespeichert
+tr.getRmsd();
+tr.getTmscore();
+tr.getGdt();
+
