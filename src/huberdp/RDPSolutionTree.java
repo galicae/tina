@@ -22,7 +22,7 @@ public class RDPSolutionTree {
 	 * @param problem
 	 */
 	public RDPSolutionTree(RDPProblem problem) {
-		root = new RDPSolutionTreeOrNode(null, problem, Double.POSITIVE_INFINITY);
+		root = new RDPSolutionTreeOrNode(null, problem, 0);
 	}
 	
 	/**

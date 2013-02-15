@@ -50,7 +50,24 @@ public class RDPScoring implements Scoring {
 	 */
 	private final static double ZETA = 1.0;
 	
-	private final static String VOROPATH = "/home/h/huberste/gobi/tina/tools/voro++";
+	/**
+	 * static reference to voro++ path
+	 */
+	private final static String VOROPATH =
+			"/home/h/huberste/gobi/tina/tools/voro++";
+	
+	/**
+	 * empirically calibratet value for voro++
+	 */
+	private final static double GRID_EXTEND = 8.9;
+	/**
+	 * empirically calibratet value for voro++
+	 */
+	private final static double GRID_DENSITY = 1.0;
+	/**
+	 * empirically calibratet value for voro++
+	 */
+	private final static double GRID_CLASH = 6.5;
 	
 	/**
 	 * weight of the mutation matrix score
@@ -80,9 +97,24 @@ public class RDPScoring implements Scoring {
 	private PDBEntry templateStructure;
 	
 	/**
-	 * absolute path to location of voro++ binary (dont have one? look at ./tools/voro++)
+	 * absolute path to location of voro++ binary
+	 * (dont have one? look at ./tools/voro++)
 	 */
 	private String vorobin;
+	
+	/**
+	 * Voronoi constants
+	 */
+	private double gridExtend;
+	private double gridDensity;
+	private double gridClash;
+	
+	/**
+	 * Voro++ stuff
+	 */
+	private VoroPPWrap voro;
+	private VoronoiData data;
+	private Set<Integer> solvents;
 	
 	/**
 	 * constructs a RDPScoring object with given paramters
@@ -98,7 +130,8 @@ public class RDPScoring implements Scoring {
 			double gamma, double delta, double epsilon, double zeta,
 			double[][] mutationMatrix,
 			PDBEntry templatestructure,
-			String vorobin
+			String vorobin,
+			double gridExtend, double gridDensity, double gridClash
 	) {
 		this.gamma = gamma;
 		this.delta = delta;
@@ -106,6 +139,7 @@ public class RDPScoring implements Scoring {
 		this.zeta = zeta;
 		this.mutationMatrix = mutationMatrix;
 		this.vorobin = vorobin;
+		setVoroVars(gridExtend, gridDensity, gridClash);
 	}
 	
 	/**
@@ -116,7 +150,8 @@ public class RDPScoring implements Scoring {
 				GAMMA, DELTA, EPSILON, ZETA,
 				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX,
 				null,
-				VOROPATH
+				VOROPATH,
+				GRID_EXTEND, GRID_DENSITY, GRID_CLASH
 		);
 	}
 	
@@ -127,8 +162,28 @@ public class RDPScoring implements Scoring {
 	public RDPScoring(RDPScoring arg) {
 		this(
 				arg.gamma, arg.delta, arg.epsilon, arg.zeta,
-				arg.mutationMatrix, arg.templateStructure, arg.vorobin
+				arg.mutationMatrix,
+				arg.templateStructure,
+				arg.vorobin,
+				arg.gridExtend, arg.gridDensity, arg.gridClash
 		);
+	}
+	
+	/**
+	 * initializes Voro++ stuff
+	 * @param gridExtend value in Angstrom, additional space which will be filled by grid, CAVE: MUST be greater then gridClash!!
+	 * @param gridDensisty value in Angstrom, denisty of solvent points with which grid will be filled
+	 * @param gridClash value in Angstrom, distance every solvent must have to every peptide atom!
+	 */
+	public void initVoro() {
+		if (vorobin != null && templateStructure != null) {
+			voro = new VoroPPWrap(vorobin);
+			data = new VoronoiData(templateStructure.getID());
+			data.reducePDB(VoroPrepType.CA, templateStructure);
+			data.fillGridWithoutClashes(gridExtend, gridDensity, gridClash);
+			voro.decomposite(data);
+			solvents = data.getOuterGridIds();
+		}
 	}
 	
 	/**
@@ -141,6 +196,19 @@ public class RDPScoring implements Scoring {
 	}
 
 	/**
+	 * 
+	 * @param gridExtend
+	 * @param gridDensity
+	 * @param gridClash
+	 */
+	public void setVoroVars(
+			double gridExtend, double gridDensity, double gridClash) {
+		this.gridExtend = gridExtend;
+		this.gridDensity = gridDensity;
+		this.gridClash = gridClash;
+	}
+	
+	/**
 	 * calculates the score for a given OR node
 	 * \phi (f, A, B) = \gamma * \phi^S(f,A,B) +	// mutation matrix (e.g. DAYHOFF)
 	 * 					\delta * \phi^C(f,A,B) +	// contact capacity potential (see 123D)
@@ -152,25 +220,40 @@ public class RDPScoring implements Scoring {
 	 */
 	@Override
 	public double score(RDPSolutionTreeOrNode node) {
-		// TODO if node.templateStructure has changed: reinitialize Voronoi
-		// TODO add parent's alignment's score to parent's parent's score
+
 		double result = 0.0;
 		
+		// check if correct structure is set
+		if ((this.templateStructure == null) ||
+			(templateStructure != node.getProblem().templateStructure)) {
+			templateStructure = node.getProblem().templateStructure;
+			initVoro();
+		}
+		
+		// check if voronoi composition is set
+/*		// normally this should never be the case.
+		if (voro == null) {
+				initVoro();
+			}
+*/
+		
 		if (node.getParent() != null) {	// node is not root
-			double grandparentsscore =
-					((RDPSolutionTreeOrNode) node.getParent().getParent())
+			// add parent's alignment's score to parent's parent's score
+			result += ((RDPSolutionTreeOrNode) node.getParent().getParent())
 						.getScore();
 		
-		SequenceAlignment f = ((RDPSolutionTreeAndNode)node.getParent()).getPA().alignment;
-		Sequence a = node.getProblem().targetSequence;
-		PDBEntry b = node.getProblem().templateStructure;
-		
-		result = gamma * phiS(f, a, b) +
-				delta * phiC(f, a, b) +
-				epsilon * phiH(f, a, b) +
-				zeta * phiP(f, a, b) -
-				gap(f, a, b);
+			SequenceAlignment f = ((RDPSolutionTreeAndNode)node.getParent())
+						.getPA().alignment;
+			Sequence a = node.getProblem().targetSequence;
+			PDBEntry b = node.getProblem().templateStructure;
+			
+			result = gamma * phiS(f, a, b) +
+					delta * phiC(f, a, b) +
+					epsilon * phiH(f, a, b) +
+					zeta * phiP(f, a, b) -
+					gap(f, a, b);
 		}
+		
 		return result;
 	}
 	
@@ -194,7 +277,10 @@ public class RDPScoring implements Scoring {
 			// if positions are aligned
 			if((rows[0][pos] != '-') && (rows[1][pos] != '-')) {
 				// sum up score from mutation matrix
-				result += mutationMatrix[rows[0][pos]][rows[0][pos]];
+				result +=
+						mutationMatrix
+							[rows[0][pos]-65]
+							[rows[1][pos]-65];
 			}
 		}
 		
@@ -334,35 +420,18 @@ public class RDPScoring implements Scoring {
 	/**
 	 * calculates the degree of burial (dob) for the given amino acid in the
 	 * given structure
+	 * @author seitza
 	 * @param structure the 3d structure of the template
 	 * @param pos the position of the amino acid in the template
 	 * @return the degree of burial [0..1]
 	 */
 	private double dob(PDBEntry structure, int pos) {
-		return dob(structure, pos, 8.9, 1.0, 6.5);
-	}
-	
-	/**
-	 * calculates the degree of burial (dob) for the given amino acid in the
-	 * given structure
-	 * @author seitza
-	 * @param structure the 3d structure of the template
-	 * @param pos the position of the amino acid in the template
-	 * @param gridExtend value in Angstrom, additional space which will be filled by grid, CAVE: MUST be greater then gridClash!!
-	 * @param gridDensisty value in Angstrom, denisty of solvent points with which grid will be filled
-	 * @param gridClash value in Angstrom, distance every solvent must have to every peptide atom!
-	 * @return the degree of burial [0..1]
-	 */
-	private double dob(PDBEntry structure, int pos, double gridExtend, double gridDensity, double gridClash) {
-		VoroPPWrap voro = new VoroPPWrap(vorobin);
-		VoronoiData data = new VoronoiData(structure.getID());
-		data.reducePDB(VoroPrepType.CA, structure);
-		data.fillGridWithoutClashes(8.9, 1.0, 6.5);
-		voro.decomposite(data);
-		HashMap<Integer,Double> faces = data.getFaces().get(pos);
-		Set<Integer> solvents = data.getOuterGridIds();
+		
 		double outer = 0.0;
 		double inner = 0.0;
+
+		HashMap<Integer,Double> faces = data.getFaces().get(pos);
+		
 		for(int neighbor : faces.keySet()){
 			if(solvents.contains(neighbor)){
 				outer += faces.get(neighbor);

@@ -1,6 +1,8 @@
 /******************************************************************************
  * validation.huberdp.HubeRDPValidatorEvaluation.java                         *
  *                                                                            *
+ * This file is not needed anymore.                                           *
+ *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
  ******************************************************************************/

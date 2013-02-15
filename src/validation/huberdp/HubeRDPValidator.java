@@ -26,8 +26,8 @@ import huberdp.HubeRDP;
 import huberdp.RDPPriorityQueue;
 import huberdp.RDPProblem;
 import huberdp.RDPSolutionTree;
-import huberdp.oracles.TinyOracle;
-import huberdp.scoring.SimpleScoring;
+import huberdp.oracles.*;
+import huberdp.scoring.*;
 import util.CommandLineParser;
 
 /**
@@ -104,9 +104,11 @@ public class HubeRDPValidator {
 		int rdpdepth = 0;
 		
 		// initialize HubeRDP stuff
-		HubeRDP rdp = new HubeRDP();
-		rdp.addOracle(new TinyOracle());
-		rdp.setScoring(new SimpleScoring());
+		// TODO
+//		HubeRDP rdp = new HubeRDP();
+		HubeRDP rdp;
+//		rdp.addOracle(new TinyOracle());
+//		rdp.setScoring(new RDPScoring());
 		
 		// initialize TM stuff
 		TMMain tmmain = new TMMain();
@@ -142,7 +144,7 @@ public class HubeRDPValidator {
 				// initialize HubeRDP
 				RDPProblem root =
 						new RDPProblem (
-								template, null,
+								template, templateStructure,
 								target, null,
 								null,
 								0, template.length() - 1,
@@ -151,6 +153,9 @@ public class HubeRDPValidator {
 				RDPSolutionTree t = new RDPSolutionTree(root);
 				RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
 				// run HubeRDP
+				rdp = new HubeRDP();
+				rdp.setScoring(new RDPScoring());
+				rdp.addOracle(new TinyOracle());
 				rdp.rdp(t, pq);
 				// save for output
 				rdpdepth = t.getDepth()/2;
