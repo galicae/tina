@@ -18,12 +18,16 @@ import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.PDBReduce;
 import bioinfo.superpos.Transformation;
 
+/**
+ * this class is a single entry test for the AlignmentAssembler
+ * 
+ * @author galicae
+ * 
+ */
 public class AlignmentAssemblyTest {
 
 	public static void main(String[] args) {
-		// String[] seqIds = { "1cqxB02", "1gvhA02"};
-		String[] seqIds = { "1f0yA02", "3hdhC02" }; // 0.77
-		// String[] seqIds = { "1m3uE00", "1o68B00"}; //0.53
+		String[] seqIds = { "1chmB01", "1kp0A01" };
 		String[] stringSeq = new String[seqIds.length];
 
 		// read sequences (strings)
@@ -57,7 +61,7 @@ public class AlignmentAssemblyTest {
 				"/home/galicae/Desktop/STRUCTURES/");
 		PDBFileReader read = new PDBFileReader(
 				"/home/galicae/Desktop/STRUCTURES/");
-		PDBEntry pdb = read.readFromFolderById("1f0yA02");
+		PDBEntry pdb = read.readFromFolderById("1chmB01");
 		String query = "";
 		for (int i = 0; i < pdb.length(); i++) {
 			query += pdb.getAminoAcid(i).getName();
@@ -87,26 +91,33 @@ public class AlignmentAssemblyTest {
 			wr2.write("MODEL        2\n");
 			wr2.write(prot.toString());
 			wr2.write("ENDMDL\n");
-			
-//			kabschFood[0] = prot.getAllResidues();
+
+			// kabschFood[0] = prot.getAllResidues();
 			Sequence seq1 = new Sequence(pdb.getID(), pdb.getSequence());
 			for (int i = 1; i < seqs.size(); i++) {
 				PDBEntry pdb1 = read.readFromFolderById(seqs.get(i).getID());
-				FreeshiftSequenceGotoh got = new FreeshiftSequenceGotoh(-15, -3, QuasarMatrix.DAYHOFF_MATRIX);
+				FreeshiftSequenceGotoh got = new FreeshiftSequenceGotoh(-15,
+						-3, QuasarMatrix.DAYHOFF_MATRIX);
 				Sequence seq2 = new Sequence(pdb1.getID(), pdb1.getSequence());
 				SequenceAlignment ali = got.align(seq1, seq2);
 				System.out.println(ali.toStringVerbose());
-				
-				prot = new ProteinFragment(pdb1.getID(), "D", new double[0][0], 8);
+
+				prot = new ProteinFragment(pdb1.getID(), "D", new double[0][0],
+						8);
 				prot.setSequence(pdb1.getSequence());
-				prot.append(PDBReduce.reduceSinglePDB(pdb1), "");
+				kabschFood[1] = PDBReduce.reduceSinglePDB(pdb1);
+				prot.append(kabschFood[1], "");
 				
-				kabschFood[1] = prot.getAllResidues();
 				kabschFood = PDBReduce.reduce(ali, pdb, pdb1);
 				t = Kabsch.calculateTransformation(kabschFood);
-				kabschFood[1] = t.transform(kabschFood[1]);
+				pdb1 = t.transform(pdb1);
 				
-				prot.setCoordinates(kabschFood[1]);
+				System.out.println(prot.getAllResidues().length);
+
+//				prot = new ProteinFragment(pdb1.getID(), "D", new double[0][0],
+//						8);
+//				prot.setSequence(pdb1.getSequence());
+//				prot.append(PDBReduce.reduceSinglePDB(pdb1), "");
 				wr2.write("MODEL        " + (i + 2) + "\n");
 				wr2.write(prot.toString());
 				wr2.write("ENDMDL\n");
