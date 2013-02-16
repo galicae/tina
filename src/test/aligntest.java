@@ -36,9 +36,9 @@ public class aligntest {
 	public static void main(String[] args) throws Exception {
 		BufferedWriter out = null;
 		out = new BufferedWriter(new FileWriter("sec_glocal-global.aligns"));
-		HashMap<String,char[]> seqlib = SeqLibrary.read("../GoBi_old/referenz/domains.seqlib");
-		HashMap<String,char[]> sec_seqlib = SeqLibrary.read("secstruct.seqlib");
-		ArrayList<String[]> pairs = PairReader.parse("410List.unique_pairs");
+		HashMap<String,char[]> seqlib = SeqLibrary.read("../domains.seqlib");
+		HashMap<String,char[]> sec_seqlib = SeqLibrary.read("../secstruct.seqlib");
+		ArrayList<String[]> pairs = PairReader.parse("../410List.unique_pairs");
 		InitClass init = new InitClass();
 		double[][] secMatrix = SecStructScores.matrix;
 		double[][] substMatrix = QuasarMatrix.DAYHOFF_MATRIX;
@@ -46,9 +46,9 @@ public class aligntest {
 		double[][] hbMatrix = init.calcGotohInputMatrix(init.calcHydropathyScores());
 		GlobalSequenceGotoh substgotoh = new GlobalSequenceGotoh(-12.0,-1.0,substMatrix);
 		FreeshiftSequenceGotoh polgotoh = new FreeshiftSequenceGotoh(-10,-4,polMatrix);
-		LocalSequenceGotoh localgotoh = new LocalSequenceGotoh(-7,-2,polMatrix);
+		LocalSequenceGotoh localgotoh = new LocalSequenceGotoh(-15,-4,secMatrix);
 		GLocalSequenceGotoh glocalgotoh = new GLocalSequenceGotoh(-15.0,-4.0,secMatrix);
-		GLocalMusterLite mustertest = new GLocalMusterLite(-4.0,-1.0, SeqLibrary.read("secstruct.seqlib"),hbMatrix,polMatrix,SecStructScores.matrix,substMatrix,0.1,0.1,0.3,0.1);
+		GLocalMusterLite mustertest = new GLocalMusterLite(-4.0,-1.0, SeqLibrary.read("../secstruct.seqlib"),hbMatrix,polMatrix,SecStructScores.matrix,substMatrix,0.1,0.1,0.3,0.1);
 		Sequence seq1;
 		Sequence seq2;
 		
@@ -56,26 +56,26 @@ public class aligntest {
 		String pdb2 = "1wq2B00";
 		
 //		for(String[] pair : pairs){
-		seq1 = new Sequence(pdb1,seqlib.get(pdb1));
-		seq2 = new Sequence(pdb2,seqlib.get(pdb2));
+		seq1 = new Sequence(pdb1,sec_seqlib.get(pdb1));
+		seq2 = new Sequence(pdb2,sec_seqlib.get(pdb2));
 		
-		SequenceAlignment align1 = glocalgotoh.align(seq1, seq2);
+		SequenceAlignment align1 = localgotoh.align(seq1, seq2);
 		SequenceAlignment align2 = substgotoh.align(seq1, seq2);
 		
 		System.out.println(align1.toStringVerbose()+"\n");
-		System.out.println(align2.toStringVerbose());
+//		System.out.println(align2.toStringVerbose());
 		
 		
-		PDBFileReader pdbreader = new PDBFileReader("../GoBi_old/STRUCTURES");
-		TMMain superpos = new TMMain();
-		PDBEntry p = pdbreader.readFromFolderById(pdb1);
-		PDBEntry q = pdbreader.readFromFolderById(pdb2);
-		Transformation tr1 = superpos.calculateTransformation(align1, p, q);
-		Transformation tr2 = superpos.calculateTransformation(align2, p, q);
-		System.out.println("TMScore f�r Muster: " + tr1.getTmscore());
-		System.out.println("TMScore f�r Sequence: " + tr2.getTmscore());
-		System.out.println("RMSD f�r Muster: " + tr1.getRmsd());
-		System.out.println("RMSD f�r Sequence: " + tr2.getRmsd());
+//		PDBFileReader pdbreader = new PDBFileReader("../GoBi_old/STRUCTURES");
+//		TMMain superpos = new TMMain();
+//		PDBEntry p = pdbreader.readFromFolderById(pdb1);
+//		PDBEntry q = pdbreader.readFromFolderById(pdb2);
+//		Transformation tr1 = superpos.calculateTransformation(align1, p, q);
+//		Transformation tr2 = superpos.calculateTransformation(align2, p, q);
+//		System.out.println("TMScore f�r Muster: " + tr1.getTmscore());
+//		System.out.println("TMScore f�r Sequence: " + tr2.getTmscore());
+//		System.out.println("RMSD f�r Muster: " + tr1.getRmsd());
+//		System.out.println("RMSD f�r Sequence: " + tr2.getRmsd());
 	
 //		out.append(tr1.getRmsd()+"\t"+tr2.getRmsd()+"\n");
 		
