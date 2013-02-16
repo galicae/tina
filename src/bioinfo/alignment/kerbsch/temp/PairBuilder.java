@@ -21,27 +21,26 @@ public class PairBuilder {
 		ArrayList<String> ids = new ArrayList<String>();
 		
 		try{
-			in = new BufferedReader(new FileReader("../410.list"));
+			in = new BufferedReader(new FileReader("../famrec.list"));
 			String line;
 			while((line = in.readLine()) != null){
 				ids.add(line.trim());
 			}
 			in.close();
+
 			
-			List<String> pairs = new ArrayList<String>();
-			
-			out = new BufferedWriter(new FileWriter("410List.unique_pairs"));
-			for (int i = 0; i < ids.size(); i++) {
-				for (int j = 0; j < ids.size(); j++) {
-					pairs.add(ids.get(i)+ids.get(j));
-					if(ids.get(i) != ids.get(j) && !pairs.contains(ids.get(j)+ids.get(i))){		
-						out.append(ids.get(i) + "\t" + ids.get(j) + "\n");
-					}
+			out = new BufferedWriter(new FileWriter("../famrec.pairs"));
+			for (int i = 0; i < 100; i++) {
+				in = new BufferedReader(new FileReader("../QUERY2TEMPLATELIST/"+ids.get(i)+".templates"));
+				in.readLine();
+				while((line = in.readLine()) != null){
+					out.append(ids.get(i) + "\t" + line.split("\\s+")[0] + "\n");					
 				}
+				in.close();
 			}
 			out.close();
 		} catch (IOException e) {
-			System.out.println("cannot read voretargets");
+			System.out.println("cannot read");
 		}
 	}
 	

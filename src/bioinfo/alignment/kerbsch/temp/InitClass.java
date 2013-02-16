@@ -106,10 +106,14 @@ public class InitClass {
 		mean_distance = distance / (mScore.length*(mScore.length+1)/2);
 		for (int i = 0; i < mScore.length; i++) {
 			for (int j = 0; j < mScore.length; j++) {
-				temp = Math.abs(mScore[i] - mScore[j]);
-				temp = mean_distance - temp;
-				temp = (Math.round(temp * 100.0)) / 100.0;
-				matrix[i][j] = temp;
+				if(mScore[i] != 0 && mScore[j] != 0){
+					temp = Math.abs(mScore[i] - mScore[j]);
+					temp = mean_distance - temp;
+					temp = (Math.round(temp * 100.0)) / 100.0;
+					matrix[i][j] = temp;
+				}else{
+					matrix[i][j] = 0.0;
+				}
 			}
 		}
 		return matrix;
