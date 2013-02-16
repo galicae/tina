@@ -1,8 +1,17 @@
 /******************************************************************************
- * huberdp.Scoring.RDPScoring.java                                            *
+ * bioinfo.energy.potential.hydrophobicity.HydrophobicityCalculator.java      *
  *                                                                            *
- * This class's main method calculates average dob (degree of burial) for all *
- * AminoAcidTypes over a list of pdb files.                                   *
+ * This class's main method uses the counts from                              *
+ * bioinfo.energy.potential.hydrophobicity.DoBFreqCounter.main()              *
+ * to calculate a hydrophobicity score based on the degree of burial (dob) of *
+ * an AminoAcid and the frequencies of the dobs of all other AminoAcids.      *
+ *                                                                            *
+ * The idea is: w[i][j] = r[i][j]/(p[i]*q[j])                                 *
+ * where r[i][j] is the relative frequency of amino acid [i] at dob[j],       *
+ *       p[i] is the relative frequency of amino acid [i] and                 *
+ *       q[j] is the relative frequency of dob[j]                             *
+ *                                                                            *
+ * @see Protein Threading by Recursive Dynamic Programming. JMB 290, 757-779  *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -10,146 +19,184 @@
 package bioinfo.energy.potential.hydrophobicity;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Locale;
-import java.util.Set;
-
-import bioinfo.energy.potential.voronoi.VoroPPWrap;
-import bioinfo.energy.potential.voronoi.VoroPrepType;
-import bioinfo.energy.potential.voronoi.VoronoiData;
-import bioinfo.pdb.PDBFile;
-import bioinfo.proteins.PDBEntry;
-import bioinfo.proteins.PDBFileReader;
 
 /**
- * 
  * @author huberste
  * @lastchange 2013-02-16
  */
 public class HydrophobicityCalculator {
-	
+
 	public final static String usage = 
 		"usage:\n" +
-		"\tjava HydrobhobicityCalculator <pdblist> <pdbpath>\n\n" +
-		"where <pdblist> is a list of PDB IDs and <pdbpath> is a\n"+
-		"(writable) path to the directory containing the PDB files";
+		"\tjava HydrobhobicityCalculator <infile> <outpath>\n\n" +
+		"where <infile> is an output file of DoBFreqCounter, \n" +
+		"<outpath> is a (writable) path to the folder that shall \n" +
+		"contain the output files.";
+	
+	public final static double log2 = Math.log10(2);
 	
 	/**
-	 * static reference to voro++ path
-	 */
-	private final static String VOROPATH =
-			"/home/h/huberste/gobi/tina/tools/voro++_ubuntuquantal";
-	/**
-	 * empirically calibratet value for voro++
-	 */
-	private final static double GRID_EXTEND = 8.9;
-	/**
-	 * empirically calibratet value for voro++
-	 */
-	private final static double GRID_DENSITY = 1.0;
-	/**
-	 * empirically calibratet value for voro++
-	 */
-	private final static double GRID_CLASH = 6.5;
-	/**
-	 * empirically calibratet value for voro++
-	 */
-	private final static double MIN_CONTACT = 2.0;
-	
-	/**
-	 * @param args pdblistpath, pdbpath
+	 * @param args
 	 */
 	public static void main(String[] args) {
 		if (args.length < 2) {
 			System.out.println(usage);
 			System.exit(1);
 		}
-		String pdbList = args[0];
-		String pdbpath = args[1];
+		
+		// initialize arguments
+		String infile = args[0];
+		String outpath = args[1];
+		int buckets = 0;
+		
+		// initialize important stuff
+		long freq[][] = new long[26][]; 
+		
+		// read file
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(infile));
+			String line = null;
+			int linenr = 0;
+			while ((line = br.readLine()) != null) {
+				String[] temp = line.split("\t");
+				// buckets = buckets < temp.length-1 ? temp.length-1 : buckets;
+				freq[linenr] = new long[temp.length-1];
+				for (int i = 0; i < temp.length-1; i++) {
+					freq[linenr][i] = Long.parseLong(temp[i+1]);
+				}
+				linenr++;
+			}
+		} catch (IOException e) {
+			System.err.println("Error 62: problems reading the inputfile:");
+			e.printStackTrace();
+		} finally {
+			try {
+				br.close();
+				br = null;
+			} catch (IOException e) {
+				System.err.println("Error 68: problems closing the inputfile:");
+				e.printStackTrace();
+			}
+		}
+		
+		for(int size = 0; size < 1; size++) {
+		
+			buckets = 1024 / zweihoch(size);
+			int sum = zweihoch(size);
+			// crunch the numbers
+			// sum up rows / cols
+			long[] aacount = new long[26];
+			long[] bucketcount = new long[buckets];
+			
+			long gescount = 0;
+			for(int i = 0; i < 26; i++) {
+				for (int j = 0; j < buckets; j++) {
+					for(int k = 0; k < sum; k++) {
+						aacount[i] += freq[i][(j*size)+k];
+						bucketcount[j] += freq[i][(j*size)+k];
+						gescount += freq[i][(j*size)+k];
+					}
+				}
+			}
+			
+			// calculate r
+			double[][] r = new double[26][buckets];
+			for (int i = 0; i < 26; i++) {
+				for (int j = 0; j < buckets; j++) {
+					for(int k = 0; k < sum; k++) {
+						r[i][j] = (double) freq[i][(j*size) +k] / (double) gescount;
+					}
+				}
+			}
+			
+			// calculate p
+			double[] p = new double[26];
+			for (int i = 0; i < 26; i++) {
+				p[i] = (double) aacount[i] / (double) gescount;
+			}
+			
+			// calculate q
+			double[] q = new double[buckets];
+			for (int j = 0; j < buckets; j++) {
+				q[j] = (double) bucketcount[j] / (double) gescount;
+			}
+		
+		
+		
+			// TODO calculate w (s)
+			double[][] w = new double[26][buckets];
+			
+			for(int i = 0; i < 26; i++) {
+				for (int j = 0; j < buckets; j++) {
+					double temp = r[i][j]/ (p[i]*q[j]);
+					w[i][j] = Math.log10(temp) / log2;
+				}
+			}
+			
+			// TODO print out w
+			print(w, outpath+"buckets.hmt");
+		}
+		
+		
+	}
+	
+	// TODO provide file structures and data structures for hydrophobicities
+	
+	/**
+	 * 
+	 * @param size
+	 * @return
+	 */
+	private static int zweihoch(int size) {
+		if (size == 0) {
+			return 1;
+		} else {
+			return 2 * zweihoch(size-1);
+		}
+	}
+
+	/**
+	 * 
+	 * @param w
+	 */
+	private static void print(double[][] w, String filepath) {
 		
 		// initialize important stuff	
 		Locale.setDefault(Locale.US);
 		DecimalFormat df = new DecimalFormat("0.000000");
 		
-		// TODO load file pdb_25
-		LinkedList<String> pdbIDs = new LinkedList<String>();
-		BufferedReader br = null;
-		String line = null;
-		
+		BufferedWriter bw = null;
 		try {
-			br = new BufferedReader(new FileReader(pdbList));
-			while ((line = br.readLine()) != null) {
-				pdbIDs.add(line);
+			bw = new BufferedWriter(new FileWriter(filepath));
+			bw.write("# Hydrophobicity matrix\n");
+			bw.write("# degree of burial x amino acid\n");
+			bw.write("# dob buckets: "+ w[0].length + "\n");
+			for (int i = 0; i < w.length; i++) {
+				char x = (char)(65+i);
+				bw.write(x);
+				for (int j = 0; j < w[i].length; j++) {
+					bw.write("\t" + df.format(w[i][j]));
+				}
+				bw.write("\n");
 			}
 		} catch (IOException e) {
-			System.err.println("Error 77: problems reading the File:");
+			System.err.println("Error 187: problems reading an outfile:");
 			e.printStackTrace();
 		} finally {
 			try {
-				br.close();
-			} catch (IOException e){
-				System.err.println("Error 83: problems closing the File:");
+				bw.close();
+			} catch (IOException e) {
+				System.err.println("Error 193: problems closing an outfile:");
 				e.printStackTrace();
 			}
 		}
-		
-		PDBFileReader pdbreader = new PDBFileReader(pdbpath);
-		int[] count = new int[26];
-		double[] hydro = new double[26];
-		for (String id : pdbIDs) { // for each file
-			// begin debugging
-			System.out.println("at id "+id);
-			// end debugging
-			PDBEntry structure = pdbreader.readPDBFromFile(
-					PDBFile.getFile(pdbpath, id.substring(0,4)),id.charAt(4));
-			
-			VoroPPWrap voro = new VoroPPWrap(VOROPATH);
-			VoronoiData data = new VoronoiData(structure.getID());
-			data.reducePDB(VoroPrepType.CA, structure);
-			data.fillGridWithoutClashes(GRID_EXTEND, GRID_DENSITY, GRID_CLASH);
-			voro.decomposite(data);
-			data.detectOuterGrid(MIN_CONTACT);
-			Set <Integer> solvents = data.getOuterGridIds();
-		
-			// for each amino acid
-			for (int pos = 0; pos < structure.length(); pos++) {
-				// begin debugging
-				if (pos % 10 == 0) {
-					System.out.println("at aminoacid "+pos);
-				}
-				// end debugging
-				
-				int astype = (structure.getAminoAcid(pos).getName().getOneLetterCode().charAt(0))-65;
-				// calculate dob (degree of burial)
-				double outer = 0.0;
-				double inner = 0.0;
-				HashMap<Integer,Double> faces = data.getFaces().get(pos);
-				
-				for(int neighbor : faces.keySet()){
-					if(solvents.contains(neighbor)){
-						outer += faces.get(neighbor);
-					}else{
-						inner += faces.get(neighbor);
-					}
-				}
-				hydro[astype] += outer/(outer+inner);
-				count[astype]++;
-			} // for each amino acid in that pdb 		
-		} // for each pdb
-		
-		for(int i = 0; i < 26; i++) {
-			if (count[i] > 0)
-				hydro[i] = hydro[i]/(double)count[i];
-			System.out.println(df.format(hydro[i]));
-		}
-		
-		// TODO Verify results
-		
-
 	}
 
 }
