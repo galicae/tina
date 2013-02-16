@@ -1,27 +1,31 @@
 package bioinfo.alignment.kerbsch;
 
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import bioinfo.Sequence;
-import bioinfo.alignment.Alignable;
 import bioinfo.alignment.kerbsch.temp.LocalCore;
 import bioinfo.alignment.kerbsch.temp.LocalMatch;
 
 public class FBGotoh {
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
 	private final int FACTOR = 100;
+	private final double EVALUE_CUTOFF;
+	private final double LAMBDA;
+	private final double DBLENGTH;
+	private int lengthCutOff = 4;
+	private int scoreCutOff = (int) (20.0 * FACTOR);
 	private int gapOpen;
 	private int gapExtend;
+	private int[][] substMatrix;
+	
 	private int[][] M;
 	private int[][] I;
 	private int[][] D;
-
-	private int[][] substMatrix;
 	private int[][] revM;
 	private int[][] revD;
 	private int[][] revI;
@@ -33,7 +37,6 @@ public class FBGotoh {
 
 	// for traceback
 	private int[][] tempScore;
-	private int[][] alignedRes;
 
 	private char[] seq1;
 	private char[] seq2;
@@ -41,18 +44,22 @@ public class FBGotoh {
 	// other stuff
 	private BufferedWriter out;
 
-	public FBGotoh(double gapOpen, double gapExtend, int[][] scoringmatrix,
-			BufferedWriter out) {
+	public FBGotoh(double gapOpen, double gapExtend, double ecutoff, double lambda, int dblength, int[][] scoringmatrix) throws IOException {
 		this.gapOpen = (int) (gapOpen * FACTOR);
 		this.gapExtend = (int) (gapExtend * FACTOR);
 		this.substMatrix = scoringmatrix;
-		this.out = out;
+		EVALUE_CUTOFF = ecutoff*FACTOR;
+		DBLENGTH = dblength;
+		LAMBDA = lambda;
+		out= new BufferedWriter(new FileWriter("fbgotoh.out"));
 	}
 
-	public FBGotoh(double gapOpen, double gapExtend, double[][] scoringmatrix,
-			BufferedWriter out) {
+	public FBGotoh(double gapOpen, double gapExtend, double ecutoff, double lambda, int dblength,double[][] scoringmatrix) throws IOException {
 		this.gapOpen = (int) (gapOpen * FACTOR);
 		this.gapExtend = (int) (gapExtend * FACTOR);
+		EVALUE_CUTOFF = ecutoff*FACTOR;
+		DBLENGTH = dblength;
+		LAMBDA = lambda;
 
 		this.substMatrix = new int[scoringmatrix.length][scoringmatrix[0].length];
 		for (int i = 0; i != scoringmatrix.length; i++) {
@@ -60,17 +67,15 @@ public class FBGotoh {
 				this.substMatrix[i][j] = (int) (FACTOR * scoringmatrix[i][j]);
 			}
 		}
-
-		this.out = out;
+		out= new BufferedWriter(new FileWriter("fbgotoh.out"));
 	}
 
-	public int[][] align(Alignable sequence1, Alignable sequence2) {
-		this.xsize = sequence1.length() + 1;
-		this.ysize = sequence2.length() + 1;
-
-		this.alignedRes = new int[2][];
-		this.alignedRes[0] = new int[xsize - 1];
-		this.alignedRes[1] = new int[ysize - 1];
+	public int[][] align(char[] seq1, char[] seq2) {
+		this.xsize = seq1.length + 1;
+		this.ysize = seq2.length + 1;
+		
+		this.seq1 = seq1;
+		this.seq2 = seq2;
 
 		this.M = new int[xsize][ysize];
 		this.I = new int[xsize][ysize];
@@ -81,10 +86,6 @@ public class FBGotoh {
 		this.hybridM = new int[xsize][ysize];
 		tempScore = new int[xsize][ysize];
 
-		// readin sequences
-		seq1 = ((Sequence) sequence1).getSequence();
-		seq2 = ((Sequence) sequence2).getSequence();
-
 		// make tempscore
 		for (int i = 1; i < xsize; i++) {
 			for (int j = 1; j < ysize; j++) {
@@ -93,8 +94,7 @@ public class FBGotoh {
 		}
 		prepareMatrices();
 		calculateMatrices();
-		findLocals();
-		return this.hybridM;
+		return findLocals();
 	}
 
 	private void prepareMatrices() {
@@ -159,12 +159,18 @@ public class FBGotoh {
 		}
 		
 		//add backward alignment
+		boolean gaps = false;
 		lastindex = coordsBW.size() - 1;
 		while (lastindex > 0 && coordsBW.get(lastindex - 1)[1] == coordsBW.get(lastindex)[1]) {
 			lastindex--;
+			gaps = true;
 		}
 		while (lastindex > 0 && coordsBW.get(lastindex - 1)[0] == coordsBW.get(lastindex)[0]) {
 			lastindex--;
+			gaps = true;
+		}
+		if(gaps){
+			lastindex++;
 		}
 		for (int i = 0; i <= lastindex; i++) {
 			merged.add(coordsBW.get(i));
@@ -327,11 +333,10 @@ public class FBGotoh {
 
 	}
 
-	private void findLocals() {
-		int lengthCutOff = 4;
-		int scoreCutOff = (int) (10.0 * FACTOR);
+	private int[][] findLocals() {
 		List<LocalMatch> localmatches = new ArrayList<LocalMatch>();
-
+		int[][] locals = new int[xsize][ysize];
+		
 		// read all scores with their coordinates
 		for (int i = xsize - 1; i > 0; i--) {
 			for (int j = ysize - 1; j > 0; j--) {
@@ -362,18 +367,28 @@ public class FBGotoh {
 //		}
 //		
 //		System.out.println();
-		
+		double evalue;
 		try {
 			for (LocalCore ue : localcores) {
 				if (ue.getCoords().size() >= lengthCutOff && ue.getScore() > scoreCutOff) {
-					out.write(ue.getScore() + ": " + ue.getCoords().size()
-							+ "\n");
+					evalue = FACTOR * Math.log(1.0d*DBLENGTH*seq1.length*seq2.length*Math.exp(LAMBDA*((ue.getScore()*1.0d)/FACTOR)));
+					if(evalue < 0){
+						System.out.println(evalue);
+					}
+//					System.out.println(evalue);
+					for(int[] coord : ue.getCoords()){
+						locals[coord[0]][coord[1]] = (int)(EVALUE_CUTOFF-evalue);
+					}
+//					out.append(this.toString()+": "+evalue + "\t" + ((ue.getScore()*1.0d)/FACTOR)+ "\t" + ue.getCoords().size() + "\n");
+//					out.append(ue.getScore() + "\t" + ue.getCoords().size());
+					System.out.println(this.toString()+": "+evalue + "\t" + ((ue.getScore()*1.0d)/FACTOR)+ "\t" + ue.getCoords().size());
 				}
 			}
+			out.close();
 		} catch (IOException e) {
 			System.out.println("failure");
 		}
-
+		return locals;
 	}
 
 	public void printHM() {

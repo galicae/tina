@@ -185,7 +185,7 @@ public class AlignmentBenchmarker {
 		int index = 0;
 		int id1;
 		int id2;
-				
+		
 		for (String[] pair : pairs) {
 
 			// give index to ID for storing the score of the alignment in a
@@ -198,7 +198,7 @@ public class AlignmentBenchmarker {
 				idToIndex.put(pair[1], index);
 				index++;
 			}
-
+			
 			// here comes a new target to thread
 			if (!pair[0].equals(lastquery)) {
 				statistic(besthit,query);
@@ -216,7 +216,7 @@ public class AlignmentBenchmarker {
 				temp = (SequenceAlignment) gotoh.align(new Sequence(pair[0],
 						seqlib.get(pair[0])),
 						new Sequence(pair[1], seqlib.get(pair[1])));
-				score = temp.getScore();
+				score = temp.getScore()/temp.countAlignedResidues();
 				alignments[id1][id2] = score;
 				alignments[id2][id1] = score;
 			}
