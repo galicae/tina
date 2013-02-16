@@ -52,7 +52,7 @@ public class AssessData {
 	public static void readPairs(LinkedList<String[]> pairs) {
 		try {
 			BufferedReader r = new BufferedReader(new FileReader(
-					"cathscop.inpairs"));
+					"spnfTM"));
 			String line = "";
 			String[] arr = new String[2];
 			while ((line = r.readLine()) != null) {

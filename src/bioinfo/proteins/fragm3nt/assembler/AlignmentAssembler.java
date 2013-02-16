@@ -1,7 +1,6 @@
 package bioinfo.proteins.fragm3nt.assembler;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
@@ -31,7 +30,6 @@ public class AlignmentAssembler extends Assembler {
 	 */
 	public ProteinFragment predStrucFromAl(LinkedList<Sequence> seqs,
 			int extent, String pdbDirectory) {
-		String query = seqs.get(0).getSequenceAsString();
 
 		PDBFileReader reader = new PDBFileReader(pdbDirectory);
 		LinkedList<ProteinFragment> result = new LinkedList<ProteinFragment>();
@@ -82,7 +80,7 @@ public class AlignmentAssembler extends Assembler {
 			LinkedList<SequenceAlignment> alignments,
 			LinkedList<ProteinFragment> structures, int extent) {
 		int count = 0;
-
+		System.out.println(alignments.get(0).toStringVerbose());
 		// define query only once - no need to spend three lines every time
 		String query = alignments.get(0).getComponent(0).getSequenceAsString();
 
@@ -109,7 +107,7 @@ public class AlignmentAssembler extends Assembler {
 			i += add;
 		}
 		// and now the last
-		curFrag = findFragFromAli(query.length() - fragLength, alignments,
+		curFrag = findFragFromAli(query.length() - fragLength - 1, alignments,
 				structures, curFrag);
 		result.add(curFrag);
 		if (!curFrag.getID().startsWith(structures.get(0).getID())) {
@@ -154,9 +152,9 @@ public class AlignmentAssembler extends Assembler {
 					break;
 				}
 			}
-			if (start < map[0].length - fragLength && found) {
-				int diff1 = map[0][start + fragLength] - map[0][start];
-				int diff2 = map[1][start + fragLength] - map[1][start];
+			if (start < map[0].length - fragLength - 1 && found) {
+				int diff1 = map[0][start + fragLength - 1] - map[0][start] + 1;
+				int diff2 = map[1][start + fragLength - 1] - map[1][start] + 1;
 
 				// if one of the two sequences contains a gap continue
 				if (diff1 != fragLength || diff2 != fragLength) {
@@ -189,22 +187,27 @@ public class AlignmentAssembler extends Assembler {
 		}
 
 		/*
-		 * if not all scores are negative (a continuous match of length 8 has
+		 * if not all scores are negative (a continuous match of length fragLength has
 		 * been found in the alignments) then return this fragment.
 		 */
 		if (maxIndex == -1) {
 			ProteinFragment result = structures.get(0).getPart(saveStart,
 					saveStart + fragLength);
+			System.out.println(result.getID() + " " + result.getSequence());
 			return result;
 		} else {
 			map = alignments.get(maxIndex).getAlignedResidues();
 			ProteinFragment result = structures.get(maxIndex + 1).getPart(
-					map[1][start], map[1][start + fragLength]);
-			if(checkFragment(result))
+					map[1][start], map[1][start] + fragLength);
+//			if(checkFragment(result)) {
+			if(true) {
+				System.out.println(result.getID() + " " + result.getSequence());
 				return result;
+			}
 			else
 				result = structures.get(0).getPart(saveStart,
 						saveStart + fragLength);
+			System.out.println(result.getID() + " " + result.getSequence());
 			return result;
 		}
 	}

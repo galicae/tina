@@ -36,16 +36,16 @@ public class TMMain {
 	 * @throws Exception
 	 */
 	public Transformation calculateTransformation(String alignment,
-			String pFile, String qFile) throws Exception {
+			String pFile, String qFile, int nLeng) throws Exception {
 		TMCollective main = new TMCollective();
 		PDBEntry[] pdbs = main.createTMInput(alignment, pFile, qFile);
 
-		writeToFile("TM" + pFile, pdbs[0]);
-		writeToFile("TM" + qFile, pdbs[1]);
+		writeToFile(pFile + "TM", pdbs[0]);
+		writeToFile(qFile + "TM", pdbs[1]);
 
 		// actual calculation of TM score and corresponding rotation matrix
 //		String[] bla = {"TM" + pFile, " TM" + qFile};
-		double[][] tmResult = TMOriginal.calculateTmScore("TM" + pFile, " TM" + qFile, 5);
+		double[][] tmResult = TMOriginal.calculateTmScore(pFile + "TM" , qFile + "TM", nLeng);
 
 		// remember that rmResult is [5][4], and that [i][0] is empty
 		// also [4][0] is the TM score and [4][1] the GDT

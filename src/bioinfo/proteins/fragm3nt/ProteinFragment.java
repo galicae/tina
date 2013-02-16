@@ -128,6 +128,9 @@ public class ProteinFragment {
 				// if we are past it move pointer
 				curFrag++;
 			}
+			if(curFrag >= fragments.size()) {
+				curFrag--;
+			}
 			// check if current fragment belongs to native or not
 			if(id.contains(fragments.get(curFrag).getID().substring(0, 4))) {
 				chain = 'A';

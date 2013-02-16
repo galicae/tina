@@ -2,9 +2,14 @@ package bioinfo.proteins.fragm3nt.run;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.LinkedList;
+
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.PumpStreamHandler;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
@@ -25,21 +30,105 @@ import bioinfo.superpos.Transformation;
  * 
  */
 public class AlignmentAssemblyTest {
+	static int fragLength = 8;
+	static int extent = 4;
+	static String desktop = "/home/galicae/Desktop/STRUCTURES/";
 
-	public static void main(String[] args) {
-		String[] seqIds = { "1chmB01", "1kp0A01" };
-		String[] stringSeq = new String[seqIds.length];
+	public static void main(String[] args) throws Exception {
+		String[] bla = {"1kv3B02", "1qrkA02"};
+		LinkedList<String> ids = new LinkedList<String>();
+		for(int i = 0; i < bla.length; i++) {
+			ids.add(bla[i]);
+		}
+		
+		System.out.println(ids.get(0) + "\t");
+		doMagic(ids);
+	}
 
-		// read sequences (strings)
+	public static void doMagic(LinkedList<String> id) throws Exception {
+		// find all sequences in the id list and load them
+		LinkedList<Sequence> seqs = loadSequences(id);
+
+		// find all corresponding structures (ProteinFragment)
+		LinkedList<PDBEntry> structures = loadPDBs(id);
+
+		// now do predicting magic
+		
+		AlignmentAssembler ass = new AlignmentAssembler(fragLength);
+		ProteinFragment pred = ass.predStrucFromAl(seqs, extent, desktop);
+		PDBEntry prediction = pred.toPDB();
+		double identity = pred.getClusterIndex() / 1000.0;
+		System.out.println(identity + "\t");
+
+		// now print everything in the right order: first prediction, then
+		// template, then all other stuff
+		BufferedWriter wr2 = new BufferedWriter(new FileWriter("fastaTest.pdb"));
+		wr2.write("MODEL        1\n");
+		wr2.write(pred.toString(ass.getFragments(), extent));
+		wr2.write("ENDMDL\n");
+
+		// now align every sequence with the template, kabsch structures and
+		// print result
+		for (int i = 0; i < 1; i++) {
+			FreeshiftSequenceGotoh got = new FreeshiftSequenceGotoh(-13, -3,
+					QuasarMatrix.DAYHOFF_MATRIX);
+			SequenceAlignment alignment = got.align(seqs.get(0), seqs.get(i));
+			PDBEntry temp = structures.get(i);
+			System.out.println(temp.getID());
+
+			double[][][] kabschFood = PDBReduce.reduce(alignment, prediction,
+					temp);
+			double[][][] kabschFood1 = new double[2][20][3];
+			for(int j = 0; j < 20; j++) {
+				kabschFood1[0][j] = kabschFood[0][j + 145];
+				kabschFood1[1][j] = kabschFood[1][j + 145];
+			}
+			Transformation t = Kabsch.calculateTransformation(kabschFood1);
+			
+			System.out.println(t.getRmsd() + "\t");
+			PDBEntry superposed = t.transform(temp);
+			wr2.write("MODEL        " + (i + 2) + "\n");
+			wr2.write(superposed.getAtomSectionAsString());
+			wr2.write("ENDMDL\n");
+		}
+		System.out.print("\n");
+		wr2.close();
+		
+		BufferedWriter outWr = new BufferedWriter(new FileWriter("/home/galicae/Desktop/rosenrot.pdb"));
+		outWr.write(prediction.getAtomSectionAsString());
+		outWr.close();
+		
+		String call = ("./tools/TMalign ");
+		call += ("/home/galicae/Desktop/rosenrot.pdb ");
+		call += (desktop + id.getFirst() + ".pdb ");
+		String out = execToString(call);
+		double score = findMeTmScore(out);
+		System.out.println(score);
+		// System.exit(0);
+	}
+
+	public static LinkedList<PDBEntry> loadPDBs(LinkedList<String> ids) {
+		LinkedList<PDBEntry> pdbs = new LinkedList<PDBEntry>();
+		PDBFileReader reader = new PDBFileReader(desktop);
+		for (int i = 0; i < ids.size(); i++) {
+			pdbs.add(reader.readFromFolderById(ids.get(i)));
+		}
+		return pdbs;
+	}
+
+	public static LinkedList<Sequence> loadSequences(LinkedList<String> ids) {
+		LinkedList<Sequence> result = new LinkedList<Sequence>();
 		try {
 			BufferedReader r = new BufferedReader(new FileReader(
 					"domains.seqlib"));
 			String line = "";
 			int count = 0;
-			while (count < seqIds.length && (line = r.readLine()) != null) {
-				for (int i = 0; i < seqIds.length; i++) {
-					if (line.startsWith(seqIds[i])) {
-						stringSeq[i] = line.split(":")[1];
+			String stringSeq = "";
+			while (count < ids.size() && (line = r.readLine()) != null) {
+				for (int i = 0; i < ids.size(); i++) {
+					if (line.startsWith(ids.get(i))) {
+						stringSeq = line.split(":")[1];
+						result.add(new Sequence(ids.get(i), stringSeq));
 						count++;
 						continue;
 					}
@@ -49,82 +138,23 @@ public class AlignmentAssemblyTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		LinkedList<Sequence> seqs = new LinkedList<Sequence>();
-		for (int i = 0; i < stringSeq.length; i++) {
-			seqs.add(new Sequence(seqIds[i], stringSeq[i]));
-		}
-
-		int extent = 4;
-		AlignmentAssembler ass = new AlignmentAssembler(8);
-		ProteinFragment result = ass.predStrucFromAl(seqs, extent,
-				"/home/galicae/Desktop/STRUCTURES/");
-		PDBFileReader read = new PDBFileReader(
-				"/home/galicae/Desktop/STRUCTURES/");
-		PDBEntry pdb = read.readFromFolderById("1chmB01");
-		String query = "";
-		for (int i = 0; i < pdb.length(); i++) {
-			query += pdb.getAminoAcid(i).getName();
-		}
-		double[][][] kabschFood = new double[2][][];
-
-		try {
-			BufferedWriter wr2 = new BufferedWriter(new FileWriter(
-					"fastaTest.pdb"));
-			kabschFood = new double[2][result.getAllResidues().length][3];
-			kabschFood[0] = result.getAllResidues();
-			kabschFood[1] = PDBReduce.reduceSinglePDB(pdb);
-			Transformation t = Kabsch.calculateTransformation(kabschFood);
-			kabschFood[1] = t.transform(kabschFood[1]);
-			System.out.println(t.getRmsd());
-
-			ProteinFragment prot = new ProteinFragment("real", "D",
-					new double[0][0], 8);
-			prot.setSequence(query);
-			prot.append(PDBReduce.reduceSinglePDB(pdb), "");
-			pdb = t.transform(pdb);
-			prot.setCoordinates(kabschFood[1]);
-
-			wr2.write("MODEL        1\n");
-			wr2.write(result.toString(ass.getFragments(), extent));
-			wr2.write("ENDMDL\n");
-			wr2.write("MODEL        2\n");
-			wr2.write(prot.toString());
-			wr2.write("ENDMDL\n");
-
-			// kabschFood[0] = prot.getAllResidues();
-			Sequence seq1 = new Sequence(pdb.getID(), pdb.getSequence());
-			for (int i = 1; i < seqs.size(); i++) {
-				PDBEntry pdb1 = read.readFromFolderById(seqs.get(i).getID());
-				FreeshiftSequenceGotoh got = new FreeshiftSequenceGotoh(-15,
-						-3, QuasarMatrix.DAYHOFF_MATRIX);
-				Sequence seq2 = new Sequence(pdb1.getID(), pdb1.getSequence());
-				SequenceAlignment ali = got.align(seq1, seq2);
-				System.out.println(ali.toStringVerbose());
-
-				prot = new ProteinFragment(pdb1.getID(), "D", new double[0][0],
-						8);
-				prot.setSequence(pdb1.getSequence());
-				kabschFood[1] = PDBReduce.reduceSinglePDB(pdb1);
-				prot.append(kabschFood[1], "");
-				
-				kabschFood = PDBReduce.reduce(ali, pdb, pdb1);
-				t = Kabsch.calculateTransformation(kabschFood);
-				pdb1 = t.transform(pdb1);
-				
-				System.out.println(prot.getAllResidues().length);
-
-//				prot = new ProteinFragment(pdb1.getID(), "D", new double[0][0],
-//						8);
-//				prot.setSequence(pdb1.getSequence());
-//				prot.append(PDBReduce.reduceSinglePDB(pdb1), "");
-				wr2.write("MODEL        " + (i + 2) + "\n");
-				wr2.write(prot.toString());
-				wr2.write("ENDMDL\n");
-			}
-			wr2.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return result;
 	}
+	
+	public static double findMeTmScore(String tm) {
+		String[] r = tm.split("TM-score= ");
+		String score = r[2].substring(0, 7);
+		return Double.parseDouble(score);
+	}
+
+	public static String execToString(String command) throws Exception {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		CommandLine commandline = CommandLine.parse(command);
+		DefaultExecutor exec = new DefaultExecutor();
+		PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
+		exec.setStreamHandler(streamHandler);
+		exec.execute(commandline);
+		return (outputStream.toString());
+	}
+
 }
