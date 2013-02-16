@@ -12,6 +12,7 @@ import java.util.Set;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
+import bioinfo.energy.potential.hydrophobicity.HydrophobicityMatrix;
 import bioinfo.energy.potential.voronoi.VoroPPWrap;
 import bioinfo.energy.potential.voronoi.VoroPrepType;
 import bioinfo.energy.potential.voronoi.VoronoiData;
@@ -27,9 +28,6 @@ import huberdp.Scoring;
  * @lastchange 2013-02-16
  */
 public class RDPScoring implements Scoring {
-	
-	// TODO optimize Voronoi call. It would be possible to save the voronoi
-	//	decomposition for one complete structure.
 	
 	// TODO optimize scoring. Only one for() is needed.
 
@@ -96,6 +94,11 @@ public class RDPScoring implements Scoring {
 	private double[][] mutationMatrix;
 	
 	/**
+	 * for the hydrophobicity scoring part phiH
+	 */
+	private HydrophobicityMatrix hydrophobicityMatrix;
+	
+	/**
 	 * structure of the template
 	 */
 	private PDBEntry templateStructure;
@@ -139,6 +142,7 @@ public class RDPScoring implements Scoring {
 	public RDPScoring(
 			double gamma, double delta, double epsilon, double zeta,
 			double[][] mutationMatrix,
+			HydrophobicityMatrix hydrophobicityMatrix,
 			PDBEntry templatestructure,
 			String vorobin,
 			double gridExtend, double gridDensity, double gridClash,
@@ -149,6 +153,7 @@ public class RDPScoring implements Scoring {
 		this.epsilon = epsilon;
 		this.zeta = zeta;
 		this.mutationMatrix = mutationMatrix;
+		this.hydrophobicityMatrix = hydrophobicityMatrix;
 		this.vorobin = vorobin;
 		setVoroVars(gridExtend, gridDensity, gridClash, minContact);
 	}
@@ -160,6 +165,7 @@ public class RDPScoring implements Scoring {
 		this(
 				GAMMA, DELTA, EPSILON, ZETA,
 				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX,
+				new HydrophobicityMatrix(),
 				null,
 				VOROPATH,
 				GRID_EXTEND, GRID_DENSITY, GRID_CLASH, MIN_CONTACT
@@ -174,6 +180,7 @@ public class RDPScoring implements Scoring {
 		this(
 				arg.gamma, arg.delta, arg.epsilon, arg.zeta,
 				arg.mutationMatrix,
+				arg.hydrophobicityMatrix,
 				arg.templateStructure,
 				arg.vorobin,
 				arg.gridExtend, arg.gridDensity, arg.gridClash, arg.minContact
@@ -340,6 +347,8 @@ public class RDPScoring implements Scoring {
 		
 		char[][] rows = f.getRows();
 		
+		int buckets = hydrophobicityMatrix.getBuckets();
+		
 		int temppos = 0;	// position in template
 //		int targpos = 0;	// position in target
 		
@@ -351,13 +360,14 @@ public class RDPScoring implements Scoring {
 				temppos++;
 			} else { // if match
 				// sum up score
-				double hydro = hydrophobicity(rows[1][pos]);
+				int astype = (b.getAminoAcid(pos).getName().getOneLetterCode().charAt(0))-65;
 				double dob = dob(b, temppos);
-				// TODO check if this makes sense
-				//	huberste: I fear it doesn't. Look at this when fully awake.
-				result += hydro > dob ? dob / hydro : hydro / dob;
-//				result += hydrophobicity(a.getComp(targpos)) * 
-//						dob(b, temppos);
+				for(int i = 0; i < buckets; i++) {
+					if (dob <= ((double)i+1.0)*(1.0/(double)buckets)) {
+						result += hydrophobicityMatrix.getValue(astype,i);
+						break;
+					}
+				}
 				temppos++;
 //				targpos++;
 			}

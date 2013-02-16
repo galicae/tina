@@ -19,12 +19,8 @@
 package bioinfo.energy.potential.hydrophobicity;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.Locale;
 
 /**
  * @author huberste
@@ -65,6 +61,9 @@ public class HydrophobicityCalculator {
 			String line = null;
 			int linenr = 0;
 			while ((line = br.readLine()) != null) {
+				if (line.startsWith("#")) { // comment
+					continue;
+				}
 				String[] temp = line.split("\t");
 				// buckets = buckets < temp.length-1 ? temp.length-1 : buckets;
 				freq[linenr] = new long[temp.length-1];
@@ -78,15 +77,17 @@ public class HydrophobicityCalculator {
 			e.printStackTrace();
 		} finally {
 			try {
-				br.close();
-				br = null;
+				if(br != null) {
+					br.close();
+					br = null;
+				}
 			} catch (IOException e) {
 				System.err.println("Error 68: problems closing the inputfile:");
 				e.printStackTrace();
 			}
 		}
 		
-		for(int size = 0; size < 1; size++) {
+		for(int size = 0; size < 7; size++) {
 		
 			buckets = 1024 / zweihoch(size);
 			int sum = zweihoch(size);
@@ -128,9 +129,7 @@ public class HydrophobicityCalculator {
 				q[j] = (double) bucketcount[j] / (double) gescount;
 			}
 		
-		
-		
-			// TODO calculate w (s)
+			// calculate w (s)
 			double[][] w = new double[26][buckets];
 			
 			for(int i = 0; i < 26; i++) {
@@ -140,62 +139,21 @@ public class HydrophobicityCalculator {
 				}
 			}
 			
-			// TODO print out w
-			print(w, outpath+"buckets.hmt");
+			// print out w
+			HydrophobicityMatrix.writeFile(w, outpath+buckets+"buckets");
 		}
-		
-		
 	}
-	
-	// TODO provide file structures and data structures for hydrophobicities
 	
 	/**
 	 * 
-	 * @param size
-	 * @return
+	 * @param n the exponent
+	 * @return 2^n
 	 */
-	private static int zweihoch(int size) {
-		if (size == 0) {
+	private static int zweihoch(int n) {
+		if (n == 0) {
 			return 1;
 		} else {
-			return 2 * zweihoch(size-1);
-		}
-	}
-
-	/**
-	 * 
-	 * @param w
-	 */
-	private static void print(double[][] w, String filepath) {
-		
-		// initialize important stuff	
-		Locale.setDefault(Locale.US);
-		DecimalFormat df = new DecimalFormat("0.000000");
-		
-		BufferedWriter bw = null;
-		try {
-			bw = new BufferedWriter(new FileWriter(filepath));
-			bw.write("# Hydrophobicity matrix\n");
-			bw.write("# degree of burial x amino acid\n");
-			bw.write("# dob buckets: "+ w[0].length + "\n");
-			for (int i = 0; i < w.length; i++) {
-				char x = (char)(65+i);
-				bw.write(x);
-				for (int j = 0; j < w[i].length; j++) {
-					bw.write("\t" + df.format(w[i][j]));
-				}
-				bw.write("\n");
-			}
-		} catch (IOException e) {
-			System.err.println("Error 187: problems reading an outfile:");
-			e.printStackTrace();
-		} finally {
-			try {
-				bw.close();
-			} catch (IOException e) {
-				System.err.println("Error 193: problems closing an outfile:");
-				e.printStackTrace();
-			}
+			return 2 * zweihoch(n-1);
 		}
 	}
 

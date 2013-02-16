@@ -83,6 +83,9 @@ public class DoBFreqCounter {
 		try {
 			br = new BufferedReader(new FileReader(pdbList));
 			while ((line = br.readLine()) != null) {
+				if (line.startsWith("#")) { // comment
+					continue;
+				}
 				pdbIDs.add(line);
 			}
 		} catch (IOException e) {
@@ -90,7 +93,10 @@ public class DoBFreqCounter {
 			e.printStackTrace();
 		} finally {
 			try {
-				br.close();
+				if (br != null) {
+					br.close();
+					br = null; // give br to GarbageCollector
+				}
 			} catch (IOException e){
 				System.err.println("Error 83: problems closing the File:");
 				e.printStackTrace();
