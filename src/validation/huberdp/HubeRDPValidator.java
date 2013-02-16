@@ -107,8 +107,8 @@ public class HubeRDPValidator {
 		// TODO
 		HubeRDP rdp = new HubeRDP();
 		rdp.addOracle(new TinyOracle());
-		rdp.setScoring(new SimpleScoring());
-//		rdp.setScoring(new RDPScoring());
+//		rdp.setScoring(new SimpleScoring());
+		rdp.setScoring(new RDPScoring());
 		
 		// initialize TM stuff
 		TMMain tmmain = new TMMain();

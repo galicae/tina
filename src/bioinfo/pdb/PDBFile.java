@@ -1,6 +1,10 @@
-/**
- * 
- */
+/******************************************************************************
+ * bioinfo.proteins.PDBFile.java                                              *
+ * Provides some useful methods for PDB Files.                                *
+ *                                                                            *
+ * This file is best read at line width 80 and tab width 4.                   *
+ *                                                                   huberste *
+ ******************************************************************************/
 package bioinfo.pdb;
 
 import java.io.BufferedInputStream;
@@ -12,19 +16,21 @@ import java.net.URL;
 
 /**
  * @author huberste
- *
+ * @lastchange 2013-02-16
  */
 public class PDBFile {
 
 	public final static String PDB_FILE_URL = "http://www.rcsb.org/pdb/files/";
 	public final static String PDB_FILE_ENDING = ".pdb";
 	
-//	private String filePath;
-//	
-//	public PDBFile(String pdbFilePath, String pdbID) {
-		
-//	}
-	
+	/**
+	 * if the given PDB file exists in pdbFilePath this method just returns the
+	 * file path, else it downloads the file and returns the downloaded file's
+	 * path 
+	 * @param pdbFilePath
+	 * @param pdbID
+	 * @return the PDB file's path that contains the requested PDB
+	 */
 	public static String getFile(String pdbFilePath, String pdbID) {
 		String result = null;
 		String filePath = pdbFilePath+pdbID.toUpperCase()+PDB_FILE_ENDING;
@@ -38,6 +44,12 @@ public class PDBFile {
 		return result;
 	}
 	
+	/**
+	 * Downloads a given PDB File
+	 * @param pdbID PDB ID of the requested PDB
+	 * @param toPath Path where the file shall be downloaded to
+	 * @return the Path to the downloaded file
+	 */
 	public static String downloadPDB (String pdbID, String toPath) {
 		
 		BufferedInputStream in = null;
@@ -71,3 +83,9 @@ public class PDBFile {
 		
 	}
 }
+
+/******************************************************************************
+ * "A question that sometimes drives me hazy:                                 *
+ *  Am I or are the others crazy?"                                            *
+ *     - Albert Einstein (1879 - 1955)                                        *
+ ******************************************************************************/

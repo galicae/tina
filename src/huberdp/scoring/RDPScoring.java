@@ -24,7 +24,7 @@ import huberdp.Scoring;
  * RDPScoring is an implementation of the scoring function given in the paper.
  * (Protein Threading by Recursive Dynamic Programming. JMB 290, 757-779)
  * @author huberste
- * @lastchange 2013-02-14
+ * @lastchange 2013-02-16
  */
 public class RDPScoring implements Scoring {
 	
@@ -68,6 +68,10 @@ public class RDPScoring implements Scoring {
 	 * empirically calibratet value for voro++
 	 */
 	private final static double GRID_CLASH = 6.5;
+	/**
+	 * empirically calibrate value for voro++
+	 */
+	private final static double MIN_CONTACT = 2.0;
 	
 	/**
 	 * weight of the mutation matrix score
@@ -109,6 +113,7 @@ public class RDPScoring implements Scoring {
 	private double gridExtend;
 	private double gridDensity;
 	private double gridClash;
+	private double minContact;
 	
 	/**
 	 * Voro++ stuff
@@ -126,13 +131,18 @@ public class RDPScoring implements Scoring {
 	 * @param mutationMatrix the mutation matrix that is to be used
 	 * @param templatestructure the template's structure
 	 * @param vorobin absolute path to location of voro++ binary
+	 * @param gridExtend variable vor voro++
+	 * @param gridDensity variable vor voro++
+	 * @param gridClash variable vor voro++
+	 * @param minContact variable vor voro++
 	 */
 	public RDPScoring(
 			double gamma, double delta, double epsilon, double zeta,
 			double[][] mutationMatrix,
 			PDBEntry templatestructure,
 			String vorobin,
-			double gridExtend, double gridDensity, double gridClash
+			double gridExtend, double gridDensity, double gridClash,
+			double minContact
 	) {
 		this.gamma = gamma;
 		this.delta = delta;
@@ -140,7 +150,7 @@ public class RDPScoring implements Scoring {
 		this.zeta = zeta;
 		this.mutationMatrix = mutationMatrix;
 		this.vorobin = vorobin;
-		setVoroVars(gridExtend, gridDensity, gridClash);
+		setVoroVars(gridExtend, gridDensity, gridClash, minContact);
 	}
 	
 	/**
@@ -152,7 +162,7 @@ public class RDPScoring implements Scoring {
 				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX,
 				null,
 				VOROPATH,
-				GRID_EXTEND, GRID_DENSITY, GRID_CLASH
+				GRID_EXTEND, GRID_DENSITY, GRID_CLASH, MIN_CONTACT
 		);
 	}
 	
@@ -166,7 +176,7 @@ public class RDPScoring implements Scoring {
 				arg.mutationMatrix,
 				arg.templateStructure,
 				arg.vorobin,
-				arg.gridExtend, arg.gridDensity, arg.gridClash
+				arg.gridExtend, arg.gridDensity, arg.gridClash, arg.minContact
 		);
 	}
 	
@@ -183,6 +193,7 @@ public class RDPScoring implements Scoring {
 			data.reducePDB(VoroPrepType.CA, templateStructure);
 			data.fillGridWithoutClashes(gridExtend, gridDensity, gridClash);
 			voro.decomposite(data);
+			data.detectOuterGrid(minContact);
 			solvents = data.getOuterGridIds();
 		}
 	}
@@ -201,12 +212,15 @@ public class RDPScoring implements Scoring {
 	 * @param gridExtend
 	 * @param gridDensity
 	 * @param gridClash
+	 * @param minContact
 	 */
 	public void setVoroVars(
-			double gridExtend, double gridDensity, double gridClash) {
+			double gridExtend, double gridDensity, double gridClash,
+			double minContact) {
 		this.gridExtend = gridExtend;
 		this.gridDensity = gridDensity;
 		this.gridClash = gridClash;
+		this.minContact = minContact;
 	}
 	
 	/**

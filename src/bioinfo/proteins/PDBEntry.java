@@ -1,20 +1,21 @@
 /******************************************************************************
  * bioinfo.proteins.PDBEntry                                                  *
  *                                                                            *
+ * Provides access to PDB Entries and also is our format for AminoAcid chain  *
+ * structures                                                                 * 
+ *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  ******************************************************************************/
 package bioinfo.proteins;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import bioinfo.alignment.Alignable;
 
 /**
  * @author gobi_4
- * @lastchange 2013-02-13
+ * @lastchange 2013-02-16
  */
 public class PDBEntry implements Alignable, Serializable {
 
@@ -22,7 +23,7 @@ public class PDBEntry implements Alignable, Serializable {
 	 * needed for class check. for serialization. please increase in case of
 	 * editing this file
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 	
 	private final String id;
 	private final char chainID;
@@ -31,25 +32,7 @@ public class PDBEntry implements Alignable, Serializable {
 	private int length;
 
 	/**
-	 * Constructor for an the PDBEntry
-	 * 
-	 * @param arg1
-	 *            the id of the PDBEntry
-	 */
-	public PDBEntry(String arg1) {
-		if (arg1.length() == 4) {
-			this.id = arg1;
-			this.chainID = 'A';
-			this.chainIDNum = 0;
-		} else {
-			this.id = arg1.substring(0, 4);
-			this.chainID = arg1.charAt(4);
-			this.chainIDNum = Integer.valueOf(arg1.substring(5, 7));
-		}
-	}
-
-	/**
-	 * Constructor for an the PDBEntry
+	 * Constructor for an a PDBEntry with an Array of AminoAcids
 	 * 
 	 * @param arg1
 	 *            the id of the PDBEntry
@@ -69,9 +52,19 @@ public class PDBEntry implements Alignable, Serializable {
 		this.aminoAcids = arg2;
 		this.length = arg2.length;
 	}
-
+	
 	/**
-	 * Constructor for an the PDBEntry
+	 * Constructor for an the PDBEntry without any AminoAcids
+	 * 
+	 * @param arg1
+	 *            the id of the PDBEntry
+	 */
+	public PDBEntry(String arg1) {
+		this(arg1, new AminoAcid[0]);
+	}
+	
+	/**
+	 * Constructor for an the PDBEntry with a List of AminoAcids
 	 * 
 	 * @param arg1
 	 *            the id of the PDBEntry
@@ -79,26 +72,18 @@ public class PDBEntry implements Alignable, Serializable {
 	 *            Array of AminoAcids
 	 */
 	public PDBEntry(String arg1, List<AminoAcid> arg2) {
-		if (arg1.length() == 4) {
-			this.id = arg1;
-			this.chainID = 'A';
-			this.chainIDNum = 0;
-		} else {
-			this.id = arg1.substring(0, 4);
-			this.chainID = arg1.charAt(4);
-			this.chainIDNum = Integer.valueOf(arg1.substring(5));
-			this.aminoAcids = arg2.toArray(new AminoAcid[0]);
-			this.length = arg2.size();
-		}
+		this(arg1, arg2.toArray(new AminoAcid[0]));
 	}
 
 	/**
-	 * Constructor for an the PDBEntry
+	 * Constructor for an an PDBEntry
 	 * 
 	 * @param arg1
 	 *            the id of the PDBEntry
 	 * @param arg2
 	 *            Array of AminoAcids
+	 * @param real
+	 *            ?????
 	 */
 	public PDBEntry(String arg1, List<AminoAcid> arg2, boolean real) {
 		if (arg1.length() == 4) {
@@ -153,6 +138,11 @@ public class PDBEntry implements Alignable, Serializable {
 		length++;
 	}
 
+	/**
+	 * returns the n-th AminoAcid
+	 * @param n
+	 * @return the n-th AminoAcid
+	 */
 	public AminoAcid getAminoAcid(int n) {
 		return aminoAcids[n];
 	}
@@ -168,6 +158,7 @@ public class PDBEntry implements Alignable, Serializable {
 	}
 
 	/**
+	 * returns the AmioAcids as a (human readable) String like in a PDB file
 	 * @return all AminoAcids as a (human readable) String
 	 */
 	public String getAtomSectionAsString() {
@@ -203,6 +194,10 @@ public class PDBEntry implements Alignable, Serializable {
 		return backbone;
 	}
 
+	/**
+	 * returns the sequence as a String
+	 * @return the amino acid sequence as a String
+	 */
 	public String getSequence() {
 		StringBuilder seq = new StringBuilder();
 		for(int i = 0; i < length; i++) {

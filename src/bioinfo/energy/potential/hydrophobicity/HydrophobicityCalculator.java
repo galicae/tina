@@ -1,6 +1,8 @@
 /******************************************************************************
  * huberdp.Scoring.RDPScoring.java                                            *
- * This file contains the class RDPScoring which is RDP's scoring function.   *
+ *                                                                            *
+ * This class's main method calculates average dob (degree of burial) for all *
+ * AminoAcidTypes over a list of pdb files.                                   *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -10,8 +12,10 @@ package bioinfo.energy.potential.hydrophobicity;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Set;
 
 import bioinfo.energy.potential.voronoi.VoroPPWrap;
@@ -24,7 +28,7 @@ import bioinfo.proteins.PDBFileReader;
 /**
  * 
  * @author huberste
- * @lastchange 2013-02-15
+ * @lastchange 2013-02-16
  */
 public class HydrophobicityCalculator {
 	
@@ -51,6 +55,10 @@ public class HydrophobicityCalculator {
 	 * empirically calibratet value for voro++
 	 */
 	private final static double GRID_CLASH = 6.5;
+	/**
+	 * empirically calibratet value for voro++
+	 */
+	private final static double MIN_CONTACT = 2.0;
 	
 	/**
 	 * @param args pdblistpath, pdbpath
@@ -62,6 +70,10 @@ public class HydrophobicityCalculator {
 		}
 		String pdbList = args[0];
 		String pdbpath = args[1];
+		
+		// initialize important stuff	
+		Locale.setDefault(Locale.US);
+		DecimalFormat df = new DecimalFormat("0.000000");
 		
 		// TODO load file pdb_25
 		LinkedList<String> pdbIDs = new LinkedList<String>();
@@ -85,11 +97,13 @@ public class HydrophobicityCalculator {
 			}
 		}
 		
-		// for each file
 		PDBFileReader pdbreader = new PDBFileReader(pdbpath);
 		int[] count = new int[26];
 		double[] hydro = new double[26];
-		for (String id : pdbIDs) {
+		for (String id : pdbIDs) { // for each file
+			// begin debugging
+			System.out.println("at id "+id);
+			// end debugging
 			PDBEntry structure = pdbreader.readPDBFromFile(
 					PDBFile.getFile(pdbpath, id.substring(0,4)),id.charAt(4));
 			
@@ -98,10 +112,16 @@ public class HydrophobicityCalculator {
 			data.reducePDB(VoroPrepType.CA, structure);
 			data.fillGridWithoutClashes(GRID_EXTEND, GRID_DENSITY, GRID_CLASH);
 			voro.decomposite(data);
+			data.detectOuterGrid(MIN_CONTACT);
 			Set <Integer> solvents = data.getOuterGridIds();
 		
 			// for each amino acid
 			for (int pos = 0; pos < structure.length(); pos++) {
+				// begin debugging
+				if (pos % 10 == 0) {
+					System.out.println("at aminoacid "+pos);
+				}
+				// end debugging
 				
 				int astype = (structure.getAminoAcid(pos).getName().getOneLetterCode().charAt(0))-65;
 				// calculate dob (degree of burial)
@@ -124,7 +144,7 @@ public class HydrophobicityCalculator {
 		for(int i = 0; i < 26; i++) {
 			if (count[i] > 0)
 				hydro[i] = hydro[i]/(double)count[i];
-			System.out.println(hydro[i]);
+			System.out.println(df.format(hydro[i]));
 		}
 		
 		// TODO Verify results
