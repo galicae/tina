@@ -44,7 +44,7 @@ public class AlignmentAssembler extends Assembler {
 			PDBEntry temp = reader.readFromFolderById(id);
 			ProteinFragment tempFrag = new ProteinFragment(temp.getID(),
 					PDBReduce.reduceSinglePDB(temp), extent);
-			tempFrag.setSequence(query);
+			tempFrag.setSequence(temp.getSequence());
 			structures.add(tempFrag);
 		}
 
@@ -58,14 +58,16 @@ public class AlignmentAssembler extends Assembler {
 
 		// collect fragments
 		result = collectFragmentsFromAl(alignments, structures, extent);
-		for(int i = 0; i < result.size(); i++) {
+		for (int i = 0; i < result.size(); i++) {
 			frags.add(result.get(i).clone());
 		}
 		ProteinFragment tempResFragment = assembleProtein(result, extent, seqs
 				.get(0).getSequenceAsString());
-		ProteinFragment resultFragment = new ProteinFragment("RE", new double[1][1], extent);
+		ProteinFragment resultFragment = new ProteinFragment("RE",
+				new double[1][1], extent);
 		resultFragment = tempResFragment.clone();
 		resultFragment.setID(seqs.get(0).getID());
+		resultFragment.setClusterIndex(result.get(0).getClusterIndex());
 		return resultFragment;
 	}
 
@@ -91,7 +93,7 @@ public class AlignmentAssembler extends Assembler {
 		LinkedList<ProteinFragment> result = new LinkedList<ProteinFragment>();
 		LinkedList<ProteinFragment> positSolutions = new LinkedList<ProteinFragment>();
 		result.add(curFrag);
-		if (curFrag.getID().startsWith(structures.get(0).getID())) {
+		if (!curFrag.getID().startsWith(structures.get(0).getID())) {
 			count++;
 		}
 		int add = fragLength - extent;
@@ -100,7 +102,7 @@ public class AlignmentAssembler extends Assembler {
 		for (int i = add; i < query.length() - fragLength;) {
 			positSolutions.clear();
 			curFrag = findFragFromAli(i, alignments, structures, curFrag);
-			if (curFrag.getID().startsWith(structures.get(0).getID())) {
+			if (!curFrag.getID().startsWith(structures.get(0).getID())) {
 				count++;
 			}
 			result.add(curFrag);
@@ -110,10 +112,10 @@ public class AlignmentAssembler extends Assembler {
 		curFrag = findFragFromAli(query.length() - fragLength, alignments,
 				structures, curFrag);
 		result.add(curFrag);
-		if (curFrag.getID().startsWith(structures.get(0).getID())) {
+		if (!curFrag.getID().startsWith(structures.get(0).getID())) {
 			count++;
 		}
-		System.out.print(count / (1.0 * result.size()) + "\t");
+		result.get(0).setClusterIndex((int)(count / (1.0 * result.size()) * 1000));
 		return result;
 	}
 
@@ -198,10 +200,34 @@ public class AlignmentAssembler extends Assembler {
 			map = alignments.get(maxIndex).getAlignedResidues();
 			ProteinFragment result = structures.get(maxIndex + 1).getPart(
 					map[1][start], map[1][start + fragLength]);
+			if(checkFragment(result))
+				return result;
+			else
+				result = structures.get(0).getPart(saveStart,
+						saveStart + fragLength);
 			return result;
 		}
 	}
-	
+
+	protected boolean checkFragment(ProteinFragment f) {
+		double dist = 0;
+		for (int i = 1; i < f.fragLength; i++) {
+			dist = distance(f.getResidue(i - 1), f.getResidue(i));
+			if (dist < 3.5 || dist > 4.0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	protected double distance(double[] a, double[] b) {
+		double sum = 0;
+		for (int i = 0; i < a.length; i++) {
+			sum += (a[i] - b[i]) * (a[i] - b[i]);
+		}
+		return Math.sqrt(sum);
+	}
+
 	protected void alignFragments(ProteinFragment stable, ProteinFragment move,
 			int extent) {
 		double[][][] kabschFood = new double[2][extent][3];
@@ -223,11 +249,10 @@ public class AlignmentAssembler extends Assembler {
 		}
 		String moveSeq = move.getSequence().substring(extent);
 		stable.append(moveCoordinates, moveSeq);
-//		System.out.println();
+		// System.out.println();
 	}
-	
+
 	public LinkedList<ProteinFragment> getFragments() {
 		return this.frags;
 	}
 }
- 

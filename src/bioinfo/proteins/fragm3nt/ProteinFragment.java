@@ -2,8 +2,10 @@ package bioinfo.proteins.fragm3nt;
 
 import java.util.LinkedList;
 
+import bioinfo.proteins.AminoAcid;
 import bioinfo.proteins.Atom;
 import bioinfo.proteins.AtomType;
+import bioinfo.proteins.PDBEntry;
 
 public class ProteinFragment {
 	private String id;
@@ -278,5 +280,21 @@ public class ProteinFragment {
 	
 	public void setID(String id) {
 		this.id = id;
+	}
+	
+	public PDBEntry toPDB() {
+		AminoAcid[] amia = new AminoAcid[coordinates.length];
+		for(int i = 0; i < amia.length; i++) {
+			double[] tempCoord = new double[3];
+			for(int j = 0; j < 3; j++) {
+				tempCoord[j] = coordinates[i][j];
+			}
+			Atom[] atoms = new Atom[1];
+			atoms[0] = new Atom(AtomType.CA, tempCoord);
+			amia[i] = new AminoAcid(Character.toString(sequence.charAt(i)), i, atoms);
+		}
+		
+		PDBEntry result = new PDBEntry(id, amia);
+		return result;
 	}
 }
