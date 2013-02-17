@@ -29,7 +29,7 @@ public class Kabsch {
 			double[][][] coordinates) {
 		// initialize all known quantities
 		DoubleFactory2D factory2D = DoubleFactory2D.dense;
-		DoubleFactory1D factory1D = DoubleFactory1D.dense;
+//		DoubleFactory1D factory1D = DoubleFactory1D.dense;
 		DoubleMatrix2D p = factory2D.make(coordinates[0]);
 		DoubleMatrix2D q = factory2D.make(coordinates[1]);
 
@@ -68,7 +68,7 @@ public class Kabsch {
 		double err = calcErr(S);
 
 		DoubleMatrix2D rotation = algebra.mult(V, tU);
-		double rmsd1 = calcDefRMSD(p, q);
+//		double rmsd1 = calcDefRMSD(p, q);
 		// no point in calculating the definition of the rmsd since no rotation
 		// has been performed
 		double rmsd2 = calcEasyRMSD(err, initError, p);
