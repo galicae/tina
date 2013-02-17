@@ -80,7 +80,7 @@ public class AlignmentAssembler extends Assembler {
 			LinkedList<SequenceAlignment> alignments,
 			LinkedList<ProteinFragment> structures, int extent) {
 		int count = 0;
-		System.out.println(alignments.get(0).toStringVerbose());
+//		System.out.println(alignments.get(0).toStringVerbose());
 		// define query only once - no need to spend three lines every time
 		String query = alignments.get(0).getComponent(0).getSequenceAsString();
 
@@ -193,21 +193,21 @@ public class AlignmentAssembler extends Assembler {
 		if (maxIndex == -1) {
 			ProteinFragment result = structures.get(0).getPart(saveStart,
 					saveStart + fragLength);
-			System.out.println(result.getID() + " " + result.getSequence());
+//			System.out.println(result.getID() + " " + result.getSequence());
 			return result;
 		} else {
 			map = alignments.get(maxIndex).getAlignedResidues();
 			ProteinFragment result = structures.get(maxIndex + 1).getPart(
 					map[1][start], map[1][start] + fragLength);
-//			if(checkFragment(result)) {
-			if(true) {
-				System.out.println(result.getID() + " " + result.getSequence());
+			if(checkFragment(result)) {
+//			if(true) {
+//				System.out.println(result.getID() + " " + result.getSequence());
 				return result;
 			}
 			else
 				result = structures.get(0).getPart(saveStart,
 						saveStart + fragLength);
-			System.out.println(result.getID() + " " + result.getSequence());
+//			System.out.println(result.getID() + " " + result.getSequence());
 			return result;
 		}
 	}

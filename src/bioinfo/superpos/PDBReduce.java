@@ -48,7 +48,7 @@ public class PDBReduce {
 		double[][][] alignmentCoordinates = new double[2][alignmentLength][3];
 		int j = 0; // the index for the aligned positions
 		for (int i = 0; i < calcMap[0].length; i++) {
-			if (calcMap[0][i] > 0) {
+			if (calcMap[0][i] >= 0) {
 				try {
 					alignmentCoordinates[0][j] = pdb1.getAminoAcid(i)
 							.getAtomByType(CA).getPosition();

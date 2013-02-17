@@ -35,7 +35,7 @@ public class AlignmentAssemblyTest {
 	static String desktop = "/home/galicae/Desktop/STRUCTURES/";
 
 	public static void main(String[] args) throws Exception {
-		String[] bla = {"1kv3B02", "1qrkA02"};
+		String[] bla = {"1ewmA00", "1m6dB00"};
 		LinkedList<String> ids = new LinkedList<String>();
 		for(int i = 0; i < bla.length; i++) {
 			ids.add(bla[i]);
@@ -69,7 +69,7 @@ public class AlignmentAssemblyTest {
 
 		// now align every sequence with the template, kabsch structures and
 		// print result
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < seqs.size(); i++) {
 			FreeshiftSequenceGotoh got = new FreeshiftSequenceGotoh(-13, -3,
 					QuasarMatrix.DAYHOFF_MATRIX);
 			SequenceAlignment alignment = got.align(seqs.get(0), seqs.get(i));
@@ -78,10 +78,10 @@ public class AlignmentAssemblyTest {
 
 			double[][][] kabschFood = PDBReduce.reduce(alignment, prediction,
 					temp);
-			double[][][] kabschFood1 = new double[2][20][3];
-			for(int j = 0; j < 20; j++) {
-				kabschFood1[0][j] = kabschFood[0][j + 145];
-				kabschFood1[1][j] = kabschFood[1][j + 145];
+			double[][][] kabschFood1 = new double[2][10][3];
+			for(int j = 0; j < 10; j++) {
+				kabschFood1[0][j] = kabschFood[0][j + 72];
+				kabschFood1[1][j] = kabschFood[1][j + 72];
 			}
 			Transformation t = Kabsch.calculateTransformation(kabschFood1);
 			
