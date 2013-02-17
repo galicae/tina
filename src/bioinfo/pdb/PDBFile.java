@@ -16,7 +16,7 @@ import java.net.URL;
 
 /**
  * @author huberste
- * @lastchange 2013-02-16
+ * @lastchange 2013-02-17
  */
 public class PDBFile {
 
@@ -82,6 +82,7 @@ public class PDBFile {
 		return toPath+pdbID.toUpperCase()+PDB_FILE_ENDING;
 		
 	}
+	
 }
 
 /******************************************************************************

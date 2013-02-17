@@ -26,7 +26,7 @@ import bioinfo.proteins.PDBFileReader;
 /**
  * 
  * @author huberste
- * @lastchange 2013-02-16
+ * @lastchange 2013-02-17
  */
 public class DoBFreqCounter {
 	
@@ -86,10 +86,11 @@ public class DoBFreqCounter {
 				if (line.startsWith("#")) { // comment
 					continue;
 				}
-				pdbIDs.add(line);
+				if (!line.isEmpty())	// e.g. last line
+					pdbIDs.add(line);
 			}
 		} catch (IOException e) {
-			System.err.println("Error 77: problems reading the File:");
+			System.err.println("Error 93: problems reading the File:");
 			e.printStackTrace();
 		} finally {
 			try {
@@ -98,7 +99,7 @@ public class DoBFreqCounter {
 					br = null; // give br to GarbageCollector
 				}
 			} catch (IOException e){
-				System.err.println("Error 83: problems closing the File:");
+				System.err.println("Error 102: problems closing the File:");
 				e.printStackTrace();
 			}
 		}
@@ -110,59 +111,65 @@ public class DoBFreqCounter {
 		
 		int debug = 0;
 		
+		VoroPPWrap voro = new VoroPPWrap(VOROPATH);
+		
 		for (String id : pdbIDs) { // for each file
 			debug++;
-			// begin debugging
-			System.out.println("working on id "+id + " ("+debug+" of " + pdbIDs.size()+")");
-			// end debugging
-			
-			PDBEntry structure = pdbreader.readPDBFromFile(
-					PDBFile.getFile(pdbpath, id.substring(0,4)),id.charAt(4));
-			
-			if (structure == null) { // dirty debugging
-				System.err.println("error getting ID "+id);
-				continue;
-			}
-			
-			VoroPPWrap voro = new VoroPPWrap(VOROPATH);
-			VoronoiData data = new VoronoiData(structure.getID());
-			data.reducePDB(VoroPrepType.CA, structure);
-			data.fillGridWithoutClashes(GRID_EXTEND, GRID_DENSITY, GRID_CLASH);
-			voro.decomposite(data);
-			data.detectOuterGrid(MIN_CONTACT);
-			Set <Integer> solvents = data.getOuterGridIds();
-		
-			// for each amino acid
-			for (int pos = 0; pos < structure.length(); pos++) {
-				int astype = (structure.getAminoAcid(pos).getName().getOneLetterCode().charAt(0))-65;
-				// calculate dob (degree of burial)
-				double outer = 0.0;
-				double inner = 0.0;
-				double dob;
-				HashMap<Integer,Double> faces = data.getFaces().get(pos);
+			try {
+				// begin debugging
+				System.out.println("working on id "+id + " ("+debug+" of " + pdbIDs.size()+")");
+				// end debugging
 				
-				if (faces != null) { // dirty debugging
+				PDBEntry structure = pdbreader.readPDBFromFile(
+						PDBFile.getFile(pdbpath, id.substring(0,4)),id.charAt(4));
 				
-					for(int neighbor : faces.keySet()){
-						if(solvents.contains(neighbor)){
-							outer += faces.get(neighbor);
-						}else{
-							inner += faces.get(neighbor);
-						}
-					}
-					
-					dob = outer/(outer+inner);
-					
-					for(int i = 0; i < breaks; i++) {
-						if (dob <= ((double)i+1.0)*(1.0/(double)breaks)) {
-							freq[astype][i] ++;
-							break;
-						}
-					}
-					
-					
+				if (structure == null) { // dirty debugging
+					System.err.println("Error 127: Error getting ID "+id);
+					continue;
 				}
-			} // for each amino acid in that pdb 		
+				
+				VoronoiData data = new VoronoiData(structure.getID());
+				data.reducePDB(VoroPrepType.CA, structure);
+				data.fillGridWithoutClashes(GRID_EXTEND, GRID_DENSITY, GRID_CLASH);
+				voro.decomposite(data);
+				data.detectOuterGrid(MIN_CONTACT);
+				Set <Integer> solvents = data.getOuterGridIds();
+			
+				// for each amino acid
+				for (int pos = 0; pos < structure.length(); pos++) {
+					int astype = (structure.getAminoAcid(pos).getName().getOneLetterCode().charAt(0))-65;
+					// calculate dob (degree of burial)
+					double outer = 0.0;
+					double inner = 0.0;
+					double dob;
+					HashMap<Integer,Double> faces = data.getFaces().get(pos);
+					
+					if (faces != null) { // dirty debugging
+					
+						for(int neighbor : faces.keySet()){
+							if(solvents.contains(neighbor)){
+								outer += faces.get(neighbor);
+							}else{
+								inner += faces.get(neighbor);
+							}
+						}
+						
+						dob = outer/(outer+inner);
+						
+						for(int i = 0; i < breaks; i++) {
+							if (dob <= ((double)i+1.0)*(1.0/(double)breaks)) {
+								freq[astype][i] ++;
+								break;
+							}
+						}
+						
+						
+					}
+				} // for each amino acid in that pdb
+			} catch (Exception e) { // dirty debugging
+				System.err.println("problem at id "+id + " ("+debug+" of " + pdbIDs.size()+")");
+				e.printStackTrace();
+			}
 		} // for each pdb
 		
 		// print out frequencies
