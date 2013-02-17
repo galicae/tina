@@ -1,19 +1,15 @@
 /******************************************************************************
- * bioinfo.energy.potential.hydrophobicity.HydrophobicityMatrix.java          *
+ * bioinfo.energy.potential.contactcapacity.ContactCapacityMatrix.java        *
  *                                                                            *
- * This class represents an HydrophobicityMatrix.                             *
+ * This class represents an ContactCapacityMatrix.                            *
  *                                                                            *
- * The idea is: w[i][j] = r[i][j]/(p[i]*q[j])                                 *
- * where r[i][j] is the relative frequency of amino acid [i] at dob[j],       *
- *       p[i] is the relative frequency of amino acid [i] and                 *
- *       q[j] is the relative frequency of dob[j]                             *
- *                                                                            *
- * @see Protein Threading by Recursive Dynamic Programming. JMB 290, 757-779  *
+ * @see Fast Protein Fold Recognition via Sequence to Structure Alignment and *
+ * Contact Capacity Potentials. Pacific Symposium on Biocomputing 96, pp53-72 *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
  ******************************************************************************/
-package bioinfo.energy.potential.hydrophobicity;
+package bioinfo.energy.potential.contactcapacity;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,64 +23,89 @@ import java.util.Locale;
  * @author huberste
  * @lastchange 2013-02-17
  */
-public class HydrophobicityMatrix {
+public class ContactCapacityMatrix {
 
-	// TODO fill matrix with values!
-	private final static double[][] STANDARD_MATRIX = {};
+	// TODO extend to secondary structure dependent ContactCapacityPotential or
+	//	ConditionalContactCapacityPotential
 	
-	private final double[][] matrix;
+	/**
+	 * maximum residue distance for a contact to be considered local
+	 */
+	public final static int MAX_LOCAL_DISTANCE = 4;
+	
+	/**
+	 * Maximum distance between two (virtual) C-beta Atoms that defines a
+	 * contact (in Angstrom)
+	 */
+	public final static double MAX_CONTACT_DISTANCE = 7.0;
+	
+	/**
+	 * this is the number of buckets for local contacts
+	 */
+	public final static int MAX_LOCAL_CONTACTS= 10;
+	
+	/**
+	 * this is the number of buckets fot long-range contacts
+	 */
+	public final static int MAX_LONGRANGE_CONTACTS=12;
+	
+	// TODO fill matrix with values!
+	private final static double[][][] STANDARD_MATRIX = {};
+	
+	/**
+	 * matrix[AA][local][longrange]
+	 */
+	private final double[][][] matrix;
 
 	/**
-	 * constructs a HydrophobicityMatrix
+	 * constructs a ContactCapacityMatrix
 	 * @param matrix
 	 */
-	public HydrophobicityMatrix(double[][] matrix) {
+	public ContactCapacityMatrix(double[][][] matrix) {
 		this.matrix = matrix;
 	}
 	
 	/**
-	 * constructs a HydrophobicityMatrix with standard parameters
+	 * constructs a ContactCapacityMatrix with standard parameters
 	 */
-	public HydrophobicityMatrix() {
+	public ContactCapacityMatrix() {
 		this(STANDARD_MATRIX);
 	}
 	
 	/**
-	 * constructs a HydrophobicityMatrix with the same parameters as the given
+	 * constructs a ContactCapacityMatrix with the same parameters as the given
 	 * HydrophobicityMatrix
 	 * @param arg
 	 */
-	public HydrophobicityMatrix(HydrophobicityMatrix arg) {
+	public ContactCapacityMatrix(ContactCapacityMatrix arg) {
 		this(arg.matrix);
 	}
 	
 	/**
-	 * constructs a new HydrophobicityMatrix with the Matrix given in the file.
+	 * constructs a new ContactCapacityMatrix with the Matrix given in the file.
 	 * @param filename
 	 */
-	public HydrophobicityMatrix(String filename) {
-		this(readFile(filename));
+	public ContactCapacityMatrix(String filename) {
+		this(readCCPMatrixFromFile(filename));
 	}
 	
 	/**
 	 * 
 	 * @param aa
-	 * @param bucket
+	 * @param localContacts
+	 * @param longRangeContacts
 	 * @return the value from the matrix
 	 */
-	public double getValue(int aa, int bucket) {
-		return matrix[aa][bucket];
-	}
-	
-	public int getBuckets() {
-		return matrix[0].length;
+	public double getValue(int aa, int localContacts, int longRangeContacts) {
+		return matrix[aa][localContacts][longRangeContacts];
 	}
 	
 	/**
-	 * writes a HydrophobicityMatrix file
-	 * @param w the HydrophobicityMatrix to be written
+	 * writes a ContactCapacityMatrix file
+	 * @param w the ContactCapacityMatrix to be written
 	 */
-	public static void writeFile(double[][] w, String filepath) {
+	public static void writeCCPMatrixToFile(double[][][] w, String filepath) {
+		// TODO
 		
 		// initialize important stuff	
 		Locale.setDefault(Locale.US);
@@ -121,13 +142,14 @@ public class HydrophobicityMatrix {
 	}
 	
 	/**
-	 * reads a HydrophobicityMatrix file
+	 * reads a ContactCapacityMatrix file
 	 * @param filepath
-	 * @return the double[][] matrix represented by the file
+	 * @return the double[][][] matrix represented by the file
 	 */
-	public static double[][] readFile(String filepath) {
+	public static double[][][] readCCPMatrixFromFile(String filepath) {
+		// TODO
 		BufferedReader br = null;
-		double[][] result = null;
+		double[][][] result = null;
 		try {
 			br = new BufferedReader(new FileReader(filepath));
 			String line = null;
@@ -140,7 +162,7 @@ public class HydrophobicityMatrix {
 					lines++;
 			}
 			br.close();
-			result = new double[lines][];
+			result = new double[lines][][];
 			lines = 0;
 			br = new BufferedReader(new FileReader(filepath));
 			while ((line = br.readLine()) != null) {
@@ -148,9 +170,9 @@ public class HydrophobicityMatrix {
 					continue;
 				}
 				String[] temp = line.split("\t");
-				result[lines] = new double[temp.length-1];
+//				result[lines] = new double[temp.length-1];
 				for (int i = 0; i < temp.length-1; i++) {
-					result[lines][i] = Double.parseDouble(temp[i+1]);
+//					result[lines][i] = Double.parseDouble(temp[i+1]);
 				}
 				lines++;
 			}

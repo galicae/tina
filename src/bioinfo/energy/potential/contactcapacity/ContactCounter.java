@@ -12,16 +12,13 @@ package bioinfo.energy.potential.contactcapacity;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Set;
 
-import bioinfo.energy.potential.voronoi.VoroPPWrap;
-import bioinfo.energy.potential.voronoi.VoroPrepType;
-import bioinfo.energy.potential.voronoi.VoronoiData;
+import static bioinfo.energy.potential.contactcapacity.ContactCapacityMatrix.*;
 import bioinfo.pdb.PDBFile;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
+
 
 /**
  * 
@@ -35,6 +32,18 @@ public class ContactCounter {
 		"\tjava ContactCounter <pdblist> <pdbpath>\n\n" +
 		"where <pdblist> is a list of PDB IDs, <pdbpath> is a\n"+
 		"(writable) path to the directory containing the PDB files";
+	
+	public final static String filedesc =
+			"# Contact Count Matrices.\n" +
+			"# to the right are the number of long range contacts,\n" +
+			"# downwards the number of local contacts";
+	
+	public final static String LONGRANGE_HEADER =
+			"#\t\t\t# of long range contacts ->";
+	
+	public final static String LOCAL_HEADER =
+			"#\t| # of local\n"+
+			"#\tV   contacts";
 	
 	/**
 	 * @param args pdblistpath, pdbpath
@@ -55,14 +64,14 @@ public class ContactCounter {
 		try {
 			br = new BufferedReader(new FileReader(pdbList));
 			while ((line = br.readLine()) != null) {
-				if (line.startsWith("#")) { // comment
+				if (line.trim().startsWith("#")) { // comment
 					continue;
 				}
-				if (!line.isEmpty())	// e.g. last line
-					pdbIDs.add(line);
+				if (!line.trim().isEmpty())	// e.g. last line
+					pdbIDs.add(line.trim());
 			}
 		} catch (IOException e) {
-			System.err.println("Error 65: problems reading the File:");
+			System.err.println("Error 60: problems reading the File:");
 			e.printStackTrace();
 		} finally {
 			try {
@@ -71,7 +80,7 @@ public class ContactCounter {
 					br = null; // give br to GarbageCollector
 				}
 			} catch (IOException e){
-				System.err.println("Error 74: problems closing the File:");
+				System.err.println("Error 69: problems closing the File:");
 				e.printStackTrace();
 			}
 		}
@@ -80,7 +89,11 @@ public class ContactCounter {
 		
 		// TODO count the occurences of the AminoAcids with some specific
 		// contact counts
-//		long[][] freq = new long[26][breaks];
+		// TODO Where to set the (virtual) C-beta?
+		long[][][] counts = new long
+				[26]
+				[MAX_LOCAL_CONTACTS + 1]
+				[MAX_LONGRANGE_CONTACTS + 1];
 		
 		int debug = 0;
 		
@@ -105,6 +118,34 @@ public class ContactCounter {
 					// calculate number of contacts
 					int local = 0;
 					int longrange = 0;
+					for (int pos2 = 0; pos2 < structure.length(); pos2++) {
+						if (pos != pos2) { // natürlich nicht bei selber AS
+							// TODO Check if in contact distance
+							
+							
+							if (Math.abs(pos-pos2) <= MAX_LOCAL_DISTANCE) { // local
+								local++;
+							} else { // longRange
+								longrange++;
+							}
+						}
+					}
+					
+					// insert into count matrix
+					for (int i1 = MAX_LOCAL_CONTACTS; i1 >= 0; i1--) {
+						if (local >= i1) {
+							for (int i2 = MAX_LONGRANGE_CONTACTS; i2 >= 0; i2--) {
+								if (longrange >= i2) {
+									counts[astype][i1][i2]++;
+									
+									continue;
+								}
+							}
+							
+							continue;
+						}
+					}
+					
 				} // for each amino acid in that pdb
 			} catch (Exception e) { // dirty debugging
 				System.err.println("problem at id "+id + " ("+debug+" of " + pdbIDs.size()+")");
@@ -113,17 +154,54 @@ public class ContactCounter {
 		} // for each pdb
 		
 		// print out frequencies
+		
+		System.out.println(filedesc);
 		char x = 0;
-		for (int i = 0; i < 26; i++) {
-			x = (char)(65+i);
-			System.out.print(x);
-//			for (int j = 0; j < breaks; j++) {
-//				System.out.print("\t" + freq[i][j]);
-//			}
-			System.out.print("\n");
+		for (int aa = 0; aa < 26; aa++) {
+			x = (char)(65+aa);
+			System.out.print("# \n# " + x+ "\n# \n\n");
+			System.out.println(LONGRANGE_HEADER);
+			for (int local = 0; local <= MAX_LONGRANGE_CONTACTS; local++) {
+				System.out.print("\t"+local);
+			}
+			System.out.print("+\n");
+			
+			for (int local = 0; local <= MAX_LOCAL_CONTACTS; local++) {
+				System.out.print(local);
+				for (int longrange = 0; longrange <= MAX_LONGRANGE_CONTACTS; longrange++) {
+					System.out.print("\t" + counts[aa][local]);
+				}
+			}
+			System.out.print("\n\n");
 		}
 
 	}
+	
+/* outputfile looks like this:
+#
+# A
+# 
+
+#			# of long range contacts ->
+	0	1	2	3	4	5	6	7	8	9+
+#	| # of local
+#	V contacts
+0	x	x	x	x	x	x	x	x	x	x
+1	x	x	x	x	x	x	x	x	x	x
+2	x	x	x	x	x	x	x	x	x	x
+3	x	x	x	x	x	x	x	x	x	x
+4	x	x	x	x	x	x	x	x	x	x
+5	x	x	x	x	x	x	x	x	x	x
+6	x	x	x	x	x	x	x	x	x	x
+7	x	x	x	x	x	x	x	x	x	x
+8	x	x	x	x	x	x	x	x	x	x
+9	x	x	x	x	x	x	x	x	x	x
+10	x	x	x	x	x	x	x	x	x	x
+11	x	x	x	x	x	x	x	x	x	x
+12+	x	x	x	x	x	x	x	x	x	x
+
+...
+ */
 
 }
 
