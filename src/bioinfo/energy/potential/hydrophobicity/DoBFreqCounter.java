@@ -117,7 +117,7 @@ public class DoBFreqCounter {
 			debug++;
 			try {
 				// begin debugging
-				System.out.println("working on id "+id + " ("+debug+" of " + pdbIDs.size()+")");
+				System.out.println("# working on id "+id + " ("+debug+" of " + pdbIDs.size()+")");
 				// end debugging
 				
 				PDBEntry structure = pdbreader.readPDBFromFile(
