@@ -215,4 +215,11 @@ public class AminoAcid implements Serializable{
 		return result;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
+	public Atom[] getAtoms() {
+		return this.atoms;
+	}
 }
