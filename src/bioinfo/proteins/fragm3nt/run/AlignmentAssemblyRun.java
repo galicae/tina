@@ -61,6 +61,7 @@ public class AlignmentAssemblyRun {
 		for (String s : map.keySet()) {
 			try {
 				resultWriter.write(s + "\t");
+				System.out.println(s + "\t");
 				doMagic(map.get(s));
 			} catch (Exception e) {
 				e.printStackTrace();

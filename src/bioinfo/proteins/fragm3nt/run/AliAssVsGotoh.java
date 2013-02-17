@@ -39,9 +39,9 @@ public class AliAssVsGotoh {
 	static BufferedWriter resultWriter;
 
 	public static void main(String[] args) throws Exception {
-		BufferedWriter resultWriter  = new BufferedWriter(new FileWriter("gotohVSass"));
+		BufferedWriter resultWriter  = new BufferedWriter(new FileWriter("spnf_gotohVSass"));
 		// bucket file direction
-		String bucket = "bucket05";// args[0];
+		String bucket = "spnf";// args[0];
 		// first find how many different sequences there are in the bucket
 		// so first read bucket file
 		// idea: use every ID as key and map to it a list with all the sequence
@@ -89,6 +89,7 @@ public class AliAssVsGotoh {
 				resultWriter.write(assScore + "\n");
 			} catch (Exception e) {
 				e.printStackTrace();
+				resultWriter.write("#\n");
 //				System.exit(0);
 				continue;
 			}
