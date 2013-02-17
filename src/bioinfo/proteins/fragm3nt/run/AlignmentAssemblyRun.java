@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import static bioinfo.proteins.fragm3nt.run.RunHelper.*;
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
@@ -20,13 +21,20 @@ import bioinfo.superpos.PDBReduce;
 import bioinfo.superpos.TMMain;
 import bioinfo.superpos.Transformation;
 
+/**
+ * assemble all structures in a file of pairwise alignments with the
+ * AlignmentAssembler
+ * 
+ * @author galicae
+ * 
+ */
 public class AlignmentAssemblyRun {
 	static int fragLength = 8;
 	static String pdbDirectory = "/home/galicae/Desktop/STRUCTURES/";
 	static BufferedWriter resultWriter;
 
 	public static void main(String[] args) throws Exception {
-		resultWriter  = new BufferedWriter(new FileWriter("bucket05Results"));
+		resultWriter = new BufferedWriter(new FileWriter("bucket05Results"));
 		// bucket file direction
 		String bucket = "bucket05";// args[0];
 		// first find how many different sequences there are in the bucket
@@ -88,20 +96,24 @@ public class AlignmentAssemblyRun {
 
 		// now print everything in the right order: first prediction, then
 		// template, then all other stuff
-		BufferedWriter wr2 = new BufferedWriter(new FileWriter("./bucket5/" + id.get(0) + ".pdb"));
+		BufferedWriter wr2 = new BufferedWriter(new FileWriter("./bucket5/"
+				+ id.get(0) + ".pdb"));
 		wr2.write("MODEL        1\n");
 		wr2.write(pred.toString(ass.getFragments(), extent));
 		wr2.write("ENDMDL\n");
 		wr2.write("MODEL        2\n");
 		wr2.write(structures.get(0).getAtomSectionAsString());
 		wr2.write("ENDMDL\n");
-		// now align every sequence with the template, kabsch structures and print result
-		for(int i = 1; i < seqs.size(); i++) {
-			FreeshiftSequenceGotoh got = new FreeshiftSequenceGotoh(-13, -3, QuasarMatrix.DAYHOFF_MATRIX);
+		// now align every sequence with the template, kabsch structures and
+		// print result
+		for (int i = 1; i < seqs.size(); i++) {
+			FreeshiftSequenceGotoh got = new FreeshiftSequenceGotoh(-13, -3,
+					QuasarMatrix.DAYHOFF_MATRIX);
 			SequenceAlignment alignment = got.align(seqs.get(0), seqs.get(i));
 			PDBEntry temp = structures.get(i);
-			
-			double[][][] kabschFood = PDBReduce.reduce(alignment, structures.get(0), temp);
+
+			double[][][] kabschFood = PDBReduce.reduce(alignment,
+					structures.get(0), temp);
 			Transformation t = Kabsch.calculateTransformation(kabschFood);
 			resultWriter.write(t.getRmsd() + "\t");
 			PDBEntry superposed = t.transform(temp);
@@ -111,41 +123,6 @@ public class AlignmentAssemblyRun {
 		}
 		resultWriter.write("\n");
 		wr2.close();
-//		System.exit(0);
+		// System.exit(0);
 	}
-
-	public static LinkedList<PDBEntry> loadPDBs(LinkedList<String> ids) {
-		LinkedList<PDBEntry> pdbs = new LinkedList<PDBEntry>();
-		PDBFileReader reader = new PDBFileReader(pdbDirectory);
-		for (int i = 0; i < ids.size(); i++) {
-			pdbs.add(reader.readFromFolderById(ids.get(i)));
-		}
-		return pdbs;
-	}
-
-	public static LinkedList<Sequence> loadSequences(LinkedList<String> ids) {
-		LinkedList<Sequence> result = new LinkedList<Sequence>();
-		try {
-			BufferedReader r = new BufferedReader(new FileReader(
-					"domains.seqlib"));
-			String line = "";
-			int count = 0;
-			String stringSeq = "";
-			while (count < ids.size() && (line = r.readLine()) != null) {
-				for (int i = 0; i < ids.size(); i++) {
-					if (line.startsWith(ids.get(i))) {
-						stringSeq = line.split(":")[1];
-						result.add(new Sequence(ids.get(i), stringSeq));
-						count++;
-						continue;
-					}
-				}
-			}
-			r.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-
 }

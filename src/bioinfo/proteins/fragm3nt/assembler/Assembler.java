@@ -10,6 +10,13 @@ import bioinfo.proteins.fragm3nt.ProteinFragment;
 import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.Transformation;
 
+/**
+ * this class assembles a protein structure given a set of fragment clusters and
+ * a query sequence. The actual heart of the Fragm3nt project.
+ * 
+ * @author galicae
+ * 
+ */
 public class Assembler {
 	protected final int fragLength;
 
@@ -39,7 +46,7 @@ public class Assembler {
 	 * @return a clone of the centroid of the best cluster match to query
 	 */
 	protected ProteinFragment findFragment(String query,
-			LinkedList<FragmentCluster> clusters, ProteinFragment lastFrag) {		
+			LinkedList<FragmentCluster> clusters, ProteinFragment lastFrag) {
 		ProteinFragment curFrag = new ProteinFragment("dada", new double[1][1],
 				1);
 
@@ -63,14 +70,14 @@ public class Assembler {
 			curFrag.setClusterIndex((int) (temp * 1000));
 			// reward sequence IDENTITY
 			int percent = 0;
-//			for(int i = 0; i < fragLength; i++) {
-//				if(query.charAt(i) == curFrag.getSequence().charAt(i)) {
-//					int curScore = curFrag.getClusterIndex();
-//					curFrag.setClusterIndex(curScore + 10);
-//					percent++;
-//				}
-//			}
-			if(percent == fragLength) {
+			// for(int i = 0; i < fragLength; i++) {
+			// if(query.charAt(i) == curFrag.getSequence().charAt(i)) {
+			// int curScore = curFrag.getClusterIndex();
+			// curFrag.setClusterIndex(curScore + 10);
+			// percent++;
+			// }
+			// }
+			if (percent == fragLength) {
 				int curScore = curFrag.getClusterIndex();
 				curFrag.setClusterIndex(curScore * 3);
 			}
@@ -80,58 +87,57 @@ public class Assembler {
 			else {
 				for (int k = 0; k < rank.size(); k++) {
 					if ((temp * 1000) < rank.get(k).getClusterIndex()) {
-						if(k == rank.size() - 1) {
+						if (k == rank.size() - 1) {
 							rank.add(curFrag);
 							break;
 						}
 						continue;
-					}
-					else {
+					} else {
 						rank.add(k, curFrag);
 						break;
 					}
 				}
 			}
 
-//			if (temp > tempScore) {
-//				curFrag = c.getCentroid().clone();
-//				tempScore = temp;
-//			}
+			// if (temp > tempScore) {
+			// curFrag = c.getCentroid().clone();
+			// tempScore = temp;
+			// }
 		}
-//		if(!query.equals(rank.getFirst().getSequence()))
-//			System.err.println("wrong fragment!! " + query + " " + rank.getFirst().getSequence());
-//		System.out.println(query + " " + curFrag.getSequence());
-		
+		// if(!query.equals(rank.getFirst().getSequence()))
+		// System.err.println("wrong fragment!! " + query + " " +
+		// rank.getFirst().getSequence());
+		// System.out.println(query + " " + curFrag.getSequence());
+
 		// now for the new stuff:
-		if(lastFrag == null)
+		if (lastFrag == null)
 			System.out.print("");
 		else {
 			double tempScore = Double.MAX_VALUE;
 			ProteinFragment secCopy = lastFrag.clone();
 			double[][][] kabschFood = new double[2][5][3];
 			int shove = secCopy.getAllResidues().length - 5;
-			for(int k = 0; k < rank.size(); k++) {
+			for (int k = 0; k < rank.size(); k++) {
 				for (int i = 0; i < 5; i++) {
 					kabschFood[0][i] = secCopy.getResidue(shove + i);
 					kabschFood[1][i] = rank.get(k).getResidue(i);
 				}
 				Transformation t = Kabsch.calculateTransformation(kabschFood);
-				if(tempScore > t.getRmsd()) {
+				if (tempScore > t.getRmsd()) {
 					tempScore = t.getRmsd();
 					ProteinFragment tmpFrag = rank.remove(k);
 					rank.addFirst(tmpFrag);
 				}
 			}
 		}
-		
+
 		rank.getFirst().setSequence(query);
 		return rank.getFirst();
 	}
 
 	/**
 	 * this function merges two fragments by aligning the end of the stable
-	 * fragment to the beginning of the
-	 *  "move" fragment and incorporating the
+	 * fragment to the beginning of the "move" fragment and incorporating the
 	 * unaligned parts of the "move" fragment to the stable.
 	 * 
 	 * @param stable
@@ -165,7 +171,7 @@ public class Assembler {
 		String moveSeq = move.getSequence().substring(extent);
 
 		stable.append(moveCoordinates, moveSeq);
-//		System.out.println();
+		// System.out.println();
 	}
 
 	/**
@@ -183,8 +189,8 @@ public class Assembler {
 	 * @param extent
 	 *            how many points have been aligned
 	 */
-	protected void matchCoordinates(ProteinFragment stable, ProteinFragment move,
-			int extent) {
+	protected void matchCoordinates(ProteinFragment stable,
+			ProteinFragment move, int extent) {
 		int last = stable.getAllResidues().length - 1;
 		double[] correct = new double[3];
 		double[] lastStable = stable.getAllResidues()[last];
@@ -239,7 +245,7 @@ public class Assembler {
 			positSolutions.clear();
 			curSub = query.substring(i, i + fragLength);
 			curFrag = findFragment(curSub, clusters, curFrag);
-			
+
 			result.add(curFrag);
 		}
 		curSub = query.substring(query.length() - fragLength, query.length());
@@ -272,7 +278,8 @@ public class Assembler {
 			alignFragments(resultFragment, rightFragments.get(i), extent);
 		}
 		int newExtent = query.length() - resultFragment.getAllResidues().length;
-		alignFragments(resultFragment, rightFragments.get(size - 1), fragLength - newExtent);
+		alignFragments(resultFragment, rightFragments.get(size - 1), fragLength
+				- newExtent);
 		return resultFragment;
 	}
 

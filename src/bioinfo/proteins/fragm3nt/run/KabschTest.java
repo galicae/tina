@@ -15,6 +15,12 @@ import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.PDBReduce;
 import bioinfo.superpos.Transformation;
 
+/**
+ * simple test class recapping the kabsch pipeline
+ * 
+ * @author galicae
+ * 
+ */
 public class KabschTest {
 
 	public static void main(String[] args) throws Exception {
@@ -35,9 +41,9 @@ public class KabschTest {
 
 		BufferedWriter wr2 = new BufferedWriter(new FileWriter("fastaTest.pdb"));
 
-//		double[][][] kabschFood = PDBReduce.reduce(ali, pdb, pdb1);
-//		Transformation t = Kabsch.calculateTransformation(kabschFood);
-//		System.out.println(t.getRmsd());
+		// double[][][] kabschFood = PDBReduce.reduce(ali, pdb, pdb1);
+		// Transformation t = Kabsch.calculateTransformation(kabschFood);
+		// System.out.println(t.getRmsd());
 
 		ProteinFragment pdbFrag = new ProteinFragment("real", "D",
 				new double[0][0], 8);
@@ -45,7 +51,7 @@ public class KabschTest {
 
 		ProteinFragment pdb1Frag = new ProteinFragment("real", "D",
 				new double[0][0], 8);
-////		pdb1 = t.transform(pdb1);
+		// // pdb1 = t.transform(pdb1);
 		pdb1Frag.append(PDBReduce.reduceSinglePDB(pdb1), pdb1.getSequence());
 
 		wr2.write("MODEL        1\n");

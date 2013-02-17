@@ -13,6 +13,16 @@ import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.PDBReduce;
 import bioinfo.superpos.Transformation;
 
+/**
+ * slight variation of the Assembler class. Instead of using fragment clusters
+ * the algorithm uses high quality fragments it derives from alignments of the
+ * query with template proteins. If the alignment has gaps the algorithm simply
+ * copies from the native, this method being a test for the capabilities of the
+ * algorithm and aiming to explore correlation to sequence similarity
+ * 
+ * @author galicae
+ * 
+ */
 public class AlignmentAssembler extends Assembler {
 	private LinkedList<ProteinFragment> frags = new LinkedList<ProteinFragment>();
 
@@ -21,12 +31,19 @@ public class AlignmentAssembler extends Assembler {
 	}
 
 	/**
+	 * predicts the structure of the query protein (position 0 in seqs list) by
+	 * aligning query with templates whose structures are known
 	 * 
-	 * @param query
 	 * @param seqs
-	 *            convention: first sequence is the query
+	 *            A list of sequence ids (query, template1, template2...)
 	 * @param extent
-	 * @return
+	 *            how many points should overlap during the assembly from
+	 *            fragment to fragment
+	 * @param pdbDirectory
+	 *            the directory where the PDB files corresponding to the seqs
+	 *            ids are to be found
+	 * @return a ProteinFragment object, the prediction of the 3d structure of
+	 *         query
 	 */
 	public ProteinFragment predStrucFromAl(LinkedList<Sequence> seqs,
 			int extent, String pdbDirectory) {
@@ -70,17 +87,23 @@ public class AlignmentAssembler extends Assembler {
 	}
 
 	/**
+	 * collects fragments based on alignments. A loop over the findFragment
+	 * function.
 	 * 
 	 * @param alignments
+	 *            the alignments to fish for similar fragments
 	 * @param structures
+	 *            the list of structures to fish the structures from
 	 * @param extent
-	 * @return
+	 *            how many points should overlap during the assembly from
+	 *            fragment to fragment
+	 * @return a list of all fragments in the correct order (first to last)
 	 */
 	protected LinkedList<ProteinFragment> collectFragmentsFromAl(
 			LinkedList<SequenceAlignment> alignments,
 			LinkedList<ProteinFragment> structures, int extent) {
 		int count = 0;
-//		System.out.println(alignments.get(0).toStringVerbose());
+		// System.out.println(alignments.get(0).toStringVerbose());
 		// define query only once - no need to spend three lines every time
 		String query = alignments.get(0).getComponent(0).getSequenceAsString();
 
@@ -113,17 +136,27 @@ public class AlignmentAssembler extends Assembler {
 		if (!curFrag.getID().startsWith(structures.get(0).getID())) {
 			count++;
 		}
-		result.get(0).setClusterIndex((int)(count / (1.0 * result.size()) * 1000));
+		result.get(0).setClusterIndex(
+				(int) (count / (1.0 * result.size()) * 1000));
 		return result;
 	}
 
 	/**
+	 * finds a structure for a sequence fragment starting at {@value start} of
+	 * the query sequence in the alignments. If the alignments all contain gaps,
+	 * the method will return the fragment from the native structure
 	 * 
 	 * @param start
+	 *            the fragment to find starts on this index in the native
+	 *            structure
 	 * @param alignments
+	 *            the alignments of query to templates from which to copy
+	 *            fragment, if at all possible
 	 * @param structures
+	 *            the list of structures to fish the structures from
 	 * @param lastFrag
-	 * @return
+	 *            no idea what this is supposed to do
+	 * @return the structure fragment that corresponds to this sequence fragment
 	 */
 	protected ProteinFragment findFragFromAli(int start,
 			LinkedList<SequenceAlignment> alignments,
@@ -187,31 +220,42 @@ public class AlignmentAssembler extends Assembler {
 		}
 
 		/*
-		 * if not all scores are negative (a continuous match of length fragLength has
-		 * been found in the alignments) then return this fragment.
+		 * if not all scores are negative (a continuous match of length
+		 * fragLength has been found in the alignments) then return this
+		 * fragment.
 		 */
 		if (maxIndex == -1) {
 			ProteinFragment result = structures.get(0).getPart(saveStart,
 					saveStart + fragLength);
-//			System.out.println(result.getID() + " " + result.getSequence());
+			// System.out.println(result.getID() + " " + result.getSequence());
 			return result;
 		} else {
 			map = alignments.get(maxIndex).getAlignedResidues();
 			ProteinFragment result = structures.get(maxIndex + 1).getPart(
 					map[1][start], map[1][start] + fragLength);
-			if(checkFragment(result)) {
-//			if(true) {
-//				System.out.println(result.getID() + " " + result.getSequence());
+			if (checkFragment(result)) {
+				// if(true) {
+				// System.out.println(result.getID() + " " +
+				// result.getSequence());
 				return result;
-			}
-			else
+			} else
 				result = structures.get(0).getPart(saveStart,
 						saveStart + fragLength);
-//			System.out.println(result.getID() + " " + result.getSequence());
+			// System.out.println(result.getID() + " " + result.getSequence());
 			return result;
 		}
 	}
 
+	/**
+	 * filters fragments with unnaturally (incorrectly measured) CA distances.
+	 * All CA distances should be within ca 3.8A of each other, except proline,
+	 * which is allowed to have 3.1
+	 * 
+	 * @param f
+	 *            the fragment to check
+	 * @return true if the fragment is ok (TODO: still filters out prolines,
+	 *         fix)
+	 */
 	protected boolean checkFragment(ProteinFragment f) {
 		double dist = 0;
 		for (int i = 1; i < f.fragLength; i++) {
@@ -223,6 +267,15 @@ public class AlignmentAssembler extends Assembler {
 		return true;
 	}
 
+	/**
+	 * shortcut for the euclidean distance between two vectors a, b
+	 * 
+	 * @param a
+	 *            first one-dimensional vector
+	 * @param b
+	 *            second one-dimensional vector
+	 * @return the distance between a and b
+	 */
 	protected double distance(double[] a, double[] b) {
 		double sum = 0;
 		for (int i = 0; i < a.length; i++) {
@@ -231,6 +284,9 @@ public class AlignmentAssembler extends Assembler {
 		return Math.sqrt(sum);
 	}
 
+	/**
+	 * override alignFragments so that it ... i don't know why.
+	 */
 	protected void alignFragments(ProteinFragment stable, ProteinFragment move,
 			int extent) {
 		double[][][] kabschFood = new double[2][extent][3];

@@ -13,6 +13,15 @@ import bioinfo.superpos.Kabsch;
 import bioinfo.superpos.PDBReduce;
 import bioinfo.superpos.Transformation;
 
+/**
+ * this class is a family classification test. The clusters have been previously
+ * created with family b.1.1.4; clusters and PDBs are input, the proteins are
+ * predicted and the results are compared with the native structures. This test
+ * was a complete disaster when first tried.
+ * 
+ * @author galicae
+ * 
+ */
 public class Fr4gmentTest {
 
 	public static void main(String[] args) {
@@ -37,7 +46,8 @@ public class Fr4gmentTest {
 				System.out.print(fileList.indexOf(pdb) + "\t");
 				CheatAssembler ass = new CheatAssembler(fragLength, pdb);
 				BufferedWriter wr2 = new BufferedWriter(new FileWriter(
-						"famTest/" + pdb.getID() + pdb.getChainID() + pdb.getChainIDNum() +  ".pdb"));
+						"famTest/" + pdb.getID() + pdb.getChainID()
+								+ pdb.getChainIDNum() + ".pdb"));
 				query = "";
 				for (int i = 0; i < pdb.length(); i++) {
 					query += pdb.getAminoAcid(i).getName().getOneLetterCode();
@@ -53,12 +63,16 @@ public class Fr4gmentTest {
 					Transformation t = Kabsch
 							.calculateTransformation(kabschFood);
 					kabschFood[1] = t.transform(kabschFood[1]);
-//					result.setCoordinates(t.transform(kabschFood[0]));
-					wr.write(fileList.indexOf(pdb) + "\t" + pdb.getID() + pdb.getChainID() + pdb.getChainIDNum() + "\t" + Double.toString(t.getRmsd()) + "\t" + pdb.length() + "\n");
+					// result.setCoordinates(t.transform(kabschFood[0]));
+					wr.write(fileList.indexOf(pdb) + "\t" + pdb.getID()
+							+ pdb.getChainID() + pdb.getChainIDNum() + "\t"
+							+ Double.toString(t.getRmsd()) + "\t"
+							+ pdb.length() + "\n");
 					System.out.println(t.getRmsd());
 					sum += t.getRmsd();
 
-					ProteinFragment prot = new ProteinFragment("real", query, new double[0][0], fragLength);
+					ProteinFragment prot = new ProteinFragment("real", query,
+							new double[0][0], fragLength);
 					prot.append(PDBReduce.reduceSinglePDB(pdb), "");
 					prot.setCoordinates(kabschFood[1]);
 

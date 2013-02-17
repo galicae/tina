@@ -9,6 +9,18 @@ import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.fragm3nt.FragmentCluster;
 import bioinfo.proteins.fragm3nt.ProteinFragment;
 
+/**
+ * a cheat version of Assembler. The fragment selection method is overridden:
+ * instead of choosing based on sequence similarity (original Assembler),
+ * CheatAssembler registers the maximum sequence score of a fragment (as well as
+ * its minimum) and chooses the fragment that best superposes on the native
+ * structure. Thus the assembler allows to evaluate whether the PSSM method is
+ * adequate as a fragment selection method (hint: it is not; it is woefully
+ * bad).
+ * 
+ * @author galicae
+ * 
+ */
 public class CheatAssembler extends Assembler {
 	PDBEntry control;
 
@@ -70,7 +82,7 @@ public class CheatAssembler extends Assembler {
 		// that provides the minimum RMSD from the native structure
 		double maxClusterSeqScore = Integer.MIN_VALUE; // we also want to
 		// capture the fragment that would be selected by the "normal" method
-		
+
 		double minClusterSeqScore = Integer.MAX_VALUE; // we also want to
 		// capture the fragment that would be selected by the "normal" method
 		double curClusterSeqScore = 0; // temporary variable for the sequence
@@ -82,7 +94,7 @@ public class CheatAssembler extends Assembler {
 		double maxScore = 0; // the cumulative score of the fragments the
 		// method would normally pick up
 		double minScore = 0;
-		
+
 		double curClusterRMScore = 0; // temporary variable for the RMSD score
 		// between a cluster and the predicted prefix
 
@@ -134,7 +146,7 @@ public class CheatAssembler extends Assembler {
 				if (minClusterSeqScore > curClusterSeqScore) {
 					minClusterSeqScore = curClusterSeqScore;
 				}
-				
+
 				// save minimum RMSD of the round and the sequence score
 				// of the same fragment
 				if (minClusterRMScore > curClusterRMScore) {
@@ -200,7 +212,8 @@ public class CheatAssembler extends Assembler {
 		// print results. This is not really clean, but I see no other way
 		// that wouldn't involve major restructuring of ProteinFragment
 		// and there's no need to do that, the class is already overblown
-		System.out.print(actualScore + "\t" + maxScore + "\t" + minScore + "\t");
+		System.out
+				.print(actualScore + "\t" + maxScore + "\t" + minScore + "\t");
 		resultFragment.setSequence(query);
 		return resultFragment;
 	}
