@@ -19,14 +19,12 @@
 package bioinfo.energy.potential.hydrophobicity;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 
 /**
  * @author huberste
- * @lastchange 2013-02-16
+ * @lastchange 2013-02-18
  */
 public class HydrophobicityCalculator {
 

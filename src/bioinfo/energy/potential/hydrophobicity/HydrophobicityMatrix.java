@@ -25,7 +25,7 @@ import java.util.Locale;
 
 /**
  * @author huberste
- * @lastchange 2013-02-17
+ * @lastchange 2013-02-18
  */
 public class HydrophobicityMatrix {
 
