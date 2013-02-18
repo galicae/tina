@@ -11,6 +11,17 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
 import bioinfo.alignment.matrices.QuasarMatrix;
 
+/**
+ * this class takes as input the spnfTM file (pairs from the same superfamily
+ * but not same family) and creates the bucketxx files (pairs with sequence
+ * identity of xx), where these pairs get sorted to buckets: one for 0.5<tm<0.7,
+ * one for 0.7<tm<0.9 and one for 0.9<tm
+ * 
+ * EDIT: experiment failed: two upper buckets are empty :)
+ * 
+ * @author galicae
+ * 
+ */
 public class AssessData {
 
 	public static void main(String[] args) {
@@ -23,20 +34,26 @@ public class AssessData {
 			LinkedList<String> seqs = new LinkedList<String>();
 			readSequences(seqs);
 			System.out.println("read sequences");
-			BufferedWriter list09 = new BufferedWriter(new FileWriter("bucket09"));
-			BufferedWriter list07 = new BufferedWriter(new FileWriter("bucket07"));
-			BufferedWriter list05 = new BufferedWriter(new FileWriter("bucket05"));
+			BufferedWriter list09 = new BufferedWriter(new FileWriter(
+					"bucket09"));
+			BufferedWriter list07 = new BufferedWriter(new FileWriter(
+					"bucket07"));
+			BufferedWriter list05 = new BufferedWriter(new FileWriter(
+					"bucket05"));
 			double[] scores = new double[pairs.size()];
 
 			for (int i = 0; i < pairs.size(); i++) {
 				System.out.println(i + " of " + pairs.size());
 				scores[i] = align(pairs.get(i)[0], pairs.get(i)[1], seqs);
 				if (scores[i] >= 0.5) {
-					list05.write(pairs.get(i)[0] + " " + pairs.get(i)[1] + " " + scores[i] + "\n");
+					list05.write(pairs.get(i)[0] + " " + pairs.get(i)[1] + " "
+							+ scores[i] + "\n");
 					if (scores[i] >= 0.7) {
-						list07.write(pairs.get(i)[0] + " " + pairs.get(i)[1] + " " + scores[i] + "\n");
+						list07.write(pairs.get(i)[0] + " " + pairs.get(i)[1]
+								+ " " + scores[i] + "\n");
 						if (scores[i] >= 0.9) {
-							list09.write(pairs.get(i)[0] + " " + pairs.get(i)[1] + " " + scores[i] + "\n");
+							list09.write(pairs.get(i)[0] + " "
+									+ pairs.get(i)[1] + " " + scores[i] + "\n");
 						}
 					}
 				}
@@ -51,8 +68,7 @@ public class AssessData {
 
 	public static void readPairs(LinkedList<String[]> pairs) {
 		try {
-			BufferedReader r = new BufferedReader(new FileReader(
-					"spnfTM"));
+			BufferedReader r = new BufferedReader(new FileReader("spnfTM"));
 			String line = "";
 			String[] arr = new String[2];
 			while ((line = r.readLine()) != null) {

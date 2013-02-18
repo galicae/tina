@@ -24,7 +24,9 @@ import bioinfo.superpos.PDBReduce;
 import bioinfo.superpos.Transformation;
 
 /**
- * this class is a single entry test for the AlignmentAssembler
+ * this class is a single entry test for the AlignmentAssembler. A set of ids is
+ * the input. The Assembler makes the pairwise alignments and uses them to
+ * predict a structure for the query
  * 
  * @author galicae
  * 
@@ -35,12 +37,12 @@ public class AlignmentAssemblyTest {
 	static String desktop = "/home/galicae/Desktop/STRUCTURES/";
 
 	public static void main(String[] args) throws Exception {
-		String[] bla = {"1ewmA00", "1m6dB00"};
+		String[] bla = { "1ewmA00", "1m6dB00" };
 		LinkedList<String> ids = new LinkedList<String>();
-		for(int i = 0; i < bla.length; i++) {
+		for (int i = 0; i < bla.length; i++) {
 			ids.add(bla[i]);
 		}
-		
+
 		System.out.println(ids.get(0) + "\t");
 		doMagic(ids);
 	}
@@ -53,7 +55,7 @@ public class AlignmentAssemblyTest {
 		LinkedList<PDBEntry> structures = loadPDBs(id);
 
 		// now do predicting magic
-		
+
 		AlignmentAssembler ass = new AlignmentAssembler(fragLength);
 		ProteinFragment pred = ass.predStrucFromAl(seqs, extent, desktop);
 		PDBEntry prediction = pred.toPDB();
@@ -79,12 +81,12 @@ public class AlignmentAssemblyTest {
 			double[][][] kabschFood = PDBReduce.reduce(alignment, prediction,
 					temp);
 			double[][][] kabschFood1 = new double[2][10][3];
-			for(int j = 0; j < 10; j++) {
+			for (int j = 0; j < 10; j++) {
 				kabschFood1[0][j] = kabschFood[0][j + 72];
 				kabschFood1[1][j] = kabschFood[1][j + 72];
 			}
 			Transformation t = Kabsch.calculateTransformation(kabschFood1);
-			
+
 			System.out.println(t.getRmsd() + "\t");
 			PDBEntry superposed = t.transform(temp);
 			wr2.write("MODEL        " + (i + 2) + "\n");
@@ -93,11 +95,12 @@ public class AlignmentAssemblyTest {
 		}
 		System.out.print("\n");
 		wr2.close();
-		
-		BufferedWriter outWr = new BufferedWriter(new FileWriter("/home/galicae/Desktop/rosenrot.pdb"));
+
+		BufferedWriter outWr = new BufferedWriter(new FileWriter(
+				"/home/galicae/Desktop/rosenrot.pdb"));
 		outWr.write(prediction.getAtomSectionAsString());
 		outWr.close();
-		
+
 		String call = ("./tools/TMalign ");
 		call += ("/home/galicae/Desktop/rosenrot.pdb ");
 		call += (desktop + id.getFirst() + ".pdb ");
@@ -140,7 +143,7 @@ public class AlignmentAssemblyTest {
 		}
 		return result;
 	}
-	
+
 	public static double findMeTmScore(String tm) {
 		String[] r = tm.split("TM-score= ");
 		String score = r[2].substring(0, 7);

@@ -18,6 +18,16 @@ import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
 import bioinfo.alignment.gotoh.LocalSequenceGotoh;
 import bioinfo.alignment.matrices.QuasarMatrix;
 
+/**
+ * this class contains all steps of the creation of the benchmark set. This
+ * comprised of 1)finding all pairs in cathscop.inpairs that belonged to the
+ * same superfamily but not the same family, 2)selecting pairs with a TMalign
+ * score greater than 0.5 and 3)calculating the best TM score possible
+ * (comparing freeshift, global, local alignments)
+ * 
+ * @author galicae
+ * 
+ */
 public class BenchmarkSet {
 	public static void main(String[] args) throws Exception {
 		// find all pairs from same superfamily but not same family
@@ -94,53 +104,59 @@ public class BenchmarkSet {
 		// }
 		// r.close();
 		// w.close();
-		
+
 		// calculate gotoh TM score for said alignments
 		BufferedReader r = new BufferedReader(new FileReader("spnfTM"));
-		
+
 		String line = "";
-		FreeshiftSequenceGotoh f = new FreeshiftSequenceGotoh(-9, -3, QuasarMatrix.DAYHOFF_MATRIX);
-		GlobalSequenceGotoh g = new GlobalSequenceGotoh(-12, -1, QuasarMatrix.DAYHOFF_MATRIX);
-		LocalSequenceGotoh l = new LocalSequenceGotoh(-12, -1, QuasarMatrix.DAYHOFF_MATRIX);
-		
+		FreeshiftSequenceGotoh f = new FreeshiftSequenceGotoh(-9, -3,
+				QuasarMatrix.DAYHOFF_MATRIX);
+		GlobalSequenceGotoh g = new GlobalSequenceGotoh(-12, -1,
+				QuasarMatrix.DAYHOFF_MATRIX);
+		LocalSequenceGotoh l = new LocalSequenceGotoh(-12, -1,
+				QuasarMatrix.DAYHOFF_MATRIX);
+
 		double fScore = 0;
 		double gScore = 0;
 		double lScore = 0;
-		
+
 		String fcall = "";
 		String gcall = "";
 		String lcall = "";
-		
+
 		String fOut = "";
 		String gOut = "";
 		String lOut = "";
-		
+
 		LinkedList<Double> gotohPerformance = new LinkedList<Double>();
-		
+
 		String desktop = "/home/galicae/Desktop/STRUCTURES/";
-		
-		while((line=r.readLine()) != null) {
-			// calculate all possible alignments to find the one with the best TMalign score
-			
-			
+
+		while ((line = r.readLine()) != null) {
+			// calculate all possible alignments to find the one with the best
+			// TMalign score
+
 			String[] arr = line.split(" ");
 			Sequence seq1 = retrieveSeq(arr[0]);
 			Sequence seq2 = retrieveSeq(arr[1]);
-			
+
 			SequenceAlignment fAli = f.align(seq1, seq2);
 			SequenceAlignment gAli = g.align(seq1, seq2);
 			SequenceAlignment lAli = l.align(seq1, seq2);
-			
-			BufferedWriter lw = new BufferedWriter(new FileWriter("./fastaFiles/loc" + seq1.getID() + "_" + seq2.getID()));
-			BufferedWriter fw = new BufferedWriter(new FileWriter("./fastaFiles/fre" + seq1.getID() + "_" + seq2.getID()));
-			BufferedWriter gw = new BufferedWriter(new FileWriter("./fastaFiles/glo" + seq1.getID() + "_" + seq2.getID()));
+
+			BufferedWriter lw = new BufferedWriter(new FileWriter(
+					"./fastaFiles/loc" + seq1.getID() + "_" + seq2.getID()));
+			BufferedWriter fw = new BufferedWriter(new FileWriter(
+					"./fastaFiles/fre" + seq1.getID() + "_" + seq2.getID()));
+			BufferedWriter gw = new BufferedWriter(new FileWriter(
+					"./fastaFiles/glo" + seq1.getID() + "_" + seq2.getID()));
 			lw.write(toFastaFormat(lAli));
 			fw.write(toFastaFormat(fAli));
 			gw.write(toFastaFormat(gAli));
 			lw.close();
 			fw.close();
 			gw.close();
-			
+
 			// try finding the best score
 			lcall = ("./lib/TMalign ");
 			lcall += (desktop + seq1.getID() + ".pdb ");
@@ -148,30 +164,30 @@ public class BenchmarkSet {
 			lcall += "-I ./fastaFiles/loc" + seq1.getID() + "_" + seq2.getID();
 			lOut = execToString(lcall);
 			lScore = findMeTmScore(lOut);
-			
+
 			gcall = ("./lib/TMalign ");
 			gcall += (desktop + seq1.getID() + ".pdb ");
 			gcall += (desktop + seq2.getID() + ".pdb ");
 			gcall += "-I ./fastaFiles/glo" + seq1.getID() + "_" + seq2.getID();
 			gOut = execToString(gcall);
 			gScore = findMeTmScore(gOut);
-			
+
 			fcall = ("./lib/TMalign ");
 			fcall += (desktop + seq1.getID() + ".pdb ");
 			fcall += (desktop + seq2.getID() + ".pdb ");
 			fcall += "-I ./fastaFiles/fre" + seq1.getID() + "_" + seq2.getID();
 			fOut = execToString(fcall);
 			fScore = findMeTmScore(fOut);
-			
+
 			gotohPerformance.add(Math.max(Math.max(fScore, lScore), gScore));
 		}
-		
+
 		BufferedWriter tmw = new BufferedWriter(new FileWriter("gotohTMScore"));
-		for(double d: gotohPerformance) {
+		for (double d : gotohPerformance) {
 			tmw.write(d + "\n");
 		}
 		tmw.close();
-		
+
 		r.close();
 	}
 
@@ -190,12 +206,12 @@ public class BenchmarkSet {
 		exec.execute(commandline);
 		return (outputStream.toString());
 	}
-	
+
 	public static Sequence retrieveSeq(String id) throws Exception {
 		BufferedReader r = new BufferedReader(new FileReader("domains.seqlib"));
 		String line = "";
-		while((line = r.readLine()) != null) {
-			if(line.startsWith(id)){
+		while ((line = r.readLine()) != null) {
+			if (line.startsWith(id)) {
 				String[] s = line.split(":");
 				Sequence sq = new Sequence(s[0], s[1]);
 				r.close();
@@ -205,7 +221,7 @@ public class BenchmarkSet {
 		r.close();
 		return null;
 	}
-	
+
 	public static String toFastaFormat(SequenceAlignment ali) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(">" + ali.getComponent(0).getID() + "\n");
