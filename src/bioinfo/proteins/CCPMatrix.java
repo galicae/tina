@@ -22,28 +22,27 @@ import java.io.IOException;
  */
 public class CCPMatrix {
 
+	private final static String FILE_HEADER = "        0     1     2     3     4     5     6     7     8     9    10    11    12    13\n";
+
 	/**
 	 * This is the data in the matrix: first dimension is amino acid [0..25]
 	 * second dimension is secondary structure [0..2] third dimension is number
-	 * of local contacts [0..13] fourth dimension is number of long-range
-	 * contacts [0..13]
+	 * of contacts [0..13]
 	 */
-	private double[][][][] matrix;
+	private double[][][] matrix;
 
-	public CCPMatrix(double[][][][] matrix) {
+	public CCPMatrix(double[][][] matrix) {
 		this.matrix = matrix;
 	}
 
 	/**
 	 * constructs a new CCPMatrix with the Matrix given in the folder. FileNames
-	 * must be ccpa ccpla ccpb ccplb ccpo ccplo and ssp (ccpa = global alpha,
-	 * ccpb = global beta, ccpo = global coil ccpla = local alpha, ccplb = local
-	 * beta, ccplo = local coil ssp = secondaryStructurePotential)
+	 * must be $FILENAMEa, $FILENAMEb, $FILENAMEo a = alpha b = beta, o = coil
 	 * 
 	 * @param foldername
 	 */
-	public CCPMatrix(String foldername) {
-		this(readFromFiles(foldername));
+	public CCPMatrix(String filename) {
+		this(readFromFiles(filename));
 	}
 
 	/**
@@ -55,14 +54,13 @@ public class CCPMatrix {
 	 * @param global
 	 * @return the value from the matrix
 	 */
-	public double getValue(AminoAcidName aa, SecStructThree ss, int local,
-			int global) {
+	public double getValue(AminoAcidName aa, SecStructThree ss, int contacts) {
 		if (ss == SecStructThree.H) { // alpha Helix
-			return matrix[aa.getNumber()][0][local][global];
+			return matrix[aa.getNumber()][0][contacts];
 		} else if (ss == SecStructThree.E) { // beta shEEt
-			return matrix[aa.getNumber()][1][local][global];
+			return matrix[aa.getNumber()][1][contacts];
 		} else { // Coil
-			return matrix[aa.getNumber()][2][local][global];
+			return matrix[aa.getNumber()][2][contacts];
 		}
 	}
 
@@ -71,19 +69,30 @@ public class CCPMatrix {
 	 * @param foldername
 	 * @return
 	 */
-	private static double[][][][] readFromFiles(String foldername) {
+	private static double[][][] readFromFiles(String filename) {
 
-		double[][][][] result = new double[26][3][14][14];
+		double[][][] result = new double[26][3][14];
 
-		if (!foldername.endsWith("/")) {
-			foldername = foldername + "/";
+		double [][] resultccpa = readCCPFile(filename+"a", 0);
+		double [][] resultccpb = readCCPFile(filename+"b", 1);
+		double [][] resultccpo = readCCPFile(filename+"o", 2);
+		
+		for (int aa = 0; aa < 26; aa++) {
+			result[aa][0] = resultccpa[aa];
+			result[aa][1] = resultccpb[aa];
+			result[aa][2] = resultccpo[aa];
 		}
-
+		
+		return result;
+	}
+	
+	private static double[][] readCCPFile(String filename, int ss) {
+		
+		double[][] result = new double[26][14];
+		
 		BufferedReader br = null;
-
-		// read ccpa file
 		try {
-			br = new BufferedReader(new FileReader(foldername + "ccpa"));
+			br = new BufferedReader(new FileReader(filename));
 			String line = null;
 			int aa = 0;
 			while ((line = br.readLine()) != null) {
@@ -92,13 +101,11 @@ public class CCPMatrix {
 				} else {
 					aa = AminoAcidName.getNumberFromTLC(line.substring(0, 3));
 					for (int i = 0; i <= 13; i++) {
-						// TODO
-						// matrix[aa][0][][];
+						result[aa][i] = Double.parseDouble(line.substring(3+(i*6), 9+(i*6)).trim());
 					}
 				}
 
 			}
-
 		} catch (IOException e) {
 			System.err.println("Error occured while reading a file:"
 					+ e.getLocalizedMessage());
@@ -115,7 +122,7 @@ public class CCPMatrix {
 				e.printStackTrace();
 			}
 		}
-		return null;
+		return result;
 	}
 
 	/**
@@ -123,17 +130,28 @@ public class CCPMatrix {
 	 * @param foldername
 	 * @return
 	 */
-	private static void writeToFiles(double[][][][] matrix, String foldername) {
+	public static void writeToFiles(double[][][] matrix, String filename) {
+		writeCCPFile(filename + "a", 0, matrix);
+		writeCCPFile(filename + "b", 1, matrix);
+		writeCCPFile(filename + "o", 2, matrix);
+	}
 
-		if (!foldername.endsWith("/")) {
-			foldername = foldername + "/";
-		}
-
+	private static void writeCCPFile(String filename, int ss,
+			double[][][] matrix) {
 		BufferedWriter bw = null;
-
-		// read ccpa file
 		try {
-			bw = new BufferedWriter(new FileWriter(foldername + "ccpa"));
+			bw = new BufferedWriter(new FileWriter(filename + "b"));
+			bw.write(FILE_HEADER);
+			for (int aa = 0; aa < 26; aa++) {
+				bw.write(AminoAcidName.getTLCFromNumber(aa));
+				for (int contacts = 0; contacts <= 13; contacts++) {
+					String write = Double.toString(matrix[aa][ss][contacts]);
+					while (write.length() < 6) // needs to be length 6
+						write = " " + write;
+					bw.write(write);
+				}
+				bw.write("\n");
+			}
 
 		} catch (IOException e) {
 			System.err.println("Error occured while reading a file:"

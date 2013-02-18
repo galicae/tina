@@ -87,6 +87,14 @@ public enum AminoAcidName {
 		return U;
 	}
 	
+	public static AminoAcidName getAAFromNumber(int number) {
+		for (AminoAcidName aa : AminoAcidName.values()) {
+			if (aa.getNumber() == number)
+				return aa;
+		}
+		return U;
+	}
+	
 	public static int getNumberFromTLC(String threeLetterCode) {
 		for (AminoAcidName aa : AminoAcidName.values()) {
 			if (aa.getThreeLetterCode().equals(threeLetterCode))
@@ -110,4 +118,13 @@ public enum AminoAcidName {
 		}
 		return null;
 	}
+
+	public static String getTLCFromNumber(int number) {
+		for (AminoAcidName aa : AminoAcidName.values()) {
+			if (aa.getNumber() == number)
+				return aa.threeLetterCode;
+		}
+		return null;
+	}
+	
 }
