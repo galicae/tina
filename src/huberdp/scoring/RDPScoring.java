@@ -7,6 +7,10 @@
  ******************************************************************************/
 package huberdp.scoring;
 
+import huberdp.RDPSolutionTreeAndNode;
+import huberdp.RDPSolutionTreeOrNode;
+import huberdp.Scoring;
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -16,10 +20,14 @@ import bioinfo.energy.potential.hydrophobicity.HydrophobicityMatrix;
 import bioinfo.energy.potential.voronoi.VoroPPWrap;
 import bioinfo.energy.potential.voronoi.VoroPrepType;
 import bioinfo.energy.potential.voronoi.VoronoiData;
+import bioinfo.proteins.AminoAcid;
+import bioinfo.proteins.Atom;
+import bioinfo.proteins.AtomType;
+import bioinfo.proteins.CCPMatrix;
+import bioinfo.proteins.DSSPEntry;
+import bioinfo.proteins.DSSPFileReader;
 import bioinfo.proteins.PDBEntry;
-import huberdp.RDPSolutionTreeOrNode;
-import huberdp.RDPSolutionTreeAndNode;
-import huberdp.Scoring;
+import bioinfo.proteins.SecStructEight;
 
 /**
  * RDPScoring is an implementation of the scoring function given in the paper.
@@ -35,41 +43,41 @@ public class RDPScoring implements Scoring {
 	/**
 	 * empirically calibratet weight of the mutation matrix score
 	 */
-	private final static double GAMMA = 1.0;
+	public final static double GAMMA = 1.0;
 	/**
 	 * empirically calibrated weight of the contact capacity score
 	 */
-	private final static double DELTA = 1.0;
+	public final static double DELTA = 1.0;
 	/**
 	 * empirically calibratet weight of the hydrophobicity score
 	 */
-	private final static double EPSILON = 1.0;
+	public final static double EPSILON = 1.0;
 	/**
 	 * empirically calibratet weight of the pair interaction score
 	 */
-	private final static double ZETA = 1.0;
+	public final static double ZETA = 1.0;
 
 	/**
 	 * static reference to voro++ path
 	 */
-	private final static String VOROPATH = "/home/h/huberste/gobi/tina/tools/voro++_ubuntuquantal";
+	public final static String VOROPATH = "/home/h/huberste/gobi/tina/tools/voro++_ubuntuquantal";
 
 	/**
 	 * empirically calibratet value for voro++
 	 */
-	private final static double GRID_EXTEND = 8.9;
+	public final static double GRID_EXTEND = 8.9;
 	/**
 	 * empirically calibratet value for voro++
 	 */
-	private final static double GRID_DENSITY = 1.0;
+	public final static double GRID_DENSITY = 1.0;
 	/**
 	 * empirically calibratet value for voro++
 	 */
-	private final static double GRID_CLASH = 6.5;
+	public final static double GRID_CLASH = 6.5;
 	/**
 	 * empirically calibrate value for voro++
 	 */
-	private final static double MIN_CONTACT = 2.0;
+	public final static double MIN_CONTACT = 2.0;
 
 	/**
 	 * weight of the mutation matrix score
@@ -99,6 +107,11 @@ public class RDPScoring implements Scoring {
 	private HydrophobicityMatrix hydrophobicityMatrix;
 
 	/**
+	 * ContactCapacityMatrix
+	 */
+	private CCPMatrix ccpMatrix;
+
+	/**
 	 * structure of the template
 	 */
 	private PDBEntry templateStructure;
@@ -112,18 +125,33 @@ public class RDPScoring implements Scoring {
 	private String vorobin;
 
 	/**
-	 * Voronoi constants
+	 * Voronoi constant
 	 */
 	private double gridExtend;
+	/**
+	 * Voronoi constant
+	 */
 	private double gridDensity;
+	/**
+	 * Voronoi constant
+	 */
 	private double gridClash;
+	/**
+	 * Voronoi constant
+	 */
 	private double minContact;
 
 	/**
 	 * Voro++ stuff
 	 */
 	private VoroPPWrap voro;
+	/**
+	 * Voro++ stuff
+	 */
 	private VoronoiData data;
+	/**
+	 * Voro++ stuff
+	 */
 	private Set<Integer> solvents;
 
 	/**
@@ -139,6 +167,10 @@ public class RDPScoring implements Scoring {
 	 *            weight of the pair interaction score
 	 * @param mutationMatrix
 	 *            the mutation matrix that is to be used
+	 * @param hydrophobicityMatrix
+	 *            the hydrophobicityMatrix to be used
+	 * @param ccpMatrix
+	 *            the CCPMatrix to be used
 	 * @param templatestructure
 	 *            the template's structure
 	 * @param vorobin
@@ -154,7 +186,7 @@ public class RDPScoring implements Scoring {
 	 */
 	public RDPScoring(double gamma, double delta, double epsilon, double zeta,
 			double[][] mutationMatrix,
-			HydrophobicityMatrix hydrophobicityMatrix,
+			HydrophobicityMatrix hydrophobicityMatrix, CCPMatrix ccpMatrix,
 			PDBEntry templatestructure, String vorobin, double gridExtend,
 			double gridDensity, double gridClash, double minContact) {
 		this.gamma = gamma;
@@ -163,6 +195,7 @@ public class RDPScoring implements Scoring {
 		this.zeta = zeta;
 		this.mutationMatrix = mutationMatrix;
 		this.hydrophobicityMatrix = hydrophobicityMatrix;
+		this.ccpMatrix = ccpMatrix;
 		this.vorobin = vorobin;
 		setVoroVars(gridExtend, gridDensity, gridClash, minContact);
 	}
@@ -173,7 +206,7 @@ public class RDPScoring implements Scoring {
 	public RDPScoring() {
 		this(GAMMA, DELTA, EPSILON, ZETA,
 				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX,
-				new HydrophobicityMatrix(), null, VOROPATH, GRID_EXTEND,
+				new HydrophobicityMatrix(), null, null, VOROPATH, GRID_EXTEND,
 				GRID_DENSITY, GRID_CLASH, MIN_CONTACT);
 	}
 
@@ -185,7 +218,7 @@ public class RDPScoring implements Scoring {
 	 */
 	public RDPScoring(RDPScoring arg) {
 		this(arg.gamma, arg.delta, arg.epsilon, arg.zeta, arg.mutationMatrix,
-				arg.hydrophobicityMatrix, arg.templateStructure, arg.vorobin,
+				arg.hydrophobicityMatrix, arg.ccpMatrix, arg.templateStructure, arg.vorobin,
 				arg.gridExtend, arg.gridDensity, arg.gridClash, arg.minContact);
 	}
 
@@ -225,6 +258,7 @@ public class RDPScoring implements Scoring {
 	}
 
 	/**
+	 * sets voronoi variables
 	 * 
 	 * @param gridExtend
 	 * @param gridDensity
@@ -317,7 +351,9 @@ public class RDPScoring implements Scoring {
 
 	/**
 	 * "(...) contact-capacity-potential phiC (...)" (From: Protein Threading by
-	 * Recursive Dynamic Programming. JMB 290, 757-779)
+	 * Recursive Dynamic Programming. JMB 290, 757-779) <br />
+	 * Two AminoAcids are in contact if their C alpah atoms are less than 7 Å
+	 * distant
 	 * 
 	 * @param f
 	 *            the alignment (so far)
@@ -333,9 +369,58 @@ public class RDPScoring implements Scoring {
 
 		char[][] rows = f.getRows();
 
-		for (int pos = 0; pos < rows[0].length; pos++) {
-			// TODO
+		// first dimension: local / long range
+		// second dimension: position in structure
+		int[][] contacts = new int[2][b.length()];
+		// calculate contacts fo every amino acid
+		// TODO check if code correct
+		for (int partnera = 0; partnera < b.length(); partnera++) {
+			for (int partnerb = partnera + 1; partnerb < b.length(); partnerb++) {
+				if (calcDistance(b.getAminoAcid(partnera),
+						b.getAminoAcid(partnerb)) < 7.0) {
+					if (Math.abs(partnera - partnerb) < 5) {
+						contacts[0][partnera]++;
+						contacts[0][partnerb]++;
+					} else {
+						contacts[1][partnera]++;
+						contacts[1][partnerb]++;
+					}
+				}
+			}
 
+		}
+
+		// TODO read SecStruct from DSSP File
+		DSSPEntry dssp = DSSPFileReader.readDSSPFile(DSSPFileReader.DSSP_FOLDER
+				+ f.getComponent(0).getID() + ".dssp");
+		// System.out.println(dssp.asTable());
+		SecStructEight[] ss = dssp.getSecondaryStructure();
+
+		int temppos = 0; // position in template
+		int targpos = 0; // position in target
+
+		for (int pos = 0; pos < rows[0].length; pos++) {
+
+			if (rows[0][pos] == '-') { // if insertion
+				targpos++;
+			} else if ((rows[1][pos] == '-')) { // if deletion
+				temppos++;
+			} else { // if match
+				// sum up score
+				// debugging
+				System.out.println("targpos: " + targpos);
+				System.out.println("temppos: " + temppos);
+				System.out.println("contacts[0][temppos]: "
+						+ contacts[0][temppos]);
+				int tmp = contacts[0][temppos];
+				result += ccpMatrix.getValue(a.getComp(targpos),
+						ss[temppos].getThreeClassAnalogon(), 0, tmp);
+				result += ccpMatrix.getValue(a.getComp(targpos),
+						ss[temppos].getThreeClassAnalogon(), 1,
+						contacts[1][temppos]);
+				temppos++;
+				targpos++;
+			}
 		}
 
 		return result;
@@ -458,10 +543,48 @@ public class RDPScoring implements Scoring {
 	}
 
 	/**
+	 * calculates the euklidian distance between two AminoAcids
+	 * 
+	 * @param a
+	 *            an AmoniAcid
+	 * @param b
+	 *            another AminoAcid
+	 * @return the euklidian distance between the two AminoAcid's C alpha atoms
+	 */
+	private double calcDistance(AminoAcid a, AminoAcid b) {
+		Atom caa = a.getAtomByType(AtomType.CA);
+		Atom cab = b.getAtomByType(AtomType.CA);
+		if (caa != null && cab != null) {
+			return calcDistance(caa, cab);
+		}
+
+		return 0.0;
+	}
+
+	/**
+	 * calculates the distance between two atoms
+	 * 
+	 * @param a
+	 *            an Atom
+	 * @param b
+	 *            another Atom
+	 * @return the euklidian distance between two Atoms
+	 */
+	private double calcDistance(Atom a, Atom b) {
+		double[] apos = a.getPosition();
+		double[] bpos = b.getPosition();
+		double[] dis = { apos[0] - bpos[0], apos[1] - bpos[1],
+				apos[2] - bpos[2] };
+		return Math.sqrt(Math.pow(dis[0], 2) + Math.pow(dis[1], 2)
+				+ Math.pow(dis[2], 2));
+	}
+
+	/**
 	 * calculates the degree of burial (dob) for the given amino acid in the
 	 * given structure
 	 * 
 	 * @author seitza
+	 * @author huberste
 	 * @param structure
 	 *            the 3d structure of the template
 	 * @param pos
