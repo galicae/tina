@@ -21,19 +21,16 @@ public class GridSolventPotential extends AVoroPotential {
 	 * classes smaller then 25,50,75,100,125,150,bigger then 150, where all
 	 * values smaller then 1 have to be ignored
 	 */
-	private final String pdbFolder;
 	private final int[] size = {7,26,26};
-	
 	private final double minContact;
 	private final double gridHullExtend;
 	private final double gridDensity;
 	private final double gridClash;
 	private final double mkT = -0.582d;
 
-	public GridSolventPotential(String vorobin, String pdbFolder, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
+	public GridSolventPotential(String vorobin, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
 		super(vorobin);
 		initPotential(size);
-		this.pdbFolder = pdbFolder;
 
 		this.minContact = minContact;
 		this.gridHullExtend = gridHullExtend;
@@ -41,10 +38,9 @@ public class GridSolventPotential extends AVoroPotential {
 		this.gridClash = gridClash;
 	}
 
-	public GridSolventPotential(String vorobin, String tmpdir, String pdbFolder, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
+	public GridSolventPotential(String vorobin, String tmpdir, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
 		super(vorobin, tmpdir);
 		initPotential(size);
-		this.pdbFolder = pdbFolder;
 
 		this.minContact = minContact;
 		this.gridHullExtend = gridHullExtend;
@@ -53,29 +49,7 @@ public class GridSolventPotential extends AVoroPotential {
 
 	}
 
-	public GridSolventPotential(String filename, String vorobin, String tmpdir) {
-		super(vorobin, tmpdir);
-		initPotential(size);
-		this.pdbFolder = null;
-
-		this.minContact = 1.0d;
-		this.gridHullExtend = 1.0d;
-		this.gridDensity = 1.0d;
-		this.gridClash = 1.0d;
-	}
-
-	public GridSolventPotential(String filename, String vorobin) {
-		super(vorobin);
-		initPotential(size);
-		this.pdbFolder = null;
-
-		minContact = 1.0d;
-		gridHullExtend = 1.0d;
-		gridDensity = 1.0d;
-		gridClash = 1.0d;
-	}
-
-	public void calculateFromDATA(List<String> pdbIds) {
+	public void calculateFromDATA(List<String> pdbIds, String pdbFolder) {
 		PDBEntry pdb = null;
 		PDBFileReader reader = new PDBFileReader(pdbFolder);
 		VoronoiData data = null;
@@ -156,9 +130,13 @@ public class GridSolventPotential extends AVoroPotential {
 		}
 	}
 
+	/**
+	 * scores model by potential
+	 * complete decomposition will be made every time the method is called
+	 */
 	@Override
 	public double scoreModel(PDBEntry model) {
-		VoronoiData data = prepareWithGrid(model, gridHullExtend, gridDensity, gridClash, minContact);
+		data = prepareWithGrid(model, gridHullExtend, gridDensity, gridClash, minContact);
 		Set<Integer> solventIds = null;
 		Set<Integer> pepIds = null;
 		HashMap<Integer, AminoAcidName> amino;
@@ -216,6 +194,10 @@ public class GridSolventPotential extends AVoroPotential {
 		return score;
 	}
 	
+	/**
+	 * scores the amino acids in the given model
+	 * complete decomposition will be made every time the method is called
+	 */
 	@Override
 	public double[] getAminoScores(PDBEntry model){
 		double[] scores = new double[model.length()];
@@ -286,6 +268,146 @@ public class GridSolventPotential extends AVoroPotential {
 		return scores;
 	}
 	
+	/**
+	 * get native scoring of model
+	 * CAVE ensure you prepared shuffle scoring with prepare Sequence scoring
+	 */
+	@Override
+	public double getNativeScoring(){
+		Set<Integer> solventIds = null;
+		Set<Integer> pepIds = null;
+		HashMap<Integer, AminoAcidName> amino;
+		HashMap<Integer, HashMap<Integer, Double>> faces;
+		HashMap<Integer, Double> neighbors;
+		boolean surfaceFlag = false;
+		List<Integer> surfaceIds = new ArrayList<Integer>();
+		double surfaceArea = 0.0d;
+		int tmp = 0;
+		int p1;
+		int p2;
+		double score = 0.0d;
+		
+		faces = data.getFaces();
+		amino = data.getAminos();
+		pepIds = data.getPepIds();
+		solventIds = data.getOuterGridIds();
+		
+		for (int id1 : pepIds) {
+			if (faces.get(id1) == null) {
+				continue;
+			}
+			neighbors = faces.get(id1);
+			surfaceFlag = false;
+			surfaceArea = 0.0d;
+			for (int id2 : neighbors.keySet()) {
+				if (solventIds.contains(id2) && neighbors.get(id2) > minContact) {
+					surfaceArea += neighbors.get(id2);
+					surfaceFlag = true;
+				}
+			}
+			if (surfaceFlag) {
+				surfaceIds.add(id1);
+				if (surfaceArea > minContact) {
+					for (int id2 : neighbors.keySet()) {
+						if(!amino.containsKey(id2)){
+							continue;
+						}
+						tmp = 0;
+						for (int i = 25; i <= 150; i += 25) {
+							if (surfaceArea <= i * 1.0d) {
+								break;
+							}
+							tmp++;
+						}
+						p1 = amino.get(id1).getOneLetterCode().charAt(0) - 65;
+						p2 = amino.get(id2).getOneLetterCode().charAt(0) - 65;
+						int[] path = {tmp,p1,p2};
+						score += potential.getByAddress(path).getValue();
+					}
+				}
+			}
+		}
+		return score;
+	}
+	
+	@Override
+	public double getSequenceScoring(AminoAcidName[] sequence){
+		Set<Integer> solventIds = null;
+		Set<Integer> pepIds = null;
+		HashMap<Integer, AminoAcidName> amino;
+		HashMap<Integer, HashMap<Integer, Double>> faces;
+		HashMap<Integer, Double> neighbors;
+		boolean surfaceFlag = false;
+		List<Integer> surfaceIds = new ArrayList<Integer>();
+		double surfaceArea = 0.0d;
+		int tmp = 0;
+		int p1;
+		int p2;
+		double score = 0.0d;
+		
+		faces = data.getFaces();
+		amino = data.getAminos();
+		pepIds = data.getPepIds();
+		solventIds = data.getOuterGridIds();
+		
+		//proofreading
+		for(int x : amino.keySet()){
+			if(x < 0 || x >= sequence.length){
+				System.err.println("sequence length "+sequence.length+" does not cover aminoid "+x+" !");
+				return 0.0d;
+			}
+		}
+		
+		for (int id1 : pepIds) {
+			if (faces.get(id1) == null) {
+				continue;
+			}
+			neighbors = faces.get(id1);
+			surfaceFlag = false;
+			surfaceArea = 0.0d;
+			for (int id2 : neighbors.keySet()) {
+				if (solventIds.contains(id2) && neighbors.get(id2) > minContact) {
+					surfaceArea += neighbors.get(id2);
+					surfaceFlag = true;
+				}
+			}
+			if (surfaceFlag) {
+				surfaceIds.add(id1);
+				if (surfaceArea > minContact) {
+					for (int id2 : neighbors.keySet()) {
+						if(!amino.containsKey(id2)){
+							continue;
+						}
+						tmp = 0;
+						for (int i = 25; i <= 150; i += 25) {
+							if (surfaceArea <= i * 1.0d) {
+								break;
+							}
+							tmp++;
+						}
+						p1 = sequence[id1].getOneLetterCode().charAt(0) - 65;
+						p2 = sequence[id2].getOneLetterCode().charAt(0) - 65;
+						int[] path = {tmp,p1,p2};
+						score += potential.getByAddress(path).getValue();
+					}
+				}
+			}
+		}
+		return score;
+	}
+	
+	@Override
+	public double[] getNativeAminoScoring(){
+		return null;
+		//TODO
+	}
+	
+	@Override
+	public double[] getSequenceAminoScoring(AminoAcidName[] sequence){
+		return null;
+		//TODO
+	}
+	
 	
 
 	/**
@@ -309,8 +431,8 @@ public class GridSolventPotential extends AVoroPotential {
 		//pdbIds.add("1j2xA00");
 
 
-		GridSolventPotential pot = new GridSolventPotential(vorobin, pdbLoc, Double.parseDouble(minContact), Double.parseDouble(gridExtend), Double.parseDouble(gridDensity), Double.parseDouble(gridClash));
-		pot.calculateFromDATA(pdbIds);
+		GridSolventPotential pot = new GridSolventPotential(vorobin, Double.parseDouble(minContact), Double.parseDouble(gridExtend), Double.parseDouble(gridDensity), Double.parseDouble(gridClash));
+		pot.calculateFromDATA(pdbIds, pdbLoc);
 		pot.writeToFile(outfile);
 		//System.out.println("done");
 

@@ -14,7 +14,7 @@ import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;
 
 public class SipplContactPotential extends AContactPotential{
-
+	
 	/**
 	 * reads potential from VPOT file 
 	 * e.g. vpot on biocluster
@@ -97,7 +97,7 @@ public class SipplContactPotential extends AContactPotential{
 	}
 	
 	@Override
-	public void calculateFromDATA(List<String> Ids) {
+	public void calculateFromDATA(List<String> Ids, String dataLoc) {
 		// nothing to do, due to the potential beeing precomputed
 	}
 
@@ -192,6 +192,30 @@ public class SipplContactPotential extends AContactPotential{
 		}
 		return scores;
 	}
+	
+	@Override
+	public double getNativeScoring(){
+		return scoreModel(this.model);
+	}
+	
+	@Override
+	public double getSequenceScoring(AminoAcidName[] sequence){
+		return 0.0d;
+		//TODO
+	}
+	
+	@Override
+	public double[] getNativeAminoScoring(){
+		return getAminoScores(this.model);
+	}
+	
+	@Override
+	public double[] getSequenceAminoScoring(AminoAcidName[] sequence){
+		return null;
+		//TODO
+	}
+	
+	
 
 	public static void main(String[] args) {
 		SipplContactPotential pot = new SipplContactPotential();

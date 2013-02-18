@@ -1,5 +1,6 @@
 file <- "Desktop/tmp.tmp";
 a <- read.delim(file,header=TRUE);
+main <- paste0("energy footprint of native vs ",length(a[1,])-1," shuffles")
 
 cummulativeMean <- function(a){
   for(i in 1:length(a)){
@@ -15,7 +16,7 @@ cummulativeMean <- function(a){
 names <- c(names(a),"cummulative");
 colors = c(c(1:length(a)),"lightgrey")
 linetype <- c(1,1,1,2);
-plot(c(1,length(a[,1])),c(range(a)[1],range(a)[2]),col="white",ylab="energy values (cummulative)",xlab="peptide length",main="energy footprint");
+plot(c(1,length(a[,1])),c(range(a)[1],range(a)[2]),col="white",ylab="energy values (cummulative)",xlab="peptide length",main=main);
 abline(h=0,col="lightgrey")
 for(i in 1:length(a)){
     tmp <- cummulativeMean(a[,i]);
