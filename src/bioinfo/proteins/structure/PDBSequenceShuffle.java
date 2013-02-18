@@ -292,5 +292,18 @@ public class PDBSequenceShuffle {
 		}
 		return results;
 	}
+	
+	/**
+	 * generates random sequence on given length and distribution previously set to shuffle instance.
+	 * @param length
+	 * @return random amino acid name sequence
+	 */
+	public AminoAcidName[] shuffleSequence(int length){
+		AminoAcidName[] result = new AminoAcidName[length];
+		for(int i = 0; i != length; i++){
+			result[i] = getNextRandomAminoAcidName();
+		}
+		return result;
+	}
 
 }

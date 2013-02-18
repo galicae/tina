@@ -35,40 +35,17 @@ public class DSSPSolventPotential extends AVoroPotential {
 	 * values smaller then 1 have to be ignored
 	 */
 	private final int[] size = {7,26,26};
-	private final String dsspFolder;
+
 	private final double minContact;
-	private final double mkT = -0.582d;
 	private final double gridHullExtend;
 	private final double gridDensity;
 	private final double gridClash;
+	private final double mkT = -0.582d;
 
-	public DSSPSolventPotential(String vorobin, String dsspFolder) {
+
+	public DSSPSolventPotential(String vorobin, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
 		super(vorobin);
 		initPotential(size);
-		this.dsspFolder = dsspFolder;
-
-		this.minContact = 1.0d;
-		this.gridHullExtend = 2.0d;
-		this.gridDensity = 3.0d;
-		this.gridClash = 4.0d;
-	}
-
-	public DSSPSolventPotential(String vorobin, String tmpdir, String dsspFolder) {
-		super(vorobin, tmpdir);
-		initPotential(size);
-		this.dsspFolder = dsspFolder;
-
-		this.minContact = 1.0d;
-		this.gridHullExtend = 2.0d;
-		this.gridDensity = 3.0d;
-		this.gridClash = 4.0d;
-
-	}
-
-	public DSSPSolventPotential(String vorobin, String dsspFolder, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
-		super(vorobin);
-		initPotential(size);
-		this.dsspFolder = dsspFolder;
 
 		this.minContact = minContact;
 		this.gridHullExtend = gridHullExtend;
@@ -76,10 +53,9 @@ public class DSSPSolventPotential extends AVoroPotential {
 		this.gridClash = gridClash;
 	}
 
-	public DSSPSolventPotential(String vorobin, String tmpdir, String dsspFolder, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
+	public DSSPSolventPotential(String vorobin, String tmpdir, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
 		super(vorobin, tmpdir);
 		initPotential(size);
-		this.dsspFolder = dsspFolder;
 
 		this.minContact = minContact;
 		this.gridHullExtend = gridHullExtend;
@@ -88,34 +64,8 @@ public class DSSPSolventPotential extends AVoroPotential {
 
 	}
 
-	// public DSSPSolventPotential(String filename,String vorobin, String
-	// tmpdir){
-	// super(vorobin, tmpdir);
-	// this.potential = new double[26][26][7];
-	// this.dsspFolder = null;
-	//
-	// this.minContact = 1.0d;
-	// this.gridHullExtend = 2.0d;
-	// this.gridDensity = 3.0d;
-	// this.gridClash = 4.0d;
-	//
-	// this.readFromFile(filename);
-	// }
-	//
-	// public DSSPSolventPotential(String filename,String vorobin){
-	// super(vorobin);
-	// this.potential = new double[26][26][7];
-	// this.dsspFolder = null;
-	//
-	// this.minContact = 1.0d;
-	// this.gridHullExtend = 2.0d;
-	// this.gridDensity = 3.0d;
-	// this.gridClash = 4.0d;
-	//
-	// this.readFromFile(filename);
-	// }
 
-	public void calculateEval(List<String> dsspIds, VoroEvalTree tree) {
+	public void calculateEval(List<String> dsspIds, VoroEvalTree tree, String dsspFolder) {
 		DSSPEntry dssp = null;
 		DSSPFileReader reader = new DSSPFileReader(dsspFolder);
 		VoronoiData data = null;
@@ -177,7 +127,7 @@ public class DSSPSolventPotential extends AVoroPotential {
 
 	}
 
-	public void calculateEval(List<String> dsspIds, String outLoc) {
+	public void calculateEval(List<String> dsspIds, String dsspFolder, String outLoc) {
 		DSSPEntry dssp = null;
 		DSSPFileReader reader = new DSSPFileReader(dsspFolder);
 		VoronoiData data = null;
@@ -251,7 +201,7 @@ public class DSSPSolventPotential extends AVoroPotential {
 
 	}
 
-	public void calculateEval(List<String> dsspIds, VoroEvalTree tree, String outLoc) {
+	public void calculateEval(List<String> dsspIds, VoroEvalTree tree, String dsspFolder, String outLoc) {
 		DSSPEntry dssp = null;
 		DSSPFileReader reader = new DSSPFileReader(dsspFolder);
 		VoronoiData data = null;
@@ -330,7 +280,7 @@ public class DSSPSolventPotential extends AVoroPotential {
 	}
 
 	@Override
-	public void calculateFromDATA(List<String> dsspIds) {
+	public void calculateFromDATA(List<String> dsspIds, String dsspFolder) {
 		DSSPEntry dssp = null;
 		DSSPFileReader reader = new DSSPFileReader(dsspFolder);
 		VoronoiData data = null;
@@ -546,6 +496,149 @@ public class DSSPSolventPotential extends AVoroPotential {
 		}
 		return scores;
 	}
+	
+	/**
+	 * get native scoring of model
+	 * CAVE ensure you prepared shuffle scoring with prepare Sequence scoring
+	 */
+	
+	@Override
+	public double getNativeScoring(){
+		Set<Integer> solventIds = null;
+		Set<Integer> pepIds = null;
+		HashMap<Integer, AminoAcidName> amino;
+		HashMap<Integer, HashMap<Integer, Double>> faces;
+		HashMap<Integer, Double> neighbors;
+		boolean surfaceFlag = false;
+		List<Integer> surfaceIds = new ArrayList<Integer>();
+		double surfaceArea = 0.0d;
+		int tmp = 0;
+		int p1;
+		int p2;
+		double score = 0.0d;
+		
+		faces = data.getFaces();
+		amino = data.getAminos();
+		pepIds = data.getPepIds();
+		solventIds = data.getOuterGridIds();
+		
+		for (int id1 : pepIds) {
+			if (faces.get(id1) == null) {
+				continue;
+			}
+			neighbors = faces.get(id1);
+			surfaceFlag = false;
+			surfaceArea = 0.0d;
+			for (int id2 : neighbors.keySet()) {
+				if (solventIds.contains(id2) && neighbors.get(id2) > minContact) {
+					surfaceArea += neighbors.get(id2);
+					surfaceFlag = true;
+				}
+			}
+			if (surfaceFlag) {
+				surfaceIds.add(id1);
+				if (surfaceArea > minContact) {
+					for (int id2 : neighbors.keySet()) {
+						if(!amino.containsKey(id2)){
+							continue;
+						}
+						tmp = 0;
+						for (int i = 25; i <= 150; i += 25) {
+							if (surfaceArea <= i * 1.0d) {
+								break;
+							}
+							tmp++;
+						}
+						p1 = amino.get(id1).getOneLetterCode().charAt(0) - 65;
+						p2 = amino.get(id2).getOneLetterCode().charAt(0) - 65;
+						int[] path = {tmp,p1,p2};
+						score += potential.getByAddress(path).getValue();
+					}
+				}
+			}
+		}
+		return score;
+	}
+	
+	@Override
+	public double getSequenceScoring(AminoAcidName[] sequence){
+		Set<Integer> solventIds = null;
+		Set<Integer> pepIds = null;
+		HashMap<Integer, AminoAcidName> amino;
+		HashMap<Integer, HashMap<Integer, Double>> faces;
+		HashMap<Integer, Double> neighbors;
+		boolean surfaceFlag = false;
+		List<Integer> surfaceIds = new ArrayList<Integer>();
+		double surfaceArea = 0.0d;
+		int tmp = 0;
+		int p1;
+		int p2;
+		double score = 0.0d;
+		
+		faces = data.getFaces();
+		amino = data.getAminos();
+		pepIds = data.getPepIds();
+		solventIds = data.getOuterGridIds();
+		
+		//proofreading
+		for(int x : amino.keySet()){
+			if(x < 0 || x >= sequence.length){
+				System.err.println("sequence length "+sequence.length+" does not cover aminoid "+x+" !");
+				return 0.0d;
+			}
+		}
+		
+		for (int id1 : pepIds) {
+			if (faces.get(id1) == null) {
+				continue;
+			}
+			neighbors = faces.get(id1);
+			surfaceFlag = false;
+			surfaceArea = 0.0d;
+			for (int id2 : neighbors.keySet()) {
+				if (solventIds.contains(id2) && neighbors.get(id2) > minContact) {
+					surfaceArea += neighbors.get(id2);
+					surfaceFlag = true;
+				}
+			}
+			if (surfaceFlag) {
+				surfaceIds.add(id1);
+				if (surfaceArea > minContact) {
+					for (int id2 : neighbors.keySet()) {
+						if(!amino.containsKey(id2)){
+							continue;
+						}
+						tmp = 0;
+						for (int i = 25; i <= 150; i += 25) {
+							if (surfaceArea <= i * 1.0d) {
+								break;
+							}
+							tmp++;
+						}
+						p1 = sequence[id1].getOneLetterCode().charAt(0) - 65;
+						p2 = sequence[id2].getOneLetterCode().charAt(0) - 65;
+						int[] path = {tmp,p1,p2};
+						score += potential.getByAddress(path).getValue();
+					}
+				}
+			}
+		}
+		return score;
+	}
+	
+	@Override
+	public double[] getNativeAminoScoring(){
+		return null;
+		//TODO
+	}
+	
+	@Override
+	public double[] getSequenceAminoScoring(AminoAcidName[] sequence){
+		return null;
+		//TODO
+	}
+	
+	
 	/**
 	 * TEST main method
 	 */
@@ -571,7 +664,7 @@ public class DSSPSolventPotential extends AVoroPotential {
 		//VoroEvalTree eval = new VoroEvalTree(Double.parseDouble(minContact));
 		//pot.calculateEval(dsspIds, eval, outLocation);
 		//eval.printTree();
-		pot.calculateFromDATA(dsspIds);
+		pot.calculateFromDATA(dsspIds,dsspLoc);
 		pot.writeToFile(outfile);
 		// System.out.println("done");
 
