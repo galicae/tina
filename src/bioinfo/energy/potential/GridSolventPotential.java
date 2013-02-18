@@ -1,22 +1,11 @@
 package bioinfo.energy.potential;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import bioinfo.energy.potential.voronoi.VoroPPWrap;
-import bioinfo.energy.potential.voronoi.VoroPrepType;
 import bioinfo.energy.potential.voronoi.VoronoiData;
 import bioinfo.proteins.AminoAcidName;
 import bioinfo.proteins.PDBEntry;
@@ -33,67 +22,57 @@ public class GridSolventPotential extends AVoroPotential {
 	 * values smaller then 1 have to be ignored
 	 */
 	private final String pdbFolder;
-
+	private final int[] size = {7,26,26};
+	
 	private final double minContact;
 	private final double gridHullExtend;
 	private final double gridDensity;
 	private final double gridClash;
 	private final double mkT = -0.582d;
 
-	private final String[] mappingKeys = { "aminoacid1", "aminoacid2", "faceArea" };
-
-	public GridSolventPotential(String vorobin, String pdbFolder, List<String> pdbIds, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
+	public GridSolventPotential(String vorobin, String pdbFolder, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
 		super(vorobin);
-		this.potential = new double[26][26][7];
+		initPotential(size);
 		this.pdbFolder = pdbFolder;
 
 		this.minContact = minContact;
 		this.gridHullExtend = gridHullExtend;
 		this.gridDensity = gridDensity;
 		this.gridClash = gridClash;
-
-		calculateFromDATA(pdbIds);
-
 	}
 
-	public GridSolventPotential(String vorobin, String tmpdir, String pdbFolder, List<String> pdbIds, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
+	public GridSolventPotential(String vorobin, String tmpdir, String pdbFolder, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
 		super(vorobin, tmpdir);
-		this.potential = new double[26][26][7];
+		initPotential(size);
 		this.pdbFolder = pdbFolder;
 
 		this.minContact = minContact;
 		this.gridHullExtend = gridHullExtend;
 		this.gridDensity = gridDensity;
 		this.gridClash = gridClash;
-
-		calculateFromDATA(pdbIds);
 
 	}
 
 	public GridSolventPotential(String filename, String vorobin, String tmpdir) {
 		super(vorobin, tmpdir);
-		this.potential = new double[26][26][7];
+		initPotential(size);
 		this.pdbFolder = null;
 
 		this.minContact = 1.0d;
 		this.gridHullExtend = 1.0d;
 		this.gridDensity = 1.0d;
 		this.gridClash = 1.0d;
-
-		readFromFile(filename);
 	}
 
 	public GridSolventPotential(String filename, String vorobin) {
 		super(vorobin);
-		this.potential = new double[26][26][7];
+		initPotential(size);
 		this.pdbFolder = null;
 
 		minContact = 1.0d;
 		gridHullExtend = 1.0d;
 		gridDensity = 1.0d;
 		gridClash = 1.0d;
-
-		readFromFile(filename);
 	}
 
 	public void calculateFromDATA(List<String> pdbIds) {
@@ -111,7 +90,7 @@ public class GridSolventPotential extends AVoroPotential {
 		int tmp = 0;
 		int p1;
 		int p2;
-		int[] aminoCount = new int[26];
+		int[] stateCount = new int[7];
 
 		for (String pdbId : pdbIds) {
 
@@ -153,69 +132,28 @@ public class GridSolventPotential extends AVoroPotential {
 							}
 							p1 = amino.get(id1).getOneLetterCode().charAt(0) - 65;
 							p2 = amino.get(id2).getOneLetterCode().charAt(0) - 65;
-							potential[p1][p2][tmp]++;
-							potential[p2][p1][tmp]++;
-							aminoCount[p1]++;
+							int[] path1 = {tmp,p1,p2};
+							potential.setValue(path1, potential.getByAddress(path1).getValue()+1.0d);
+							int[] path2 = {tmp,p2,p1};
+							potential.setValue(path2, potential.getByAddress(path2).getValue()+1.0d);
+							stateCount[tmp]++;
 						}
 					}
 				}
 			}
 		}
 
-		for (int i = 0; i != 26; i++) {
-			for (int j = 0; j != 26; j++) {
-				for (int k = 0; k != 7; k++) {
-					if (i == j) {
-						potential[i][j][k] = mkT * Math.log(((potential[i][j][k] + 1) / 2) / (((aminoCount[i] + aminoCount[j]) / 2) + 1));
-					} else {
-						potential[i][j][k] = mkT * Math.log((potential[i][j][k] + 1) / (((aminoCount[i] + aminoCount[j]) / 2) + 1));
-					}
+		int[] path = new int[3];
+		for (int k = 0; k != 7; k++) {
+			path[0] = k;
+			for (int i = 0; i != 26; i++) {
+				path[1] = i;
+				for (int j = 0; j != 26; j++) {
+					path[2] = j;
+					potential.setValue(path, (mkT * Math.log(((potential.getByAddress(path).getValue() + 1)) / stateCount[k])));
 				}
 			}
 		}
-
-	}
-
-	/**
-	 * function to access single energy values from potential dont use as batch
-	 * accessing method - might be very slow due to parameter passing as map key
-	 * values for map can be looked up in potentials class commi 21.01.1013
-	 * required keys are aminoacid1,aminoacid2 and faceArea
-	 */
-	@Override
-	public double getEnergyValue(Map<Object, Object> mapping) {
-		String missing_keys = "";
-		for (String key : this.mappingKeys) {
-			if (!mapping.containsKey(key)) {
-				missing_keys += key + "\t";
-			}
-		}
-		if (missing_keys.length() > 0) {
-			System.err.println("key(s) missing: " + missing_keys + " in energy value request!");
-			return 0.0d;
-		}
-
-		char aa1 = (Character) mapping.get("aminoacid1");
-		char aa2 = (Character) mapping.get("aminoacid2");
-		double area = (Double) mapping.get("faceArea");
-		int k = 0;
-		for (int i = 25; i <= 150; i += 25) {
-			if (area <= i * 1.0d) {
-				break;
-			}
-			k++;
-		}
-
-		int i = aa1 - 65;
-		int j = aa2 - 65;
-
-		return potential[i][j][k];
-
-	}
-
-	@Override
-	public String[] getMapKeys() {
-		return this.mappingKeys;
 	}
 
 	@Override
@@ -239,8 +177,6 @@ public class GridSolventPotential extends AVoroPotential {
 		amino = data.getAminos();
 		pepIds = data.getPepIds();
 		solventIds = data.getOuterGridIds();
-		faces = data.getFaces();
-		amino = data.getAminos();
 
 		for (int id1 : pepIds) {
 			if (faces.get(id1) == null) {
@@ -259,6 +195,9 @@ public class GridSolventPotential extends AVoroPotential {
 				surfaceIds.add(id1);
 				if (surfaceArea > minContact) {
 					for (int id2 : neighbors.keySet()) {
+						if(!amino.containsKey(id2)){
+							continue;
+						}
 						tmp = 0;
 						for (int i = 25; i <= 150; i += 25) {
 							if (surfaceArea <= i * 1.0d) {
@@ -268,13 +207,86 @@ public class GridSolventPotential extends AVoroPotential {
 						}
 						p1 = amino.get(id1).getOneLetterCode().charAt(0) - 65;
 						p2 = amino.get(id2).getOneLetterCode().charAt(0) - 65;
-						score += potential[p1][p2][tmp];
+						int[] path = {tmp,p1,p2};
+						score += potential.getByAddress(path).getValue();
 					}
 				}
 			}
 		}
 		return score;
 	}
+	
+	@Override
+	public double[] getAminoScores(PDBEntry model){
+		double[] scores = new double[model.length()];
+		VoronoiData data = prepareWithGrid(model, gridHullExtend, gridDensity, gridClash, minContact);
+		Set<Integer> solventIds = null;
+		Set<Integer> pepIds = null;
+		HashMap<Integer, AminoAcidName> amino;
+		HashMap<Integer, HashMap<Integer, Double>> faces;
+		HashMap<Integer, Double> neighbors;
+		boolean surfaceFlag = false;
+		List<Integer> surfaceIds = new ArrayList<Integer>();
+		double surfaceArea = 0.0d;
+		int tmp = 0;
+		int p1;
+		int p2;
+		double score = 0.0d;
+
+		voro.decomposite(data);
+		faces = data.getFaces();
+		amino = data.getAminos();
+		pepIds = data.getPepIds();
+		solventIds = data.getOuterGridIds();
+		
+		int pepIdsSize = pepIds.size();
+		int l = 0;
+		for (int id1 = 0; id1 != pepIdsSize; id1++) {
+			if(!pepIds.contains(id1)){
+				pepIdsSize++;
+				continue;
+			}
+			if (faces.get(id1) == null) {
+				continue;
+			}
+			neighbors = faces.get(id1);
+			surfaceFlag = false;
+			surfaceArea = 0.0d;
+			for (int id2 : neighbors.keySet()) {
+				if (solventIds.contains(id2) && neighbors.get(id2) > minContact) {
+					surfaceArea += neighbors.get(id2);
+					surfaceFlag = true;
+				}
+			}
+			if (surfaceFlag) {
+				surfaceIds.add(id1);
+				if (surfaceArea > minContact) {
+					score = 0.0d;
+					for (int id2 : neighbors.keySet()) {
+						if(!amino.containsKey(id2)){
+							continue;
+						}
+						tmp = 0;
+						for (int i = 25; i <= 150; i += 25) {
+							if (surfaceArea <= i * 1.0d) {
+								break;
+							}
+							tmp++;
+						}
+						p1 = amino.get(id1).getOneLetterCode().charAt(0) - 65;
+						p2 = amino.get(id2).getOneLetterCode().charAt(0) - 65;
+						int[] path = {tmp,p1,p2};
+						score = potential.getByAddress(path).getValue();
+					}
+					scores[l] = score;
+					l++;
+				}
+			}
+		}
+		return scores;
+	}
+	
+	
 
 	/**
 	 * TEST main method
@@ -294,10 +306,13 @@ public class GridSolventPotential extends AVoroPotential {
 		for (File f : file.listFiles()) {
 			pdbIds.add(f.getName().substring(0, 7));
 		}
+		//pdbIds.add("1j2xA00");
 
-		GridSolventPotential pot = new GridSolventPotential(vorobin, pdbLoc, pdbIds, Double.parseDouble(minContact), Double.parseDouble(gridExtend), Double.parseDouble(gridDensity), Double.parseDouble(gridClash));
+
+		GridSolventPotential pot = new GridSolventPotential(vorobin, pdbLoc, Double.parseDouble(minContact), Double.parseDouble(gridExtend), Double.parseDouble(gridDensity), Double.parseDouble(gridClash));
+		pot.calculateFromDATA(pdbIds);
 		pot.writeToFile(outfile);
-		System.out.println("done");
+		//System.out.println("done");
 
 		// GridSolvensPotential pot = new
 		// GridSolvensPotential(args[2],args[1],VoroPrepType.CC);

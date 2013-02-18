@@ -1,25 +1,18 @@
 package bioinfo.energy.potential;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 import bioinfo.energy.potential.voroEval.VoroEvalDataPoint;
 import bioinfo.energy.potential.voroEval.VoroEvalTree;
-import bioinfo.energy.potential.voronoi.VoroPPWrap;
 import bioinfo.energy.potential.voronoi.VoronoiData;
 import bioinfo.proteins.AminoAcidName;
 import bioinfo.proteins.DSSPEntry;
@@ -27,9 +20,7 @@ import bioinfo.proteins.DSSPFileReader;
 import bioinfo.proteins.PDBEntry;
 
 /**
- * just a dummy potential to evaluate the self-written solvensPotential
- * therefore scoreModel returns always 0.0d;
- * 
+ * based on voronoi surface neighborhood detection and dssp surface values
  * @author andreseitz
  * 
  */
@@ -43,6 +34,7 @@ public class DSSPSolventPotential extends AVoroPotential {
 	 * classes smaller then 25,50,75,100,125,150,bigger then 150, where all
 	 * values smaller then 1 have to be ignored
 	 */
+	private final int[] size = {7,26,26};
 	private final String dsspFolder;
 	private final double minContact;
 	private final double mkT = -0.582d;
@@ -50,13 +42,9 @@ public class DSSPSolventPotential extends AVoroPotential {
 	private final double gridDensity;
 	private final double gridClash;
 
-	private final String[] mappingKeys = { "aminoacid1", "aminoacid2", "faceArea" };
-	private String vorobin;
-	private String tmpdir;
-
 	public DSSPSolventPotential(String vorobin, String dsspFolder) {
 		super(vorobin);
-		this.potential = new double[26][26][7];
+		initPotential(size);
 		this.dsspFolder = dsspFolder;
 
 		this.minContact = 1.0d;
@@ -67,7 +55,7 @@ public class DSSPSolventPotential extends AVoroPotential {
 
 	public DSSPSolventPotential(String vorobin, String tmpdir, String dsspFolder) {
 		super(vorobin, tmpdir);
-		this.potential = new double[26][26][7];
+		initPotential(size);
 		this.dsspFolder = dsspFolder;
 
 		this.minContact = 1.0d;
@@ -79,7 +67,7 @@ public class DSSPSolventPotential extends AVoroPotential {
 
 	public DSSPSolventPotential(String vorobin, String dsspFolder, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
 		super(vorobin);
-		this.potential = new double[26][26][7];
+		initPotential(size);
 		this.dsspFolder = dsspFolder;
 
 		this.minContact = minContact;
@@ -90,7 +78,7 @@ public class DSSPSolventPotential extends AVoroPotential {
 
 	public DSSPSolventPotential(String vorobin, String tmpdir, String dsspFolder, double minContact, double gridHullExtend, double gridDensity, double gridClash) {
 		super(vorobin, tmpdir);
-		this.potential = new double[26][26][7];
+		initPotential(size);
 		this.dsspFolder = dsspFolder;
 
 		this.minContact = minContact;
@@ -134,7 +122,6 @@ public class DSSPSolventPotential extends AVoroPotential {
 		Set<Integer> solventIds = null;
 		Set<Integer> pepIds = null;
 		int[] acc;
-		HashMap<Integer, AminoAcidName> point;
 		HashMap<Integer, HashMap<Integer, Double>> faces;
 		HashMap<Integer, Double> neighbors;
 		boolean surfaceFlag = false;
@@ -157,7 +144,6 @@ public class DSSPSolventPotential extends AVoroPotential {
 			pepIds = data.getPepIds();
 			solventIds = data.getOuterGridIds();
 			faces = data.getFaces();
-			point = data.getAminos();
 
 			// System.out.println("\tdecomp done ... "+faces.size()+" faces");
 
@@ -198,7 +184,6 @@ public class DSSPSolventPotential extends AVoroPotential {
 		Set<Integer> solventIds = null;
 		Set<Integer> pepIds = null;
 		int[] acc;
-		HashMap<Integer, AminoAcidName> point;
 		HashMap<Integer, HashMap<Integer, Double>> faces;
 		HashMap<Integer, Double> neighbors;
 		boolean surfaceFlag = false;
@@ -228,7 +213,6 @@ public class DSSPSolventPotential extends AVoroPotential {
 			pepIds = data.getPepIds();
 			solventIds = data.getOuterGridIds();
 			faces = data.getFaces();
-			point = data.getAminos();
 
 			// System.out.println("\tdecomp done ... "+faces.size()+" faces");
 
@@ -274,12 +258,10 @@ public class DSSPSolventPotential extends AVoroPotential {
 		Set<Integer> solventIds = null;
 		Set<Integer> pepIds = null;
 		int[] acc;
-		HashMap<Integer, AminoAcidName> point;
 		HashMap<Integer, HashMap<Integer, Double>> faces;
 		HashMap<Integer, Double> neighbors;
 		boolean surfaceFlag = false;
 		List<Integer> surfaceIds = new ArrayList<Integer>();
-		int accessability = 0;
 		double surfaceArea = 0.0d;
 		AminoAcidName[] names;
 		// int[] index;
@@ -305,7 +287,6 @@ public class DSSPSolventPotential extends AVoroPotential {
 			pepIds = data.getPepIds();
 			solventIds = data.getOuterGridIds();
 			faces = data.getFaces();
-			point = data.getAminos();
 
 			// System.out.println("\tdecomp done ... "+faces.size()+" faces");
 
@@ -323,7 +304,6 @@ public class DSSPSolventPotential extends AVoroPotential {
 					}
 				}
 				if (surfaceFlag) {
-					accessability = acc[id1];
 					surfaces.put(id1, surfaceArea);
 					surfaceIds.add(id1);
 				}
@@ -365,31 +345,13 @@ public class DSSPSolventPotential extends AVoroPotential {
 		int tmp = 0;
 		int p1;
 		int p2;
-		int[] aminoCount = new int[26];
+		int[] stateCount = new int[7];
 		int accessability = 0;
-		double surfaceArea = 0.0d;
 
 		for (String dsspId : dsspIds) {
-			// test->
-			BufferedWriter bw = null;
-			try {
-				bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/Users/andreseitz/Desktop/" + dsspId + ".res")));
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-			// ->test
-
-			System.out.println(">" + dsspId);
-
+			System.err.println(dsspId);
 			// read from files, can be changed to db later!
 			dssp = reader.readFromFolderById(dsspId);
-
-			// test->
-			AminoAcidName[] names = dssp.getNames();
-			int[] index = dssp.getResIndex();
-			HashMap<Integer, Double> surfaces = new HashMap<Integer, Double>();
-			// ->test
-
 			data = this.prepareWithGrid(dssp, gridHullExtend, gridDensity, gridClash, minContact);
 			acc = dssp.getAccesability();
 			pepIds = data.getPepIds();
@@ -397,27 +359,19 @@ public class DSSPSolventPotential extends AVoroPotential {
 			faces = data.getFaces();
 			point = data.getAminos();
 
-			System.out.println("\tdecomp done ... " + faces.size() + " faces");
-
 			for (int id1 : pepIds) {
 				if (faces.get(id1) == null) {
 					continue;
 				}
 				neighbors = faces.get(id1);
 				surfaceFlag = false;
-				surfaceArea = 0.0d;
 				for (int id2 : neighbors.keySet()) {
 					if (solventIds.contains(id2) && neighbors.get(id2) > minContact) {
-						surfaceArea += neighbors.get(id2);
 						surfaceFlag = true;
 					}
 				}
 				if (surfaceFlag) {
 					accessability = acc[id1];
-					// test->
-					surfaces.put(id1, surfaceArea);
-					// ->test
-					System.err.println(surfaceArea + "\t" + accessability);
 					surfaceIds.add(id1);
 					if (accessability > minContact) {
 						for (int id2 : neighbors.keySet()) {
@@ -434,102 +388,169 @@ public class DSSPSolventPotential extends AVoroPotential {
 
 							p1 = point.get(id1).getOneLetterCode().charAt(0) - 65;
 							p2 = point.get(id2).getOneLetterCode().charAt(0) - 65;
-							potential[p1][p2][tmp]++;
-							potential[p2][p1][tmp]++;
-							aminoCount[p1]++;
+							int[] path1 = {tmp,p1,p2};
+							potential.setValue(path1, potential.getByAddress(path1).getValue()+1.0d);
+							int[] path2 = {tmp,p2,p1};
+							potential.setValue(path2, potential.getByAddress(path2).getValue()+1.0d);
+
+							stateCount[tmp]++;
 						}
 					}
 				}
 			}
-
-			// test->
-			for (int i = 0; i != pepIds.size(); i++) {
-				try {
-					if (surfaces.containsKey(i)) {
-						bw.append(names[i] + "\t" + index[i] + "\t" + acc[i] + "\t" + surfaces.get(i) + "\t" + (surfaces.get(i) - acc[i]) + "\t" + "S" + "\n");
-					} else {
-						bw.append(names[i] + "\t" + index[i] + "\t" + acc[i] + "\t" + 0 + "\t" + ((-1) * acc[i]) + "\t" + "I" + "\n");
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			try {
-				bw.flush();
-				bw.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			// ->test
-
 		}
 
-		for (int i = 0; i != 26; i++) {
-			for (int j = 0; j != 26; j++) {
-				for (int k = 0; k != 7; k++) {
-					if (i == j) {
-						potential[i][j][k] = mkT * Math.log(((potential[i][j][k] + 1)) / (((aminoCount[i] + aminoCount[j]) / 2) + 1));
-					} else {
-						potential[i][j][k] = mkT * Math.log((potential[i][j][k] + 1) / (((aminoCount[i] + aminoCount[j]) / 2) + 1));
-					}
+		int[] path = new int[3];
+		for (int k = 0; k != 7; k++) {
+			path[0] = k;
+			for (int i = 0; i != 26; i++) {
+				path[1] = i;
+				for (int j = 0; j != 26; j++) {
+					path[2] = j;
+					potential.setValue(path, (mkT * Math.log((potential.getByAddress(path).getValue() + 1) / (stateCount[tmp]+1))));
 				}
 			}
 		}
 
-	}
-
-	/**
-	 * function to access single energy values from potential dont use as batch
-	 * accessing method - might be very slow due to parameter passing as map key
-	 * values for map can be looked up in potentials class commi 21.01.1013
-	 * required keys are aminoacid1,aminoacid2 and faceArea
-	 */
-	@Override
-	public double getEnergyValue(Map<Object, Object> mapping) {
-		String missing_keys = "";
-		for (String key : this.mappingKeys) {
-			if (!mapping.containsKey(key)) {
-				missing_keys += key + "\t";
-			}
-		}
-		if (missing_keys.length() > 0) {
-			System.err.println("key(s) missing: " + missing_keys + " in energy value request!");
-			return 0.0d;
-		}
-
-		char aa1 = (Character) mapping.get("aminoacid1");
-		char aa2 = (Character) mapping.get("aminoacid2");
-		double area = (Double) mapping.get("faceArea");
-		int k = 0;
-		for (int i = 25; i <= 150; i += 25) {
-			if (area <= i * 1.0d) {
-				break;
-			}
-			k++;
-		}
-
-		int i = aa1 - 65;
-		int j = aa2 - 65;
-
-		return potential[i][j][k];
-
-	}
-
-	@Override
-	public String[] getMapKeys() {
-		return this.mappingKeys;
 	}
 
 	@Override
 	public double scoreModel(PDBEntry model) {
-		return 0.0d;
+		VoronoiData data = prepareWithGrid(model, gridHullExtend, gridDensity, gridClash, minContact);
+		Set<Integer> solventIds = null;
+		Set<Integer> pepIds = null;
+		HashMap<Integer, AminoAcidName> amino;
+		HashMap<Integer, HashMap<Integer, Double>> faces;
+		HashMap<Integer, Double> neighbors;
+		boolean surfaceFlag = false;
+		List<Integer> surfaceIds = new ArrayList<Integer>();
+		double surfaceArea = 0.0d;
+		int tmp = 0;
+		int p1;
+		int p2;
+		double score = 0.0d;
+
+		voro.decomposite(data);
+		faces = data.getFaces();
+		amino = data.getAminos();
+		pepIds = data.getPepIds();
+		solventIds = data.getOuterGridIds();
+		faces = data.getFaces();
+		amino = data.getAminos();
+
+		for (int id1 : pepIds) {
+			if (faces.get(id1) == null) {
+				continue;
+			}
+			neighbors = faces.get(id1);
+			surfaceFlag = false;
+			surfaceArea = 0.0d;
+			for (int id2 : neighbors.keySet()) {
+				if (solventIds.contains(id2) && neighbors.get(id2) > minContact) {
+					surfaceArea += neighbors.get(id2);
+					surfaceFlag = true;
+				}
+			}
+			if (surfaceFlag) {
+				surfaceIds.add(id1);
+				if (surfaceArea > minContact) {
+					for (int id2 : neighbors.keySet()) {
+						if(!amino.containsKey(id2)){
+							continue;
+						}
+						tmp = 0;
+						for (int i = 25; i <= 150; i += 25) {
+							if (surfaceArea <= i * 1.0d) {
+								break;
+							}
+							tmp++;
+						}
+						p1 = amino.get(id1).getOneLetterCode().charAt(0) - 65;
+						p2 = amino.get(id2).getOneLetterCode().charAt(0) - 65;
+						int[] path = {tmp,p1,p2};
+						score += potential.getByAddress(path).getValue();
+					}
+				}
+			}
+		}
+		return score;
 	}
 
+	
+	@Override
+	public double[] getAminoScores(PDBEntry model){
+		double[] scores = new double[model.length()];
+		VoronoiData data = prepareWithGrid(model, gridHullExtend, gridDensity, gridClash, minContact);
+		Set<Integer> solventIds = null;
+		Set<Integer> pepIds = null;
+		HashMap<Integer, AminoAcidName> amino;
+		HashMap<Integer, HashMap<Integer, Double>> faces;
+		HashMap<Integer, Double> neighbors;
+		boolean surfaceFlag = false;
+		List<Integer> surfaceIds = new ArrayList<Integer>();
+		double surfaceArea = 0.0d;
+		int tmp = 0;
+		int p1;
+		int p2;
+		double score = 0.0d;
+
+		voro.decomposite(data);
+		faces = data.getFaces();
+		amino = data.getAminos();
+		pepIds = data.getPepIds();
+		solventIds = data.getOuterGridIds();
+		
+		int pepIdsSize = pepIds.size();
+		int l = 0;
+		for (int id1 = 0; id1 != pepIdsSize; id1++) {
+			if(!pepIds.contains(id1)){
+				pepIdsSize++;
+				continue;
+			}
+			if (faces.get(id1) == null) {
+				continue;
+			}
+			neighbors = faces.get(id1);
+			surfaceFlag = false;
+			surfaceArea = 0.0d;
+			for (int id2 : neighbors.keySet()) {
+				if (solventIds.contains(id2) && neighbors.get(id2) > minContact) {
+					surfaceArea += neighbors.get(id2);
+					surfaceFlag = true;
+				}
+			}
+			if (surfaceFlag) {
+				surfaceIds.add(id1);
+				if (surfaceArea > minContact) {
+					score = 0.0d;
+					for (int id2 : neighbors.keySet()) {
+						if(!amino.containsKey(id2)){
+							continue;
+						}
+						tmp = 0;
+						for (int i = 25; i <= 150; i += 25) {
+							if (surfaceArea <= i * 1.0d) {
+								break;
+							}
+							tmp++;
+						}
+						p1 = amino.get(id1).getOneLetterCode().charAt(0) - 65;
+						p2 = amino.get(id2).getOneLetterCode().charAt(0) - 65;
+						int[] path = {tmp,p1,p2};
+						score = potential.getByAddress(path).getValue();
+					}
+					scores[l] = score;
+					l++;
+				}
+			}
+		}
+		return scores;
+	}
 	/**
 	 * TEST main method
 	 */
 	public static void main(String[] args) {
-
+		
 		List<String> dsspIds = new ArrayList<String>();
 		String dsspLoc = args[0];
 		String vorobin = args[1];
@@ -544,14 +565,14 @@ public class DSSPSolventPotential extends AVoroPotential {
 		for (File f : file.listFiles()) {
 			dsspIds.add(f.getName().substring(0, 7));
 		}
-		// dsspIds.add("1gaiA00");
+		//dsspIds.add("1gaiA00");
 
 		DSSPSolventPotential pot = new DSSPSolventPotential(vorobin, dsspLoc, Double.parseDouble(minContact), Double.parseDouble(gridExtend), Double.parseDouble(gridDensity), Double.parseDouble(gridClash));
-		VoroEvalTree eval = new VoroEvalTree(Double.parseDouble(minContact));
-		pot.calculateEval(dsspIds, eval, outLocation);
-		eval.printTree();
-
-		// pot.writeToFile(outfile);
+		//VoroEvalTree eval = new VoroEvalTree(Double.parseDouble(minContact));
+		//pot.calculateEval(dsspIds, eval, outLocation);
+		//eval.printTree();
+		pot.calculateFromDATA(dsspIds);
+		pot.writeToFile(outfile);
 		// System.out.println("done");
 
 		// GridSolvensPotential pot = new
@@ -559,7 +580,7 @@ public class DSSPSolventPotential extends AVoroPotential {
 		// PDBFileReader reader = new PDBFileReader(pdbLoc);
 		// PDBEntry pdb = reader.readFromFolderById("1j2xA00");
 		// System.out.println(pot.scoreModel(pdb));
-
+		//System.out.println((System.currentTimeMillis()-start)/1000+" sec");
 	}
 
 }
