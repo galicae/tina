@@ -374,6 +374,7 @@ public class RDPScoring implements Scoring {
 		int[][] contacts = new int[2][b.length()];
 		// calculate contacts fo every amino acid
 		// TODO check if code correct
+		// TODO huberste: Code seems to work fine. 2013-02-18
 		for (int partnera = 0; partnera < b.length(); partnera++) {
 			for (int partnerb = partnera + 1; partnerb < b.length(); partnerb++) {
 				if (calcDistance(b.getAminoAcid(partnera),
@@ -408,10 +409,10 @@ public class RDPScoring implements Scoring {
 			} else { // if match
 				// sum up score
 				// debugging
-				System.out.println("targpos: " + targpos);
-				System.out.println("temppos: " + temppos);
-				System.out.println("contacts[0][temppos]: "
-						+ contacts[0][temppos]);
+//				System.out.println("targpos: " + targpos);
+//				System.out.println("temppos: " + temppos);
+//				System.out.println("contacts[0][temppos]: "
+//						+ contacts[0][temppos]);
 				int tmp = contacts[0][temppos];
 				result += ccpMatrix.getValue(a.getComp(targpos),
 						ss[temppos].getThreeClassAnalogon(), 0, tmp);
@@ -487,7 +488,7 @@ public class RDPScoring implements Scoring {
 	 * @return the calculated pair interaction based score
 	 */
 	private double phiP(SequenceAlignment f, Sequence a, PDBEntry b) {
-		// TODO
+		// TODO use SiplContactPotential from bioinfo.energy.potentials
 		return 0.0;
 	}
 

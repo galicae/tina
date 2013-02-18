@@ -29,7 +29,8 @@ public class HubeRDPTest {
 	private static final Sequence template = new Sequence("1j2xA00","GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK");
 	private static final Sequence target   = new Sequence("1dp7P00","TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK");
 	
-	private static final String hydromatrixFile = "/home/h/huberste/gobi/data/hydro_1024";
+	private static final String hydromatrixFile = "/home/h/huberste/gobi/data/hydrophobicityMatrices/hydro_1024";
+	private static final String ccpfilename = "/home/h/huberste/gobi/data/ccp/ccp";
 	private static final String dsspFile = "/home/h/huberste/gobi/data/dssp/";
 //	private static final Sequence template = new Sequence("test001","GGGGCA");
 //	private static final Sequence target   = new Sequence("test002","TTTGGGGA");
@@ -76,7 +77,7 @@ public class HubeRDPTest {
 //		rdp.addOracle(new ManualOracle());
 		
 		// set scoring
-		rdp.setScoring(new RDPScoring(RDPScoring.GAMMA, RDPScoring.DELTA, RDPScoring.EPSILON, RDPScoring.ZETA, QuasarMatrix.DAYHOFF_MATRIX, new HydrophobicityMatrix(hydromatrixFile), new CCPMatrix("/home/h/huberste/gobi/")));
+		rdp.setScoring(new RDPScoring(RDPScoring.GAMMA, RDPScoring.DELTA, RDPScoring.EPSILON, RDPScoring.ZETA, QuasarMatrix.DAYHOFF_MATRIX, new HydrophobicityMatrix(hydromatrixFile), new CCPMatrix(ccpfilename), templateStructure, RDPScoring.VOROPATH, RDPScoring.GRID_EXTEND,RDPScoring.GRID_DENSITY, RDPScoring.GRID_CLASH,RDPScoring.MIN_CONTACT));
 //		rdp.setScoring(new SimpleScoring());
 //		rdp.setScoring(new ManualScoring());
 		
