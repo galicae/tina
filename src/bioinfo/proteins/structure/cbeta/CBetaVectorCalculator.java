@@ -9,15 +9,15 @@ package bioinfo.proteins.structure.cbeta;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import bioinfo.pdb.PDBFile;
 import bioinfo.proteins.Atom;
 import bioinfo.proteins.AtomType;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
-import cern.colt.matrix.DoubleFactory2D;
-import cern.colt.matrix.DoubleMatrix2D;
 
 /**
  * 
@@ -108,10 +108,11 @@ public class CBetaVectorCalculator {
 				// for each amino acid in that pdb
 				for (int pos = 0; pos < structure.length(); pos++) {
 					int astype = (structure.getAminoAcid(pos).getName().getOneLetterCode().charAt(0))-65;
-					// TODO Calculate CB vector (from CA)
+					// get AminoAcids
 					Atom calpha = structure.getAminoAcid(pos).getAtomByType(AtomType.CA);
 					Atom cbeta = structure.getAminoAcid(pos).getAtomByType(AtomType.CB);
 					Atom o = structure.getAminoAcid(pos).getAtomByType(AtomType.O);
+					// generate vectors
 					double[] vector1 = new double[3]; // Calpha -> Cbeta
 					double[] vector2 = new double[3]; // O -> Calpha
 					if (calpha != null && cbeta != null && o != null) {
@@ -144,10 +145,19 @@ public class CBetaVectorCalculator {
 					double scalar = scalarProduct(vector1null, vector1);
 					double phi = Math.acos(scalar / (vectorLength(vector1null)*vectorLength(vector1)));
 					double[][] rotationMatrix = calcRotationMatrix(cross, phi);
+					System.out.println("vector1null:");
+					System.out.println(vectorToString(vector1null));
+					System.out.println("vector1:");
+					System.out.println(vectorToString(vector1));
 					
-					System.out.println(rotationMatrix);
+					
+					System.out.println("Rotationsmatrix:");
+					System.out.println(matrixToString(rotationMatrix));
 					
 					double[] vector2 = vectors2[aa].get(num);
+					double[][] newvector = matrixMultiplication(vector2, rotationMatrix);
+					System.out.println("vector2"+"\n"+vectorToString(vector2));
+					System.out.println("newvector"+"\n"+matrixToString(newvector));
 				}
 			}
 		}
@@ -198,10 +208,11 @@ public class CBetaVectorCalculator {
 	}
 	
 	public static double[] linearProduct(double factor, double[] vector) {
+		double[] result = new double[vector.length];
 		for (int i = 0; i < vector.length; i++) {
-			vector[i] = factor * vector[i];
+			result[i] = factor * vector[i];
 		}
-		return vector;
+		return result;
 	}
 	
 	public static double[] crossProduct(double[] vector1, double[] vector2) {
@@ -226,6 +237,52 @@ public class CBetaVectorCalculator {
 					result[i][j] += a[i][k] * b[k][j];
 				}
 			}
+		}
+		return result;
+	}
+	
+	public static double[][] matrixMultiplication(double[] x, double[][] b) {
+		double[][] a = new double[1][];
+		a[0] = x;
+		if (a[0].length != b.length) {
+			System.err.println("cannot multiply these two matrices!");
+			return null;
+		}
+		
+		double[][] result = new double[a.length][b[0].length];
+		
+		for (int i = 0; i < a.length; i ++) {
+			for(int j = 0; j < b[0].length; j++) {
+				for (int k = 0; k < a[0].length; k++) {
+					result[i][j] += a[i][k] * b[k][j];
+				}
+			}
+		}
+		return result;
+	}
+	
+	public static String vectorToString(double[] vector) {
+		// initialize important stuff	
+		Locale.setDefault(Locale.US);
+		DecimalFormat df = new DecimalFormat("0.00");
+		
+		String result = "";
+		for (int i = 0; i < vector.length; i++) {
+			result += df.format(vector[i]) + "\n";
+		}
+		return result;
+	}
+	
+	public static String matrixToString(double[][] matrix) {
+		// initialize important stuff	
+		Locale.setDefault(Locale.US);
+		DecimalFormat df = new DecimalFormat("0.00");
+		String result = "";
+		for(int y = 0; y < matrix[0].length; y++) {
+			for (int x = 0; x < matrix.length; x++) {
+				result += df.format(matrix[x][y]) + "\t";
+			}
+			result += "\n";
 		}
 		return result;
 	}
