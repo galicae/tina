@@ -12,8 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jmol.adapter.readers.cifpdb.PdbReader;
-
 /**
  * PDBFileReader read PDBFile and returns it as internal PDBEntry
  * @author andreseitz

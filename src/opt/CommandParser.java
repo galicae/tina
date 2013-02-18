@@ -5,12 +5,12 @@ import java.util.List;
 
 import javax.management.ObjectInstance;
 
-public class CommandParser {
+public class CommandParser{
 	
 	private List<Setting> settings;
 	private String[] commandLine;
 	
-	public CommandParser(List<Setting> settings, String[] commandLine){
+	public CommandParser(List<Setting> settings, String[] commandLine) throws Exception{
 		this.settings = settings;
 		this.commandLine = commandLine;
 	}

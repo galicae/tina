@@ -4,6 +4,8 @@ import bioinfo.proteins.PDBEntry;
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
+import cern.colt.matrix.impl.DenseDoubleMatrix1D;
+import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.jet.math.Functions;
 
 /**
@@ -141,4 +143,14 @@ public class Transformation {
 	public String getRotation() {
 		return rotation.toString();
 	}
+	
+	public DenseDoubleMatrix1D peekTranslation(){
+		return (DenseDoubleMatrix1D)translation;
+	}
+	
+	public DenseDoubleMatrix2D peekRotation(){
+		return (DenseDoubleMatrix2D)rotation;
+	}
+	
+	
 }

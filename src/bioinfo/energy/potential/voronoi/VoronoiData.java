@@ -274,6 +274,7 @@ public class VoronoiData {
 	 */
 	public void fillGridWithoutClashes(double gridExtend, double gridDensity, double clashDistToNonGrid) {
 		int id = getNextIdentifier();
+		double clashsquare = clashDistToNonGrid*clashDistToNonGrid;
 		double[] point;
 		double[] tmp = null;
 		boolean clash = false;
@@ -284,7 +285,7 @@ public class VoronoiData {
 					clash = false;
 					for (int i : pointPositions.keySet()) {
 						point = pointPositions.get(i);
-						if (Math.sqrt(((point[0] - x) * (point[0] - x)) + ((point[1] - y) * (point[1] - y)) + ((point[2] - z) * (point[2] - z))) < clashDistToNonGrid) {
+						if (((point[0] - x) * (point[0] - x)) + ((point[1] - y) * (point[1] - y)) + ((point[2] - z) * (point[2] - z)) < clashsquare) {
 							clash = true;
 							break;
 						}
