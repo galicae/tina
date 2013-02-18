@@ -25,7 +25,7 @@ public class MatrixTools {
 	}
 	
 	/**
-	 * 
+	 * returns a vector as a Java Matrix String
 	 * @param matrix
 	 * @return
 	 */
@@ -39,8 +39,19 @@ public class MatrixTools {
 		return result;
 	}
 
-	public static String toJavaStringx(<T>[] objectarray) {
-		return null;
+	/**
+	 * TEST
+	 * @param objectarray
+	 * @return
+	 */
+	public static String toJavaStringx(Object[] objectarray) {
+		String result = "{";
+		for (int x = 0; x < objectarray.length-1; x++) {
+			result += objectarray[x] + ", ";
+		}
+		result += objectarray[objectarray.length -1];
+		result +="}";
+		return result;
 	}
 	
 }
