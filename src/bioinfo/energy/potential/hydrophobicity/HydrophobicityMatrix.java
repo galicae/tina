@@ -100,7 +100,13 @@ public class HydrophobicityMatrix {
 				char x = (char)(65+i);
 				bw.write(x);
 				for (int j = 0; j < w[i].length; j++) {
-					bw.write("\t" + df.format(w[i][j]));
+					if (Double.isNaN(w[i][j])) {
+						bw.write("\tNAN");
+					} else if(Double.isInfinite(w[i][j])) {
+						bw.write("\tNAN");
+					} else { 
+						bw.write("\t" + df.format(w[i][j]));
+					}
 				}
 				bw.write("\n");
 			}
@@ -150,7 +156,11 @@ public class HydrophobicityMatrix {
 				String[] temp = line.split("\t");
 				result[lines] = new double[temp.length-1];
 				for (int i = 0; i < temp.length-1; i++) {
-					result[lines][i] = Double.parseDouble(temp[i+1]);
+					if (temp[i+1].startsWith("NAN")) {
+						result[lines][i] = Double.NEGATIVE_INFINITY;
+					} else {
+						result[lines][i] = Double.parseDouble(temp[i+1]);
+					}
 				}
 				lines++;
 			}
