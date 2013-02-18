@@ -416,9 +416,136 @@ public class DSSPSolventPotential extends AVoroPotential {
 
 	@Override
 	public double scoreModel(PDBEntry model) {
-		return 0.0d;
+		VoronoiData data = prepareWithGrid(model, gridHullExtend, gridDensity, gridClash, minContact);
+		Set<Integer> solventIds = null;
+		Set<Integer> pepIds = null;
+		HashMap<Integer, AminoAcidName> amino;
+		HashMap<Integer, HashMap<Integer, Double>> faces;
+		HashMap<Integer, Double> neighbors;
+		boolean surfaceFlag = false;
+		List<Integer> surfaceIds = new ArrayList<Integer>();
+		double surfaceArea = 0.0d;
+		int tmp = 0;
+		int p1;
+		int p2;
+		double score = 0.0d;
+
+		voro.decomposite(data);
+		faces = data.getFaces();
+		amino = data.getAminos();
+		pepIds = data.getPepIds();
+		solventIds = data.getOuterGridIds();
+		faces = data.getFaces();
+		amino = data.getAminos();
+
+		for (int id1 : pepIds) {
+			if (faces.get(id1) == null) {
+				continue;
+			}
+			neighbors = faces.get(id1);
+			surfaceFlag = false;
+			surfaceArea = 0.0d;
+			for (int id2 : neighbors.keySet()) {
+				if (solventIds.contains(id2) && neighbors.get(id2) > minContact) {
+					surfaceArea += neighbors.get(id2);
+					surfaceFlag = true;
+				}
+			}
+			if (surfaceFlag) {
+				surfaceIds.add(id1);
+				if (surfaceArea > minContact) {
+					for (int id2 : neighbors.keySet()) {
+						if(!amino.containsKey(id2)){
+							continue;
+						}
+						tmp = 0;
+						for (int i = 25; i <= 150; i += 25) {
+							if (surfaceArea <= i * 1.0d) {
+								break;
+							}
+							tmp++;
+						}
+						p1 = amino.get(id1).getOneLetterCode().charAt(0) - 65;
+						p2 = amino.get(id2).getOneLetterCode().charAt(0) - 65;
+						int[] path = {tmp,p1,p2};
+						score += potential.getByAddress(path).getValue();
+					}
+				}
+			}
+		}
+		return score;
 	}
 
+	
+	@Override
+	public double[] getAminoScores(PDBEntry model){
+		double[] scores = new double[model.length()];
+		VoronoiData data = prepareWithGrid(model, gridHullExtend, gridDensity, gridClash, minContact);
+		Set<Integer> solventIds = null;
+		Set<Integer> pepIds = null;
+		HashMap<Integer, AminoAcidName> amino;
+		HashMap<Integer, HashMap<Integer, Double>> faces;
+		HashMap<Integer, Double> neighbors;
+		boolean surfaceFlag = false;
+		List<Integer> surfaceIds = new ArrayList<Integer>();
+		double surfaceArea = 0.0d;
+		int tmp = 0;
+		int p1;
+		int p2;
+		double score = 0.0d;
+
+		voro.decomposite(data);
+		faces = data.getFaces();
+		amino = data.getAminos();
+		pepIds = data.getPepIds();
+		solventIds = data.getOuterGridIds();
+		
+		int pepIdsSize = pepIds.size();
+		int l = 0;
+		for (int id1 = 0; id1 != pepIdsSize; id1++) {
+			if(!pepIds.contains(id1)){
+				pepIdsSize++;
+				continue;
+			}
+			if (faces.get(id1) == null) {
+				continue;
+			}
+			neighbors = faces.get(id1);
+			surfaceFlag = false;
+			surfaceArea = 0.0d;
+			for (int id2 : neighbors.keySet()) {
+				if (solventIds.contains(id2) && neighbors.get(id2) > minContact) {
+					surfaceArea += neighbors.get(id2);
+					surfaceFlag = true;
+				}
+			}
+			if (surfaceFlag) {
+				surfaceIds.add(id1);
+				if (surfaceArea > minContact) {
+					score = 0.0d;
+					for (int id2 : neighbors.keySet()) {
+						if(!amino.containsKey(id2)){
+							continue;
+						}
+						tmp = 0;
+						for (int i = 25; i <= 150; i += 25) {
+							if (surfaceArea <= i * 1.0d) {
+								break;
+							}
+							tmp++;
+						}
+						p1 = amino.get(id1).getOneLetterCode().charAt(0) - 65;
+						p2 = amino.get(id2).getOneLetterCode().charAt(0) - 65;
+						int[] path = {tmp,p1,p2};
+						score = potential.getByAddress(path).getValue();
+					}
+					scores[l] = score;
+					l++;
+				}
+			}
+		}
+		return scores;
+	}
 	/**
 	 * TEST main method
 	 */

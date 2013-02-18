@@ -54,4 +54,11 @@ public interface IEnergy {
 	 */
 	public double scoreModel(PDBEntry model);
 	
+	/**
+	 * 
+	 * @param model of type PDBEntry
+	 * @return aminoacidwise scores of model read from Potential
+	 */
+	public double[] getAminoScores(PDBEntry model);
+	
 }
