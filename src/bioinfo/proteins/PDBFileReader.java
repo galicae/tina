@@ -12,8 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jmol.adapter.readers.cifpdb.PdbReader;
-
 /**
  * PDBFileReader read PDBFile and returns it as internal PDBEntry
  * @author andreseitz
@@ -569,13 +567,13 @@ public class PDBFileReader {
 	public static void main(String[] args) {
 		String line = null;
 		try{
-			BufferedReader listStream = new BufferedReader(new InputStreamReader(new FileInputStream("/Users/andreseitz/Desktop/tmpPDB")));
+			BufferedReader listStream = new BufferedReader(new InputStreamReader(new FileInputStream("/Users/andreseitz/Desktop/strConsTestSet/sippl_list")));
 			while((line = listStream.readLine()) != null){
-				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("/Users/andreseitz/Desktop/repPDB/"+line.trim()+".pdb")));
+				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("/Users/andreseitz/Desktop/strConsTestSet/orig_sippl_PDB/"+line.trim().toUpperCase()+".pdb")));
 				PDBFileReader reader = new PDBFileReader();
 				Set<PDBEntry> entries = reader.parseSplittedEntries(br, line.trim().toLowerCase());
 				for(PDBEntry entry : entries){
-					BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/Users/andreseitz/Desktop/strConsTestSet/"+entry.getID()+entry.getChainID()+String.format("%02d",entry.getChainIDNum())+".pdb")));
+					BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/Users/andreseitz/Desktop/strConsTestSet/sippl_PDB/"+entry.getID()+entry.getChainID()+String.format("%02d",entry.getChainIDNum())+".pdb")));
 					bw.append(entry.getAtomSectionAsString());
 					bw.flush();
 					bw.close();

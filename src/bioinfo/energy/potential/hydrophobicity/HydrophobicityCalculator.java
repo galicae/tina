@@ -24,7 +24,7 @@ import java.io.IOException;
 
 /**
  * @author huberste
- * @lastchange 2013-02-16
+ * @lastchange 2013-02-18
  */
 public class HydrophobicityCalculator {
 
@@ -39,8 +39,9 @@ public class HydrophobicityCalculator {
 	
 	/**
 	 * @param args
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		if (args.length < 2) {
 			System.out.println(usage);
 			System.exit(1);
@@ -49,10 +50,11 @@ public class HydrophobicityCalculator {
 		// initialize arguments
 		String infile = args[0];
 		String outpath = args[1];
-		int buckets = 0;
+		int aas = 26;
+		int buckets = 1024;
 		
 		// initialize important stuff
-		long freq[][] = new long[26][]; 
+		long freq[][] = new long[aas][buckets]; 
 		
 		// read file
 		BufferedReader br = null;
@@ -87,60 +89,69 @@ public class HydrophobicityCalculator {
 			}
 		}
 		
+		// PSEUDOCOUNTS
+		for (int aa = 0; aa < aas; aa++) {
+			for (int bucket = 0; bucket < buckets; bucket ++) {
+				if(aa != 1 && aa != 9 & aa != 14 && aa != 20 & aa != 23 & aa != 25) {
+					freq[aa][bucket]++;
+				}
+			}
+		}
+		
 		for(int size = 0; size < 7; size++) {
 		
-			buckets = 1024 / zweihoch(size);
-			int sum = zweihoch(size);
+			int bucketsize = zweihoch(size);
+			int numbuckets = buckets / bucketsize;
 			// crunch the numbers
 			// sum up rows / cols
-			long[] aacount = new long[26];
-			long[] bucketcount = new long[buckets];
+			long[] aacount = new long[aas];
+			long[] bucketcount = new long[numbuckets];
 			
 			long gescount = 0;
-			for(int i = 0; i < 26; i++) {
-				for (int j = 0; j < buckets; j++) {
-					for(int k = 0; k < sum; k++) {
-						aacount[i] += freq[i][(j*size)+k];
-						bucketcount[j] += freq[i][(j*size)+k];
-						gescount += freq[i][(j*size)+k];
+			for(int aa = 0; aa < aas; aa++) {
+				for (int bucket = 0; bucket < numbuckets; bucket++) {
+					for(int k = 0; k < bucketsize; k++) {
+						aacount[aa] += freq[aa][(bucket*bucketsize)+k];
+						bucketcount[bucket] += freq[aa][(bucket*bucketsize)+k];
+						gescount += freq[aa][(bucket*bucketsize)+k];
 					}
 				}
 			}
 			
 			// calculate r
-			double[][] r = new double[26][buckets];
-			for (int i = 0; i < 26; i++) {
-				for (int j = 0; j < buckets; j++) {
-					for(int k = 0; k < sum; k++) {
-						r[i][j] = (double) freq[i][(j*size) +k] / (double) gescount;
+			double[][] r = new double[aas][numbuckets];
+			for (int aa = 0; aa < aas; aa++) {
+				for (int bucket = 0; bucket < numbuckets; bucket++) {
+					for(int k = 0; k < bucketsize; k++) {
+						r[aa][bucket] = (double) freq[aa][(bucket*bucketsize) +k] / (double) gescount;
 					}
 				}
 			}
 			
 			// calculate p
-			double[] p = new double[26];
-			for (int i = 0; i < 26; i++) {
-				p[i] = (double) aacount[i] / (double) gescount;
+			double[] p = new double[aas];
+			for (int aa = 0; aa < aas; aa++) {
+				p[aa] = (double) aacount[aa] / (double) gescount;
 			}
 			
 			// calculate q
-			double[] q = new double[buckets];
-			for (int j = 0; j < buckets; j++) {
-				q[j] = (double) bucketcount[j] / (double) gescount;
+			double[] q = new double[numbuckets];
+			for (int bucket = 0; bucket < numbuckets; bucket++) {
+				q[bucket] = (double) bucketcount[bucket] / (double) gescount;
 			}
 		
 			// calculate w (s)
-			double[][] w = new double[26][buckets];
+			double[][] w = new double[aas][numbuckets];
 			
-			for(int i = 0; i < 26; i++) {
-				for (int j = 0; j < buckets; j++) {
-					double temp = r[i][j]/ (p[i]*q[j]);
-					w[i][j] = Math.log10(temp) / log2;
+			for(int aa = 0; aa < aas; aa++) {
+				for (int bucket = 0; bucket < numbuckets; bucket++) {
+					double temp = r[aa][bucket]/ (p[aa]*q[bucket]);
+					w[aa][bucket] = Math.log10(temp) / log2;
 				}
 			}
 			
 			// print out w
-			HydrophobicityMatrix.writeFile(w, outpath+buckets+"buckets");
+			HydrophobicityMatrix.writeFile(w, outpath+numbuckets+"buckets");
 		}
 	}
 	

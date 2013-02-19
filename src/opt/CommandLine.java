@@ -36,15 +36,15 @@ public class CommandLine {
 		this.parser = parser;
 	}
 	
-	public CommandLine(List<Setting> settings,String[] commands) {
+	public CommandLine(List<Setting> settings,String[] commands) throws Exception{
 		this.commands = commands;
 		this.settings = settings;
 		this.parser = new CommandParser(settings,commands);
 		try{
 			this.parsedComs = parser.parse();
 		} catch(Exception e){
-			e.printStackTrace();
 			this.parsedComs = null;
+			throw e;
 		}
 	}
 	
@@ -53,7 +53,7 @@ public class CommandLine {
 		this.settings = settings;
 	}
 	
-	public void parse(String[] commands){
+	public void parse(String[] commands) throws Exception {
 		this.parser = new CommandParser(settings,commands);
 		try{
 			this.parsedComs = parser.parse();
