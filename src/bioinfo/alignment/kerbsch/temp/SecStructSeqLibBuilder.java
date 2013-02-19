@@ -18,11 +18,11 @@ public class SecStructSeqLibBuilder {
 		LocalConnection con = new LocalConnection();
 		DBConnector dbcon = new DBConnector(con);	
 		BufferedWriter out;
-		HashMap<String,char[]> seqlib = SeqLibrary.read("../GoBi_old/full_domains.seqlib");
+		HashMap<String,char[]> seqlib = SeqLibrary.read("../full_domains.seqlib");
 		DSSPEntry dsspentry;
 		
 		try{
-			out = new BufferedWriter(new FileWriter("full_secstruct.seqlib"));
+			out = new BufferedWriter(new FileWriter("../test_secstruct.seqlib"));
 			
 			for(Entry<String,char[]> entry : seqlib.entrySet()){
 				dsspentry = dbcon.getDSSP(entry.getKey());
