@@ -187,10 +187,10 @@ public class CoreSegmentGotoh extends Gotoh {
 	 * 
 	 * @return Alignment of the two given Alignables
 	 */
-	public int[] traceback(int[] pos) {
+	public int[] traceback(int start, int end) {
 
-		int start = pos[0];
-		int end = pos[1];
+//		int start = pos[0];
+//		int end = pos[1];
 		int max = INIT_VAL;
 		int x = 0;
 		int y = 0;
@@ -214,7 +214,7 @@ public class CoreSegmentGotoh extends Gotoh {
 		char acty;
 
 		while (x >= start && y >= 0 && M[x + 1][y + 1] != 0) {
-			System.out.println(x + " " + y);
+//			System.out.println(x + " " + y);
 			actScore = M[x + 1][y + 1];
 			actx = (Character) sequence1.getComp(x);
 			acty = (Character) sequence2.getComp(y);
