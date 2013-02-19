@@ -98,8 +98,9 @@ public class Test {
 			for (int i = 0; i < ms.getStructures().size(); i++) {
 				PDBEntry pdbX = ms.getStructures().get(i);
 				double[][] xCoord = PDBReduce.reduceSinglePDB(pdbX);
-				ProteinFragment x = new ProteinFragment(pdbX.getID(),
-						pdbX.getSequence(), xCoord, pdbX.length());
+				ProteinFragment x = new ProteinFragment(pdbX.getID(), pdbX
+						.getSequence().getSequenceAsString(), xCoord,
+						pdbX.length());
 				CoreSegmentGotoh got = new CoreSegmentGotoh(-1, -1, 0.5,
 						usedFrag, x);
 

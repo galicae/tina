@@ -35,8 +35,8 @@ public class KabschTest {
 
 		FreeshiftSequenceGotoh got = new FreeshiftSequenceGotoh(-15, -3,
 				QuasarMatrix.DAYHOFF_MATRIX);
-		Sequence seq1 = new Sequence(pdb.getID(), pdb.getSequence());
-		Sequence seq2 = new Sequence(pdb1.getID(), pdb1.getSequence());
+		Sequence seq1 = new Sequence(pdb.getID(), pdb.getSequenceAsString());
+		Sequence seq2 = new Sequence(pdb1.getID(), pdb1.getSequenceAsString());
 		SequenceAlignment ali = got.align(seq1, seq2);
 
 		BufferedWriter wr2 = new BufferedWriter(new FileWriter("fastaTest.pdb"));
@@ -47,12 +47,12 @@ public class KabschTest {
 
 		ProteinFragment pdbFrag = new ProteinFragment("real", "D",
 				new double[0][0], 8);
-		pdbFrag.append(PDBReduce.reduceSinglePDB(pdb), pdb.getSequence());
+		pdbFrag.append(PDBReduce.reduceSinglePDB(pdb), pdb.getSequenceAsString());
 
 		ProteinFragment pdb1Frag = new ProteinFragment("real", "D",
 				new double[0][0], 8);
 		// // pdb1 = t.transform(pdb1);
-		pdb1Frag.append(PDBReduce.reduceSinglePDB(pdb1), pdb1.getSequence());
+		pdb1Frag.append(PDBReduce.reduceSinglePDB(pdb1), pdb1.getSequenceAsString());
 
 		wr2.write("MODEL        1\n");
 		wr2.write(pdbFrag.toString());

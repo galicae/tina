@@ -2,7 +2,7 @@ package bioinfo.proteins;
 
 import bioinfo.alignment.Alignable;
 
-public class SSCCEntry implements Alignable{
+public class SSCCEntry implements Alignable {
 
 	private SSCCLine[] lines;
 	private int length;

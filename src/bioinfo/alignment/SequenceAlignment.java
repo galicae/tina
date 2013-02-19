@@ -34,9 +34,9 @@ public class SequenceAlignment implements Alignment {
 	 * The indices of the aligned residues, used by Paul format: map is an array
 	 * of arrays whereas the first dimension just differs between sequence 1 or
 	 * 2 the scd dimension is an array of length n or m referring to the length
-	 * n or m of the sequences 1 or 2. every position in the scd dimension of the
-	 * arrays contains the index of the residue from the other sequence it is
-	 * aligned to
+	 * n or m of the sequences 1 or 2. every position in the scd dimension of
+	 * the arrays contains the index of the residue from the other sequence it
+	 * is aligned to
 	 */
 	private final int[][] map;
 	/**
@@ -85,8 +85,8 @@ public class SequenceAlignment implements Alignment {
 	 * @param score
 	 *            the score of the Alignment
 	 * @param alignedResidues
-	 * 			  the mapping from sequence to aligned sequence positions, see javadoc of alignedResidues
-
+	 *            the mapping from sequence to aligned sequence positions, see
+	 *            javadoc of alignedResidues
 	 */
 	public SequenceAlignment(Sequence seq1, Sequence seq2, char[] row1,
 			char[] row2, double score) {
@@ -101,7 +101,6 @@ public class SequenceAlignment implements Alignment {
 		map = calcMap();
 	}
 
-	
 	/**
 	 * Constructs an Alignment of seq1 and seq2 with the given alignment rows
 	 * and score.
@@ -117,7 +116,8 @@ public class SequenceAlignment implements Alignment {
 	 * @param score
 	 *            the score of the Alignment
 	 * @param alignedResidues
-	 * 			  the mapping from sequence to aligned sequence positions, see javadoc of alignedResidues
+	 *            the mapping from sequence to aligned sequence positions, see
+	 *            javadoc of alignedResidues
 	 */
 	public SequenceAlignment(Sequence seq1, Sequence seq2, String row1,
 			String row2, double score) {
@@ -140,17 +140,18 @@ public class SequenceAlignment implements Alignment {
 	private int calcLength() {
 		return rows[0].length;
 	}
-	
+
 	/**
-	 * Calculates an 2D array similiar to the map[][], but that only contains
+	 * Calculates a 2D array similiar to the map[][], but that only contains
 	 * the aligned residues
+	 * 
 	 * @return the 2D array
 	 */
 	public int[][] getAlignedResidues() {
 		int[][] result = new int[2][countAlignedResidues()];
 		int temp = 0;
 		for (int i = 0; i < map[0].length; i++) {
-			if(map[0][i] != -1){
+			if (map[0][i] != -1) {
 				result[0][temp] = i;
 				result[1][temp] = map[0][i];
 				temp++;
@@ -158,15 +159,16 @@ public class SequenceAlignment implements Alignment {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Calculates the number of aligned residues
+	 * 
 	 * @return the number of aligned residues
 	 */
-	public int countAlignedResidues(){
+	public int countAlignedResidues() {
 		int result = 0;
 		for (int i = 0; i < map[0].length; i++) {
-			if(map[0][i] != -1){
+			if (map[0][i] != -1) {
 				result++;
 			}
 		}
@@ -247,7 +249,7 @@ public class SequenceAlignment implements Alignment {
 	public char[] getRow(int n) {
 		return rows[n].clone();
 	}
-	
+
 	public char[][] getRows() {
 		return rows.clone();
 	}
@@ -261,56 +263,59 @@ public class SequenceAlignment implements Alignment {
 	}
 
 	/**
-	 * essentially copies the current alignment
+	 * essentially copies the current alignment TODO this should be a
+	 * constructor
 	 */
 	public SequenceAlignment duplicate() {
 		return new SequenceAlignment(seq1, seq2, rows, score);
 	}
-	
+
 	/**
 	 * this neat function calculates the first / last aligned positions in an
 	 * alignment (in both rows)
+	 * 
 	 * @author huberste
-	 * @param ali the alignment
+	 * @param ali
+	 *            the alignment
 	 * @return an int[4] with result[0] the number of the first aligned position
-	 * in the 1st sequence, result[1] the number of the last aligned position 
-	 * in the 1st sequence, result[2] the number of the first aligned position
-	 * in the 2nd sequence and result[3] the number of the last aligned position
-	 * in the 2nd sequence.
+	 *         in the 1st sequence, result[1] the number of the last aligned
+	 *         position in the 1st sequence, result[2] the number of the first
+	 *         aligned position in the 2nd sequence and result[3] the number of
+	 *         the last aligned position in the 2nd sequence.
 	 */
 	public static int[] calculateAlignedPositions(Alignment ali) {
 		int[] result = new int[4];
-		
+
 		int[][] map = ali.calcMap();
-		
+
 		for (int i = 0; i < map[0].length; i++) {
-			if ( map[0][i] >= 0 ) {
+			if (map[0][i] >= 0) {
 				result[0] = i;
 				break;
 			}
 		}
-		
-		for (int i = map[0].length-1; i >=0; i++) {
-			if ( map[0][i] >= 0 ) {
+
+		for (int i = map[0].length - 1; i >= 0; i++) {
+			if (map[0][i] >= 0) {
 				result[1] = i;
 				break;
 			}
 		}
-		
+
 		for (int i = 0; i < map[1].length; i++) {
-			if ( map[1][i] >= 0 ) {
+			if (map[1][i] >= 0) {
 				result[2] = i;
 				break;
 			}
 		}
-		
-		for (int i = map[1].length-1; i >=0; i++) {
-			if ( map[1][i] >= 0 ) {
+
+		for (int i = map[1].length - 1; i >= 0; i++) {
+			if (map[1][i] >= 0) {
 				result[3] = i;
 				break;
 			}
 		}
-		
+
 		return result;
 	}
 

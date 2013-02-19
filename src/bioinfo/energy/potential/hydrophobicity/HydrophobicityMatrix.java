@@ -25,14 +25,14 @@ import java.util.Locale;
 
 /**
  * @author huberste
- * @lastchange 2013-02-17
+ * @lastchange 2013-02-18
  */
 public class HydrophobicityMatrix {
 
 	// TODO fill matrix with values!
-	private final static double[][] STANDARD_MATRIX = {};
+	private final static double[][] STANDARD_MATRIX = null;
 	
-	private final double[][] matrix;
+	private double[][] matrix;
 
 	/**
 	 * constructs a HydrophobicityMatrix
@@ -55,7 +55,7 @@ public class HydrophobicityMatrix {
 	 * @param arg
 	 */
 	public HydrophobicityMatrix(HydrophobicityMatrix arg) {
-		this(arg.matrix);
+		this(arg.getMatrix());
 	}
 	
 	/**
@@ -73,11 +73,11 @@ public class HydrophobicityMatrix {
 	 * @return the value from the matrix
 	 */
 	public double getValue(int aa, int bucket) {
-		return matrix[aa][bucket];
+		return getMatrix()[aa][bucket];
 	}
 	
 	public int getBuckets() {
-		return matrix[0].length;
+		return getMatrix()[0].length;
 	}
 	
 	/**
@@ -101,9 +101,9 @@ public class HydrophobicityMatrix {
 				bw.write(x);
 				for (int j = 0; j < w[i].length; j++) {
 					if (Double.isNaN(w[i][j])) {
-						bw.write("\tNAN");
+						bw.write("\tNaN");
 					} else if(Double.isInfinite(w[i][j])) {
-						bw.write("\tNAN");
+						bw.write("\tNaN");
 					} else { 
 						bw.write("\t" + df.format(w[i][j]));
 					}
@@ -156,7 +156,9 @@ public class HydrophobicityMatrix {
 				String[] temp = line.split("\t");
 				result[lines] = new double[temp.length-1];
 				for (int i = 0; i < temp.length-1; i++) {
-					if (temp[i+1].startsWith("NAN")) {
+					if (temp[i+1].startsWith("NaN")) {
+						result[lines][i] = Double.NEGATIVE_INFINITY;
+					} else if (temp[i+1].startsWith("NAN")) {
 						result[lines][i] = Double.NEGATIVE_INFINITY;
 					} else {
 						result[lines][i] = Double.parseDouble(temp[i+1]);
@@ -180,6 +182,13 @@ public class HydrophobicityMatrix {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * @return the matrix
+	 */
+	public double[][] getMatrix() {
+		return matrix;
 	}
 	
 }

@@ -11,11 +11,12 @@ package bioinfo.proteins;
 import java.io.Serializable;
 import java.util.List;
 
+import bioinfo.Sequence;
 import bioinfo.alignment.Alignable;
 
 /**
  * @author gobi_4
- * @lastchange 2013-02-16
+ * @lastchange 2013-02-18
  */
 public class PDBEntry implements Alignable, Serializable {
 
@@ -24,7 +25,7 @@ public class PDBEntry implements Alignable, Serializable {
 	 * editing this file
 	 */
 	private static final long serialVersionUID = 2L;
-	
+
 	private final String id;
 	private final char chainID;
 	private final int chainIDNum;
@@ -32,71 +33,100 @@ public class PDBEntry implements Alignable, Serializable {
 	private int length;
 
 	/**
-	 * Constructor for an a PDBEntry with an Array of AminoAcids
+	 * stanard constructor for PDBEntry XXXXA00
 	 * 
-	 * @param arg1
-	 *            the id of the PDBEntry
-	 * @param arg2
+	 * @param id
+	 *            the ID of the PDB Entry (XXXX)
+	 * @param chainID
+	 *            the chain ID (A)
+	 * @param chainIDNum
+	 *            the number of the chain (00)
+	 * @param aminoAcids
 	 *            Array of AminoAcids
 	 */
-	public PDBEntry(String arg1, AminoAcid[] arg2) {
-		if (arg1.length() == 4) {
-			this.id = arg1;
-			this.chainID = 'A';
-			this.chainIDNum = 0;
-		} else {
-			this.id = arg1.substring(0, 4);
-			this.chainID = arg1.charAt(4);
-			this.chainIDNum = Integer.valueOf(arg1.substring(5, 7));
-		}
-		this.aminoAcids = arg2;
-		this.length = arg2.length;
-	}
-	
-	/**
-	 * Constructor for an the PDBEntry without any AminoAcids
-	 * 
-	 * @param arg1
-	 *            the id of the PDBEntry
-	 */
-	public PDBEntry(String arg1) {
-		this(arg1, new AminoAcid[0]);
-	}
-	
-	/**
-	 * Constructor for an the PDBEntry with a List of AminoAcids
-	 * 
-	 * @param arg1
-	 *            the id of the PDBEntry
-	 * @param arg2
-	 *            Array of AminoAcids
-	 */
-	public PDBEntry(String arg1, List<AminoAcid> arg2) {
-		this(arg1, arg2.toArray(new AminoAcid[0]));
+	public PDBEntry(String id, char chainID, int chainIDNum,
+			AminoAcid[] aminoAcids) {
+		this.id = id;
+		this.chainID = chainID;
+		this.chainIDNum = chainIDNum;
+		this.setAminoAcids(aminoAcids);
 	}
 
 	/**
-	 * Constructor for an an PDBEntry
+	 * Constructor for an a PDBEntry with an Array of AminoAcids
 	 * 
-	 * @param arg1
-	 *            the id of the PDBEntry
-	 * @param arg2
+	 * @param id
+	 *            the id of the PDBEntry (XXXX or XXXXA00)
+	 * @param aminoAcids
 	 *            Array of AminoAcids
-	 * @param real
-	 *            ?????
 	 */
-	public PDBEntry(String arg1, List<AminoAcid> arg2, boolean real) {
-		if (arg1.length() == 4) {
-			this.id = arg1;
+	public PDBEntry(String id, AminoAcid[] aminoAcids) {
+		if (id.length() == 4) {
+			this.id = id;
 			this.chainID = 'A';
 			this.chainIDNum = 0;
 		} else {
-			this.id = arg1.substring(0, 4);
-			this.chainID = arg1.charAt(4);
-			this.chainIDNum = Integer.valueOf(arg1.substring(5));
-			this.aminoAcids = arg2.toArray(new AminoAcid[0]);
-			this.length = arg2.size();
+			this.id = id.substring(0, 4);
+			this.chainID = id.charAt(4);
+			this.chainIDNum = Integer.valueOf(id.substring(5, 7));
 		}
+		this.setAminoAcids(aminoAcids);
+	}
+
+	/**
+	 * Constructor for an the PDBEntry without any AminoAcids
+	 * 
+	 * @param id
+	 *            the id of the PDBEntry (XXXX or XXXXA00)
+	 */
+	public PDBEntry(String id) {
+		this(id, new AminoAcid[0]);
+	}
+
+	/**
+	 * Constructor for an the PDBEntry with a List of AminoAcids
+	 * 
+	 * @param id
+	 *            the id of the PDBEntry (XXXX or XXXXA00)
+	 * @param aminoAcidList
+	 *            List of AminoAcids
+	 */
+	public PDBEntry(String id, List<AminoAcid> aminoAcidList) {
+		this(id, aminoAcidList.toArray(new AminoAcid[0]));
+	}
+
+	/**
+	 * Constructor for an an PDBEntry. don't know what this is good for. Doesn't
+	 * even seem to be needed.
+	 * 
+	 * @param id
+	 *            the id of the PDBEntry (XXXX or XXXXA00)
+	 * @param aminoAcidList
+	 *            List of AminoAcids
+	 * @param real
+	 *            ?????
+	 */
+	public PDBEntry(String id, List<AminoAcid> aminoAcidList, boolean real) {
+		if (id.length() == 4) {
+			this.id = id;
+			this.chainID = 'A';
+			this.chainIDNum = 0;
+		} else {
+			this.id = id.substring(0, 4);
+			this.chainID = id.charAt(4);
+			this.chainIDNum = Integer.valueOf(id.substring(5));
+			this.setAminoAcids(aminoAcidList.toArray(new AminoAcid[0]));
+		}
+	}
+
+	/**
+	 * Constructor for a new PDBEntry which has the same Values as the given one
+	 * 
+	 * @param arg
+	 *            PDBEntry with the Parameters to copy from
+	 */
+	public PDBEntry(PDBEntry arg) {
+		this(arg.id, arg.chainID, arg.chainIDNum, arg.aminoAcids);
 	}
 
 	/**
@@ -120,6 +150,10 @@ public class PDBEntry implements Alignable, Serializable {
 	public int getChainIDNum() {
 		return chainIDNum;
 	}
+	
+	public String getLongID() {
+		return this.id + this.chainID + this.getChainIDNumAsString();
+	}
 
 	/**
 	 * Adds an AminoAcid to the entry. Usage discouraged because very slow.
@@ -131,45 +165,70 @@ public class PDBEntry implements Alignable, Serializable {
 	public void addAminoAcid(AminoAcid arg) {
 		AminoAcid[] result = new AminoAcid[length];
 		for (int i = 0; i < length; i++) {
-			result[i] = aminoAcids[i];
+			result[i] = getAminoAcids()[i];
 		}
 		result[length] = arg;
-		aminoAcids = result;
+		setAminoAcids(result);
 		length++;
 	}
 
 	/**
-	 * returns the n-th AminoAcid
 	 * @param n
 	 * @return the n-th AminoAcid
+	 * @throws NullPointerException
+	 *             if n is out of bounds
 	 */
 	public AminoAcid getAminoAcid(int n) {
-		return aminoAcids[n];
+		if (n >= aminoAcids.length) {
+			throw new IndexOutOfBoundsException(
+					"This AminoAcid doesn't exist in this PDBEntry!");
+		}
+		return getAminoAcids()[n];
 	}
 
+	/**
+	 * @return number of AminoAcids in this PDBEntry
+	 */
 	@Override
 	public int length() {
-		return aminoAcids.length;
+		return getAminoAcids().length;
 	}
 
+	/**
+	 * @param n
+	 *            integer defining position of wanted AminoAcid in PDB Entry
+	 * @return the n-th AminoAcid
+	 */
 	@Override
-	public Object getComp(int n) {
-		return getAminoAcid(n);
+	public AminoAcid getComp(int n) {
+		if (n >= aminoAcids.length) {
+			throw new IndexOutOfBoundsException(
+					"This AminoAcid doesn't exist in this PDBEntry!");
+		}
+		return getAminoAcids()[n];
 	}
 
 	/**
 	 * returns the AmioAcids as a (human readable) String like in a PDB file
+	 * 
 	 * @return all AminoAcids as a (human readable) String
 	 */
 	public String getAtomSectionAsString() {
 		int lineCounter = 0;
 		String out = "";
-		for (int i = 0; i != aminoAcids.length; i++) {
-			for (int j = 0; j != aminoAcids[i].getAtomNumber(); j++) {
+		for (int i = 0; i != getAminoAcids().length; i++) {
+			for (int j = 0; j != getAminoAcids()[i].getAtomNumber(); j++) {
 				// TODO Some Entries have no 7-letter ID (1TIMA00) but four
 				// letters (1TIM)
 				// ==> make some Method for IDs without chainID!
-				out += aminoAcids[i].getAtom(j).toString(lineCounter++, i, aminoAcids[i].getName().getThreeLetterCode(), chainID).trim() + "\n";
+				out += getAminoAcids()[i]
+						.getAtom(j)
+						.toString(
+								lineCounter++,
+								i,
+								getAminoAcids()[i].getName()
+										.getThreeLetterCode(), chainID).trim()
+						+ "\n";
 			}
 		}
 		return out;
@@ -182,10 +241,10 @@ public class PDBEntry implements Alignable, Serializable {
 	 */
 	public Atom[] getBackboneAtoms() {
 		AminoAcid tmp;
-		Atom[] backbone = new Atom[aminoAcids.length * 4];
+		Atom[] backbone = new Atom[getAminoAcids().length * 4];
 		Atom[] temp;
-		for (int i = 0; i != aminoAcids.length; i++) {
-			tmp = aminoAcids[i];
+		for (int i = 0; i != getAminoAcids().length; i++) {
+			tmp = getAminoAcids()[i];
 			temp = tmp.getBackboneAtoms();
 			for (int j = 0; j != 4; j++) {
 				backbone[i * 4 + j] = temp[j];
@@ -196,13 +255,53 @@ public class PDBEntry implements Alignable, Serializable {
 
 	/**
 	 * returns the sequence as a String
+	 * 
 	 * @return the amino acid sequence as a String
 	 */
-	public String getSequence() {
+	public String getSequenceAsString() {
 		StringBuilder seq = new StringBuilder();
-		for(int i = 0; i < length; i++) {
-			seq.append(aminoAcids[i].getName());
+		for (int i = 0; i < length; i++) {
+			seq.append(getAminoAcids()[i].getName());
 		}
 		return seq.toString();
 	}
+
+	/**
+	 * @return the aminoAcids
+	 */
+	public AminoAcid[] getAminoAcids() {
+		return aminoAcids;
+	}
+
+	/**
+	 * sets aminoAcid and updates this.length
+	 * 
+	 * @param aminoAcids
+	 *            the aminoAcids to set
+	 */
+	public void setAminoAcids(AminoAcid[] aminoAcids) {
+		this.aminoAcids = aminoAcids;
+		this.length = this.aminoAcids.length;
+	}
+
+	/**
+	 * 
+	 * @return the Sequence that is depicted by this PDBEntry
+	 */
+	public Sequence getSequence() {
+		return new Sequence(getLongID(), getSequenceAsString());
+	}
+
+	/**
+	 * 
+	 * @returnchainIDNum as two-lengthed String
+	 */
+	private String getChainIDNumAsString() {
+		String result = Integer.toString(chainIDNum);
+		if (chainIDNum < 10) {
+			result = "0" + result;
+		}
+		return result;
+	}
+
 }
