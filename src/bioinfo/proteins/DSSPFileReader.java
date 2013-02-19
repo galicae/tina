@@ -326,7 +326,7 @@ public class DSSPFileReader {
 	 * Reads an DSSPEntry from a file without the DSSPFileReader around
 	 * 
 	 * @param filename
-	 *            (format: XXXXA00.dssp)
+	 *            (format: xxxxA00.dssp)
 	 * @return the DSSPEntry
 	 */
 	public static DSSPEntry readDSSPFile(String filename) {

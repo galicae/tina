@@ -16,6 +16,7 @@ import java.util.Set;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
+import bioinfo.energy.potential.SipplContactPotential;
 import bioinfo.energy.potential.hydrophobicity.HydrophobicityMatrix;
 import bioinfo.energy.potential.voronoi.VoroPPWrap;
 import bioinfo.energy.potential.voronoi.VoroPrepType;
@@ -112,6 +113,11 @@ public class RDPScoring implements Scoring {
 	private CCPMatrix ccpMatrix;
 
 	/**
+	 * path to the vpot file (PairPotential File)
+	 */
+	private SipplContactPotential pcp;
+
+	/**
 	 * structure of the template
 	 */
 	private PDBEntry templateStructure;
@@ -187,28 +193,30 @@ public class RDPScoring implements Scoring {
 	public RDPScoring(double gamma, double delta, double epsilon, double zeta,
 			double[][] mutationMatrix,
 			HydrophobicityMatrix hydrophobicityMatrix, CCPMatrix ccpMatrix,
-			PDBEntry templatestructure, String vorobin, double gridExtend,
-			double gridDensity, double gridClash, double minContact) {
+			SipplContactPotential sippl, PDBEntry templatestructure,
+			String vorobin, double gridExtend, double gridDensity,
+			double gridClash, double minContact) {
 		this.gamma = gamma;
 		this.delta = delta;
 		this.epsilon = epsilon;
 		this.zeta = zeta;
 		this.mutationMatrix = mutationMatrix;
 		this.hydrophobicityMatrix = hydrophobicityMatrix;
+		this.pcp = sippl;
 		this.ccpMatrix = ccpMatrix;
 		this.vorobin = vorobin;
 		setVoroVars(gridExtend, gridDensity, gridClash, minContact);
 	}
 
-	/**
-	 * construcs a RDPScoring object with standard parameters
-	 */
-	public RDPScoring() {
-		this(GAMMA, DELTA, EPSILON, ZETA,
-				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX,
-				new HydrophobicityMatrix(), null, null, VOROPATH, GRID_EXTEND,
-				GRID_DENSITY, GRID_CLASH, MIN_CONTACT);
-	}
+	// /**
+	// * construcs a RDPScoring object with standard parameters
+	// */
+	// public RDPScoring() {
+	// this(GAMMA, DELTA, EPSILON, ZETA,
+	// bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX,
+	// new HydrophobicityMatrix(), null, null, null, VOROPATH, GRID_EXTEND,
+	// GRID_DENSITY, GRID_CLASH, MIN_CONTACT);
+	// }
 
 	/**
 	 * constructs a RDPScoring object with the same parameters as the given one
@@ -218,8 +226,9 @@ public class RDPScoring implements Scoring {
 	 */
 	public RDPScoring(RDPScoring arg) {
 		this(arg.gamma, arg.delta, arg.epsilon, arg.zeta, arg.mutationMatrix,
-				arg.hydrophobicityMatrix, arg.ccpMatrix, arg.templateStructure, arg.vorobin,
-				arg.gridExtend, arg.gridDensity, arg.gridClash, arg.minContact);
+				arg.hydrophobicityMatrix, arg.ccpMatrix, arg.pcp,
+				arg.templateStructure, arg.vorobin, arg.gridExtend,
+				arg.gridDensity, arg.gridClash, arg.minContact);
 	}
 
 	/**
@@ -352,7 +361,7 @@ public class RDPScoring implements Scoring {
 	/**
 	 * "(...) contact-capacity-potential phiC (...)" (From: Protein Threading by
 	 * Recursive Dynamic Programming. JMB 290, 757-779) <br />
-	 * Two AminoAcids are in contact if their C alpah atoms are less than 7 Å
+	 * Two AminoAcids are in contact if their C alpha atoms are less than 7 Å
 	 * distant
 	 * 
 	 * @param f
@@ -369,6 +378,8 @@ public class RDPScoring implements Scoring {
 
 		char[][] rows = f.getRows();
 
+		// Count contacts
+		// TODO: This needs to be done only one time for each template!
 		// first dimension: local / long range
 		// second dimension: position in structure
 		int[][] contacts = new int[2][b.length()];
@@ -379,22 +390,22 @@ public class RDPScoring implements Scoring {
 			for (int partnerb = partnera + 1; partnerb < b.length(); partnerb++) {
 				if (calcDistance(b.getAminoAcid(partnera),
 						b.getAminoAcid(partnerb)) < 7.0) {
-					if (Math.abs(partnera - partnerb) < 5) {
+					if (Math.abs(partnera - partnerb) < 5) { // local
 						contacts[0][partnera]++;
 						contacts[0][partnerb]++;
-					} else {
+					} else { // longRange
 						contacts[1][partnera]++;
 						contacts[1][partnerb]++;
 					}
 				}
 			}
-
 		}
 
-		// TODO read SecStruct from DSSP File
-		DSSPEntry dssp = DSSPFileReader.readDSSPFile(DSSPFileReader.DSSP_FOLDER
-				+ f.getComponent(0).getID() + ".dssp");
-		// System.out.println(dssp.asTable());
+		// read SecStruct from DSSP File
+		String dsspFileName = DSSPFileReader.DSSP_FOLDER
+				+ f.getComponent(0).getID().substring(0, 4).toLowerCase()
+				+ f.getComponent(0).getID().substring(4, 7) + ".dssp";
+		DSSPEntry dssp = DSSPFileReader.readDSSPFile(dsspFileName);
 		SecStructEight[] ss = dssp.getSecondaryStructure();
 
 		int temppos = 0; // position in template
@@ -408,11 +419,6 @@ public class RDPScoring implements Scoring {
 				temppos++;
 			} else { // if match
 				// sum up score
-				// debugging
-//				System.out.println("targpos: " + targpos);
-//				System.out.println("temppos: " + temppos);
-//				System.out.println("contacts[0][temppos]: "
-//						+ contacts[0][temppos]);
 				int tmp = contacts[0][temppos];
 				result += ccpMatrix.getValue(a.getComp(targpos),
 						ss[temppos].getThreeClassAnalogon(), 0, tmp);
@@ -488,8 +494,10 @@ public class RDPScoring implements Scoring {
 	 * @return the calculated pair interaction based score
 	 */
 	private double phiP(SequenceAlignment f, Sequence a, PDBEntry b) {
-		// TODO use SiplContactPotential from bioinfo.energy.potentials
-		return 0.0;
+		// use SipplContactPotential from bioinfo.energy.potential
+		PDBEntry model = modifyModel(f, a, b);
+		return pcp.scoreModel(model);
+		// return 0.0;
 	}
 
 	/**
@@ -607,6 +615,47 @@ public class RDPScoring implements Scoring {
 			}
 		}
 		return outer / (outer + inner);
+	}
+
+	/**
+	 * modifies the model so it can be scored by phiP
+	 * 
+	 * @param f
+	 *            SequenceAlignment (template, target)
+	 * @param a
+	 *            target Sequence
+	 * @param b
+	 *            template structure
+	 * @return
+	 */
+	private static PDBEntry modifyModel(SequenceAlignment f, Sequence a,
+			PDBEntry b) {
+
+		char[][] rows = f.getRows();
+		AminoAcid[] aminoAcids = new AminoAcid[b.length()];
+
+		int temppos = 0;
+		int targpos = 0;
+		for (int pos = 0; pos < rows[0].length; pos++) {
+
+			if (rows[0][pos] == '-') { // if insertion
+				targpos++;
+			} else if ((rows[1][pos] == '-')) { // if deletion
+				aminoAcids[temppos] = b.getAminoAcid(temppos);
+				temppos++;
+			} else { // if match
+				aminoAcids[temppos] = new AminoAcid(a.getComp(targpos), b
+						.getAminoAcid(temppos).getResIndex(), b.getAminoAcid(
+						temppos).getAtoms());
+				temppos++;
+				targpos++;
+			}
+		}
+
+		PDBEntry result = new PDBEntry(b.getID(), b.getChainID(),
+				b.getChainIDNum(), aminoAcids);
+
+		return result;
 	}
 
 }
