@@ -178,7 +178,7 @@ public class CBetaVectorCalculator {
 
 	}
 	
-	private static double[][] calcRotationMatrix(double[] cross, double phi) {
+	public static double[][] calcRotationMatrix(double[] cross, double phi) {
 		double[][] result = {
 			{cross[0] * cross[0] * (1-Math.cos(phi)) +            Math.cos(phi),
 			 cross[1] * cross[0] * (1-Math.cos(phi)) + cross[2] * Math.sin(phi),
