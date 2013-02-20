@@ -36,8 +36,8 @@ public class PDBSequenceShuffle {
 		for(int i = 1; i != tmp.length; i++){
 			bgDistributionBorders[i] = bgDistributionBorders[i-1]+tmp[i];
 		}
-		if(bgDistributionBorders[bgDistributionBorders.length] != 1.0d){
-			bgDistributionBorders[bgDistributionBorders.length] = 1.0d;
+		if(bgDistributionBorders[bgDistributionBorders.length-1] != 1.0d){
+			bgDistributionBorders[bgDistributionBorders.length-1] = 1.0d;
 		}
 	}
 	

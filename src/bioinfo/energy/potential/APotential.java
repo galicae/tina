@@ -10,15 +10,27 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import bioinfo.proteins.PDBEntry;
+
 public abstract class APotential implements IEnergy{
 	
+	/**
+	 * potential with PotentialDimension datastructure containing all data
+	 * needed for accessing the right energy values
+	 */
 	PotentialDimension<Double> potential;
 	
+	/**
+	 * initializes potential datastructure with given size
+	 */
 	@Override
 	public void initPotential(int[] size) {
 		potential = new PotentialDimension<Double>(size, 0.0);
 	}
 	
+	/**
+	 * writes potential to file
+	 */
 	@Override
 	public void writeToFile(String filename) {
 		HashMap<Integer,Integer> size = potential.getSize();
@@ -50,6 +62,9 @@ public abstract class APotential implements IEnergy{
 		}
 	}
 	
+	/**
+	 * reads potential from file
+	 */
 	@SuppressWarnings("unused")
 	@Override
 	public void readFromFile(String filename) {
@@ -150,5 +165,4 @@ public abstract class APotential implements IEnergy{
 			e.printStackTrace();
 		}
 	}
-
 }
