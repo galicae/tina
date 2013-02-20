@@ -124,7 +124,7 @@ public class LocalSequenceGotoh extends Gotoh {
 	 * calculates matrices using given scoring function and gap penalty
 	 * 
 	 */
-	private void calculateMatrices() {
+	protected void calculateMatrices() {
 		int[][] tempScore = new int[sequence1.length()][sequence2.length()];
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
@@ -152,7 +152,7 @@ public class LocalSequenceGotoh extends Gotoh {
 	 * 
 	 * @return Alignment of the two given Alignables
 	 */
-	private Alignment traceback() {
+	protected Alignment traceback() {
 		
 		int max = INIT_VAL;
 		int x = 0;
@@ -232,7 +232,9 @@ public class LocalSequenceGotoh extends Gotoh {
 	}
 
 	/**
-	 * @param two
+	 * @param x
+	 * 
+	 * @param x
 	 *            components of Alignable implementing equals
 	 * @return score between two components of Alignable
 	 */
@@ -252,4 +254,5 @@ public class LocalSequenceGotoh extends Gotoh {
 		}
 		return out;
 	}
+
 }

@@ -9,6 +9,7 @@ package test;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
+import bioinfo.alignment.Threading;
 import bioinfo.alignment.matrices.QuasarMatrix;
 import bioinfo.energy.potential.SipplContactPotential;
 import bioinfo.energy.potential.hydrophobicity.HydrophobicityMatrix;
@@ -66,9 +67,17 @@ public class HubeRDPTest {
 
 		// construct rdp tree
 		System.out.print("Constructing RDP Tree structure...");
-		RDPProblem root = new RDPProblem(template, templateStructure, target,
-				targetStructure, ali, 0, template.length() - 1, 0,
-				target.length() - 1);
+		int[][] rows = new int[2][templateStructure.length() + target.length()];
+		for(int i = 0; i < template.length(); i++) {
+			rows[0][i] = i;
+			rows[1][i] = -1;
+		}
+		for(int i = 0; i < target.length(); i++) {
+			rows[0][templateStructure.length()+i] = -1;
+			rows[1][templateStructure.length()+i] = i;
+		}
+		
+		RDPProblem root = new RDPProblem(new Threading(templateStructure, target, rows, 0), 0, rows[0].length-1);
 		RDPSolutionTree t = new RDPSolutionTree(root);
 		System.out.println(" done!");
 
@@ -81,10 +90,13 @@ public class HubeRDPTest {
 		HubeRDP rdp = new HubeRDP();
 
 		// add oracles
-		rdp.addOracle(new TinyOracle());
-		// rdp.addOracle(new ManualOracle());
+//		rdp.addOracle(new ManualOracle());
+//		rdp.addOracle(new TinyOracle());
+		rdp.addOracle(new RDPOracle());
 
 		// set scoring
+//		rdp.setScoring(new ManualScoring());
+//		rdp.setScoring(new SimpleScoring());
 		SipplContactPotential sippl = new SipplContactPotential();
 		sippl.readFromVPOTFile(vpotfile);
 		rdp.setScoring(new RDPScoring(RDPScoring.GAMMA, RDPScoring.DELTA,
@@ -94,8 +106,6 @@ public class HubeRDPTest {
 				templateStructure, RDPScoring.VOROPATH, RDPScoring.GRID_EXTEND,
 				RDPScoring.GRID_DENSITY, RDPScoring.GRID_CLASH,
 				RDPScoring.MIN_CONTACT));
-		// rdp.setScoring(new SimpleScoring());
-		// rdp.setScoring(new ManualScoring());
 
 		// execute rdp algorithm
 		System.out.println("HubeRDP will now be executed!");

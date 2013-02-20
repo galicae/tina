@@ -53,7 +53,7 @@ public class Threading implements Alignment {
 	 * aligned to that value of the other Alignable.
 	 */
 	private int[][] map;
-	
+
 	/**
 	 * positionsInAlignables[i][pos] is the position of the (pos-th character in
 	 * the rows) in the i-th Alignable
@@ -65,8 +65,16 @@ public class Threading implements Alignment {
 	 */
 	private int length;
 
+	/**
+	 * Standard constructor for a new Threading
+	 * 
+	 * @param structure
+	 * @param sequence
+	 * @param rows
+	 * @param score
+	 */
 	public Threading(PDBEntry structure, Sequence sequence, int[][] rows,
-			double score) throws Exception {
+			double score) {
 		this.structure = structure;
 		this.sequence = sequence;
 		this.setRows(rows);
@@ -79,14 +87,14 @@ public class Threading implements Alignment {
 	 * @param rows
 	 * @throws Exception
 	 */
-	private void setRows(int[][] rows) throws Exception {
+	private void setRows(int[][] rows) {
 		// Error Handling
-		if (rows.length != 2) {
-			throw new Exception("rows must be of length 2!");
-		}
-		if (rows[0].length != rows[1].length) {
-			throw new Exception("rows[0] and rows[1] must be the same length!");
-		}
+		// if (rows.length != 2) {
+		// throw new Exception("rows must be of length 2!");
+		// }
+		// if (rows[0].length != rows[1].length) {
+		// throw new Exception("rows[0] and rows[1] must be the same length!");
+		// }
 		// set rows
 		this.rows = rows;
 		// update length
@@ -95,7 +103,7 @@ public class Threading implements Alignment {
 		this.map = calcMap();
 		// update positionsInAlignables
 		this.positionsInAlignables = calcPositions();
-		
+
 	}
 
 	/**
@@ -149,9 +157,12 @@ public class Threading implements Alignment {
 		return result;
 	}
 
-	
+	/**
+	 * 
+	 * @return
+	 */
 	public int[][] calcPositions() {
-		int[][]result = new int[2][rows[0].length];
+		int[][] result = new int[2][rows[0].length];
 		int structpos = 0;
 		int seqpos = 0;
 		for (int i = 0; i < rows[0].length; i++) {
@@ -169,11 +180,11 @@ public class Threading implements Alignment {
 				structpos++;
 				seqpos++;
 			}
-				
+
 		}
 		return result;
 	}
-	
+
 	/**
 	 * @return the length of the Threading
 	 */
@@ -187,7 +198,6 @@ public class Threading implements Alignment {
 	 */
 	@Override
 	public double getScore() {
-		// TODO Auto-generated method stub
 		return score;
 	}
 
@@ -208,21 +218,51 @@ public class Threading implements Alignment {
 		return result;
 	}
 
+	public int[][] getRows() {
+		return rows;
+	}
+
 	/**
 	 * 
 	 * @return the rows as a String representation
 	 */
 	public String[] getRowsAsString() {
 		String[] result = new String[2];
+		int temppos = 0;
+		int targpos = 0;
 		for (int i = 0; i < rows[0].length; i++) {
 			if (rows[0][i] != -1) {
-				result[0] += structure.getComp(i).getName().getOneLetterCode();
+				result[0] += structure.getComp(temppos).getName()
+						.getOneLetterCode();
+				temppos++;
 			} else
 				result[0] += '-';
 			if (rows[1][i] != -1) {
-				result[1] += sequence.getComp(i).toString();
+				result[1] += sequence.getComp(targpos).toString();
+				targpos++;
 			} else
 				result[1] += '-';
+		}
+
+		return result;
+	}
+
+	/**
+	 * 
+	 * @return the rows as a char Array representation
+	 */
+	public char[][] getRowsAsCharArray() {
+		char[][] result = new char[2][rows[0].length];
+		for (int i = 0; i < rows[0].length; i++) {
+			if (rows[0][i] != -1) {
+				result[0][i] = structure.getComp(i).getName()
+						.getOneLetterCode().charAt(0);
+			} else
+				result[0][i] = '-';
+			if (rows[1][i] != -1) {
+				result[1][i] = sequence.getComp(i);
+			} else
+				result[1][i] = '-';
 		}
 
 		return result;
@@ -261,14 +301,6 @@ public class Threading implements Alignment {
 	}
 
 	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-	
-	/**
 	 * 
 	 * @param n
 	 * @return the position od the n-th Residue in the Rows in the Structure
@@ -276,7 +308,7 @@ public class Threading implements Alignment {
 	public int getPositionInStructure(int n) {
 		return positionsInAlignables[0][n];
 	}
-	
+
 	/**
 	 * 
 	 * @param n
@@ -286,6 +318,20 @@ public class Threading implements Alignment {
 		return positionsInAlignables[1][n];
 	}
 
+	public Sequence getSequence() {
+		return sequence;
+	}
+
+	public PDBEntry getStructure() {
+		return structure;
+	}
+
+	public SequenceAlignment asSequenceAlignment() {
+		SequenceAlignment result = new SequenceAlignment(
+				structure.getSequence(), sequence, getRowsAsCharArray(), score);
+
+		return result;
+	}
 }
 
 /******************************************************************************

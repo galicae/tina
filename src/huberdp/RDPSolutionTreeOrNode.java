@@ -35,7 +35,7 @@ public class RDPSolutionTreeOrNode
 	public RDPSolutionTreeOrNode(RDPSolutionTreeAndNode parent, RDPProblem problem, Scoring scoring) {
 		super(parent);
 		this.problem=problem;
-		this.setScore(scoring.score(this));
+		this.setScore(scoring.score(problem.getThreading()));
 	}
 	
 	/**
@@ -77,9 +77,9 @@ public class RDPSolutionTreeOrNode
 	public String toString() {
 		String result = "RDPSolutionTreeOrNode. ";
 
-		if (this.problem.alignment != null) {
+		if (this.problem.getThreading() != null) {
 			result += "Partial alignment up to now:\n"+
-					this.problem.alignment.toStringVerbose()+
+					this.problem.getThreading().toStringVerbose()+
 					"\n";
 		} 
 		result += "SP:\n" +this.problem.toString();

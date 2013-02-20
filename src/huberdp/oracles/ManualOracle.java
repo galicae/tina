@@ -11,28 +11,46 @@ package huberdp.oracles;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 
 import huberdp.Oracle;
+import huberdp.PartialAlignment;
+import huberdp.RDPProblem;
 
 /**
  * ManualOracle is an Oracle for the HubeRDP which features manual input.
+ * 
  * @author huberste
  * @lastchange 2013-02-14
  */
-public class ManualOracle extends Oracle {
+public class ManualOracle implements Oracle {
 
-	/**
-	 * this is the _real_ alignment step.
-	 * @param templateSequence
-	 * @param targetSequence
-	 * @return the alignment of the two given sequences
-	 */
 	@Override
-	protected SequenceAlignment align(Sequence templateSequence, Sequence targetSequence) {
-		SequenceAlignment result = null;
+	public LinkedList<PartialAlignment> findSimiliarSegments(
+			RDPProblem problem, int m) {
+		
+		// allocate result
+		LinkedList<PartialAlignment> results = new LinkedList<PartialAlignment>();
+
+		// set Sequences for Oracle
+		String[] rows = problem.getThreading().getRowsAsString();
+		String template = "";
+		String target = "";
+		for (int i = problem.getProblemStart(); i < problem.getProblemEnd(); i++) {
+			if (rows[0].charAt(i) != '-') {
+				template += rows[0].charAt(i);
+			}
+			if (rows[1].charAt(i) != '-') {
+				target += rows[1].charAt(i);
+			}
+		}
+		
+		Sequence templateSequence = new Sequence(problem.getThreading().getStructure().getLongID(), template);
+		Sequence   targetSequence = new Sequence(problem.getThreading().getSequence().getID(), target);
+		
 		System.out.println("Please align the following Sequences:");
 		System.out.println("Press ENTER without any text to break aligning here.");
 		System.out.println("template: " + templateSequence.getSequenceAsString());
@@ -59,23 +77,17 @@ public class ManualOracle extends Oracle {
 		if (templateInput.equals("")) {
 //			result = null; // already happened in line 33
 			System.out.println("No further aligning is done.");
-		} else {		
-			result = new SequenceAlignment(
-					templateSequence,
-					targetSequence,
-					templateInput,
-					targetInput,
-					score);
+		} else {
+			results.add(new PartialAlignment(problem, new SequenceAlignment(
+					templateSequence, targetSequence, templateInput,
+					targetInput, score)));
 		}
-			
-		return result;
+		
+		return null;
 	}
-	
-
 }
 
 /******************************************************************************
- * "A question that sometimes drives me hazy:                                 *
- *  Am I or are the others crazy?"                                            *
- *     - Albert Einstein (1879 - 1955)                                        *
+ * "A question that sometimes drives me hazy: * Am I or are the others crazy?" *
+ * - Albert Einstein (1879 - 1955) *
  ******************************************************************************/

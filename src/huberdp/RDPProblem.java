@@ -8,100 +8,95 @@
  ******************************************************************************/
 package huberdp;
 
-import bioinfo.Sequence;
-import bioinfo.alignment.SequenceAlignment;
-import bioinfo.proteins.PDBEntry;
+import bioinfo.alignment.Threading;
 
 /**
  * RDPProblem is an implementation of an (sub-)problem defined by an OR node.
+ * 
  * @author huberste
  * @lastchange 2013-02-14
  */
 public class RDPProblem {
-	
+
 	/**
-	 * Template
+	 * current Threading
 	 */
-	public Sequence templateSequence;
-	public PDBEntry templateStructure;
-	
+	private Threading threading;
 	/**
-	 * Target
+	 * Start of the currend (sub-)problem, inclusive
 	 */
-	public Sequence targetSequence;
-	public PDBEntry targetStructure;
-	
+	private int problemStart;
 	/**
-	 * SequenceAlignment so far
+	 * End of the current (sub-)problem, inclusive
 	 */
-	public SequenceAlignment alignment;
-	
-	/**
-	 * start and end of the given (sub-)problem.
-	 */
-	public int templateStart;
-	public int templateEnd;
-	public int targetStart;
-	public int targetEnd;
-	
+	private int problemEnd;
+
 	/**
 	 * Constructs an RDPProblem
-	 * @param templateSequence
-	 * @param templateStructure
-	 * @param targetSequence
-	 * @param targetStructure
-	 * @param partialAlignment
-	 * @param templateStart Start of the (sub-) problem on template side
-	 * @param templateEnd End of the (sub-) problem on template side
-	 * @param targetStart Start of the (sub-) problem on target side
-	 * @param targetEnd End of the (sub-) problem on target side
+	 * 
+	 * @param threading
+	 *            the Threading that defines this (sub-)problem
+	 * @param problemStart
+	 *            start of the (sub-)problem
+	 * @param problemEnd
+	 *            end of the (sub-)problem
 	 */
-	public RDPProblem(
-			Sequence templateSequence, PDBEntry templateStructure,
-			Sequence targetSequence, PDBEntry targetStructure,
-			SequenceAlignment partialAlignment,
-			int templateStart, int templateEnd,
-			int targetStart, int targetEnd) {
-		this.templateSequence = templateSequence;
-		this.templateStructure = templateStructure;
-		this.targetSequence = targetSequence;
-		this.targetStructure = targetStructure;
-		this.alignment = partialAlignment;
-		this.templateStart = templateStart;
-		this.templateEnd = templateEnd;
-		this.targetStart = targetStart;
-		this.targetEnd = targetEnd;
+	public RDPProblem(Threading threading, int problemStart, int problemEnd) {
+		this.threading = threading;
+		this.problemStart = problemStart;
+		this.problemEnd = problemEnd;
 	}
-	
+
 	/**
-	 * Constructs a new RDPProblem which is a copy of the given one.
-	 * @param problem
+	 * 
+	 * @return the Threading
 	 */
-	public RDPProblem(RDPProblem problem) {
-		this.templateSequence = problem.templateSequence;
-		this.templateStructure = problem.templateStructure;
-		this.targetSequence = problem.targetSequence;
-		this.targetStructure = problem.targetStructure;
-		this.alignment = problem.alignment;
-		this.templateStart = problem.templateStart;
-		this.templateEnd = problem.templateEnd;
-		this.targetStart = problem.targetStart;
-		this.targetEnd = problem.targetEnd;
+	public Threading getThreading() {
+		return threading;
 	}
-	
+
+	/**
+	 * 
+	 * @return the problemStart value
+	 */
+	public int getProblemStart() {
+		return problemStart;
+	}
+
+	/**
+	 * 
+	 * @return the problemEnd value
+	 */
+	public int getProblemEnd() {
+		return problemEnd;
+	}
+
 	/**
 	 * toString() function. mainly for debugging.
 	 */
 	public String toString() {
-		String result = "";
-		result += templateSequence.getSequenceAsString().substring(templateStart, templateEnd+1)+ "\n";
-		result += targetSequence.getSequenceAsString().substring(targetStart, targetEnd+1);
-		return result;
+		String[] result = new String[2];
+		String[] rows = threading.getRowsAsString();
+		result[0] = threading.getComponent(0).getID() + ": ";
+		result[1] = threading.getComponent(1).getID() + ": ";
+		for (int i = 0; i < threading.length(); i++) {
+			if (problemStart == i) {
+				result[0] += ">";
+				result[1] += ">";
+			}
+			result[0] += rows[0].charAt(i);
+			result[1] += rows[1].charAt(i);
+			if (problemEnd == i) {
+				result[0] += "<";
+				result[1] += "<";
+			}
+
+		}
+		return result[0] + "\n" + result[1] + "\n";
 	}
 }
 
 /******************************************************************************
- * "A question that sometimes drives me hazy:                                 *
- *  Am I or are the others crazy?"                                            *
- *     - Albert Einstein (1879 - 1955)                                        *
+ * "A question that sometimes drives me hazy: * Am I or are the others crazy?" *
+ * - Albert Einstein (1879 - 1955) *
  ******************************************************************************/

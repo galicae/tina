@@ -13,8 +13,13 @@ import java.util.Locale;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
+import bioinfo.alignment.Threading;
 import bioinfo.alignment.gotoh.LocalSequenceGotoh;
+import bioinfo.alignment.matrices.QuasarMatrix;
+import bioinfo.energy.potential.SipplContactPotential;
+import bioinfo.energy.potential.hydrophobicity.HydrophobicityMatrix;
 import bioinfo.pdb.PDBFile;
+import bioinfo.proteins.CCPMatrix;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 import bioinfo.proteins.structure.SimpleCoordMapper;
@@ -37,6 +42,10 @@ import util.CommandLineParser;
  * @lastchange 2013-02-14
  */
 public class HubeRDPValidator {
+
+	private static final String hydromatrixFile = "/home/h/huberste/gobi/data/hydrophobicityMatrices/hydro_1024";
+	private static final String ccpfilename = "/home/h/huberste/gobi/data/ccp/ccp";
+	private static final String vpotfile = "/home/h/huberste/gobi/data/pair/s3d3_hob97_25_ED6_SD6_cb_all.md15.hssp95.vpot";
 
 	private static String usage =
 	"Alignment aller Paare in pairfile:\n"+
@@ -106,9 +115,16 @@ public class HubeRDPValidator {
 		// initialize HubeRDP stuff
 		// TODO
 		HubeRDP rdp = new HubeRDP();
-		rdp.addOracle(new TinyOracle());
-//		rdp.setScoring(new SimpleScoring());
-		rdp.setScoring(new RDPScoring());
+		rdp.addOracle(new RDPOracle());
+		SipplContactPotential sippl = new SipplContactPotential();
+		sippl.readFromVPOTFile(vpotfile);
+		rdp.setScoring(new RDPScoring(RDPScoring.GAMMA, RDPScoring.DELTA,
+				RDPScoring.EPSILON, RDPScoring.ZETA,
+				QuasarMatrix.DAYHOFF_MATRIX, new HydrophobicityMatrix(
+						hydromatrixFile), new CCPMatrix(ccpfilename), sippl,
+				null, RDPScoring.VOROPATH, RDPScoring.GRID_EXTEND,
+				RDPScoring.GRID_DENSITY, RDPScoring.GRID_CLASH,
+				RDPScoring.MIN_CONTACT));
 		
 		// initialize TM stuff
 		TMMain tmmain = new TMMain();
@@ -142,14 +158,18 @@ public class HubeRDPValidator {
 				
 			// align sequences with HubeRDP
 				// initialize HubeRDP
-				RDPProblem root =
-						new RDPProblem (
-								template, templateStructure,
-								target, null,
-								null,
-								0, template.length() - 1,
-								0, target.length() - 1
-						);
+				System.out.print("Constructing RDP Tree structure...");
+				int[][] rows = new int[2][templateStructure.length() + target.length()];
+				for(int i = 0; i < template.length(); i++) {
+					rows[0][i] = i;
+					rows[1][i] = -1;
+				}
+				for(int i = 0; i < target.length(); i++) {
+					rows[0][templateStructure.length()+i] = -1;
+					rows[1][+templateStructure.length()+i] = i;
+				}
+				
+				RDPProblem root = new RDPProblem(new Threading(templateStructure, target, rows, 0), 0, rows[0].length-1);
 				RDPSolutionTree t = new RDPSolutionTree(root);
 				RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
 				// run HubeRDP
@@ -159,7 +179,7 @@ public class HubeRDPValidator {
 				
 				// get HubeRDP's alignment
 				SequenceAlignment rdpAlignment =
-						t.getRoot().getTA().get(0).alignment;
+						t.getRoot().getTA().get(0).getThreading().asSequenceAlignment();
 			// use CoordMapper on HubeRDP Alignment
 				PDBEntry rdpStructure =
 						SimpleCoordMapper.map(templateStructure, rdpAlignment);

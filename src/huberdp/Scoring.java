@@ -8,6 +8,8 @@
  ******************************************************************************/
 package huberdp;
 
+import bioinfo.alignment.Threading;
+
 /**
  * Scoring is an abstract class for scoring OR-Nodes
  *
@@ -26,7 +28,7 @@ public interface Scoring {
 	 * @param node
 	 * @return
 	 */
-	public double score(RDPSolutionTreeOrNode node);
+	public double score(Threading threading);
 	
 }
 

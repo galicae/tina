@@ -8,23 +8,17 @@
  ******************************************************************************/
 package huberdp;
 
-import bioinfo.Sequence;
-import bioinfo.alignment.SequenceAlignment;
-import huberdp.oracles.TinyOracle;
-import huberdp.scoring.SimpleScoring;
-
 import java.util.LinkedList;
 
 /**
  * @author huberste
- * @lastchange 2013-02-18
+ * @lastchange 2013-02-19
  */
 public class HubeRDP {
 
 	private final static int M = 3; // number of different solutions an oracle
 									// shall give
-									// private final static int N = 2; // number
-									// of subproblems after using oracle
+//	private final static int N = 2; // number of subproblems after using oracle
 
 	private LinkedList<Oracle> oracles;
 
@@ -35,7 +29,12 @@ public class HubeRDP {
 	 */
 	public HubeRDP() {
 		oracles = new LinkedList<Oracle>();
-		scoring = new SimpleScoring();
+	}
+	
+	public HubeRDP(Oracle oracle, Scoring scoring) {
+		this();
+		oracles.add(oracle);
+		this.scoring = scoring;
 	}
 
 	/**
@@ -47,6 +46,14 @@ public class HubeRDP {
 		oracles.add(oracle);
 	}
 
+	/**
+	 * @param scoring
+	 *            the scoring to set
+	 */
+	public void setScoring(Scoring scoring) {
+		this.scoring = scoring;
+	}
+	
 	/**
 	 * first rdp must be called with t = new RDPSolutionTree(); pq = new
 	 * RDPPriorityQueue(t.getRoot()); rdp (t, pq); Optimal solution is now in
@@ -190,7 +197,7 @@ public class HubeRDP {
 	 * @param t
 	 *            the tree the node is part of
 	 */
-	private void finish(RDPSolutionTreeNode node, RDPSolutionTree t) {
+	private void finish(RDPSolutionTreeNode node, RDPSolutionTree t) { 
 
 		// checkFinal() checks if the node can be finished
 		if (node.checkFinal()) {
@@ -201,25 +208,17 @@ public class HubeRDP {
 				}
 			} else if (node instanceof RDPSolutionTreeAndNode) {
 				if (node.isLeaf()) {
-					((RDPSolutionTreeAndNode) node).addTA(new TreeAlignment(
-							((RDPSolutionTreeAndNode) node).getPA()));
+					// TODO
 				} else {
 					for (RDPSolutionTreeNode child : node.getChilds()) {
 						if (node.ta.isEmpty()) {
-							// node.addTAs(child.getTA()); // They are already
-							// merged
-							// WRONG!
-							for (TreeAlignment ta1 : child.getTA()) {
-								node.addTA(new TreeAlignment(
-										HubeRDP.mergePaT(
-												((RDPSolutionTreeAndNode) node)
-														.getPA(), ta1)));
-							}
+							// TODO
 						} else {
 							LinkedList<TreeAlignment> newTAs = new LinkedList<TreeAlignment>();
 							for (TreeAlignment ta1 : child.getTA()) {
 								for (TreeAlignment ta2 : node.getTA()) {
-									newTAs.add(TreeAlignment.merge(ta1, ta2));
+									// TODO MERGE TAs
+									// oldsource: newTAs.add(TreeAlignment.merge(ta1, ta2));
 								}
 							}
 							node.setTA(newTAs);
@@ -236,7 +235,7 @@ public class HubeRDP {
 		}
 	}
 
-	/**
+/*	**
 	 * merges a Problem and an Alignment
 	 * 
 	 * @param prob
@@ -244,8 +243,8 @@ public class HubeRDP {
 	 * @param ali
 	 *            An SequenceAlignment for this Problem
 	 * @return a with all the possible PartialAlignments
-	 */
-	/*
+	 *
+	 *
 	 * static public TreeAlignment mergePaA(RDPProblem prob, SequenceAlignment
 	 * ali) {
 	 * 
@@ -341,10 +340,11 @@ public class HubeRDP {
 	 * prob.templateStructure, prob.targetSequence, prob.targetStructure, pa,
 	 * prob.templateStart, prob.templateEnd, prob.targetStart, prob.targetEnd);
 	 * 
-	 * return result; }
-	 */
+	 * return result;
+	 * }
+*/
 
-	/**
+/*	**
 	 * merges a Problem and an TreeAlignment
 	 * 
 	 * @param p1
@@ -352,8 +352,8 @@ public class HubeRDP {
 	 * @param p2
 	 *            a TreeAlignment for this (sub-)problem
 	 * @return a LinkedList with all the possible PartialAlignments
-	 */
-	static public PartialAlignment mergePaT(RDPProblem p1, RDPProblem p2) {
+	 *
+	static public PartialAlignment mergeTAa(TreeAlignment ta1, TreeAlignment ta2) {
 
 		// switch them if needed!
 		if (p1.alignment.length() < p2.alignment.length()) {
@@ -465,23 +465,9 @@ public class HubeRDP {
 
 		return result;
 	}
+*/
 
-	/**
-	 * @return the scoring
-	 */
-	public Scoring getScoring() {
-		return scoring;
-	}
-
-	/**
-	 * @param scoring
-	 *            the scoring to set
-	 */
-	public void setScoring(Scoring scoring) {
-		this.scoring = scoring;
-	}
-
-	public static SequenceAlignment hubeRDPAlign(Sequence template,
+/*	public static SequenceAlignment hubeRDPAlign(Sequence template,
 			Sequence target) {
 		// construct rdp tree
 		// System.out.print("Constructing RDP Tree structure...");
@@ -514,7 +500,7 @@ public class HubeRDP {
 		// Solution is now in t.getRoot();
 		return t.getRoot().getTA().get(0).alignment;
 	}
-
+*/
 }
 
 /******************************************************************************

@@ -269,6 +269,34 @@ public class SequenceAlignment implements Alignment {
 	public SequenceAlignment duplicate() {
 		return new SequenceAlignment(seq1, seq2, rows, score);
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int[][] calcPositions() {
+		int[][]result = new int[2][rows[0].length];
+		int structpos = 0;
+		int seqpos = 0;
+		for (int i = 0; i < rows[0].length; i++) {
+			if (rows[0][i] == '-') { // insertion
+				result[0][i] = -1;
+				result[1][i] = seqpos;
+				seqpos++;
+			} else if (rows[1][i] == '-') { // deletion
+				result[0][i] = structpos;
+				result[1][i] = -1;
+				structpos++;
+			} else { // match
+				result[0][i] = structpos;
+				result[1][i] = seqpos;
+				structpos++;
+				seqpos++;
+			}
+				
+		}
+		return result;
+	}
 
 	/**
 	 * this neat function calculates the first / last aligned positions in an
