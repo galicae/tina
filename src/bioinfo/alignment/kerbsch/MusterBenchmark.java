@@ -27,12 +27,12 @@ public class MusterBenchmark {
 		HashMap<String,CathScopEntry> cathscopinfo = CathScopHash.read(args[5]);
 		
 		
-//		double go = Double.parseDouble(args[0]);
-//		double ge = Double.parseDouble(args[1]);
-//		double hbWeight;
-//		double polWeight = Double.parseDouble(args[7]);
-//		double ssWeight = Double.parseDouble(args[8]);
-//		double substWeight = Double.parseDouble(args[9]);
+		double go = Double.parseDouble(args[0]);
+		double ge = Double.parseDouble(args[1]);
+		double hbWeight = Double.parseDouble(args[6]);
+		double polWeight = Double.parseDouble(args[7]);
+		double ssWeight = Double.parseDouble(args[8]);
+		double substWeight = Double.parseDouble(args[9]);
 		String file = args[6];
 		double[][] substMatrix = QuasarMatrix.DAYHOFF_MATRIX;
 		double[][] secStructMatrix = SecStructScores.matrix;
@@ -46,8 +46,8 @@ public class MusterBenchmark {
 		resultwriter = new BufferedWriter(new FileWriter(file));
 
 	
-		for (int go = -5; go > -13; go--) {
-			for (int ge = -1; ge >= go ; ge--) {
+//		for (int go = -5; go > -13; go--) {
+//			for (int ge = -1; ge >= go ; ge--) {
 				if(args[2].equals("freeshift")){
 					gotoh = new FreeshiftMusterLite(go, ge, SeqLibrary.read(args[7]),hbMatrix,polMatrix,secStructMatrix,substMatrix,0.0,0.1,0.5,0.4);
 				}
@@ -55,7 +55,7 @@ public class MusterBenchmark {
 					gotoh = new GLocalMusterLite(go, ge, SeqLibrary.read(args[7]),hbMatrix,polMatrix,secStructMatrix,substMatrix,0.1,0.1,0.3,0.1);
 				}
 				else if(args[2].equals("global")){
-					gotoh = new GlobalMusterLite(go, ge, SeqLibrary.read(args[7]),hbMatrix,polMatrix,secStructMatrix,substMatrix,0.1,0.1,0.3,0.1);
+					gotoh = new GlobalMusterLite(go, ge, SeqLibrary.read(args[7]),hbMatrix,polMatrix,secStructMatrix,substMatrix,hbWeight,polWeight,ssWeight,substWeight);
 				}
 				resultwriter = new BufferedWriter(new FileWriter("../muster_benchmarks/gapopt/"+args[2]+"_"+go+"_"+ge+".bm"));
 				ab = new AlignmentBenchmarker(gotoh,seqlib,pairs,cathscopinfo,resultwriter);
@@ -65,7 +65,7 @@ public class MusterBenchmark {
 				} catch (IOException e) {
 					System.out.println("cannot write output! (Benchmarker)");
 				}
-			}
-		}
+//			}
+//		}
 	}
 }

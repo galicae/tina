@@ -2,9 +2,11 @@ package bioinfo.alignment.kerbsch;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -121,18 +123,19 @@ public class ValidateAlignments {
 				id2 = idToIndex.get(template);
 				Sequence seq1 = new Sequence(target,seqlib.get(target));
 				Sequence seq2 = new Sequence(template, seqlib.get(template));
-				System.out.println(target+"|"+template);
 				if (alignments[id1][id2] == Double.NEGATIVE_INFINITY) {
 					temp = (SequenceAlignment) gotoh.align(seq1,seq2);
 //					int minlength = Math.min(seq1.length(), seq2.length());
-					score = temp.getScore()/temp.countAlignedResidues();
+					score = (temp.getScore()/temp.countAlignedResidues());
 					alignments[id1][id2] = score;
 					alignments[id2][id1] = score;
-				}
+				}		
 				// else get score from alignment matrix
 				else {
 					score = alignments[id1][id2];
+					
 				}
+//				out.append(target+"\t"+template+"\t"+((Math.round(score*100.0))/100.0)+"\n");
 				if (score > maxscore) {
 					maxscore = score;
 					besthit = i;
@@ -147,14 +150,16 @@ public class ValidateAlignments {
 			}
 
 			// famrec test
-			if (templates.get(besthit)[2].equals("fam")) {
-				fam_recsamefam++;
-			} else if (templates.get(besthit)[2].equals("supfam")) {
-				fam_recsamesup++;
-			} else if (templates.get(besthit)[2].equals("fold")) {
-				fam_recsamefold++;
-			} else {
-				fam_recdiffold++;
+			if(levels.contains("outer") && (levels.contains("fam") || levels.contains("supfam") || levels.contains("fold"))){
+				if (templates.get(besthit)[2].equals("fam")) {
+					fam_recsamefam++;
+				} else if (templates.get(besthit)[2].equals("supfam")) {
+					fam_recsamesup++;
+				} else if (templates.get(besthit)[2].equals("fold")) {
+					fam_recsamefold++;
+				} else {
+					fam_recdiffold++;
+				}
 			}
 
 			// suprec test
@@ -185,6 +190,7 @@ public class ValidateAlignments {
 			}
 			System.out.println("found max");
 		}
+//		out.close();
 	}
 
 	// private void printResultList(CathScopEntry besthit, CathScopEntry query)
@@ -229,13 +235,22 @@ public class ValidateAlignments {
 				.read(args[3]);
 		HashMap<String,char[]> seqlib = SeqLibrary.read(args[2]);
 		InitClass init = new InitClass();
+		
+		HashMap<String, Integer> t = new HashMap<String,Integer>();
+		File folder = new File(args[10]);
+		File[] files = folder.listFiles();
+		for(File f : files){
+			t.put(f.getName().split("\\.")[0],0);
+		}
 		BufferedReader in = new BufferedReader(new FileReader(args[4]));
 		String line;
 		ArrayList<String> targets = new ArrayList<String>();
 		while((line = in.readLine())!= null){
-			targets.add(line);
+			if(t.containsKey(line))	targets.add(line);
 		}
 		in.close();
+		
+
 		
 //		for (int go = -5; go > -13; go--) {
 //			for (int ge = -1; ge >= go ; ge--) {
