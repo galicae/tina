@@ -22,7 +22,7 @@ import bioinfo.alignment.Threading;
  */
 public class PartialAlignment {
 
-	RDPProblem problem;
+	private RDPProblem problem;
 	SequenceAlignment alignment;
 
 	/**
@@ -34,7 +34,7 @@ public class PartialAlignment {
 	 *            the SequenceAlignment that was given by the oracle
 	 */
 	public PartialAlignment(RDPProblem problem, SequenceAlignment alignment) {
-		this.problem = problem;
+		this.problem =problem;
 		this.alignment = alignment;
 	}
 
@@ -50,19 +50,19 @@ public class PartialAlignment {
 	 * 
 	 * @return the two subproblems that are defined by the partial alignment
 	 */
-	public LinkedList<RDPProblem> getSubProblems() {
+	public LinkedList<RDPProblem> getSubProblems(Scoring scoring) {
 		LinkedList<RDPProblem> results = new LinkedList<RDPProblem>();
 
-		Threading newThreading = merge();
+		Threading newThreading = merge(scoring);
 
 		char[][] alirows = alignment.getRows();
 
 		// calculate first subproblem
-		int pstart = problem.getProblemStart();
+		int pstart = getProblem().getProblemStart();
 		int pend = 0;
 		for (int i = 0; i < alignment.length(); i++) {
 			if (alirows[0][i] != '-' && alirows[1][i] != '-') {
-				pend = problem.getProblemStart() + i;
+				pend = getProblem().getProblemStart() + i-1;
 				break;
 			}
 		}
@@ -72,12 +72,12 @@ public class PartialAlignment {
 		}
 
 		// calculate second subproblem
-		pend = problem.getProblemEnd();
-		pstart = problem.getProblemEnd();
+		pend = getProblem().getProblemEnd();
+		pstart = getProblem().getProblemEnd();
 		for (int i = 0; i < alignment.length(); i++) {
 			if (alirows[0][alignment.length() - i - 1] != '-'
-					&& alirows[1][alignment.length() - i - i] != '-') {
-				pend = problem.getProblemEnd() - i;
+					&& alirows[1][alignment.length() - i - 1] != '-') {
+				pend = getProblem().getProblemEnd() - i;
 				break;
 			}
 		}
@@ -89,59 +89,42 @@ public class PartialAlignment {
 		return results;
 	}
 
-	private Threading merge() {
-		int[][] oldRows = problem.getThreading().getRows();
-		char[][] alignmentRows = alignment.getRows();
-		int[][] alipos = alignment.calcPositions();
-		int[][] aliRows = new int[2][alignmentRows[0].length];
-		// convert from char[][] to int[][]
-		int temppos = 0;
-		int targpos = 0;
-		for (int i = 0; i < alignmentRows[0].length; i++) {
-			if (alignmentRows[0][i] == '-') {
-				aliRows[0][i] = -1;
-			} else {
-				aliRows[0][i] = alipos[0][problem.getProblemStart()] + temppos;
-				temppos++;
-			}
-			if (alignmentRows[1][i] == '-') {
-				aliRows[1][i] = -1;
-			} else {
-				aliRows[1][i] = alipos[1][problem.getProblemStart()] + targpos;
-				targpos++;
-			}
-		}
+	private Threading merge(Scoring scoring) {
+		// Rows of the old (problem)alignment
+		int[][] oldRows = getProblem().getThreading().getRows();
+		// rows of the new Alignment
+		int[][] aliRows = alignment.getRowsAsIntArray();
 
 		// calculate newRows[][]
 		int[][] newRows = new int[2][];
-		newRows[0] = new int[problem.getProblemStart() + alignment.length()
-				+ (problem.getThreading().length() - problem.getProblemEnd())];
+		newRows[0] = new int[getProblem().getProblemStart() + alignment.length()
+				+ (getProblem().getThreading().length() - getProblem().getProblemEnd())
+				- 1];
 		newRows[1] = new int[newRows[0].length];
 		// copy old start
-		for (int i = 0; i < problem.getProblemStart(); i++) {
+		for (int i = 0; i < getProblem().getProblemStart(); i++) {
 			newRows[0][i] = oldRows[0][i];
 			newRows[1][i] = oldRows[1][i];
 		}
 		// copy new
-		for (int i = 0; i < alignment.length(); i++) {
-			newRows[0][problem.getProblemStart() + i] = aliRows[0][i];
-			newRows[1][problem.getProblemStart() + i] = aliRows[1][i];
+		for (int i = getProblem().getProblemStart(); i < getProblem().getProblemStart() + alignment.length(); i++) {
+			newRows[0][i] = aliRows[0][i];
+			newRows[1][i] = aliRows[1][i];
 		}
 		// copy old end
-		for (int i = 0; i < alignment.length(); i++) {
-			newRows[0][(problem.getThreading().length() - problem
-					.getProblemEnd()) + i] = aliRows[0][(problem.getThreading()
-					.length() - problem.getProblemEnd()) + i];
-			newRows[1][(problem.getThreading().length() - problem
-					.getProblemEnd()) + i] = aliRows[1][(problem.getThreading()
-					.length() - problem.getProblemEnd()) + i];
+		for (int i = getProblem().getProblemStart() + alignment.length(); i < newRows[0].length; i++) {
+			newRows[0][i] = oldRows[0][(getProblem().getProblemEnd()) - getProblem().getProblemStart() - alignment.length() + i + 1];
+			newRows[1][i] = oldRows[1][(getProblem().getProblemEnd()) - getProblem().getProblemStart() - alignment.length() + i + 1];
 		}
 
-		// FIXME
-		double score = 0.0;
+		Threading result = new Threading(getProblem().getThreading().getStructure(),
+				getProblem().getThreading().getSequence(), newRows, 0.0);
 
-		Threading result = new Threading(problem.getThreading().getStructure(),
-				problem.getThreading().getSequence(), newRows, score);
+		// recalculate the score
+		double score = scoring.score(result);
+		result.setScore(score);
+
+		
 		return result;
 	}
 
@@ -154,6 +137,13 @@ public class PartialAlignment {
 		String result = alignment.getRowAsString(0) + "\n";
 		result += alignment.getRowAsString(1);
 		return result;
+	}
+
+	/**
+	 * @return the problem
+	 */
+	public RDPProblem getProblem() {
+		return problem;
 	}
 
 }

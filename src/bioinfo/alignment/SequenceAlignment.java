@@ -142,8 +142,8 @@ public class SequenceAlignment implements Alignment {
 	}
 
 	/**
-	 * Calculates a 2D array similiar to the map[][], but that only contains
-	 * the aligned residues
+	 * Calculates a 2D array similiar to the map[][], but that only contains the
+	 * aligned residues
 	 * 
 	 * @return the 2D array
 	 */
@@ -269,31 +269,35 @@ public class SequenceAlignment implements Alignment {
 	public SequenceAlignment duplicate() {
 		return new SequenceAlignment(seq1, seq2, rows, score);
 	}
-	
+
 	/**
+	 * int[0][n] = -1 if and only if on the n-th position of the alignment is a
+	 * gap in the first row. In any other case int[0][n] is the number of the
+	 * aligned residue in the first row.
 	 * 
-	 * @return
+	 * @return the rows as an int[][].
+	 * 
 	 */
-	public int[][] calcPositions() {
-		int[][]result = new int[2][rows[0].length];
-		int structpos = 0;
-		int seqpos = 0;
+	public int[][] getRowsAsIntArray() {
+		int[][] result = new int[2][rows[0].length];
+		int temppos = 0;
+		int targpos = 0;
 		for (int i = 0; i < rows[0].length; i++) {
 			if (rows[0][i] == '-') { // insertion
 				result[0][i] = -1;
-				result[1][i] = seqpos;
-				seqpos++;
+				result[1][i] = targpos;
+				targpos++;
 			} else if (rows[1][i] == '-') { // deletion
-				result[0][i] = structpos;
+				result[0][i] = temppos;
 				result[1][i] = -1;
-				structpos++;
+				temppos++;
 			} else { // match
-				result[0][i] = structpos;
-				result[1][i] = seqpos;
-				structpos++;
-				seqpos++;
+				result[0][i] = temppos;
+				result[1][i] = targpos;
+				temppos++;
+				targpos++;
 			}
-				
+
 		}
 		return result;
 	}

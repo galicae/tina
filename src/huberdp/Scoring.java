@@ -1,7 +1,8 @@
 /******************************************************************************
  * huberdp.Scoring.java                                                       *
+ *                                                                            *
  * Contains the interface Scoring which is to be implemented by every Scoring *
- * class for scoring OR-Nodes                                                 *
+ * class for scoring Threadings                                               *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -11,12 +12,15 @@ package huberdp;
 import bioinfo.alignment.Threading;
 
 /**
- * Scoring is an abstract class for scoring OR-Nodes
+ * Scoring is an interface for scoring OR-Nodes
  *
  * Possible Scoring features:
  * * unclosable gaps
  * * large gaps
- * ...
+ * * Hydrophobicity
+ * * ContactCapacityPotentials
+ * * Pair Contact Potentials
+ * * Sequence Scoring Matrices
  * 
  * @author huberste
  * @lastchange 2013-02-12
@@ -24,7 +28,7 @@ import bioinfo.alignment.Threading;
 public interface Scoring {
 
 	/**
-	 * scores an OR node
+	 * scores a Threading
 	 * @param node
 	 * @return
 	 */

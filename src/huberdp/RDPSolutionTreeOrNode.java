@@ -14,17 +14,30 @@ package huberdp;
 
 /**
  * RDPSolutionTreeOrNode represents a (sub-)problem to be solved.
+ * 
  * @author huberste
  * @lastchange 2013-02-12
  */
-public class RDPSolutionTreeOrNode
-	extends RDPSolutionTreeNode
-	implements Comparable<RDPSolutionTreeOrNode> {
-	
+public class RDPSolutionTreeOrNode extends RDPSolutionTreeNode implements
+		Comparable<RDPSolutionTreeOrNode> {
+
 	// SP = SubProblem
 	private RDPProblem problem;
-	
+
 	private double score;
+	
+	/**
+	 * Standard Constructor
+	 * @param parent
+	 * @param problem
+	 * @param score
+	 */
+	public RDPSolutionTreeOrNode(RDPSolutionTreeAndNode parent,
+			RDPProblem problem, double score) {
+		super(parent);
+		this.problem = problem;
+		this.setScore(score);
+	}
 	
 	/**
 	 * 
@@ -32,34 +45,21 @@ public class RDPSolutionTreeOrNode
 	 * @param problem
 	 * @param scoring
 	 */
-	public RDPSolutionTreeOrNode(RDPSolutionTreeAndNode parent, RDPProblem problem, Scoring scoring) {
-		super(parent);
-		this.problem=problem;
-		this.setScore(scoring.score(problem.getThreading()));
+	public RDPSolutionTreeOrNode(RDPSolutionTreeAndNode parent,
+			RDPProblem problem, Scoring scoring) {
+		this(parent, problem, scoring.score(problem.getThreading()));
 	}
 	
-	/**
-	 * 
-	 * @param parent
-	 * @param problem
-	 * @param score
-	 */
-	public RDPSolutionTreeOrNode(RDPSolutionTreeAndNode parent, RDPProblem problem, double score) {
-		super(parent);
-		this.problem=problem;
-		this.setScore(score);
-	}
-
 	@Override
 	public int compareTo(RDPSolutionTreeOrNode other) {
 		if (this.getScore() > other.getScore()) {
-			return  1;
+			return 1;
 		} else if (this.getScore() == other.getScore()) {
-			return  0;
+			return 0;
 		} else { // this.score < other.score
 			return -1;
 		}
-//		return 0;
+		// return 0;
 	}
 
 	/**
@@ -69,20 +69,20 @@ public class RDPSolutionTreeOrNode
 	public RDPProblem getProblem() {
 		return problem;
 	}
-	
+
 	/**
 	 * simple toString() function, mainly for debugging
+	 * 
 	 * @return String representation of this OR node
 	 */
 	public String toString() {
 		String result = "RDPSolutionTreeOrNode. ";
 
 		if (this.problem.getThreading() != null) {
-			result += "Partial alignment up to now:\n"+
-					this.problem.getThreading().toStringVerbose()+
-					"\n";
-		} 
-		result += "SP:\n" +this.problem.toString();
+			result += "Partial alignment up to now:\n"
+					+ this.problem.getThreading().toStringVerbose() + "\n";
+		}
+		result += "SP:\n" + this.problem.toString();
 		return result;
 	}
 
@@ -94,16 +94,16 @@ public class RDPSolutionTreeOrNode
 	}
 
 	/**
-	 * @param score the score to set
+	 * @param score
+	 *            the score to set
 	 */
 	private void setScore(double score) {
 		this.score = score;
 	}
-	
+
 }
 
 /******************************************************************************
- * "A question that sometimes drives me hazy:                                 *
- *  Am I or are the others crazy?"                                            *
- *     - Albert Einstein (1879 - 1955)                                        *
+ * "A question that sometimes drives me hazy: * Am I or are the others crazy?" *
+ * - Albert Einstein (1879 - 1955) *
  ******************************************************************************/

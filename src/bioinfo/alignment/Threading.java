@@ -18,7 +18,7 @@ import bioinfo.proteins.PDBEntry;
  * Sequence.
  * 
  * @author huberste
- * @lastchange 2013-02-19
+ * @lastchange 2013-02-20
  */
 public class Threading implements Alignment {
 
@@ -96,6 +96,17 @@ public class Threading implements Alignment {
 		// throw new Exception("rows[0] and rows[1] must be the same length!");
 		// }
 		// set rows
+		if (rows == null) {
+			rows = new int[2][structure.length()+sequence.length()];
+			for (int i = 0; i < structure.length(); i++) {
+				rows[0][i]=i;
+				rows[1][i]=-1;
+			}
+			for (int i = 0; i < sequence.length(); i++) {
+				rows[0][structure.length()+i]=-1;
+				rows[1][structure.length()+i]=i;
+			}
+		}
 		this.rows = rows;
 		// update length
 		this.length = rows[0].length;
@@ -194,6 +205,14 @@ public class Threading implements Alignment {
 	}
 
 	/**
+	 * 
+	 * @param score
+	 */
+	public void setScore(double score) {
+		this.score = score;
+	}
+	
+	/**
 	 * @return the score of the Threading
 	 */
 	@Override
@@ -203,16 +222,20 @@ public class Threading implements Alignment {
 
 	@Override
 	public String toString() {
-		DecimalFormat df = new DecimalFormat("0.0000");
-		return "Threading: structure: " + structure.getLongID()
-				+ ", sequence: " + sequence.getID() + ", score: "
-				+ df.format(score) + "\n";
+		return toStringVerbose();
+//		DecimalFormat df = new DecimalFormat("0.0000");
+//		return "Threading: structure: " + structure.getLongID()
+//				+ ", sequence: " + sequence.getID() + ", score: "
+//				+ df.format(score) + "\n";
 	}
 
 	@Override
 	public String toStringVerbose() {
+		DecimalFormat df = new DecimalFormat("0.0000");
+		String result = "> " + "Threading: structure: " + structure.getLongID()
+				+ ", sequence: " + sequence.getID() + ", score: "
+				+ df.format(score) + "\n";
 		String[] temp = getRowsAsString();
-		String result = "> " + toString();
 		result += structure.getLongID() + ": " + temp[0] + "\n";
 		result += sequence.getID() + ": " + temp[1] + "\n";
 		return result;
@@ -228,6 +251,8 @@ public class Threading implements Alignment {
 	 */
 	public String[] getRowsAsString() {
 		String[] result = new String[2];
+		result[0] = "";
+		result[1] = "";
 		int temppos = 0;
 		int targpos = 0;
 		for (int i = 0; i < rows[0].length; i++) {
@@ -253,14 +278,18 @@ public class Threading implements Alignment {
 	 */
 	public char[][] getRowsAsCharArray() {
 		char[][] result = new char[2][rows[0].length];
+		int temppos = 0;
+		int targpos = 0;
 		for (int i = 0; i < rows[0].length; i++) {
 			if (rows[0][i] != -1) {
-				result[0][i] = structure.getComp(i).getName()
+				result[0][i] = structure.getComp(temppos).getName()
 						.getOneLetterCode().charAt(0);
+				temppos++;
 			} else
 				result[0][i] = '-';
 			if (rows[1][i] != -1) {
-				result[1][i] = sequence.getComp(i);
+				result[1][i] = sequence.getComp(targpos);
+				targpos++;
 			} else
 				result[1][i] = '-';
 		}
@@ -308,6 +337,13 @@ public class Threading implements Alignment {
 	public int getPositionInStructure(int n) {
 		return positionsInAlignables[0][n];
 	}
+	
+	public int getFirstAfterInStructure(int n) {
+		while(n < positionsInAlignables[0].length && positionsInAlignables[0][n] == -1) {
+			n++;
+		}
+		return positionsInAlignables[0][n];
+	}
 
 	/**
 	 * 
@@ -315,6 +351,13 @@ public class Threading implements Alignment {
 	 * @return the position od the n-th Residue in the Rows in the Sequence
 	 */
 	public int getPositionInSequence(int n) {
+		return positionsInAlignables[1][n];
+	}
+	
+	public int getFirstAfterInSequence(int n) {
+		while(n < positionsInAlignables[1].length && positionsInAlignables[1][n] == -1) {
+			n++;
+		}
 		return positionsInAlignables[1][n];
 	}
 
@@ -329,9 +372,9 @@ public class Threading implements Alignment {
 	public SequenceAlignment asSequenceAlignment() {
 		SequenceAlignment result = new SequenceAlignment(
 				structure.getSequence(), sequence, getRowsAsCharArray(), score);
-
 		return result;
 	}
+	
 }
 
 /******************************************************************************

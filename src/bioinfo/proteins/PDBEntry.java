@@ -303,5 +303,9 @@ public class PDBEntry implements Alignable, Serializable {
 		}
 		return result;
 	}
+	
+	public String toString() {
+		return "PDBEntry: "+this.getSequenceAsString();
+	}
 
 }

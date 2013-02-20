@@ -1,5 +1,6 @@
 /******************************************************************************
  * huberdp.RDPProblem.java                                                    *
+ *                                                                            *
  * Contains the class RDPProblem which is the (sub-)problem definition for an *
  * OR node of RDP.                                                            *
  *                                                                            *
@@ -8,13 +9,15 @@
  ******************************************************************************/
 package huberdp;
 
+import bioinfo.Sequence;
 import bioinfo.alignment.Threading;
+import bioinfo.proteins.PDBEntry;
 
 /**
  * RDPProblem is an implementation of an (sub-)problem defined by an OR node.
  * 
  * @author huberste
- * @lastchange 2013-02-14
+ * @lastchange 2013-02-20
  */
 public class RDPProblem {
 
@@ -48,6 +51,17 @@ public class RDPProblem {
 	}
 
 	/**
+	 * Constructs a new RDPProblem from a template and a sequence
+	 * 
+	 * @param template
+	 * @param target
+	 */
+	public RDPProblem(PDBEntry template, Sequence target) {
+		this(new Threading(template, target, null, 0.0), 0, (template.length()
+				+ target.length() - 1));
+	}
+
+	/**
 	 * 
 	 * @return the Threading
 	 */
@@ -77,8 +91,8 @@ public class RDPProblem {
 	public String toString() {
 		String[] result = new String[2];
 		String[] rows = threading.getRowsAsString();
-		result[0] = threading.getComponent(0).getID() + ": ";
-		result[1] = threading.getComponent(1).getID() + ": ";
+		result[0] = threading.getStructure().getLongID() + ": ";
+		result[1] = threading.getSequence().getID() + ": ";
 		for (int i = 0; i < threading.length(); i++) {
 			if (problemStart == i) {
 				result[0] += ">";

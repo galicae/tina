@@ -103,7 +103,7 @@ public class LocalSequenceGotoh extends Gotoh {
 	 * prepares matrices for global alignment
 	 * 
 	 */
-	private void prepareMatrices() {
+	protected void prepareMatrices() {
 		for (int i = 1; i <= sequence1.length(); i++) { // old: hSeq
 			// I[i][0] = 0; //old: vGap
 			D[i][0] = INIT_VAL; // old: hGap
@@ -247,7 +247,7 @@ public class LocalSequenceGotoh extends Gotoh {
 	 * @param in the character array in question
 	 * @return the reversed array
 	 */
-	private char[] flip(char[] in) {
+	public static char[] flip(char[] in) {
 		char[] out = new char[in.length];
 		for (int i = in.length - 1; i >= 0; i--) {
 			out[out.length - 1 - i] = in[i];

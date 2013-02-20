@@ -1,7 +1,15 @@
-/**
- * 
- */
+/******************************************************************************
+ * huberdp.oracles.RDPOracle.java                                             *
+ * This file contains the class RDPOracle which is RDP's standard scoring     *
+ * function.                                                                  *
+ *                                                                            *
+ * This file is best read at line width 80 and tab width 4.                   *
+ *                                                                   huberste *
+ ******************************************************************************/
 package huberdp.oracles;
+
+import static bioinfo.alignment.gotoh.Gotoh.FACTOR;
+import static util.Util.flip;
 
 import huberdp.Oracle;
 import huberdp.PartialAlignment;
@@ -11,140 +19,37 @@ import huberdp.scoring.RDPScoring;
 import java.util.LinkedList;
 
 import bioinfo.Sequence;
-import bioinfo.alignment.Alignment;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.Threading;
-import bioinfo.alignment.gotoh.Gotoh;
-import bioinfo.alignment.gotoh.LocalSequenceGotoh;
 import bioinfo.proteins.PDBEntry;
 
 /**
  * @author huberste
- * 
+ * @lastchange 2013-02-19
  */
-public class RDPOracle extends LocalSequenceGotoh implements Oracle {
+public class RDPOracle implements Oracle {
 
-	private RDPScoring scoring;
-	private PDBEntry template;
-	private Sequence target;
-	
-	/**
-	 * for local gotoh
-	 */
-	private boolean[][][] comefrom;
+	// for traceback
+	protected static final int FROM_TOPLEFT = 1;
+	protected static final int FROM_TOP = 2;
+	protected static final int FROM_LEFT = 4;
 
-	public RDPOracle(double gapOpen, double gapExtend,
-			double[][] scoringmatrix, RDPScoring scoring) {
-		super(gapOpen, gapExtend, scoringmatrix);
+	protected RDPScoring scoring;
+	protected RDPProblem problem;
+	protected PDBEntry template;
+	protected Sequence target;
+
+	public RDPOracle(RDPScoring scoring) {
 		this.scoring = scoring;
 	}
 
-	public RDPOracle() {
-		this(0.0, 0.0, null, null);
-	}
-
-	@Override
-	protected void calculateMatrices() {
-		Threading threading = new Threading(template, target, null, 0.0);
-		for (int i = 1; i <= sequence1.length(); i++) {
-			for (int j = 1; j <= sequence2.length(); j++) {
-				D[i][j] = Math.max(M[i][j - 1] + gapOpen + gapExtend,
-						D[i][j - 1] + gapExtend);
-				I[i][j] = Math.max(M[i - 1][j] + gapOpen + gapExtend,
-						I[i - 1][j] + gapExtend);
-				M[i][j] = Math.max(
-						M[i - 1][j - 1]
-								+ (int) scoring.getScore(threading, i - 1,
-										j - 1) * Gotoh.FACTOR,
-						Math.max(I[i][j], Math.max(D[i][j], 0)));
-
-			}
-		}
-	}
-	
 	/**
-	 * @return Alignment of the two given Alignables
+	 * @param problem
+	 *            the problem we shall find solutions for
+	 * @param m
+	 *            the maximum number of solutions
+	 * @return a LinkedList of local maximum Partial Alignments
 	 */
-	@Override
-	protected Alignment traceback() {
-		
-		int max = Integer.MIN_VALUE;
-		int x = 0;
-		int y = 0;
-
-		for (int i = 0; i != M.length; i++) {
-			for (int j = 0; j != M[i].length; j++) {
-				if (max <= M[i][j]) {
-					max = M[i][j];
-					x = i - 1;
-					y = j - 1;
-				}
-			}
-		}
-
-		int score = max;
-		String row0 = "";
-		String row1 = "";
-		int actScore = 0;
-		char actx;
-		char acty;
-
-		for (int i = M[M.length - 1].length - 1; i > y + 1; i--) {
-			row0 += "-";
-			row1 += sequence2.getComp(i - 1);
-		}
-		for (int i = M.length - 1; i > x + 1; i--) {
-			row0 += sequence1.getComp(i - 1);
-			row1 += "-";
-		}
-
-		while (x >= 0 && y >= 0 && M[x + 1][y + 1] != 0) {
-
-			actScore = M[x + 1][y + 1];
-			actx = (Character) sequence1.getComp(x);
-			acty = (Character) sequence2.getComp(y);
-
-			if (actScore == M[x][y] + score(actx, acty)) { // come from topleft
-				row0 += actx;
-				row1 += acty;
-				y--;
-				x--;
-			} else if (actScore == D[x + 1][y + 1]) { // come from left (deletion)
-				while (D[x + 1][y + 1] == D[x + 1][y] + gapExtend && y > 0) {
-					row0 += "-";
-					row1 += acty;
-					y--;
-					acty = (Character)sequence2.getComp(y);
-				}
-				row0 += "-";
-				row1 += acty;
-				y--;
-			} else if (actScore == I[x + 1][y + 1]) { // come from top (insertion)
-				while (I[x + 1][y + 1] == I[x][y + 1] + gapExtend && x > 0) {
-					row0 += actx;
-					row1 += "-";
-					x--;
-					actx = (Character)sequence1.getComp(x);
-				}
-				row0 += actx;
-				row1 += "-";
-				x--;
-			}
-		}
-		for (int i = y + 1; i > 0; i--) {
-			row0 += "-";
-			row1 += sequence2.getComp(i - 1);
-		}
-		for (int i = x + 1; i > 0; i--) {
-			row0 += sequence1.getComp(i - 1);
-			row1 += "-";
-		}
-
-		return new SequenceAlignment((Sequence)sequence1, (Sequence)sequence2,
-				flip(row0.toCharArray()), flip(row1.toCharArray()), 1.0d
-						* score / Gotoh.FACTOR);
-	}
-
 	@Override
 	public LinkedList<PartialAlignment> findSimiliarSegments(
 			RDPProblem problem, int m) {
@@ -152,11 +57,16 @@ public class RDPOracle extends LocalSequenceGotoh implements Oracle {
 		// allocate result
 		LinkedList<PartialAlignment> results = new LinkedList<PartialAlignment>();
 
+		this.template = problem.getThreading().getStructure();
+		this.target = problem.getThreading().getSequence();
+
 		// set Sequences for Oracle
 		String[] rows = problem.getThreading().getRowsAsString();
 		String template = "";
 		String target = "";
-		for (int i = problem.getProblemStart(); i < problem.getProblemEnd(); i++) {
+		// only use subproblem: start at ProblemStart, end at ProblemEnd
+		// TODO check if complete problem comes out. can't think clear now.
+		for (int i = problem.getProblemStart(); i <= problem.getProblemEnd(); i++) {
 			if (rows[0].charAt(i) != '-') {
 				template += rows[0].charAt(i);
 			}
@@ -164,16 +74,159 @@ public class RDPOracle extends LocalSequenceGotoh implements Oracle {
 				target += rows[1].charAt(i);
 			}
 		}
-
 		rows = null; // GC
 
-		// TODO make Sequence Alignment via dynamic programming with scoring
+		// make Sequence Alignment via dynamic programming with scoring
 		// function
-		SequenceAlignment alignment = null;
+		SequenceAlignment alignment = align(problem, template, target);
 
 		results.add(new PartialAlignment(problem, alignment));
 
 		return results;
 	}
 
+	/**
+	 * Simple dynamic programming algorithm.
+	 * 
+	 * @param templateSequence
+	 * @param targetSequence
+	 * @return the best local alignment
+	 * @TODO make it return several (best) alignments
+	 */
+	protected SequenceAlignment align(RDPProblem problem, String template,
+			String target) {
+		// initialize matrices
+		int[][] m = new int[template.length() + 1][target.length() + 1];
+		int[][] from = new int[template.length() + 1][target.length() + 1];
+		Threading threading = problem.getThreading();
+		// values for traceback
+		int max = Integer.MIN_VALUE;
+		int x = 0;
+		int y = 0;
+		int temppos = problem.getThreading().getFirstAfterInStructure(
+				problem.getProblemStart());
+		int targpos;
+		// fill matrices
+		for (int i = 1; i <= template.length(); i++, temppos++) {
+			targpos = problem.getThreading().getFirstAfterInSequence(
+					problem.getProblemStart());
+			for (int j = 1; j <= target.length(); j++, targpos++) {
+				// D Matrix and I Matrix are not needed :-)
+				// Use D Matrix instead for "comeFrom" values
+				int matchValue = m[i - 1][j - 1]
+						+ (int) (FACTOR * scoring.getScore(threading,
+								temppos, targpos));
+				int insertValue = m[i - 1][j]
+						+ (int) (FACTOR * scoring.getInsertionScore(threading,
+								targpos));
+				int deleteValue = m[i][j - 1]
+						+ (int) (FACTOR * scoring.getDeletionScore(threading,
+								temppos));
+				// standard: match
+				int mValue = matchValue;
+				int fromValue = FROM_TOPLEFT;
+				// check Insertion
+				if (insertValue == mValue) { // insertion also possible
+					fromValue = fromValue | FROM_TOP;
+				} else if (insertValue > mValue) { // only insertion
+					fromValue = FROM_TOP;
+					mValue = insertValue;
+				}
+				// check deletion
+				if (deleteValue == mValue) { // insertion also possible
+					fromValue = fromValue | FROM_LEFT;
+				} else if (deleteValue > mValue) { // only insertion
+					fromValue = FROM_LEFT;
+					mValue = deleteValue;
+				}
+				// local: check 0
+				if (mValue < 0) {
+					fromValue = 0; // come from no direction
+					mValue = 0; // set 0 for local alignment
+				}
+				// fill M Matrix witch values
+				m[i][j] = mValue;
+				// fill D Matrix with "comeFrom"
+				from[i][j] = fromValue;
+				if (mValue >= max) {
+					max = mValue;
+					// TODO check if x and y values are set correctly
+					x = i - 1;
+					y = j - 1;
+				}
+			}
+		}
+		
+		// begin debugging
+//		util.Util.printIntegerArray(m);
+//		util.Util.printIntegerArray(from);
+		// end debugging
+
+		String row0 = "";
+		String row1 = "";
+		char actx;
+		char acty;
+
+		// start of alignment: unaligned sequences
+		for (int i = m[0].length - 1; i > y + 1; i--) {
+			row0 += "-";
+			row1 += target.charAt(i - 1);
+		}
+		for (int i = m.length - 1; i > x + 1; i--) {
+			row0 += template.charAt(i - 1);
+			row1 += "-";
+		}
+
+		// real traceback
+		while (x >= 0 && y >= 0 && m[x + 1][y + 1] != 0) {
+			actx = template.charAt(x);
+			acty = target.charAt(y);
+
+			if ((from[x][y] & FROM_TOPLEFT) > 0) { // come from topleft
+				row0 += actx;
+				row1 += acty;
+				y--;
+				x--;
+			} else if ((from[x][y] & FROM_LEFT) > 0) { // come from left
+														// (deletion)
+				row0 += "-";
+				row1 += acty;
+				y--;
+			} else if ((from[x][y] & FROM_TOP) > 0) { // come from top
+														// (insertion)
+				row0 += actx;
+				row1 += "-";
+				x--;
+			}
+			else break;
+		}
+		// end of alignment: unaligned sequences
+		for (int i = y + 1; i > 0; i--) {
+			row0 += "-";
+			row1 += target.charAt(i - 1);
+		}
+		for (int i = x + 1; i > 0; i--) {
+			row0 += template.charAt(i - 1);
+			row1 += "-";
+		}
+		char[] templateRow = flip(row0.toCharArray());
+		char[] targetRow = flip(row1.toCharArray());
+
+		SequenceAlignment result = new SequenceAlignment(new Sequence(threading.getStructure()
+				.getLongID(), templateRow), new Sequence(threading
+				.getSequence().getID(), targetRow), templateRow, targetRow,
+				1.0d * max / FACTOR);
+		
+		// DONE begin debugging
+//		System.out.println(result.toStringVerbose());
+		// end debugging
+		
+		return result;
+
+	}
 }
+
+/******************************************************************************
+ * "A question that sometimes drives me hazy: * Am I or are the others crazy?" *
+ * - Albert Einstein (1879 - 1955) *
+ ******************************************************************************/

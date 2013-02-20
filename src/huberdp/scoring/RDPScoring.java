@@ -27,6 +27,7 @@ import bioinfo.proteins.DSSPEntry;
 import bioinfo.proteins.DSSPFileReader;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.SecStructEight;
+import bioinfo.proteins.SecStructThree;
 
 /**
  * RDPScoring is an implementation of the scoring function given in the paper.
@@ -46,15 +47,15 @@ public class RDPScoring implements Scoring {
 	/**
 	 * empirically calibrated weight of the contact capacity score
 	 */
-	public final static double DELTA = 1.0;
+	public final static double DELTA = 0.1;
 	/**
 	 * empirically calibratet weight of the hydrophobicity score
 	 */
-	public final static double EPSILON = 1.0;
+	public final static double EPSILON = 2.0;
 	/**
 	 * empirically calibratet weight of the pair interaction score
 	 */
-	public final static double ZETA = 1.0;
+	public final static double ZETA = 4.0;
 
 	/**
 	 * static reference to voro++ path
@@ -160,7 +161,7 @@ public class RDPScoring implements Scoring {
 
 	private int[][] contacts;
 
-	private SecStructEight[] ss;
+	private SecStructThree[] ss;
 
 	/**
 	 * constructs a RDPScoring object with given paramters
@@ -239,7 +240,7 @@ public class RDPScoring implements Scoring {
 	public void initVoro() {
 		if (vorobin != null && templateStructure != null) {
 			voro = new VoroPPWrap(vorobin);
-			data = new VoronoiData(templateStructure.getID());
+			data = new VoronoiData(templateStructure.getLongID());
 			data.reducePDB(VoroPrepType.CA, templateStructure);
 			data.fillGridWithoutClashes(gridExtend, gridDensity, gridClash);
 			voro.decomposite(data);
@@ -254,8 +255,6 @@ public class RDPScoring implements Scoring {
 			// second dimension: position in structure
 			contacts = new int[2][templateStructure.length()];
 			// calculate contacts fo every amino acid
-			// TODO check if code correct
-			// TODO huberste: Code seems to work fine. 2013-02-18
 			for (int partnera = 0; partnera < templateStructure.length(); partnera++) {
 				for (int partnerb = partnera + 1; partnerb < templateStructure
 						.length(); partnerb++) {
@@ -275,10 +274,15 @@ public class RDPScoring implements Scoring {
 
 		// read SecStruct from DSSP File
 		String dsspFileName = DSSPFileReader.DSSP_FOLDER
-				+ templateStructure.getID().substring(0, 4).toLowerCase()
-				+ templateStructure.getID().substring(4, 7) + ".dssp";
+				+ templateStructure.getID().toLowerCase()
+				+ templateStructure.getLongID().substring(4, 7) + ".dssp";
 		DSSPEntry dssp = DSSPFileReader.readDSSPFile(dsspFileName);
-		ss = dssp.getSecondaryStructure();
+		SecStructEight[] temp = dssp.getSecondaryStructure();
+		ss = new SecStructThree[temp.length];
+		for (int i = 0; i < temp.length; i++) {
+			ss[i] = temp[i].getThreeClassAnalogon();
+		}
+		 
 	}
 
 	/**
@@ -409,8 +413,8 @@ public class RDPScoring implements Scoring {
 
 		// read SecStruct from DSSP File
 		String dsspFileName = DSSPFileReader.DSSP_FOLDER
-				+ f.getComponent(0).getID().substring(0, 4).toLowerCase()
-				+ f.getComponent(0).getID().substring(4, 7) + ".dssp";
+				+ f.getStructure().getID().toLowerCase()
+				+ f.getStructure().getLongID().substring(4, 7) + ".dssp";
 		DSSPEntry dssp = DSSPFileReader.readDSSPFile(dsspFileName);
 		SecStructEight[] ss = dssp.getSecondaryStructure();
 
@@ -459,9 +463,9 @@ public class RDPScoring implements Scoring {
 
 		// TODO make ss an ThreeClas Matrix!
 
-		double result = ccpMatrix.getValue(aa, ss[m].getThreeClassAnalogon(),
+		double result = ccpMatrix.getValue(aa, ss[m],
 				0, contacts[0][m])
-				+ ccpMatrix.getValue(aa, ss[m].getThreeClassAnalogon(), 1,
+				+ ccpMatrix.getValue(aa, ss[m], 1,
 						contacts[1][m]);
 
 		return result;
@@ -533,17 +537,15 @@ public class RDPScoring implements Scoring {
 		Sequence a = f.getSequence();
 
 		int buckets = hydrophobicityMatrix.getBuckets();
-	
+
 		int astype = (a.getComp(n)) - 65;
 		double dob = dob(b, m);
 		for (int bucket = 0; bucket < buckets; bucket++) {
-			if (dob <= ((double) bucket + 1.0)
-					* (1.0 / (double) buckets)) {
+			if (dob <= ((double) bucket + 1.0) * (1.0 / (double) buckets)) {
 				result = hydrophobicityMatrix.getValue(astype, bucket);
 				break;
 			}
 		}
-				
 
 		return result;
 	}
@@ -566,7 +568,7 @@ public class RDPScoring implements Scoring {
 		return pcp.scoreModel(model);
 		// return 0.0;
 	}
-	
+
 	/**
 	 * "phiP denotes the pair interaction term (...)" (From: Protein Threading
 	 * by Recursive Dynamic Programming. JMB 290, 757-779)
@@ -765,11 +767,50 @@ public class RDPScoring implements Scoring {
 			templateStructure = threading.getStructure();
 			initVoro();
 		}
+		
+		return gamma * phiS(threading, m, n) + delta * phiC(threading, m, n)
+				+ epsilon * phiH(threading, m, n) + zeta
+				* phiP(threading, m, n);
 
-		return gamma * phiS(threading, m, n) + delta
-				* phiC(threading, m, n) + epsilon * phiH(threading, m, n)
-				+ zeta * phiP(threading, m, n);
+	}
 
+	/**
+	 * Calculates the score for an insertion of target's AminoAcid n.
+	 * 
+	 * @param threading
+	 *            the threading to be scored
+	 * @param n
+	 *            the number of the aminoAcid in the target that needs to be
+	 *            inserted
+	 * @return the score of
+	 */
+	public double getInsertionScore(Threading threading, int n) {
+		
+		// TODO set this -phiP(threading, ...)
+		double result = -25;
+		
+		// TODO check if this needs to be -zeta*result
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param threading
+	 * @param m
+	 * @return
+	 */
+	public double getDeletionScore(Threading threading, int m) {
+
+		char aa = threading.getStructure().getAminoAcid(m).getName()
+				.getOneLetterCode().charAt(0);
+
+		double result = ccpMatrix.getValue(aa, ss[m],
+				0, contacts[0][m])
+				+ ccpMatrix.getValue(aa, ss[m], 1,
+						contacts[1][m]);
+
+		// TODO check if this needs to be -delta*result
+		return - result;
 	}
 
 }
