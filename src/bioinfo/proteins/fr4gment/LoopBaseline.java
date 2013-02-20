@@ -13,6 +13,7 @@ import bioinfo.alignment.SequenceAlignment;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.fragm3nt.ProteinFragment;
 import bioinfo.superpos.PDBReduce;
+import bioinfo.superpos.TMCollective;
 
 /**
  * this class should group (almost) all functions needed to produce a complete
@@ -30,7 +31,7 @@ public class LoopBaseline {
 	public LoopBaseline(SequenceAlignment input, String clusterDirectory,
 			String guideFile) {
 		this.input = input;
-		System.out.println(input.toStringVerbose());
+		System.out.print(input.toString() + " ");
 		this.ms = findMultipleSuperpos(clusterDirectory, guideFile);
 	}
 
@@ -171,7 +172,11 @@ public class LoopBaseline {
 
 			for (int i = 1; i < ms.getStructures().size(); i++) {
 				PDBEntry pdbX = ms.getStructures().get(i);
+				if(pdbX == null)
+					continue;
 				double[][] xCoord = PDBReduce.reduceSinglePDB(pdbX);
+				if(xCoord == null)
+					continue;
 				ProteinFragment x = new ProteinFragment(pdbX.getID(), pdbX
 						.getSequence().getSequenceAsString(), xCoord,
 						pdbX.length());
@@ -184,8 +189,14 @@ public class LoopBaseline {
 				int[] xCore = got.traceback(prevCore[1], nextCore[0]);
 				// take last point of preceding and first point of following
 				// core as well - is important for later assembly
-				xCore[0]--;
-				xCore[1]++;
+				if(xCore[0] > 1)
+					xCore[0]--;
+				if(xCore[1] < xSequence.length())
+					xCore[1]++;
+				if(xCore[0] <= 0)
+					xCore[0]++;
+				if(xCore[0] >= xSequence.length())
+					xCore[1]--;
 				currentLoop.add(x.getPart(xCore));
 			}
 			betweenCores.put(prevCore[1], currentLoop);
@@ -276,9 +287,10 @@ public class LoopBaseline {
 			int[] prevCore = templCores.get(i - 1);
 			filterSequenceLength(loopFragments.get(prevCore[1]), queryNext[0]
 					- queryPrev[1] - 1);
-			if (loopFragments.get(prevCore[1]).size() == 0)
+			if (loopFragments.get(prevCore[1]).size() == 0) {
 				loopFragments.remove(prevCore[1]);
-			prevCore[0] = prevCore[1] = -1;
+				// prevCore[0] = prevCore[1] = -1;
+			}
 		}
 
 		// filter loop segments according to euclidean distance cutoff
@@ -286,13 +298,30 @@ public class LoopBaseline {
 			int[] prevCore = templCores.get(i - 1);
 			int[] nextCore = templCores.get(i);
 			filterDistanceCutoff(loopFragments.get(prevCore[1]), prevCore,
-					nextCore, 2);
+					nextCore, 0.5);
 		}
 
 		// try all available loops on the core segment positions to test for
 		// collisions
-		
-		
+		for (int i = 1; i < templCores.size(); i++) {
+			int[] tempPos = { templCores.get(i - 1)[1], templCores.get(i)[0] };
+			int[] queryPos = { queryCores.get(i - 1)[1], queryCores.get(i)[0] };
+			if (tempPos[0] < 0)
+				continue;
+			double[][] coord = PDBReduce.reduceSinglePDB(ms.getStructures()
+					.get(0));
+			ProteinFragment usedFrag = new ProteinFragment(input
+					.getComponent(0).getID(), input.getComponent(0)
+					.getSequenceAsString(), coord, coord.length);
+			LinkedList<ProteinFragment> loops = loopFragments.get(tempPos[0]);
+
+			LoopRotator rot = new LoopRotator(usedFrag, resultCoordinates,
+					loops, tempPos, queryPos);
+			ProteinFragment model = rot.rotateAllLoops();
+			if(model != null)
+				resultCoordinates = model.getAllResidues();
+		}
+
 		// compile result and return
 		String seq = input.getComponent(1).getSequenceAsString();
 		return new ProteinFragment("coreTest", seq, resultCoordinates,
@@ -386,7 +415,12 @@ public class LoopBaseline {
 		double[] end = coord[nextCore[0]];
 
 		double dist = euclideanDistance(start, end);
-		int fragLength = loopSegment.get(0).getAllResidues().length;
+		int fragLength;
+		try {
+			fragLength = loopSegment.get(0).getAllResidues().length;
+		} catch (NullPointerException e) {
+			return;
+		}
 
 		LinkedList<ProteinFragment> rightDist = new LinkedList<ProteinFragment>();
 		for (ProteinFragment f : loopSegment) {
@@ -426,5 +460,13 @@ public class LoopBaseline {
 			return true;
 		else
 			return false;
+	}
+	
+	public LinkedList<int[]> getTmCores() {
+		return templCores;
+	}
+	
+	public LinkedList<int[]> getQuCores() {
+		return queryCores;
 	}
 }
