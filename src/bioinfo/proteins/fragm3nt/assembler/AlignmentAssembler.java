@@ -59,7 +59,7 @@ public class AlignmentAssembler extends Assembler {
 			PDBEntry temp = reader.readFromFolderById(id);
 			ProteinFragment tempFrag = new ProteinFragment(temp.getID(),
 					PDBReduce.reduceSinglePDB(temp), extent);
-			tempFrag.setSequence(temp.getSequence());
+			tempFrag.setSequence(temp.getSequenceAsString());
 			structures.add(tempFrag);
 		}
 

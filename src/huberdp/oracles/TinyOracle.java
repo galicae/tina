@@ -8,11 +8,16 @@
  ******************************************************************************/
 package huberdp.oracles;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.LocalSequenceGotoh;
 
 import huberdp.Oracle;
+import huberdp.PartialAlignment;
+import huberdp.RDPProblem;
 
 /**
  * TinyOracle is an Oracle for HubeRDP that features an local Gotoh as sequence
@@ -20,7 +25,7 @@ import huberdp.Oracle;
  * @author huberste
  * @lastchange 2013-02-14
  */
-public class TinyOracle extends Oracle {
+public class TinyOracle implements Oracle {
 
 	/**
 	 * this is the _real_ alignment step.
@@ -28,7 +33,6 @@ public class TinyOracle extends Oracle {
 	 * @param targetSequence
 	 * @return the alignment of the two given sequences
 	 */
-	@Override
 	protected SequenceAlignment align(Sequence templateSequence, Sequence targetSequence) {
 		// TODO check if correct!
 				
@@ -46,6 +50,32 @@ public class TinyOracle extends Oracle {
 		// end debugging
 		
 		return result;
+	}
+
+	@Override
+	public LinkedList<PartialAlignment> findSimiliarSegments(
+			RDPProblem problem, int m) {
+		
+		// allocate result
+		LinkedList<PartialAlignment> results = new LinkedList<PartialAlignment>();
+
+		// set Sequences for Oracle
+		String[] rows = problem.getThreading().getRowsAsString();
+		String template = "";
+		String target = "";
+		for (int i = problem.getProblemStart(); i < problem.getProblemEnd(); i++) {
+			if (rows[0].charAt(i) != '-') {
+				template += rows[0].charAt(i);
+			}
+			if (rows[1].charAt(i) != '-') {
+				target += rows[1].charAt(i);
+			}
+		}
+		
+		Sequence templateSequence = new Sequence(problem.getThreading().getStructure().getLongID(), template);
+		Sequence   targetSequence = new Sequence(problem.getThreading().getSequence().getID(), target);
+		results.add(new PartialAlignment(problem, align(templateSequence, targetSequence)));
+		return results;
 	}
 
 }

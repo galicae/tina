@@ -23,7 +23,6 @@ public class RDPPriorityQueue {
 	 * Constructs a new (empty) RDPPriorityQueue
 	 */
 	public RDPPriorityQueue() {
-		// TODO correct construction of priorityQueue!
 		pq = new PriorityQueue<RDPSolutionTreeOrNode>();
 	}
 	
@@ -32,8 +31,7 @@ public class RDPPriorityQueue {
 	 * @param node
 	 */
 	public RDPPriorityQueue(RDPSolutionTreeOrNode node) {
-		// TODO correct construction of priorityQueue!
-		pq = new PriorityQueue<RDPSolutionTreeOrNode>();
+		this();
 		add(node);
 	}
 	
@@ -58,7 +56,7 @@ public class RDPPriorityQueue {
 	 */
 	public void add(RDPSolutionTreeOrNode[] nodes) {
 		for (RDPSolutionTreeOrNode node : nodes) {
-			pq.add(node);
+			add(node);
 		}
 	}
 	

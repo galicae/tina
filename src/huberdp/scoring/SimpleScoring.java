@@ -8,10 +8,8 @@
  ******************************************************************************/
 package huberdp.scoring;
 
-//import bioinfo.alignment.gotoh.LocalSequenceGotoh;
-import huberdp.RDPSolutionTreeAndNode;
-import huberdp.RDPSolutionTreeOrNode;
 import huberdp.Scoring;
+import bioinfo.alignment.Threading;
 
 /**
  * SimpleScoring provides a simple scoring function for OR nodes.
@@ -24,18 +22,9 @@ public class SimpleScoring implements Scoring {
 	 * @see huberdp.Scoring#score(huberdp.RDPSolutionTreeOrNode)
 	 */
 	@Override
-	public double score(RDPSolutionTreeOrNode node) {
-//		LocalSequenceGotoh gotoh = new LocalSequenceGotoh(
-//				-10.0, -2.0,
-//				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX);
+	public double score(Threading threading) {
 		
-		return ((RDPSolutionTreeOrNode)node.getParent().getParent()).getScore()
-				+ ((RDPSolutionTreeAndNode)node.getParent()).
-					getPA().alignment.getScore();
-//				+ gotoh.align(
-//						node.getProblem().templateSequence,
-//						node.getProblem().targetSequence
-//				).getScore();
+		return (threading.getScore());
 	}
 
 }

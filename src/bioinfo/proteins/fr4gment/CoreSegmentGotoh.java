@@ -1,21 +1,29 @@
-package bioinfo.alignment.gotoh;
+package bioinfo.proteins.fr4gment;
+
+import java.util.LinkedList;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.Alignable;
 import bioinfo.alignment.Alignment;
 import bioinfo.alignment.SequenceAlignment;
+import bioinfo.alignment.gotoh.Gotoh;
+import bioinfo.proteins.fragm3nt.ProteinFragment;
 
 /**
  * Local Alignment of two Sequences
  * 
- * @author andreseitz
+ * @author andreseitz, galicae
  */
-public class LocalSequenceGotoh extends Gotoh {
+public class CoreSegmentGotoh extends Gotoh {
 
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
 	private int[][] scoringmatrix;
-//	Sequence sequence1;
-//	Sequence sequence2;
+	private ProteinFragment used;
+	private ProteinFragment x;
+	private double cutoff;
+
+	// Sequence sequence1;
+	// Sequence sequence2;
 
 	/**
 	 * 
@@ -25,21 +33,12 @@ public class LocalSequenceGotoh extends Gotoh {
 	 *            26x26 matrix containing all scoring values plus some empty
 	 *            lines for faster access
 	 */
-	public LocalSequenceGotoh(double gapOpen, double gapExtend,
-			int[][] scoringmatrix) {
+	public CoreSegmentGotoh(double gapOpen, double gapExtend, double cutoff,
+			ProteinFragment used, ProteinFragment x) {
 		super(gapOpen, gapExtend);
-		this.scoringmatrix = scoringmatrix;
-	}
-
-	public LocalSequenceGotoh(double gapOpen, double gapExtend,
-			double[][] scoringmatrix) {
-		super(gapOpen, gapExtend);
-		this.scoringmatrix = new int[scoringmatrix.length][scoringmatrix[0].length];
-		for (int i = 0; i != scoringmatrix.length; i++) {
-			for (int j = 0; j != scoringmatrix[0].length; j++) {
-				this.scoringmatrix[i][j] = (int) (Gotoh.FACTOR * scoringmatrix[i][j]);
-			}
-		}
+		this.cutoff = cutoff;
+		this.used = used;
+		this.x = x;
 	}
 
 	@Override
@@ -100,10 +99,10 @@ public class LocalSequenceGotoh extends Gotoh {
 	}
 
 	/**
-	 * prepares matrices for global alignment
+	 * prepares matrices for local/global alignment
 	 * 
 	 */
-	protected void prepareMatrices() {
+	private void prepareMatrices() {
 		for (int i = 1; i <= sequence1.length(); i++) { // old: hSeq
 			// I[i][0] = 0; //old: vGap
 			D[i][0] = INIT_VAL; // old: hGap
@@ -124,41 +123,80 @@ public class LocalSequenceGotoh extends Gotoh {
 	 * calculates matrices using given scoring function and gap penalty
 	 * 
 	 */
-	protected void calculateMatrices() {
-		int[][] tempScore = new int[sequence1.length()][sequence2.length()];
-		char[] seq1 = ((Sequence) sequence1).getSequence();
-		char[] seq2 = ((Sequence) sequence2).getSequence();
+	private void calculateMatrices() {
+		scoringmatrix = new int[sequence1.length()][sequence2.length()];
 
 		for (int i = 1; i <= sequence1.length(); i++) {
 			for (int j = 1; j <= sequence2.length(); j++) {
-				tempScore[i - 1][j - 1] = score(seq1[i - 1], seq2[j - 1]);
+				scoringmatrix[i - 1][j - 1] = score(i - 1, j - 1);
 			}
 		}
+		enhance(scoringmatrix);
+
 		for (int i = 1; i <= sequence1.length(); i++) {
 			for (int j = 1; j <= sequence2.length(); j++) {
 				D[i][j] = Math.max(M[i][j - 1] + gapOpen + gapExtend,
 						D[i][j - 1] + gapExtend);
-				I[i][j] = Math.max(M[i - 1][j] + gapOpen + gapExtend,
-						I[i - 1][j] + gapExtend);
-				M[i][j] = Math.max(M[i - 1][j - 1] + tempScore[i - 1][j - 1],
+				I[i][j] = Math.max(M[i - 1][j] + 10 * gapOpen + 10 * gapExtend,
+						I[i - 1][j] + 10 * gapExtend);
+				M[i][j] = Math.max(M[i - 1][j - 1] + scoringmatrix[i - 1][j - 1],
 						Math.max(I[i][j], Math.max(D[i][j], 0)));
 
 			}
 		}
 	}
 
+	private void enhance(int[][] tempScore) {
+		LinkedList<int[]> posPoints = new LinkedList<int[]>();
+		for (int i = 0; i < tempScore.length; i++) {
+			for (int j = 0; j < tempScore[0].length; j++) {
+				if (tempScore[i][j] >= 0) {
+					int[] positive = { i, j };
+					posPoints.add(positive);
+				}
+			}
+		}
+
+		for (int[] cur : posPoints) {
+			int x = cur[0];
+			int y = cur[1];
+			if (x > 0) {
+				tempScore[x - 1][y] = tempScore[x][y];
+				if (y > 0)
+					tempScore[x - 1][y - 1] = tempScore[x][y];
+				if (y < tempScore[0].length - 1)
+					tempScore[x - 1][y + 1] = tempScore[x][y];
+			}
+			if (x < tempScore.length - 1) {
+				tempScore[x + 1][y] = tempScore[x][y];
+				if (y > 0)
+					tempScore[x + 1][y - 1] = tempScore[x][y];
+				if (y < tempScore[0].length - 1)
+					tempScore[x + 1][y + 1] = tempScore[x][y];
+			}
+		}
+	}
+
+	private Alignment traceback() {
+		return null;
+	}
+
 	/**
-	 * Override this method in extensions!
+	 * this traceback starts from a given column in the alignment in order to
+	 * identify the
 	 * 
 	 * @return Alignment of the two given Alignables
 	 */
-	protected Alignment traceback() {
-		
+	public int[] traceback(int start, int end) {
+
+//		int start = pos[0];
+//		int end = pos[1];
 		int max = INIT_VAL;
 		int x = 0;
 		int y = 0;
-
-		for (int i = 0; i != M.length; i++) {
+		int resStart = 0;
+		int resEnd = 0;
+		for (int i = end; i < end + 1; i++) {
 			for (int j = 0; j != M[i].length; j++) {
 				if (max <= M[i][j]) {
 					max = M[i][j];
@@ -167,7 +205,7 @@ public class LocalSequenceGotoh extends Gotoh {
 				}
 			}
 		}
-
+		resStart = y + 1;
 		int score = max;
 		String row0 = "";
 		String row1 = "";
@@ -175,22 +213,12 @@ public class LocalSequenceGotoh extends Gotoh {
 		char actx;
 		char acty;
 
-		for (int i = M[M.length - 1].length - 1; i > y + 1; i--) {
-			row0 += "-";
-			row1 += sequence2.getComp(i - 1);
-		}
-		for (int i = M.length - 1; i > x + 1; i--) {
-			row0 += sequence1.getComp(i - 1);
-			row1 += "-";
-		}
-
-		while (x >= 0 && y >= 0 && M[x + 1][y + 1] != 0) {
-
+		while (x >= start && y >= 0 && M[x + 1][y + 1] != 0) {
+//			System.out.println(x + " " + y);
 			actScore = M[x + 1][y + 1];
 			actx = (Character) sequence1.getComp(x);
 			acty = (Character) sequence2.getComp(y);
-
-			if (actScore == M[x][y] + score(actx, acty)) {
+			if (actScore == M[x][y] + scoringmatrix[x][y]) {
 				row0 += actx;
 				row1 += acty;
 				y--;
@@ -200,59 +228,60 @@ public class LocalSequenceGotoh extends Gotoh {
 					row0 += "-";
 					row1 += acty;
 					y--;
-					acty = (Character)sequence2.getComp(y);
+					acty = (Character) sequence2.getComp(y);
 				}
 				row0 += "-";
 				row1 += acty;
 				y--;
 			} else if (actScore == I[x + 1][y + 1]) {
-				while (I[x + 1][y + 1] == I[x][y + 1] + gapExtend && x > 0) {
+				while (I[x + 1][y + 1] == I[x][y + 1] + 10 * gapExtend && x > 0) {
 					row0 += actx;
 					row1 += "-";
 					x--;
-					actx = (Character)sequence1.getComp(x);
+					actx = (Character) sequence1.getComp(x);
 				}
 				row0 += actx;
 				row1 += "-";
 				x--;
 			}
 		}
-		for (int i = y + 1; i > 0; i--) {
-			row0 += "-";
-			row1 += sequence2.getComp(i - 1);
-		}
-		for (int i = x + 1; i > 0; i--) {
-			row0 += sequence1.getComp(i - 1);
-			row1 += "-";
-		}
 
-		return new SequenceAlignment((Sequence)sequence1, (Sequence)sequence2,
-				flip(row0.toCharArray()), flip(row1.toCharArray()), 1.0d
-						* score / Gotoh.FACTOR);
+		int[] result = { y, resStart };
+		return result;
 	}
 
 	/**
-	 * @param x
-	 * 
-	 * @param x
+	 * @param two
 	 *            components of Alignable implementing equals
 	 * @return score between two components of Alignable
 	 */
-	private int score(char x, char y) {
-		return scoringmatrix[x - 65][y - 65];
+	private int score(int x, int y) {
+		double result = euclideanDistance(used.getResidue(x),
+				this.x.getResidue(y));
+		result = 10* cutoff - result;
+		return (int) result * Gotoh.FACTOR;
+	}
+
+	private double euclideanDistance(double[] x, double[] y) {
+		double result = 0;
+		for (int i = 0; i < x.length; i++) {
+			result += Math.pow(x[i] - y[i], 2);
+		}
+		return Math.sqrt(result);
 	}
 
 	/**
 	 * flips a char[] on itself
-	 * @param in the character array in question
+	 * 
+	 * @param in
+	 *            the character array in question
 	 * @return the reversed array
 	 */
-	public static char[] flip(char[] in) {
+	private char[] flip(char[] in) {
 		char[] out = new char[in.length];
 		for (int i = in.length - 1; i >= 0; i--) {
 			out[out.length - 1 - i] = in[i];
 		}
 		return out;
 	}
-
 }
