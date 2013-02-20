@@ -165,10 +165,10 @@ public class LoopBaseline {
 		for (int j = 1; j < templCores.size(); j++) {
 			int[] nextCore = templCores.get(j);
 			int[] prevCore = templCores.get(j - 1);
-			
+
 			LinkedList<ProteinFragment> currentLoop = new LinkedList<ProteinFragment>();
 			currentLoop.add(usedFrag.getPart(prevCore[1], nextCore[0] + 1));
-			
+
 			for (int i = 1; i < ms.getStructures().size(); i++) {
 				PDBEntry pdbX = ms.getStructures().get(i);
 				double[][] xCoord = PDBReduce.reduceSinglePDB(pdbX);
@@ -276,7 +276,7 @@ public class LoopBaseline {
 			int[] prevCore = templCores.get(i - 1);
 			filterSequenceLength(loopFragments.get(prevCore[1]), queryNext[0]
 					- queryPrev[1] - 1);
-			if(loopFragments.get(prevCore[1]).size() == 0)
+			if (loopFragments.get(prevCore[1]).size() == 0)
 				loopFragments.remove(prevCore[1]);
 			prevCore[0] = prevCore[1] = -1;
 		}
@@ -289,6 +289,11 @@ public class LoopBaseline {
 					nextCore, 2);
 		}
 
+		// try all available loops on the core segment positions to test for
+		// collisions
+		
+		
+		// compile result and return
 		String seq = input.getComponent(1).getSequenceAsString();
 		return new ProteinFragment("coreTest", seq, resultCoordinates,
 				seq.length());
@@ -341,6 +346,7 @@ public class LoopBaseline {
 	 */
 	private void filterSequenceLength(LinkedList<ProteinFragment> loopSegment,
 			int loopLength) {
+		loopLength += 2;
 		LinkedList<ProteinFragment> rightLengthLoop = new LinkedList<ProteinFragment>();
 		for (ProteinFragment f : loopSegment) {
 			int curLoopLength = f.getAllResidues().length;
@@ -351,7 +357,7 @@ public class LoopBaseline {
 			}
 		}
 		loopSegment.clear();
-		for(ProteinFragment f: rightLengthLoop) {
+		for (ProteinFragment f : rightLengthLoop) {
 			loopSegment.add(f);
 		}
 	}
@@ -372,7 +378,7 @@ public class LoopBaseline {
 	 */
 	private void filterDistanceCutoff(LinkedList<ProteinFragment> loopSegment,
 			int[] prevCore, int[] nextCore, double cutoff) {
-		if(prevCore[0] < 0)
+		if (prevCore[0] < 0)
 			return;
 		// calculate the distance the core coordinates imply
 		double[][] coord = PDBReduce.reduceSinglePDB(ms.getStructures().get(0));
