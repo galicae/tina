@@ -2,22 +2,25 @@ package bioinfo.alignment.kerbsch;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.Alignable;
 import bioinfo.alignment.Alignment;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.Gotoh;
+import bioinfo.alignment.kerbsch.FBGotoh.Locals;
+
 
 public class Kerbsch extends Gotoh {
 
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
 
 	// E-Value Params
-	private final double EVALUE_CUTOFF_HB = 5.00;
-	private final double EVALUE_CUTOFF_POL = 10.00;
-	private final double EVALUE_CUTOFF_DAYHOFF = 6.00;
-	private final double EVALUE_CUTOFF_SECSTRUCT = 9.0;
+	private final int EVALUE_CUTOFF_HB = 787;
+	private final int EVALUE_CUTOFF_POL = 1326;
+	private final int EVALUE_CUTOFF_DAYHOFF = 888;
+	private final int EVALUE_CUTOFF_SECSTRUCT = 1160;
 
 	// Lambda Params
 	private final double LAMBDA_HB = 0.616;
@@ -25,7 +28,7 @@ public class Kerbsch extends Gotoh {
 	private final double LAMBDA_DAYHOFF = 0.38;
 	private final double LAMBDA_SECSTRUCT = 0.408;
 
-	private final int DBLENGTH = 63500;
+	private final int DBLENGTH = 61735;
 
 	// size for matrices
 	private int xsize;
@@ -37,23 +40,23 @@ public class Kerbsch extends Gotoh {
 	char[] seq2;
 
 	// gapopens, gapextends for substitution matrices
-	private int hbGapOpen = -4;
-	private int hbGapExtend = -2;
+	private double hbGapOpen = -4.0;
+	private double hbGapExtend = -1.0;
 
-	private int polGapOpen = -10;
-	private int polGapExtend = -1;
+	private double polGapOpen = -8.0;
+	private double polGapExtend = -2.0;
 
-	private int secStructGapOpen = -4;
-	private int secStructGapExtend = -3;
+	private double secStructGapOpen = -7.0;
+	private double secStructGapExtend = -2.0;
 
-	private int seqGapOpen = -11;
-	private int seqGapExtend = -1;
+	private double seqGapOpen = -12.0;
+	private double seqGapExtend = -1.0;
 
 	// feature weights
-	private final int hbWeight = (int) (0.1 * Gotoh.FACTOR);
+	private final int hbWeight = (int) (0.0 * Gotoh.FACTOR);
 	private final int polWeight = (int) (0.1 * Gotoh.FACTOR);
-	private final int secStructWeight = (int) (0.3 * Gotoh.FACTOR);
-	private final int seqWeight = (int) (0.1 * Gotoh.FACTOR);
+	private final int secStructWeight = (int) (0.5 * Gotoh.FACTOR);
+	private final int seqWeight = (int) (0.4 * Gotoh.FACTOR);
 
 	private FBGotoh hbLocals;
 	private FBGotoh polLocals;
@@ -61,52 +64,44 @@ public class Kerbsch extends Gotoh {
 	private FBGotoh dayhoffLocals;
 	private HashMap<String, char[]> seclib;
 
-	// FBGotoh matrices
-	private int[][] hbM;
-	private int[][] polM;
-	private int[][] secStructM;
-	private int[][] dayhoffM;
 	private int[][] tempscore;
 
 	public Kerbsch(double gapOpen, double gapExtend, int[][] seqMatrix,
 			int[][] hbMatrix, int[][] polMatrix, int[][] secStructMatrix,
 			HashMap<String, char[]> seclib) throws IOException {
 		super(gapOpen, gapExtend);
-
-		hbLocals = new FBGotoh(hbGapOpen, hbGapExtend, EVALUE_CUTOFF_HB,
-				LAMBDA_HB, DBLENGTH, hbMatrix);
-		polLocals = new FBGotoh(polGapOpen, polGapExtend, EVALUE_CUTOFF_POL,
-				LAMBDA_POL, DBLENGTH, polMatrix);
-		secStructLocals = new FBGotoh(secStructGapOpen,
-				EVALUE_CUTOFF_SECSTRUCT, LAMBDA_SECSTRUCT, DBLENGTH,
-				secStructGapExtend, secStructMatrix);
-		dayhoffLocals = new FBGotoh(seqGapOpen, seqGapExtend,
-				EVALUE_CUTOFF_DAYHOFF, LAMBDA_DAYHOFF, DBLENGTH, seqMatrix);
+		
+		this.gapOpen *= Gotoh.FACTOR;
+		this.gapExtend *= Gotoh.FACTOR;
+		
+		hbLocals = new FBGotoh(hbGapOpen, hbGapExtend, LAMBDA_HB, DBLENGTH,
+				hbMatrix);
+		polLocals = new FBGotoh(polGapOpen, polGapExtend, LAMBDA_POL, DBLENGTH,
+				polMatrix);
+		secStructLocals = new FBGotoh(secStructGapOpen, secStructGapExtend,LAMBDA_SECSTRUCT,
+				DBLENGTH, secStructMatrix);
+		dayhoffLocals = new FBGotoh(seqGapOpen, seqGapExtend, LAMBDA_DAYHOFF,
+				DBLENGTH, seqMatrix);
 		this.seclib = seclib;
 	}
 
 	public Kerbsch(double gapOpen, double gapExtend, double[][] seqMatrix,
 			double[][] hbMatrix, double[][] polMatrix,
-			double[][] secStructMatrix, HashMap<String, char[]> seclib) throws IOException {
+			double[][] secStructMatrix, HashMap<String, char[]> seclib)
+			throws IOException {
 		super(gapOpen, gapExtend);
 
-		// for (int i = 0; i < seqMatrix.length; i++) {
-		// for (int j = 0; j < seqMatrix[0].length; j++) {
-		// seqMatrix[i][j] = (int) (Gotoh.FACTOR * seqMatrix[i][j]);
-		// hbMatrix[i][j] = (int) (Gotoh.FACTOR * hbMatrix[i][j]);
-		// polMatrix[i][j] = (int) (Gotoh.FACTOR * polMatrix[i][j]);
-		// secStructMatrix[i][j] = (int) (Gotoh.FACTOR * secStructMatrix[i][j]);
-		// }
-		// }
-		hbLocals = new FBGotoh(hbGapOpen, hbGapExtend, EVALUE_CUTOFF_HB,
-				LAMBDA_HB, DBLENGTH, hbMatrix);
-		polLocals = new FBGotoh(polGapOpen, polGapExtend, EVALUE_CUTOFF_POL,
-				LAMBDA_POL, DBLENGTH, polMatrix);
-		secStructLocals = new FBGotoh(secStructGapOpen,
-				EVALUE_CUTOFF_SECSTRUCT, LAMBDA_SECSTRUCT, DBLENGTH,
-				secStructGapExtend, secStructMatrix);
-		dayhoffLocals = new FBGotoh(seqGapOpen, seqGapExtend,
-				EVALUE_CUTOFF_DAYHOFF, LAMBDA_DAYHOFF, DBLENGTH, seqMatrix);
+		this.gapOpen *= Gotoh.FACTOR;
+		this.gapExtend *= Gotoh.FACTOR;
+		
+		hbLocals = new FBGotoh(hbGapOpen, hbGapExtend, LAMBDA_HB, DBLENGTH,
+				hbMatrix);
+		polLocals = new FBGotoh(polGapOpen, polGapExtend, LAMBDA_POL, DBLENGTH,
+				polMatrix);
+		secStructLocals = new FBGotoh(secStructGapOpen, secStructGapExtend, LAMBDA_SECSTRUCT,
+				DBLENGTH, secStructMatrix);
+		dayhoffLocals = new FBGotoh(seqGapOpen, seqGapExtend, LAMBDA_DAYHOFF,
+				DBLENGTH, seqMatrix);
 		this.seclib = seclib;
 	}
 
@@ -118,7 +113,7 @@ public class Kerbsch extends Gotoh {
 		this.I = new int[xsize][ysize];
 		this.D = new int[xsize][ysize];
 		tempscore = new int[xsize][ysize];
-		
+
 		this.sequence1 = (Sequence) sequence1;
 		this.sequence2 = (Sequence) sequence2;
 		this.seq1 = ((Sequence) sequence1).getSequence();
@@ -132,31 +127,55 @@ public class Kerbsch extends Gotoh {
 	}
 
 	private void prepareMatrices() {
-		for (int i = 0; i < xsize; i++) {
+		for (int i = 1; i < xsize; i++) {
 			D[i][0] = INIT_VAL;
+//			if (i == 1) {
+//				M[i][0] = M[i - 1][0] + gapOpen + gapExtend;
+//			} else {
+//				M[i][0] = M[i - 1][0] + gapExtend;
+//			}
 		}
 
-		for (int i = 0; i < ysize; i++) {
+		for (int i = 1; i < ysize; i++) {
 			I[0][i] = INIT_VAL;
+//			if (i == 1) {
+//				M[0][i] = M[0][i - 1] + gapOpen + gapExtend;
+//			} else {
+//				M[0][i] = M[0][i - 1] + gapExtend;
+//			}
 		}
+		D[0][0] = INIT_VAL;
+		I[0][0]	= INIT_VAL;
+		M[0][0] = 0;
 	}
 
 	private void calculateMatrices() {
-		hbM = hbLocals.align(seq1, seq2);
-		polM = polLocals.align(seq1, seq2);
-		secStructM = secStructLocals.align(sec1, sec2);
-		dayhoffM = dayhoffLocals.align(seq1, seq2);
-
 		// calc tempscore
-		for (int i = 0; i < xsize; i++) {
-			for (int j = 0; j < ysize; j++) {
-				tempscore[i][j] = hbM[i][j] + polM[i][j] + secStructM[i][j]
-						+ dayhoffM[i][j];
-//				System.out.print(dayhoffM[i][j]+"\t");
-			}
-//			System.out.println();
+		List<Locals> locals = hbLocals.align(seq1, seq2);
+		for(Locals l : locals){
+			for(int[] c : l.getCoords()){
+				tempscore[c[0]][c[1]] += hbWeight * (EVALUE_CUTOFF_HB - (int)(l.getEvalue()*Gotoh.FACTOR));
+			}	
 		}
-
+		locals = polLocals.align(seq1, seq2);
+		for(Locals l : locals){
+			for(int[] c : l.getCoords()){
+				tempscore[c[0]][c[1]] += polWeight * (EVALUE_CUTOFF_POL - (int)(l.getEvalue()*Gotoh.FACTOR));
+			}	
+		}
+		locals = secStructLocals.align(sec1, sec2);
+		for(Locals l : locals){
+			for(int[] c : l.getCoords()){
+				tempscore[c[0]][c[1]] += secStructWeight * (EVALUE_CUTOFF_SECSTRUCT - (int)(l.getEvalue()*Gotoh.FACTOR));
+			}	
+		}
+		locals = dayhoffLocals.align(seq1, seq2);
+		for(Locals l : locals){
+			for(int[] c : l.getCoords()){
+				tempscore[c[0]][c[1]] += seqWeight * (EVALUE_CUTOFF_DAYHOFF - (int)(l.getEvalue()*Gotoh.FACTOR));
+			}	
+		}
+		
 		for (int i = 1; i < xsize; i++) {
 			for (int j = 1; j < ysize; j++) {
 
@@ -173,8 +192,8 @@ public class Kerbsch extends Gotoh {
 
 	private Alignment traceback() {
 		int max = INIT_VAL;
-		int x = 0;
-		int y = 0;
+		int x = Integer.MIN_VALUE;
+		int y = Integer.MIN_VALUE;
 
 		for (int i = 0; i != M.length; i++) {
 			if (M[i][M[i].length - 1] >= max) {
@@ -251,7 +270,7 @@ public class Kerbsch extends Gotoh {
 
 		return new SequenceAlignment((Sequence) sequence1,
 				(Sequence) sequence2, flip(row0.toCharArray()),
-				flip(row1.toCharArray()), 1.0d * score / Gotoh.FACTOR);
+				flip(row1.toCharArray()), 1.0d * score / (Gotoh.FACTOR*Gotoh.FACTOR));
 	}
 
 	/**

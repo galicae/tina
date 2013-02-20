@@ -8,21 +8,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import bioinfo.alignment.kerbsch.temp.LocalCore;
-import bioinfo.alignment.kerbsch.temp.LocalMatch;
-
 public class FBGotoh {
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
-	private final int FACTOR = 100;
-	private final double EVALUE_CUTOFF;
+	private final double FACTOR = 100.0;
 	private final double LAMBDA;
 	private final double DBLENGTH;
-	private int lengthCutOff = 4;
-	private int scoreCutOff = (int) (20.0 * FACTOR);
+	private int lengthCutOff = 3;
+	private double scoreCutOff = 0.0;
 	private int gapOpen;
 	private int gapExtend;
 	private int[][] substMatrix;
-	
+
 	private int[][] M;
 	private int[][] I;
 	private int[][] D;
@@ -41,23 +37,22 @@ public class FBGotoh {
 	private char[] seq1;
 	private char[] seq2;
 
-	// other stuff
-	private BufferedWriter out;
+	BufferedWriter out = new BufferedWriter(new FileWriter(
+			"../Evalues_fbaligns/dayhoff_local.evalues"));
 
-	public FBGotoh(double gapOpen, double gapExtend, double ecutoff, double lambda, int dblength, int[][] scoringmatrix) throws IOException {
+	public FBGotoh(double gapOpen, double gapExtend, double lambda,
+			int dblength, int[][] scoringmatrix) throws IOException {
 		this.gapOpen = (int) (gapOpen * FACTOR);
 		this.gapExtend = (int) (gapExtend * FACTOR);
 		this.substMatrix = scoringmatrix;
-		EVALUE_CUTOFF = ecutoff*FACTOR;
 		DBLENGTH = dblength;
 		LAMBDA = lambda;
-		out= new BufferedWriter(new FileWriter("fbgotoh.out"));
 	}
 
-	public FBGotoh(double gapOpen, double gapExtend, double ecutoff, double lambda, int dblength,double[][] scoringmatrix) throws IOException {
+	public FBGotoh(double gapOpen, double gapExtend, double lambda,
+			int dblength, double[][] scoringmatrix) throws IOException {
 		this.gapOpen = (int) (gapOpen * FACTOR);
 		this.gapExtend = (int) (gapExtend * FACTOR);
-		EVALUE_CUTOFF = ecutoff*FACTOR;
 		DBLENGTH = dblength;
 		LAMBDA = lambda;
 
@@ -67,13 +62,12 @@ public class FBGotoh {
 				this.substMatrix[i][j] = (int) (FACTOR * scoringmatrix[i][j]);
 			}
 		}
-		out= new BufferedWriter(new FileWriter("fbgotoh.out"));
 	}
 
-	public int[][] align(char[] seq1, char[] seq2) {
+	public List<Locals> align(char[] seq1, char[] seq2) {
 		this.xsize = seq1.length + 1;
 		this.ysize = seq2.length + 1;
-		
+
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 
@@ -93,8 +87,7 @@ public class FBGotoh {
 			}
 		}
 		prepareMatrices();
-		calculateMatrices();
-		return findLocals();
+		return calculateMatrices();
 	}
 
 	private void prepareMatrices() {
@@ -113,7 +106,7 @@ public class FBGotoh {
 		return substMatrix[x - 65][y - 65];
 	}
 
-	private void calculateMatrices() {
+	private List<Locals> calculateMatrices() {
 
 		for (int i = 1; i < xsize; i++) {
 			for (int j = 1; j < ysize; j++) {
@@ -127,64 +120,128 @@ public class FBGotoh {
 				revI[i][j] = Math.max(revM[i - 1][j] + gapOpen + gapExtend,
 						revI[i - 1][j] + gapExtend);
 
+				M[i][j] = Math.max(M[i - 1][j - 1] + tempScore[i][j],
+						Math.max(I[i][j], Math.max(D[i][j], 0)));
 				revM[i][j] = Math.max(revM[i - 1][j - 1]
 						+ tempScore[xsize - i][ysize - j],
 						Math.max(revI[i][j], Math.max(revD[i][j], 0)));
-				M[i][j] = Math.max(M[i - 1][j - 1] + tempScore[i][j],
-						Math.max(I[i][j], Math.max(D[i][j], 0)));
 			}
 		}
 
+		// main step, calculate hybridM, find locals, do traceback
+		List<LocalMatch> scorelist = new ArrayList<LocalMatch>();
 		for (int i = 1; i < xsize; i++) {
 			for (int j = 1; j < ysize; j++) {
 				hybridM[i][j] = M[i - 1][j - 1] + tempScore[i][j]
 						+ revM[xsize - i - 1][ysize - j - 1];
+				if (hybridM[i][j] >= scoreCutOff) {
+					scorelist.add(new LocalMatch(hybridM[i][j], new int[] { i,
+							j }));
+
+				}
+				// System.out.print(hybridM[i][j]+"\t");
 			}
+			// System.out.println();
 		}
+
+		// sort scorelist
+		Collections.sort(scorelist, new sortScore());
+		System.out.print("Maxscore: " + (scorelist.get(0).getScore() / 100.0)
+				+ "\t");
+
+		List<Locals> locals = traceback(scorelist);
+
+		return locals;
 	}
 
-	private LocalCore mergeAlignment(List<int[]> coordsBW,List<int[]> coordsFW) {
+	private Locals mergeAlignment(List<int[]> coordsBW, List<int[]> coordsFW) {
 		List<int[]> merged = new ArrayList<int[]>();
-		
-		//add forward alignment
+
+		// add forward alignment
 		int lastindex = coordsFW.size() - 1;
-		while (lastindex > 0 && coordsFW.get(lastindex - 1)[1] == coordsFW.get(lastindex)[1]) {
-			lastindex--;
-		}
-		while (lastindex > 0 && coordsFW.get(lastindex - 1)[0] == coordsFW.get(lastindex)[0]) {
-			lastindex--;
-		}
+		// while (lastindex > 0
+		// && (coordsFW.get(lastindex - 1)[1] == coordsFW.get(lastindex)[1] ||
+		// coordsFW
+		// .get(lastindex - 1)[0] == coordsFW.get(lastindex)[0])) {
+		// lastindex--;
+		// }
+
 		for (int i = lastindex; i >= 0; i--) {
 			merged.add(coordsFW.get(i));
 		}
-		
-		//add backward alignment
-		boolean gaps = false;
+
+		// add backward alignment
+
 		lastindex = coordsBW.size() - 1;
-		while (lastindex > 0 && coordsBW.get(lastindex - 1)[1] == coordsBW.get(lastindex)[1]) {
-			lastindex--;
-			gaps = true;
-		}
-		while (lastindex > 0 && coordsBW.get(lastindex - 1)[0] == coordsBW.get(lastindex)[0]) {
-			lastindex--;
-			gaps = true;
-		}
-		if(gaps){
-			lastindex++;
-		}
+		// while (lastindex > 0
+		// && (coordsBW.get(lastindex - 1)[1] == coordsBW.get(lastindex)[1] ||
+		// coordsBW
+		// .get(lastindex - 1)[0] == coordsBW.get(lastindex)[0])) {
+		// lastindex--;
+		// }
+
 		for (int i = 0; i <= lastindex; i++) {
 			merged.add(coordsBW.get(i));
 		}
-		
-		int score = M[merged.get(merged.size()-1)[0]][merged.get(merged.size()-1)[1]] - M[merged.get(0)[0]-1][merged.get(0)[1]-1];
-		return new LocalCore(score,merged);
+
+		double evalue = Double.NEGATIVE_INFINITY;
+		double newscore = calcScore(merged) / FACTOR;
+		if (merged.size() >= lengthCutOff && newscore >= scoreCutOff) {
+			evalue = Math.log(1.0d * DBLENGTH * seq1.length * seq2.length
+					* Math.exp(-LAMBDA * newscore));
+			try {
+				out.append(((Math.round(evalue * 100.0)) / 100.0) + "\t"
+						+ newscore + "\t" + merged.size() + "\n");
+				// out.append(newscore + "\n");
+				// out.append("\n");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return new Locals(newscore, evalue, merged);
 	}
 
-	private List<LocalCore> traceback(List<LocalMatch> localmatches) {
+	private int calcScore(List<int[]> match) {
+		int score = 0;
+		int start = 0;
+		int end = match.size() - 1;
+		while (start < end
+				&& (match.get(start + 1)[0] == match.get(start)[0] || match
+						.get(start + 1)[1] == match.get(start)[1])) {
+			start++;
+		}
+
+		while (end > 1
+				&& (match.get(end - 1)[0] == match.get(end)[0] || match
+						.get(end - 1)[1] == match.get(end)[1])) {
+			end--;
+		}
+
+		for (int i = start; i <= end; i++) {
+			score += tempScore[match.get(i)[0]][match.get(i)[1]];
+			if (i < end - 1
+					&& (match.get(i + 1)[0] == match.get(i)[0] || match
+							.get(i + 1)[1] == match.get(i)[1])) {
+				score += gapOpen;
+				while (i < end - 1
+						&& (match.get(i + 1)[0] == match.get(i)[0] || match
+								.get(i + 1)[1] == match.get(i)[1])) {
+					i++;
+					score += gapExtend;
+				}
+				i--;
+			}
+		}
+		return score;
+	}
+
+	private List<Locals> traceback(List<LocalMatch> localmatches) {
 		int x, y, revX, revY;
 		int actScore;
+		double maxscore = Double.NEGATIVE_INFINITY;
 
-		List<LocalCore> result = new ArrayList<LocalCore>();
+		List<Locals> result = new ArrayList<Locals>();
 		ArrayList<int[]> coordsFW = new ArrayList<int[]>();
 		ArrayList<int[]> coordsBW = new ArrayList<int[]>();
 
@@ -193,7 +250,7 @@ public class FBGotoh {
 		for (LocalMatch lm : localmatches) {
 			coordsBW = new ArrayList<int[]>();
 			coordsFW = new ArrayList<int[]>();
-			
+
 			x = lm.getCoords()[0];
 			y = lm.getCoords()[1];
 
@@ -204,10 +261,10 @@ public class FBGotoh {
 				coordsBW.add(new int[] { x, y });
 				used[x][y] = -1;
 
+				revX = xsize - (x + 1);
+				revY = ysize - (y + 1);
 				x--;
 				y--;
-				revX = xsize - 1 - x;
-				revY = ysize - 1 - y;
 
 				while (revX > 0 && revY > 0 && revM[revX][revY] != 0) {
 					actScore = revM[revX][revY];
@@ -318,9 +375,14 @@ public class FBGotoh {
 						}
 					}
 				}
-				result.add(mergeAlignment(coordsBW, coordsFW));
+				Locals mergedali = mergeAlignment(coordsBW, coordsFW);
+				if (mergedali.getScore() > maxscore) {
+					maxscore = mergedali.getScore();
+				}
+				result.add(mergedali);
 			}
 		}
+		System.out.print(maxscore + "\n");
 		return result;
 	}
 
@@ -333,79 +395,53 @@ public class FBGotoh {
 
 	}
 
-	private int[][] findLocals() {
-		List<LocalMatch> localmatches = new ArrayList<LocalMatch>();
-		int[][] locals = new int[xsize][ysize];
-		
-		// read all scores with their coordinates
-		for (int i = xsize - 1; i > 0; i--) {
-			for (int j = ysize - 1; j > 0; j--) {
-				if (hybridM[i][j] >= scoreCutOff) {
-					localmatches.add(new LocalMatch(hybridM[i][j], new int[] {
-							i, j }));
-				}
-			}
+	protected class Locals {
+		private double evalue;
+		private double score;
+		private List<int[]> coords = new ArrayList<int[]>();
+
+		public Locals(double score, double evalue, List<int[]> coords) {
+			this.evalue = evalue;
+			this.coords = coords;
+			this.score = score;
 		}
 
-		// sort scorelist
-		Collections.sort(localmatches, new sortScore());
-
-		List<LocalCore> localcores = traceback(localmatches);
-		
-//		int[][] test = new int[xsize][ysize];
-//		for(LocalCore lc : localcores){
-//			for(int[] coord : lc.getCoords()){
-//				test[coord[0]][coord[1]] = lc.getScore();
-//			}
-//		}
-//		
-//		for (int i = 0; i < test.length; i++) {
-//			for (int j = 0; j < test.length; j++) {
-//				System.out.print(test[i][j]+"\t");
-//			}
-//			System.out.println();
-//		}
-//		
-//		System.out.println();
-		double evalue;
-		try {
-			for (LocalCore ue : localcores) {
-				if (ue.getCoords().size() >= lengthCutOff && ue.getScore() > scoreCutOff) {
-					evalue = FACTOR * Math.log(1.0d*DBLENGTH*seq1.length*seq2.length*Math.exp(LAMBDA*((ue.getScore()*1.0d)/FACTOR)));
-					if(evalue < 0){
-						System.out.println(evalue);
-					}
-//					System.out.println(evalue);
-					for(int[] coord : ue.getCoords()){
-						locals[coord[0]][coord[1]] = (int)(EVALUE_CUTOFF-evalue);
-					}
-//					out.append(this.toString()+": "+evalue + "\t" + ((ue.getScore()*1.0d)/FACTOR)+ "\t" + ue.getCoords().size() + "\n");
-//					out.append(ue.getScore() + "\t" + ue.getCoords().size());
-					System.out.println(this.toString()+": "+evalue + "\t" + ((ue.getScore()*1.0d)/FACTOR)+ "\t" + ue.getCoords().size());
-				}
-			}
-			out.close();
-		} catch (IOException e) {
-			System.out.println("failure");
+		public List<int[]> getCoords() {
+			return this.coords;
 		}
-		return locals;
-	}
 
-	public void printHM() {
-		for (int i = 0; i < xsize; i++) {
-			for (int j = 0; j < ysize; j++) {
-				System.out.print(hybridM[i][j] + "\t");
-			}
-			System.out.println();
+		public void setEvalue(double evalue) {
+			this.evalue = evalue;
+		}
+
+		public double getEvalue() {
+			return this.evalue;
+		}
+
+		public double getScore() {
+			return this.score;
 		}
 	}
 
-	public void printM() {
-		for (int i = 0; i < xsize; i++) {
-			for (int j = 0; j < ysize; j++) {
-				System.out.print(M[i][j] + "\t");
-			}
-			System.out.println();
+	public void closeOut() throws IOException {
+		out.close();
+	}
+
+	private class LocalMatch {
+		private int score;
+		private int[] coord = new int[2];
+
+		public LocalMatch(int score, int[] coord) {
+			this.score = score;
+			this.coord = coord;
+		}
+
+		public int[] getCoords() {
+			return this.coord;
+		}
+
+		public int getScore() {
+			return this.score;
 		}
 	}
 }

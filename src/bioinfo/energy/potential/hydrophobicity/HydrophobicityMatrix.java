@@ -158,6 +158,8 @@ public class HydrophobicityMatrix {
 				for (int i = 0; i < temp.length-1; i++) {
 					if (temp[i+1].startsWith("NaN")) {
 						result[lines][i] = Double.NEGATIVE_INFINITY;
+					} else if (temp[i+1].startsWith("NAN")) {
+						result[lines][i] = Double.NEGATIVE_INFINITY;
 					} else {
 						result[lines][i] = Double.parseDouble(temp[i+1]);
 					}

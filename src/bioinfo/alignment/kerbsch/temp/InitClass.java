@@ -103,7 +103,7 @@ public class InitClass {
 			}
 		}
 		
-		mean_distance = distance / (mScore.length*(mScore.length+1)/2);
+		mean_distance = distance / (mScore.length*(mScore.length-1)/2);
 		for (int i = 0; i < mScore.length; i++) {
 			for (int j = 0; j < mScore.length; j++) {
 				if(mScore[i] != 0 && mScore[j] != 0){

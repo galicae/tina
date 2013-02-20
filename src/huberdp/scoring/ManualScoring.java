@@ -12,7 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import huberdp.RDPSolutionTreeOrNode;
+import bioinfo.alignment.Threading;
 import huberdp.Scoring;
 
 /**
@@ -26,10 +26,10 @@ public class ManualScoring implements Scoring {
 	 * @see huberdp.Scoring#score(huberdp.RDPSolutionTreeOrNode)
 	 */
 	@Override
-	public double score(RDPSolutionTreeOrNode node) {
-		System.out.println("Please score the following node.");
+	public double score(Threading threading) {
+		System.out.println("Please score the following Threading.");
 		System.out.println("Press ENTER to set default score (0.0).");
-		System.out.println(node);
+		System.out.println(threading);
 		double score = 0.0;
 		try{
 		    BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));

@@ -259,7 +259,12 @@ public class ProteinFragment {
 	public Atom[] getAtoms() {
 		return this.atoms;
 	}
-
+	
+	public ProteinFragment getPart(int[] pos) {
+		return getPart(pos[0], pos[1]);
+	}
+	
+	
 	public ProteinFragment getPart(int start, int end) {
 		String seq = "";
 		if (end == atoms.length)

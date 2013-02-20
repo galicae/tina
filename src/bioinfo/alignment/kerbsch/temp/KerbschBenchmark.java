@@ -1,16 +1,15 @@
 package bioinfo.alignment.kerbsch.temp;
 
-import highscorealignments.CathScopEntry;
-import highscorealignments.CathScopHash;
-
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import bioinfo.alignment.kerbsch.AlignmentBenchmarker;
 import bioinfo.alignment.kerbsch.Kerbsch;
+import bioinfo.alignment.kerbsch.ValidateAlignments;
 import bioinfo.alignment.matrices.QuasarMatrix;
 
 public class KerbschBenchmark {
@@ -24,13 +23,20 @@ public class KerbschBenchmark {
 		double[][] secStructMatrix = SecStructScores.matrix;
 		
 		BufferedWriter out = new BufferedWriter(new FileWriter("kerbsch.bench"));
-		HashMap<String,char[]> seclib = SeqLibrary.read("../tina/secstruct.seqlib");
-		HashMap<String,char[]> seqlib = SeqLibrary.read("../tina/domains.seqlib");
-		ArrayList<String[]> pairs = PairReader.parse("../tina/410List.pairs");
-		HashMap<String,CathScopEntry> cathscopinfo = CathScopHash.read("../tina/cathscop.seqlib");
+		HashMap<String,char[]> seclib = SeqLibrary.read("../full_secstruct.seqlib");
+		HashMap<String,char[]> seqlib = SeqLibrary.read("../full_domains.seqlib");
 		
-		Kerbsch kerbsch = new Kerbsch(200.0,50.0,seqMatrix,hbMatrix,polMatrix,secStructMatrix,seclib);
-		AlignmentBenchmarker bench = new AlignmentBenchmarker(kerbsch,seqlib,pairs,cathscopinfo,out);
+		String targetsfolder = "../QUERY2TEMPLATELIST";
+		BufferedReader in = new BufferedReader(new FileReader("../small.list"));
+		String line;
+		ArrayList<String> targetlist = new ArrayList<String>();
+		while((line = in.readLine())!= null){
+			targetlist.add(line);
+		}
+		in.close();
+		
+		Kerbsch kerbsch = new Kerbsch(-12.0,-1.0,seqMatrix,hbMatrix,polMatrix,secStructMatrix,seclib);
+		ValidateAlignments bench = new ValidateAlignments(kerbsch,seqlib,targetlist,targetsfolder,out);
 		
 		bench.benchmark();
 		bench.printResults();

@@ -1,13 +1,12 @@
 package bioinfo.alignment.kerbsch;
 
+import java.util.HashMap;
+
 import bioinfo.Sequence;
 import bioinfo.alignment.Alignable;
 import bioinfo.alignment.Alignment;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.gotoh.Gotoh;
-import bioinfo.proteins.DSSPEntry;
-import bioinfo.proteins.DSSPFileReader;
-import bioinfo.proteins.SecStructEight;
 
 public class FreeshiftMusterLite extends Gotoh {
 
@@ -24,26 +23,35 @@ public class FreeshiftMusterLite extends Gotoh {
 	private int[][] substMatrix = new int[26][26];
 	
 	//feature weights
-	private final int hbWeight = 1;
-	private final int polWeight = 1;
-	private final int secStructWeight = 3;
-	private final int substWeight = 1;
+	private final int hbWeight;
+	private final int polWeight;
+	private final int secStructWeight;
+	private final int substWeight;
 
 	private int[][] tempScore;
-	private DSSPFileReader dsspReader = new DSSPFileReader("../GoBi_old/DSSP");
+	private HashMap<String,char[]> secStructSeqlib;
 	
-	public FreeshiftMusterLite(double gapOpen, double gapExtend, int[][] hbMatrix,
-			int[][] polMatrix, int[][] secStructMatrix, int[][] substMatrix) {
+	public FreeshiftMusterLite(double gapOpen, double gapExtend, HashMap<String,char[]> sslib, int[][] hbMatrix,
+			int[][] polMatrix, int[][] secStructMatrix, int[][] substMatrix, int hbWeight, int polWeight, int ssWeight, int substWeight) {
 		super(gapOpen, gapExtend);
+		
+		this.gapOpen *= Gotoh.FACTOR;
+		this.gapExtend *= Gotoh.FACTOR;
+		
 		this.hbMatrix = hbMatrix;
 		this.polMatrix = polMatrix;
 		this.secStructMatrix = secStructMatrix;
 		this.substMatrix = substMatrix;
+		this.hbWeight = hbWeight;
+		this.polWeight = polWeight;
+		this.secStructWeight = ssWeight;
+		this.substWeight = substWeight;
+		this.secStructSeqlib = sslib;
 	}
 
-	public FreeshiftMusterLite(double gapOpen, double gapExtend, double[][] hbMatrix,
+	public FreeshiftMusterLite(double gapOpen, double gapExtend, HashMap<String,char[]> sslib, double[][] hbMatrix,
 			double[][] polMatrix, double[][] secStructMatrix,
-			double[][] substMatrix) {
+			double[][] substMatrix, double hbWeight, double polWeight, double ssWeight ,double substWeight) {
 		super(gapOpen, gapExtend);
 				
 		for (int i = 0; i < substMatrix.length; i++) {
@@ -54,6 +62,12 @@ public class FreeshiftMusterLite extends Gotoh {
 				this.secStructMatrix[i][j] = (int) (Gotoh.FACTOR * secStructMatrix[i][j]);
 			}
 		}
+		
+		this.hbWeight = (int)(hbWeight * Gotoh.FACTOR);
+		this.polWeight = (int)(polWeight * Gotoh.FACTOR);
+		this.secStructWeight = (int)(ssWeight * Gotoh.FACTOR);
+		this.substWeight = (int)(substWeight * Gotoh.FACTOR);
+		this.secStructSeqlib = sslib;
 	}
 
 	public SequenceAlignment align(Alignable sequence1, Alignable sequence2) {
@@ -89,17 +103,15 @@ public class FreeshiftMusterLite extends Gotoh {
 	private void calculateMatrices() {	
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
-		DSSPEntry template = dsspReader.readFromFolderById(sequence1.getID());
-		SecStructEight[] tSecStruct = template.getSecondaryStructure();
 		
-		DSSPEntry query = dsspReader.readFromFolderById(sequence2.getID());
-		SecStructEight[] qSecStruct = query.getSecondaryStructure();
-
+		char[] sec1 = secStructSeqlib.get(sequence1.getID());
+		char[] sec2 = secStructSeqlib.get(sequence2.getID());
+		
 		for (int i = 1; i < xsize; i++) {
 			for (int j = 1; j < ysize; j++) {
 				tempScore[i][j] = score(hbMatrix, seq1[i - 1], seq2[j - 1]) * hbWeight
 						+ score(polMatrix, seq1[i - 1], seq2[j - 1]) * polWeight
-						+ score(secStructMatrix, tSecStruct[i-1].getThreeClassAnalogon().getCharRepres(), qSecStruct[j-1].getThreeClassAnalogon().getCharRepres()) * secStructWeight
+						+ score(secStructMatrix, sec1[i - 1], sec2[j - 1]) * secStructWeight
 						+ score(substMatrix, seq1[i - 1], seq2[j - 1]) * substWeight;
 			}
 		}	

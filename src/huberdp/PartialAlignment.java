@@ -10,142 +10,145 @@ package huberdp;
 
 import java.util.LinkedList;
 
-import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
-import bioinfo.proteins.PDBEntry;
+import bioinfo.alignment.Threading;
 
 /**
  * PartialAlignment is an implementation of the Partial Alignment needed for the
  * RDP data structure.
+ * 
  * @author huberste
  * @lastchange 2013-02-14
  */
-public class PartialAlignment extends RDPProblem {
+public class PartialAlignment {
+
+	private RDPProblem problem;
+	SequenceAlignment alignment;
 
 	/**
-	 * start of the partial alignment in the template sequence
-	 */
-	public int paTemStart;
-	/**
-	 * end of the partial alignment in the template sequence
-	 */
-	public int paTemEnd;
-	/**
-	 * start of the partial alignment in the target sequence
-	 */
-	public int paTarStart;
-	/**
-	 * end of the partial alignment in the target sequence
-	 */
-	public int paTarEnd;
-	
-	/**
 	 * Constructs a new PartialAlignment given the following parameters:
-	 * @param templateSequence Sequence of the template
-	 * @param templateStructure Structure of the template
-	 * @param targetSequence Sequence of the target
-	 * @param targetStructure (incomplete) structure of the target (maybe null)
-	 * @param partialAlignment partial SequenceAlignment
-	 * @param templateStart start of the subproblen (on template)
-	 * @param templateEnd end of the subproblem (on template)
-	 * @param targetStart start of the subproblem (on target)
-	 * @param targetEnd end of the subproblem (on target)
-	 * @param paTemStart start of the new partial alignment (template)
-	 * @param paTemEnd end of the new partial alignment (template)
-	 * @param paTarStart start of the new partial alignment (target)
-	 * @param paTarEnd end of the new partial alignment (target)
+	 * 
+	 * @param problem
+	 *            the (sub-)problem this PA solves
+	 * @param alignment
+	 *            the SequenceAlignment that was given by the oracle
 	 */
-	public PartialAlignment(Sequence templateSequence, PDBEntry templateStructure,
-			Sequence targetSequence, PDBEntry targetStructure,
-			SequenceAlignment partialAlignment,
-			int templateStart, int templateEnd, int targetStart, int targetEnd,
-			int paTemStart, int paTemEnd, int paTarStart, int paTarEnd) {
-		
-		super(templateSequence, templateStructure, targetSequence, targetStructure, 
-				partialAlignment,
-				templateStart, templateEnd, targetStart, targetEnd);
-		this.paTemStart = paTemStart;
-		this.paTemEnd = paTemEnd;
-		this.paTarStart = paTarStart;
-		this.paTarEnd = paTarEnd;
+	public PartialAlignment(RDPProblem problem, SequenceAlignment alignment) {
+		this.problem =problem;
+		this.alignment = alignment;
 	}
-	
+
 	/**
-	 * Constructs a new PartialAlignment which is the same as the given one. 
-	 * @param pa
+	 * 
+	 * @return the SequenceAlignment
 	 */
-	public PartialAlignment(PartialAlignment pa) {
-		this(
-			pa.templateSequence, pa.templateStructure,
-			pa.targetSequence, pa.targetStructure,
-			pa.alignment,
-			pa.templateStart, pa.templateEnd,
-			pa.targetStart, pa.targetEnd,
-			pa.paTemStart, pa.paTemEnd,
-			pa.paTarStart, pa.paTarEnd
-		);
+	public SequenceAlignment getAlignment() {
+		return alignment;
 	}
 
 	/**
 	 * 
 	 * @return the two subproblems that are defined by the partial alignment
 	 */
-	public LinkedList<RDPProblem> getSubProblems() {
+	public LinkedList<RDPProblem> getSubProblems(Scoring scoring) {
 		LinkedList<RDPProblem> results = new LinkedList<RDPProblem>();
-		
-		// DONE check if this is correct!
-		// this seems correct. ~huberste 2013-02-11
-		
-		int temStart = this.templateStart;
-		int temEnd = this.paTemStart-1;
-		int tarStart = this.targetStart;
-		int tarEnd = this.paTarStart-1;
-		
-		// DONE check sanity of subproblems! (begin < end, ...)
-		if (temStart <= temEnd && tarStart <= tarEnd) {
-			results.add (
-				new RDPProblem (
-					this.templateSequence, this.templateStructure,
-					this.targetSequence, this.targetStructure,
-					this.alignment,
-					temStart, temEnd, tarStart, tarEnd
-				)
-			);
+
+		Threading newThreading = merge(scoring);
+
+		char[][] alirows = alignment.getRows();
+
+		// calculate first subproblem
+		int pstart = getProblem().getProblemStart();
+		int pend = 0;
+		for (int i = 0; i < alignment.length(); i++) {
+			if (alirows[0][i] != '-' && alirows[1][i] != '-') {
+				pend = getProblem().getProblemStart() + i-1;
+				break;
+			}
 		}
-		
-		temStart = this.paTemEnd+1;
-		temEnd = this.templateEnd;
-		tarStart = this.paTarEnd+1;
-		tarEnd = this.targetEnd;
 		// DONE check sanity of subproblems! (begin < end, ...)
-		if (temStart <= temEnd && tarStart <= tarEnd) {
-			results.add (
-				new RDPProblem (
-					this.templateSequence, this.templateStructure,
-					this.targetSequence, this.targetStructure,
-					this.alignment,
-					temStart, temEnd, tarStart, tarEnd
-				)
-			);
+		if (pstart < pend) {
+			results.add(new RDPProblem(newThreading, pstart, pend));
 		}
-		
+
+		// calculate second subproblem
+		pend = getProblem().getProblemEnd();
+		pstart = getProblem().getProblemEnd();
+		for (int i = 0; i < alignment.length(); i++) {
+			if (alirows[0][alignment.length() - i - 1] != '-'
+					&& alirows[1][alignment.length() - i - 1] != '-') {
+				pend = getProblem().getProblemEnd() - i;
+				break;
+			}
+		}
+		// DONE check sanity of subproblems! (begin < end, ...)
+		if (pstart < pend) {
+			results.add(new RDPProblem(newThreading, pstart, pend));
+		}
+
 		return results;
 	}
-	
+
+	private Threading merge(Scoring scoring) {
+		// Rows of the old (problem)alignment
+		int[][] oldRows = getProblem().getThreading().getRows();
+		// rows of the new Alignment
+		int[][] aliRows = alignment.getRowsAsIntArray();
+
+		// calculate newRows[][]
+		int[][] newRows = new int[2][];
+		newRows[0] = new int[getProblem().getProblemStart() + alignment.length()
+				+ (getProblem().getThreading().length() - getProblem().getProblemEnd())
+				- 1];
+		newRows[1] = new int[newRows[0].length];
+		// copy old start
+		for (int i = 0; i < getProblem().getProblemStart(); i++) {
+			newRows[0][i] = oldRows[0][i];
+			newRows[1][i] = oldRows[1][i];
+		}
+		// copy new
+		for (int i = getProblem().getProblemStart(); i < getProblem().getProblemStart() + alignment.length(); i++) {
+			newRows[0][i] = aliRows[0][i];
+			newRows[1][i] = aliRows[1][i];
+		}
+		// copy old end
+		for (int i = getProblem().getProblemStart() + alignment.length(); i < newRows[0].length; i++) {
+			newRows[0][i] = oldRows[0][(getProblem().getProblemEnd()) - getProblem().getProblemStart() - alignment.length() + i + 1];
+			newRows[1][i] = oldRows[1][(getProblem().getProblemEnd()) - getProblem().getProblemStart() - alignment.length() + i + 1];
+		}
+
+		Threading result = new Threading(getProblem().getThreading().getStructure(),
+				getProblem().getThreading().getSequence(), newRows, 0.0);
+
+		// recalculate the score
+		double score = scoring.score(result);
+		result.setScore(score);
+
+		
+		return result;
+	}
+
 	/**
 	 * toString() function. Mainly for debugging purposes.
+	 * 
 	 * @return String representation of the partial alignment.
 	 */
 	public String toString() {
-		String result = alignment.getRowAsString(0)+"\n";
+		String result = alignment.getRowAsString(0) + "\n";
 		result += alignment.getRowAsString(1);
 		return result;
 	}
-	
+
+	/**
+	 * @return the problem
+	 */
+	public RDPProblem getProblem() {
+		return problem;
+	}
+
 }
 
 /******************************************************************************
- * "A question that sometimes drives me hazy:                                 *
- *  Am I or are the others crazy?"                                            *
- *     - Albert Einstein (1879 - 1955)                                        *
+ * "A question that sometimes drives me hazy: * Am I or are the others crazy?" *
+ * - Albert Einstein (1879 - 1955) *
  ******************************************************************************/

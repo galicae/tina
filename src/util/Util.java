@@ -2,6 +2,11 @@ package util;
 
 import java.util.Locale;
 
+/**
+ * The class Util contains some useful methods
+ * @author gobi_12_4
+ * @lastchange 2013-02-20
+ */
 public class Util {
 	
 	public static void printDoubleArray(double[][] array, int prec){
@@ -43,6 +48,18 @@ public class Util {
 			return folder+"/";
 		}
 	}
-
+	
+	/**
+	 * flips a char[] on itself
+	 * @param in the character array in question
+	 * @return the reversed array
+	 */
+	public static char[] flip(char[] in) {
+		char[] out = new char[in.length];
+		for (int i = in.length - 1; i >= 0; i--) {
+			out[out.length - 1 - i] = in[i];
+		}
+		return out;
+	}
 	
 }

@@ -3,7 +3,9 @@ package bioinfo.alignment.kerbsch;
 import highscorealignments.CathScopEntry;
 import highscorealignments.CathScopHash;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,11 +47,17 @@ public class GotohBenchmark {
 		
 
 		
-		ArrayList<String[]> pairs = PairReader.parse(args[5]);
-		HashMap<String,CathScopEntry> cathscopinfo = CathScopHash.read(args[6]);
+		BufferedReader in = new BufferedReader(new FileReader(args[5]));
+		String line;
+		ArrayList<String> targets = new ArrayList<String>();
+		while((line = in.readLine())!= null){
+			targets.add(line);
+		}
+		in.close();
+		String targetsfolder = args[6];
 		
 		
-		for (int go = -8; go > -16; go--) {
+		for (int go = -1; go > -6; go--) {
 			for (int ge = -1; ge >= go ; ge--) {
 				if(args[3].equals("freeshift")){
 					gotoh = new FreeshiftSequenceGotoh(go, ge, matrix);
@@ -63,14 +71,10 @@ public class GotohBenchmark {
 				else if(args[3].equals("glocal")){
 					gotoh = new GLocalSequenceGotoh(go, ge, matrix);
 				}
-				resultwriter = new BufferedWriter(new FileWriter("../dayhoff/"+args[2]+"_"+args[3]+"_"+go+"_"+ge+".bm"));
-				AlignmentBenchmarker ab = new AlignmentBenchmarker(gotoh,seqlib,pairs,cathscopinfo,resultwriter);
-				ab.benchmark();
-				try {
-					ab.printResults();
-				} catch (IOException e) {
-					System.out.println("cannot write output! (Benchmarker)");
-				}
+				resultwriter = new BufferedWriter(new FileWriter("../"+args[2]+"/"+args[2]+"_"+go+"_"+ge+".bm"));
+				ValidateAlignments va = new ValidateAlignments(gotoh,seqlib,targets,targetsfolder,resultwriter);
+				va.benchmark();
+				va.printResults();
 			}
 		}
 	}
