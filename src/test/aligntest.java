@@ -48,7 +48,7 @@ public class aligntest {
 //		double[][] substMatrix = QuasarMatrix.DAYHOFF_MATRIX;
 //		double[][] polMatrix = init.calcGotohInputMatrix(init.calcPolarityScores());
 //		double[][] hbMatrix = init.calcGotohInputMatrix(init.calcHydropathyScores());
-//		Kerbsch kerbsch = new Kerbsch(-20,-4,QuasarMatrix.DAYHOFF_MATRIX,init.calcGotohInputMatrix(init.calcHydropathyScores()),init.calcGotohInputMatrix(init.calcPolarityScores()),SecStructScores.matrix,sec_seqlib);
+		Kerbsch kerbsch = new Kerbsch(-20,-4,QuasarMatrix.DAYHOFF_MATRIX,init.calcGotohInputMatrix(init.calcHydropathyScores()),init.calcGotohInputMatrix(init.calcPolarityScores()),SecStructScores.matrix,sec_seqlib);
 
 //		GlobalSequenceGotoh substgotoh = new GlobalSequenceGotoh(-12.0,-1.0,substMatrix);
 //		FreeshiftSequenceGotoh polgotoh = new FreeshiftSequenceGotoh(-10,-4,polMatrix);
@@ -56,25 +56,29 @@ public class aligntest {
 //		GLocalSequenceGotoh glocalgotoh = new GLocalSequenceGotoh(-15.0,-4.0,secMatrix);
 //		GlobalMusterLite mustertest = new GlobalMusterLite(-6.0,-1.0, SeqLibrary.read("../secstruct.seqlib"),init.calcGotohInputMatrix(init.calcHydropathyScores()),init.calcGotohInputMatrix(init.calcPolarityScores()),SecStructScores.matrix,substMatrix,0.0,0.1,0.5,0.4);
 //		HSPAlignment hsptest = new HSPAlignment(-12,-1,2,2,2,QuasarMatrix.DAYHOFF_MATRIX);
-		FBGotoh fbgotoh = new FBGotoh(-12.0,-1.0,0.38,61735,QuasarMatrix.DAYHOFF_MATRIX);
+		FBGotoh fbgotoh = new FBGotoh(-12.0,-1.0,0.38,6.8,61735,QuasarMatrix.DAYHOFF_MATRIX);
 		Sequence seq1;
 		Sequence seq2;
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
+		String pdb1 = "1tuaA02";
+		String pdb2 = "1tuaA01";
 		
-//		String pdb1 = "1tuaA02";
-//		String pdb2 = "1tuaA01";
-		int index = 0;
-		for(String[] pair : pairs){
-//		System.out.println(++index);	
-		String pdb1 = pair[0];
-		String pdb2 = pair[1];
-		seq1 = new Sequence(pdb1,sec_seqlib.get(pdb1));
-		seq2 = new Sequence(pdb2,sec_seqlib.get(pdb2));
+//		for(String[] pair : pairs){	
+//			pdb1 = pair[0];
+//			pdb2 = pair[1];
+//			seq1 = new Sequence(pdb1,seqlib.get(pdb1));
+//			seq2 = new Sequence(pdb2,seqlib.get(pdb2));
+//			kerbsch.align(seq1, seq2);
+//		}
 		
-		SequenceAlignment local = localgotoh.align(seq1,seq2);
-		fbgotoh.align(seq1.getSequence(), seq2.getSequence());
-		System.out.println(local.getScore());
-		}
-		fbgotoh.closeOut();
+		seq1 = new Sequence(pdb1,seqlib.get(pdb1));
+		seq2 = new Sequence(pdb2,seqlib.get(pdb2));
+		SequenceAlignment kalign = kerbsch.align(seq1, seq2);
+		System.out.println(kalign.toStringVerbose());
+
+		System.out.println(localgotoh.align(seq1, seq2).toStringVerbose());
+//		kerbsch.streamMatricesAsTxt(writer);
+		
 //		SequenceAlignment align2 = mustertest.align(seq1, seq2);
 //		System.out.println(align1.toStringVerbose()+"\n");
 //		System.out.println(align2.toStringVerbose()+"\n");

@@ -1,7 +1,5 @@
 package bioinfo.alignment.kerbsch;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,8 +11,8 @@ public class FBGotoh {
 	private final double FACTOR = 100.0;
 	private final double LAMBDA;
 	private final double DBLENGTH;
-	private int lengthCutOff = 3;
-	private double scoreCutOff = 0.0;
+	private final int lengthCutOff = 4;
+	private final int scoreCutOff;
 	private int gapOpen;
 	private int gapExtend;
 	private int[][] substMatrix;
@@ -37,24 +35,23 @@ public class FBGotoh {
 	private char[] seq1;
 	private char[] seq2;
 
-	BufferedWriter out = new BufferedWriter(new FileWriter(
-			"../Evalues_fbaligns/dayhoff_local.evalues"));
-
-	public FBGotoh(double gapOpen, double gapExtend, double lambda,
+	public FBGotoh(double gapOpen, double gapExtend, double lambda, double scoreCutOff,
 			int dblength, int[][] scoringmatrix) throws IOException {
 		this.gapOpen = (int) (gapOpen * FACTOR);
 		this.gapExtend = (int) (gapExtend * FACTOR);
 		this.substMatrix = scoringmatrix;
 		DBLENGTH = dblength;
 		LAMBDA = lambda;
+		this.scoreCutOff = (int)(scoreCutOff * FACTOR);
 	}
 
-	public FBGotoh(double gapOpen, double gapExtend, double lambda,
+	public FBGotoh(double gapOpen, double gapExtend, double lambda, double scoreCutOff,
 			int dblength, double[][] scoringmatrix) throws IOException {
 		this.gapOpen = (int) (gapOpen * FACTOR);
 		this.gapExtend = (int) (gapExtend * FACTOR);
 		DBLENGTH = dblength;
 		LAMBDA = lambda;
+		this.scoreCutOff = (int)(scoreCutOff * FACTOR);
 
 		this.substMatrix = new int[scoringmatrix.length][scoringmatrix[0].length];
 		for (int i = 0; i != scoringmatrix.length; i++) {
@@ -137,17 +134,12 @@ public class FBGotoh {
 				if (hybridM[i][j] >= scoreCutOff) {
 					scorelist.add(new LocalMatch(hybridM[i][j], new int[] { i,
 							j }));
-
 				}
-				// System.out.print(hybridM[i][j]+"\t");
 			}
-			// System.out.println();
 		}
 
 		// sort scorelist
 		Collections.sort(scorelist, new sortScore());
-		System.out.print("Maxscore: " + (scorelist.get(0).getScore() / 100.0)
-				+ "\t");
 
 		List<Locals> locals = traceback(scorelist);
 
@@ -159,87 +151,68 @@ public class FBGotoh {
 
 		// add forward alignment
 		int lastindex = coordsFW.size() - 1;
-		// while (lastindex > 0
-		// && (coordsFW.get(lastindex - 1)[1] == coordsFW.get(lastindex)[1] ||
-		// coordsFW
-		// .get(lastindex - 1)[0] == coordsFW.get(lastindex)[0])) {
-		// lastindex--;
-		// }
+		while (lastindex > 0
+				&& (coordsFW.get(lastindex - 1)[1] == coordsFW.get(lastindex)[1] || coordsFW
+						.get(lastindex - 1)[0] == coordsFW.get(lastindex)[0])) {
+			lastindex--;
+		}
 
-		for (int i = lastindex; i >= 0; i--) {
+		for (int i = lastindex-1; i >= 0; i--) {
 			merged.add(coordsFW.get(i));
 		}
 
 		// add backward alignment
 
 		lastindex = coordsBW.size() - 1;
-		// while (lastindex > 0
-		// && (coordsBW.get(lastindex - 1)[1] == coordsBW.get(lastindex)[1] ||
-		// coordsBW
-		// .get(lastindex - 1)[0] == coordsBW.get(lastindex)[0])) {
-		// lastindex--;
-		// }
+		while (lastindex > 0
+				&& (coordsBW.get(lastindex - 1)[1] == coordsBW.get(lastindex)[1] || coordsBW
+						.get(lastindex - 1)[0] == coordsBW.get(lastindex)[0])) {
+			lastindex--;
+		}
 
 		for (int i = 0; i <= lastindex; i++) {
 			merged.add(coordsBW.get(i));
 		}
 
 		double evalue = Double.NEGATIVE_INFINITY;
-		double newscore = calcScore(merged) / FACTOR;
+		int newscore = calcScore(merged);
 		if (merged.size() >= lengthCutOff && newscore >= scoreCutOff) {
 			evalue = Math.log(1.0d * DBLENGTH * seq1.length * seq2.length
-					* Math.exp(-LAMBDA * newscore));
-			try {
-				out.append(((Math.round(evalue * 100.0)) / 100.0) + "\t"
-						+ newscore + "\t" + merged.size() + "\n");
-				// out.append(newscore + "\n");
-				// out.append("\n");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+					* Math.exp(-LAMBDA * (newscore/100.0)));
 		}
-		return new Locals(newscore, evalue, merged);
+		return new Locals(evalue, merged);
 	}
 
 	private int calcScore(List<int[]> match) {
 		int score = 0;
 		int start = 0;
 		int end = match.size() - 1;
-		while (start < end
-				&& (match.get(start + 1)[0] == match.get(start)[0] || match
-						.get(start + 1)[1] == match.get(start)[1])) {
-			start++;
-		}
-
-		while (end > 1
-				&& (match.get(end - 1)[0] == match.get(end)[0] || match
-						.get(end - 1)[1] == match.get(end)[1])) {
-			end--;
-		}
-
-		for (int i = start; i <= end; i++) {
-			score += tempScore[match.get(i)[0]][match.get(i)[1]];
-			if (i < end - 1
-					&& (match.get(i + 1)[0] == match.get(i)[0] || match
-							.get(i + 1)[1] == match.get(i)[1])) {
+		
+		//go through all coordinates and calculate score
+		for (int i = start + 1; i <= end; i++) {
+			if (match.get(i - 1)[0] == match.get(i)[0]
+					|| match.get(i - 1)[1] == match.get(i)[1]) {
 				score += gapOpen;
-				while (i < end - 1
-						&& (match.get(i + 1)[0] == match.get(i)[0] || match
-								.get(i + 1)[1] == match.get(i)[1])) {
+				while (i <= end
+						&& (match.get(i - 1)[0] == match.get(i)[0] || match
+								.get(i - 1)[1] == match.get(i)[1])) {
 					i++;
 					score += gapExtend;
 				}
 				i--;
+			} else {
+				score += tempScore[match.get(i-1)[0]][match.get(i-1)[1]];
 			}
 		}
+		
+		//"score last match" fix
+		score += tempScore[match.get(end)[0]][match.get(end)[1]];
 		return score;
 	}
 
 	private List<Locals> traceback(List<LocalMatch> localmatches) {
 		int x, y, revX, revY;
 		int actScore;
-		double maxscore = Double.NEGATIVE_INFINITY;
 
 		List<Locals> result = new ArrayList<Locals>();
 		ArrayList<int[]> coordsFW = new ArrayList<int[]>();
@@ -254,23 +227,28 @@ public class FBGotoh {
 			x = lm.getCoords()[0];
 			y = lm.getCoords()[1];
 
-			// do reverse traceback
 			if (used[x][y] == -1) {
 				continue;
 			} else {
 				coordsBW.add(new int[] { x, y });
 				used[x][y] = -1;
 
-				revX = xsize - (x + 1);
-				revY = ysize - (y + 1);
+				revX = xsize - x;
+				revY = ysize - y;
+
 				x--;
 				y--;
 
+				revX--;
+				revY--;
+
+				// do reverse traceback
 				while (revX > 0 && revY > 0 && revM[revX][revY] != 0) {
 					actScore = revM[revX][revY];
 
 					if (actScore == revM[revX - 1][revY - 1]
 							+ tempScore[xsize - revX][ysize - revY]) {
+
 						if (used[xsize - revX][ysize - revY] != -1) {
 							coordsBW.add(new int[] { xsize - revX, ysize - revY });
 							used[xsize - revX][ysize - revY] = -1;
@@ -284,6 +262,7 @@ public class FBGotoh {
 						while (revY > 0
 								&& revD[revX][revY] == revD[revX][revY - 1]
 										+ gapExtend) {
+
 							if (used[xsize - revX][ysize - revY] != -1) {
 								coordsBW.add(new int[] { xsize - revX,
 										ysize - revY });
@@ -293,6 +272,7 @@ public class FBGotoh {
 								break;
 							}
 						}
+
 						if (used[xsize - revX][ysize - revY] != -1) {
 							coordsBW.add(new int[] { xsize - revX, ysize - revY });
 							used[xsize - revX][ysize - revY] = -1;
@@ -305,6 +285,7 @@ public class FBGotoh {
 						while (revX > 0
 								&& revI[revX][revY] == revI[revX - 1][revY]
 										+ gapExtend) {
+
 							if (used[xsize - revX][ysize - revY] != -1) {
 								coordsBW.add(new int[] { xsize - revX,
 										ysize - revY });
@@ -314,6 +295,7 @@ public class FBGotoh {
 								break;
 							}
 						}
+
 						if (used[xsize - revX][ysize - revY] != -1) {
 							coordsBW.add(new int[] { xsize - revX, ysize - revY });
 							used[xsize - revX][ysize - revY] = -1;
@@ -329,6 +311,7 @@ public class FBGotoh {
 					actScore = M[x][y];
 
 					if (actScore == M[x - 1][y - 1] + tempScore[x][y]) {
+
 						if (used[x][y] != -1) {
 							coordsFW.add(new int[] { x, y });
 							used[x][y] = -1;
@@ -348,6 +331,7 @@ public class FBGotoh {
 								break;
 							}
 						}
+
 						if (used[x][y] != -1) {
 							coordsFW.add(new int[] { x, y });
 							used[x][y] = -1;
@@ -375,14 +359,9 @@ public class FBGotoh {
 						}
 					}
 				}
-				Locals mergedali = mergeAlignment(coordsBW, coordsFW);
-				if (mergedali.getScore() > maxscore) {
-					maxscore = mergedali.getScore();
-				}
-				result.add(mergedali);
+				result.add(mergeAlignment(coordsBW, coordsFW));
 			}
 		}
-		System.out.print(maxscore + "\n");
 		return result;
 	}
 
@@ -397,13 +376,11 @@ public class FBGotoh {
 
 	protected class Locals {
 		private double evalue;
-		private double score;
 		private List<int[]> coords = new ArrayList<int[]>();
 
-		public Locals(double score, double evalue, List<int[]> coords) {
+		public Locals(double evalue, List<int[]> coords) {
 			this.evalue = evalue;
 			this.coords = coords;
-			this.score = score;
 		}
 
 		public List<int[]> getCoords() {
@@ -417,14 +394,6 @@ public class FBGotoh {
 		public double getEvalue() {
 			return this.evalue;
 		}
-
-		public double getScore() {
-			return this.score;
-		}
-	}
-
-	public void closeOut() throws IOException {
-		out.close();
 	}
 
 	private class LocalMatch {
