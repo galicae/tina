@@ -183,6 +183,8 @@ public class RDPScoring implements Scoring {
 	private SecStructThree[] ss;
 
 	private double[] avgPotential;
+	
+	private String tempdir;
 
 	/**
 	 * constructs a RDPScoring object with given paramters
@@ -205,6 +207,8 @@ public class RDPScoring implements Scoring {
 	 *            the template's structure
 	 * @param vorobin
 	 *            absolute path to location of voro++ binary
+	 * @param temp
+	 *            temporary directory for vorolign
 	 * @param gridExtend
 	 *            variable vor voro++
 	 * @param gridDensity
@@ -219,7 +223,7 @@ public class RDPScoring implements Scoring {
 			HydrophobicityMatrix hydrophobicityMatrix, CCPMatrix ccpMatrix,
 			String dsspFolder, SipplContactPotential sippl,
 			PDBEntry templatestructure, String vorobin, double gridExtend,
-			double gridDensity, double gridClash, double minContact) {
+			double gridDensity, double gridClash, double minContact, String tempdir) {
 		this.gamma = gamma;
 		this.delta = delta;
 		this.epsilon = epsilon;
@@ -231,6 +235,7 @@ public class RDPScoring implements Scoring {
 		this.ccpMatrix = ccpMatrix;
 		this.dsspFolder = dsspFolder;
 		this.vorobin = vorobin;
+		this.tempdir = tempdir;
 		calculateAveragePPs();
 		setVoroVars(gridExtend, gridDensity, gridClash, minContact);
 	}
@@ -245,7 +250,7 @@ public class RDPScoring implements Scoring {
 		this(arg.gamma, arg.delta, arg.epsilon, arg.zeta, arg.gap_weight,
 				arg.mutationMatrix, arg.hydrophobicityMatrix, arg.ccpMatrix,
 				arg.dsspFolder, arg.pcp, arg.templateStructure, arg.vorobin,
-				arg.gridExtend, arg.gridDensity, arg.gridClash, arg.minContact);
+				arg.gridExtend, arg.gridDensity, arg.gridClash, arg.minContact, arg.tempdir);
 	}
 
 	/**
@@ -263,7 +268,7 @@ public class RDPScoring implements Scoring {
 	 */
 	public void init() {
 		if (vorobin != null && templateStructure != null) {
-			voro = new VoroPPWrap(vorobin);
+			voro = new VoroPPWrap(tempdir, vorobin);
 			data = new VoronoiData(templateStructure.getLongID());
 			data.reducePDB(VoroPrepType.CA, templateStructure);
 			data.fillGridWithoutClashes(gridExtend, gridDensity, gridClash);

@@ -76,4 +76,17 @@ public class Sequence implements Alignable{
 		return id+": "+seq;
 	}
 	
+	public static Sequence getSequenceFromString(String arg) {
+		if (arg == null) {
+			return null;
+		}
+		String[] temp = arg.split(":");
+		if (temp.length != 2) {
+			return null;
+		}
+
+		return new Sequence(temp[0], temp[1]);
+
+	}
+	
 }

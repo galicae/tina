@@ -56,6 +56,7 @@ public class HubeRDPValidator {
 	private static final String VOROSTRING = "/home/h/huberste/gobi/tina/tools/voro++_ubuntuquantal";
 	private static final String VPOTSTRING = "/home/h/huberste/gobi/data/vpot/s3d3_hob97_25_ED6_SD6_cb_all.md15.hssp95.vpot";
 	private static final String DSSPSTRING = "/home/h/huberste/gobi/data/dssp/";
+	private static final String TEMPDIR = "/tmp/";
 	
 
 	private static String usage =
@@ -136,7 +137,7 @@ public class HubeRDPValidator {
 				"/home/h/huberste/gobi/data/dssp/", sippl, null,
 				RDPScoring.VOROPATH, RDPScoring.GRID_EXTEND,
 				RDPScoring.GRID_DENSITY, RDPScoring.GRID_CLASH,
-				RDPScoring.MIN_CONTACT);
+				RDPScoring.MIN_CONTACT, TEMPDIR);
 		rdp.setScoring(scoring);
 		
 		// initialize TM stuff
