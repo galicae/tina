@@ -10,12 +10,12 @@ package huberdp.oracles;
 
 import static bioinfo.alignment.gotoh.Gotoh.FACTOR;
 import static util.Util.flip;
-
 import huberdp.Oracle;
 import huberdp.PartialAlignment;
 import huberdp.RDPProblem;
 import huberdp.scoring.RDPScoring;
 
+import java.text.DecimalFormat;
 import java.util.LinkedList;
 
 import bioinfo.Sequence;
@@ -65,7 +65,6 @@ public class RDPOracle implements Oracle {
 		String template = "";
 		String target = "";
 		// only use subproblem: start at ProblemStart, end at ProblemEnd
-		// TODO check if complete problem comes out. can't think clear now.
 		for (int i = problem.getProblemStart(); i <= problem.getProblemEnd(); i++) {
 			if (rows[0].charAt(i) != '-') {
 				template += rows[0].charAt(i);
@@ -150,7 +149,6 @@ public class RDPOracle implements Oracle {
 				from[i][j] = fromValue;
 				if (mValue >= max) {
 					max = mValue;
-					// TODO check if x and y values are set correctly
 					x = i - 1;
 					y = j - 1;
 				}
@@ -158,6 +156,14 @@ public class RDPOracle implements Oracle {
 		}
 		
 		// begin debugging
+//		DecimalFormat df = new DecimalFormat("00.0000");
+//		System.out.println("s:\tmax: "+df.format(scoring.smax) + ", min: "+df.format(scoring.smin) + ", avg: " + df.format(scoring.ssum / scoring.num));
+//		System.out.println("c:\tmax: "+df.format(scoring.cmax) + ", min: "+df.format(scoring.cmin) + ", avg: " + df.format(scoring.csum / scoring.num));
+//		System.out.println("h:\tmax: "+df.format(scoring.hmax) + ", min: "+df.format(scoring.hmin) + ", avg: " + df.format(scoring.hsum / scoring.num));
+//		System.out.println("p:\tmax: "+df.format(scoring.pmax) + ", min: "+df.format(scoring.pmin) + ", avg: " + df.format(scoring.psum / scoring.num));
+//		System.out.println("result:\tmax: "+df.format(scoring.scoremax) + ", min: "+df.format(scoring.scoremin) + ", avg: " + df.format(scoring.scoresum / scoring.num));
+//		System.out.println("insert:\tmax: "+df.format(scoring.insertmax) + ", min: "+df.format(scoring.insertmin) + ", avg: " + df.format(scoring.insertsum / scoring.insertnum));
+//		System.out.println("delete:\tmax: "+df.format(scoring.deletemax) + ", min: "+df.format(scoring.deletemin) + ", avg: " + df.format(scoring.deletesum / scoring.deletenum));
 //		util.Util.printIntegerArray(m);
 //		util.Util.printIntegerArray(from);
 		// end debugging

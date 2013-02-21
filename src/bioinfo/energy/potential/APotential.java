@@ -165,4 +165,12 @@ public abstract class APotential implements IEnergy{
 			e.printStackTrace();
 		}
 	}
+	/**
+	 * @author huberste
+	 * @return the potential
+	 */
+	public PotentialDimension<Double> getPotential() {
+		return potential;
+	}
+	
 }

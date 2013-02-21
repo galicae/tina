@@ -43,9 +43,20 @@ import util.CommandLineParser;
  */
 public class HubeRDPValidator {
 
-	private static final String hydromatrixFile = "/home/h/huberste/gobi/data/hydrophobicityMatrices/hydro_1024";
-	private static final String ccpfilename = "/home/h/huberste/gobi/data/ccp/ccp";
-	private static final String vpotfile = "/home/h/huberste/gobi/data/pair/s3d3_hob97_25_ED6_SD6_cb_all.md15.hssp95.vpot";
+	private static final String TARGETESTRING = "1dp7P00:TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK";
+	private static final Sequence TARGET = new Sequence("1dp7P00","TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK");
+	private static final String TEMPLATESTRING = "/home/h/huberste/gobi/data/pdb/1j2xA00.pdb";
+	private static final String GAMMASTRING = "1.0";
+	private static final String DELTASTRING = "0.1";
+	private static final String EPSILONSTRING = "2.0";
+	private static final String ZETASTRING = "4.0";
+	private static final String GAPSTRING = "3.0";
+	private static final String HYDROSTRING = "/home/h/huberste/gobi/data/hydrophobicityMatrices/hydro_1024";
+	private static final String CCPSTRING = "/home/h/huberste/gobi/data/CCP/ccp";
+	private static final String VOROSTRING = "/home/h/huberste/gobi/tina/tools/voro++_ubuntuquantal";
+	private static final String VPOTSTRING = "/home/h/huberste/gobi/data/vpot/s3d3_hob97_25_ED6_SD6_cb_all.md15.hssp95.vpot";
+	private static final String DSSPSTRING = "/home/h/huberste/gobi/data/dssp/";
+	
 
 	private static String usage =
 	"Alignment aller Paare in pairfile:\n"+
@@ -115,16 +126,18 @@ public class HubeRDPValidator {
 		// initialize HubeRDP stuff
 		// TODO
 		HubeRDP rdp = new HubeRDP();
-		rdp.addOracle(new RDPOracle());
+//		rdp.addOracle(new RDPOracle());
 		SipplContactPotential sippl = new SipplContactPotential();
-		sippl.readFromVPOTFile(vpotfile);
-		rdp.setScoring(new RDPScoring(RDPScoring.GAMMA, RDPScoring.DELTA,
-				RDPScoring.EPSILON, RDPScoring.ZETA,
+		sippl.readFromVPOTFile(VPOTSTRING);
+		RDPScoring scoring = new RDPScoring(RDPScoring.GAMMA, RDPScoring.DELTA,
+				RDPScoring.EPSILON, RDPScoring.ZETA, RDPScoring.GAP,
 				QuasarMatrix.DAYHOFF_MATRIX, new HydrophobicityMatrix(
-						hydromatrixFile), new CCPMatrix(ccpfilename), sippl,
-				null, RDPScoring.VOROPATH, RDPScoring.GRID_EXTEND,
+						HYDROSTRING), new CCPMatrix(CCPSTRING),
+				"/home/h/huberste/gobi/data/dssp/", sippl, null,
+				RDPScoring.VOROPATH, RDPScoring.GRID_EXTEND,
 				RDPScoring.GRID_DENSITY, RDPScoring.GRID_CLASH,
-				RDPScoring.MIN_CONTACT));
+				RDPScoring.MIN_CONTACT);
+		rdp.setScoring(scoring);
 		
 		// initialize TM stuff
 		TMMain tmmain = new TMMain();

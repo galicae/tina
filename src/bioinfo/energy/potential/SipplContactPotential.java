@@ -2,6 +2,7 @@ package bioinfo.energy.potential;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -21,6 +22,7 @@ public class SipplContactPotential extends AContactPotential{
 	 * @param filename
 	 */
 	public void readFromVPOTFile(String filename){
+		BufferedReader br = null;
 		try{
 			int[] size = {6,6,26,26};
 			initPotential(size);
@@ -31,7 +33,7 @@ public class SipplContactPotential extends AContactPotential{
 			Matcher firstlinealterMatcher = null;
 			Pattern contentlinePattern = Pattern.compile("(-?\\d+\\.\\d+)\\s+(-?\\d+\\.\\d+)\\s+(-?\\d+\\.\\d+)\\s+(-?\\d+\\.\\d+)\\s+(-?\\d+\\.\\d+)\\s+(-?\\d+\\.\\d+)");
 			Matcher contentlineMatcher = null;
-			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
 			int k = 0;
 			int i = 0;
 			int j = 0;
@@ -71,7 +73,7 @@ public class SipplContactPotential extends AContactPotential{
 							int[] path = {k,t,i,j};
 							potential.setValue(path,Double.parseDouble(contentlineMatcher.group(t+1)));
 						}
-					}else{
+					} else {
 						firstlinealterMatcher = firstlinealterPattern.matcher(line);
 						if(firstlinealterMatcher.find()){
 							br.readLine();
@@ -89,10 +91,20 @@ public class SipplContactPotential extends AContactPotential{
 						}	
 					}
 				}
-			}	
-			br.close();
-		}catch(Exception e){
+			}
+		} catch (Exception e){
 			e.printStackTrace();
+		} finally {
+			try {
+				if (br != null) {
+					br.close();
+					br = null;
+				}
+			} catch (IOException e) {
+				System.err.println("Error closing the vpot file: "+e.getLocalizedMessage());
+				e.printStackTrace();
+			}
+		
 		}
 	}
 	
@@ -221,8 +233,7 @@ public class SipplContactPotential extends AContactPotential{
 		}
 		PDBEntry newModel = new PDBEntry(model.getId()+model.getChainID()+String.format("%02d",model.getChainIDNum())+"_shuffled", aas);
 		return getAminoScores(newModel);
-	}
-	
+	}	
 	
 
 	public static void main(String[] args) {
