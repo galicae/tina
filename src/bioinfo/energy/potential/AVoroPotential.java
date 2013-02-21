@@ -80,7 +80,7 @@ public abstract class AVoroPotential extends APotential{
 	 */
 	public VoronoiData prepareSimple(PDBEntry pdb, VoroPrepType type){
 		VoronoiData data;
-		data = new VoronoiData(pdb.getID());
+		data = new VoronoiData(pdb.getId());
 		data.reducePDB(type, pdb);
 		voro.decomposite(data);
 		return data;
@@ -94,7 +94,7 @@ public abstract class AVoroPotential extends APotential{
 	 */
 	public VoronoiData prepareSimple(DSSPEntry dssp){
 		VoronoiData data;
-		data = new VoronoiData(dssp.getID());
+		data = new VoronoiData(dssp.getId());
 		data.reduceDSSP(dssp);
 		voro.decomposite(data);
 		return data;
@@ -112,7 +112,7 @@ public abstract class AVoroPotential extends APotential{
 	 */
 	public VoronoiData prepareWithGrid(PDBEntry pdb, double gridExtend, double gridDensity, double gridClash, double minContact){
 		VoronoiData data;
-		data = new VoronoiData(pdb.getID());
+		data = new VoronoiData(pdb.getId());
 		data.reducePDB(pdb);
 		data.fillGridWithoutClashes(gridExtend, gridDensity, gridClash);
 		voro.decomposite(data);
@@ -132,7 +132,7 @@ public abstract class AVoroPotential extends APotential{
 	 */
 	public VoronoiData prepareWithGrid(DSSPEntry dssp, double gridExtend, double gridDensity, double gridClash, double minContact){
 		VoronoiData data;
-		data = new VoronoiData(dssp.getID());
+		data = new VoronoiData(dssp.getId());
 		data.reduceDSSP(dssp);
 		data.fillGridWithoutClashes(gridExtend, gridDensity, gridClash);
 		voro.decomposite(data);
@@ -149,7 +149,7 @@ public abstract class AVoroPotential extends APotential{
 	@Override
 	public void prepareSequenceScoring(Object model){
 		PDBEntry entry = (PDBEntry)model;
-		data = new VoronoiData(entry.getID());
+		data = new VoronoiData(entry.getId());
 		data.reducePDB(entry);
 		data.fillGridWithoutClashes(gridExtend, gridDensity, gridClash);
 		voro.decomposite(data);

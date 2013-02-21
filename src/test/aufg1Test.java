@@ -83,11 +83,11 @@ public class aufg1Test {
 							(int) (Gotoh.FACTOR * Double.parseDouble(tmp[0]
 									.split("\\s+")[2].trim())));
 					pdb1 = reader.readPDBFromFile("C:/Users/nikos/Desktop/STRUCTURES/"
-							+ cur.getComponent(0).getID() + ".pdb");
+							+ cur.getComponent(0).getId() + ".pdb");
 					pdb2 = reader.readPDBFromFile("C:/Users/nikos/Desktop/STRUCTURES/"
-							+ cur.getComponent(1).getID() + ".pdb");
+							+ cur.getComponent(1).getId() + ".pdb");
 					tr = main.calculateTransformation(cur, pdb1, pdb2);
-					System.out.println(cur.getComponent(0).getID());
+					System.out.println(cur.getComponent(0).getId());
 					tm.write(tr.getTmscore() + "\n");
 					gdt.write(tr.getGdt() + "\n");
 				}

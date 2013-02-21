@@ -83,8 +83,8 @@ public class HighScoreAlign {
 	
 	public void writeMaxAlign(SequenceAlignment align){
 		try {
-			String id1 = align.getComponent(0).getID();
-			String id2 = align.getComponent(1).getID();
+			String id1 = align.getComponent(0).getId();
+			String id2 = align.getComponent(1).getId();
 			double score = align.getScore();
 			out.write(">"+id1+" "+id2+" "+score+"\n");
 			out.write(id1+": "+align.getRowAsString(0)+"\n");

@@ -274,7 +274,7 @@ public class RDPScoring implements Scoring {
 
 		// read SecStruct from DSSP File
 		String dsspFileName = DSSPFileReader.DSSP_FOLDER
-				+ templateStructure.getID().toLowerCase()
+				+ templateStructure.getId().toLowerCase()
 				+ templateStructure.getLongID().substring(4, 7) + ".dssp";
 		DSSPEntry dssp = DSSPFileReader.readDSSPFile(dsspFileName);
 		SecStructEight[] temp = dssp.getSecondaryStructure();
@@ -413,7 +413,7 @@ public class RDPScoring implements Scoring {
 
 		// read SecStruct from DSSP File
 		String dsspFileName = DSSPFileReader.DSSP_FOLDER
-				+ f.getStructure().getID().toLowerCase()
+				+ f.getStructure().getId().toLowerCase()
 				+ f.getStructure().getLongID().substring(4, 7) + ".dssp";
 		DSSPEntry dssp = DSSPFileReader.readDSSPFile(dsspFileName);
 		SecStructEight[] ss = dssp.getSecondaryStructure();
@@ -744,7 +744,7 @@ public class RDPScoring implements Scoring {
 			}
 		}
 
-		PDBEntry result = new PDBEntry(b.getID(), b.getChainID(),
+		PDBEntry result = new PDBEntry(b.getId(), b.getChainID(),
 				b.getChainIDNum(), aminoAcids);
 
 		return result;

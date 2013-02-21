@@ -21,7 +21,7 @@ public class kabschPipeline {
 		Transformation tr = Kabsch.calculateTransformation(reducedPdbs);
 		PDBEntry superposedPdb2 = tr.transform(pdb2);
 		
-		System.out.println(superposedPdb2.getID());
+		System.out.println(superposedPdb2.getId());
 		System.out.println(tr.getRmsd());
 	}
 }

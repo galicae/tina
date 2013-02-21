@@ -24,7 +24,7 @@ public class WaitBar {
 			for (int k = 0; k < p.length(); k++) {
 				seq += p.getAminoAcid(i);
 			}
-			Sequence seq1 = new Sequence(p.getID(), seq);
+			Sequence seq1 = new Sequence(p.getId(), seq);
 			for (int j = 0; j < list.size(); j++) {
 				if(j == i)
 					continue;
@@ -33,7 +33,7 @@ public class WaitBar {
 				for (int k = 0; k < q.length(); k++) {
 					seq += q.getAminoAcid(i);
 				}
-				Sequence seq2 = new Sequence(q.getID(), seq);
+				Sequence seq2 = new Sequence(q.getId(), seq);
 
 				GlobalSequenceGotoh gotoh = new GlobalSequenceGotoh(-9, -1,
 						matrix);

@@ -128,7 +128,7 @@ public class DoBFreqCounter {
 					continue;
 				}
 				
-				VoronoiData data = new VoronoiData(structure.getID());
+				VoronoiData data = new VoronoiData(structure.getId());
 				data.reducePDB(VoroPrepType.CA, structure);
 				data.fillGridWithoutClashes(GRID_EXTEND, GRID_DENSITY, GRID_CLASH);
 				voro.decomposite(data);

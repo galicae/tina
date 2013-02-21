@@ -3,12 +3,14 @@ package bioinfo.proteins;
 import java.util.List;
 import java.util.Locale;
 
+import bioinfo.StructuralData;
+
 /**
  * 
  * @author gobi_12_4
  * 
  */
-public class DSSPEntry {
+public class DSSPEntry implements StructuralData{
 
 	private final String id;
 	private final char chainID;
@@ -129,7 +131,7 @@ public class DSSPEntry {
 		}
 	}
 
-	public int getLength() {
+	public int length() {
 		return length;
 	}
 
@@ -162,9 +164,16 @@ public class DSSPEntry {
 	}
 
 	/**
+	 * return complete id
+	 */
+	public String getID(){
+		return id+chainID+chainIDNum;
+	}
+	
+	/**
 	 * @return the ID
 	 */
-	public String getID() {
+	public String getId() {
 		return id;
 	}
 

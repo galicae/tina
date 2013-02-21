@@ -80,7 +80,7 @@ public class SimpleCoordMapper {
 			}
 		}
 
-		return new PDBEntry(arg1.getComponent(0).getID(), aalist);
+		return new PDBEntry(arg1.getComponent(0).getId(), aalist);
 	}
 	
 	/**
@@ -139,7 +139,7 @@ public class SimpleCoordMapper {
 			}
 		}
 
-		return new PDBEntry(arg1.getComponent(1).getID(), aalist);
+		return new PDBEntry(arg1.getComponent(1).getId(), aalist);
 	}
 
 }

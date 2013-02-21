@@ -249,7 +249,7 @@ public class DBConnector extends MysqlWrapper{
 	
 	public boolean addPDBEntry(PDBEntry entry){		
 		
-		if(pdbExist(entry.getID()+entry.getChainID()+entry.getChainIDNum()) == -1){
+		if(pdbExist(entry.getId()+entry.getChainID()+entry.getChainIDNum()) == -1){
 			try{
 				int lastpdbid;
 				int lastaminoid;
@@ -258,7 +258,7 @@ public class DBConnector extends MysqlWrapper{
 				double[] pos;
 				
 				//insert pdbentry
-				stmtSetPDBEntry.setString(1,entry.getID());
+				stmtSetPDBEntry.setString(1,entry.getId());
 				stmtSetPDBEntry.setString(2,String.valueOf(entry.getChainID()));
 				stmtSetPDBEntry.setInt(3,entry.getChainIDNum());
 				stmtSetPDBEntry.setInt(4, entry.length());
@@ -305,13 +305,13 @@ public class DBConnector extends MysqlWrapper{
 	}
 		
 		public boolean addDSSPEntry(DSSPEntry entry){			
-			int pdbDBID = pdbExist(entry.getID()+entry.getChainID()+entry.getChainIDNum());
+			int pdbDBID = pdbExist(entry.getId()+entry.getChainID()+entry.getChainIDNum());
 			int aminoid;
 			ResultSet res;
 			
-			if(pdbDBID != -1 && dsspExist(entry.getID()+entry.getChainID()+entry.getChainIDNum()) == -1){
+			if(pdbDBID != -1 && dsspExist(entry.getId()+entry.getChainID()+entry.getChainIDNum()) == -1){
 				try{					
-					for (int i = 0; i < entry.getLength(); i++) {
+					for (int i = 0; i < entry.length(); i++) {
 						stmtGetAAIdByResIndex.setInt(1, entry.getResIndex()[i]);
 						stmtGetAAIdByResIndex.setInt(2, pdbDBID);
 						res = stmtGetAAIdByResIndex.executeQuery();
@@ -319,7 +319,7 @@ public class DBConnector extends MysqlWrapper{
 						if(res.first()){
 							aminoid = res.getInt(aafields[0]);
 						}else{
-							System.out.println(entry.getID()+entry.getChainID()+entry.getChainIDNum());
+							System.out.println(entry.getId()+entry.getChainID()+entry.getChainIDNum());
 							System.out.println(entry.getResIndex()[i]);
 							System.out.println("--------------------------");
 						}

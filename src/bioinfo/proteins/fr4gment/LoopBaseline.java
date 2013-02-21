@@ -53,7 +53,7 @@ public class LoopBaseline {
 		// clusterDirectory: msp_cluster05
 		// guideFile: cathscop.ids
 
-		String pdbId = input.getComponent(0).getID();
+		String pdbId = input.getComponent(0).getId();
 		String fold = parseGuide(guideFile, pdbId);
 
 		File cluster = new File(clusterDirectory + fold + "/");
@@ -153,11 +153,11 @@ public class LoopBaseline {
 	 */
 	private HashMap<Integer, LinkedList<ProteinFragment>> findLoops(
 			MultipleSuperposition ms, SequenceAlignment input) {
-		ms.sort(input.getComponent(0).getID());
+		ms.sort(input.getComponent(0).getId());
 		Sequence seq1 = input.getComponent(0);
 
 		double[][] coord = PDBReduce.reduceSinglePDB(ms.getStructures().get(0));
-		ProteinFragment usedFrag = new ProteinFragment(seq1.getID(),
+		ProteinFragment usedFrag = new ProteinFragment(seq1.getId(),
 				seq1.getSequenceAsString(), coord, coord.length);
 		templCores = calcCorePoints(input);
 		deriveQueryCores();
@@ -177,7 +177,7 @@ public class LoopBaseline {
 				double[][] xCoord = PDBReduce.reduceSinglePDB(pdbX);
 				if(xCoord == null)
 					continue;
-				ProteinFragment x = new ProteinFragment(pdbX.getID(), pdbX
+				ProteinFragment x = new ProteinFragment(pdbX.getId(), pdbX
 						.getSequence().getSequenceAsString(), xCoord,
 						pdbX.length());
 				CoreSegmentGotoh got = new CoreSegmentGotoh(-1, -1, 0.5,
@@ -311,7 +311,7 @@ public class LoopBaseline {
 			double[][] coord = PDBReduce.reduceSinglePDB(ms.getStructures()
 					.get(0));
 			ProteinFragment usedFrag = new ProteinFragment(input
-					.getComponent(0).getID(), input.getComponent(0)
+					.getComponent(0).getId(), input.getComponent(0)
 					.getSequenceAsString(), coord, coord.length);
 			LinkedList<ProteinFragment> loops = loopFragments.get(tempPos[0]);
 

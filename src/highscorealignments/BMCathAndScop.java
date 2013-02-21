@@ -275,8 +275,8 @@ public class BMCathAndScop {
 			try {
 				Transformation tr = tmMachine.calculateTransformation(famRec,
 						nikoReader.readFromFolderById(famRec.getComponent(0)
-								.getID()), nikoReader.readFromFolderById(famRec
-								.getComponent(1).getID()));
+								.getId()), nikoReader.readFromFolderById(famRec
+								.getComponent(1).getId()));
 				FamRecWr.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -306,9 +306,9 @@ public class BMCathAndScop {
 					Transformation tr = tmMachine.calculateTransformation(
 							cathFamMis, nikoReader
 									.readFromFolderById(cathFamMis
-											.getComponent(0).getID()),
+											.getComponent(0).getId()),
 							nikoReader.readFromFolderById(cathFamMis
-									.getComponent(1).getID()));
+									.getComponent(1).getId()));
 					cathFamMisWr.write(tr.getTmscore() + " " + tr.getGdt()
 							+ "\n");
 				} catch (Exception e) {
@@ -320,9 +320,9 @@ public class BMCathAndScop {
 					Transformation tr = tmMachine.calculateTransformation(
 							cathDifFol, nikoReader
 									.readFromFolderById(cathDifFol
-											.getComponent(0).getID()),
+											.getComponent(0).getId()),
 							nikoReader.readFromFolderById(cathDifFol
-									.getComponent(1).getID()));
+									.getComponent(1).getId()));
 					cathFamMisWr
 							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
 				} catch (Exception e) {
@@ -335,9 +335,9 @@ public class BMCathAndScop {
 					Transformation tr = tmMachine.calculateTransformation(
 							cathSupMis, nikoReader
 									.readFromFolderById(cathSupMis
-											.getComponent(0).getID()),
+											.getComponent(0).getId()),
 							nikoReader.readFromFolderById(cathSupMis
-									.getComponent(1).getID()));
+									.getComponent(1).getId()));
 					cathSupMisWr.write(tr.getTmscore() + " " + tr.getGdt()
 							+ "\n");
 				} catch (Exception e) {
@@ -349,9 +349,9 @@ public class BMCathAndScop {
 					Transformation tr = tmMachine.calculateTransformation(
 							cathDifFol, nikoReader
 									.readFromFolderById(cathDifFol
-											.getComponent(0).getID()),
+											.getComponent(0).getId()),
 							nikoReader.readFromFolderById(cathDifFol
-									.getComponent(1).getID()));
+									.getComponent(1).getId()));
 					cathSupMisWr
 							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
 				} catch (Exception e) {
@@ -364,9 +364,9 @@ public class BMCathAndScop {
 					Transformation tr = tmMachine.calculateTransformation(
 							cathFoldMis, nikoReader
 									.readFromFolderById(cathFoldMis
-											.getComponent(0).getID()),
+											.getComponent(0).getId()),
 							nikoReader.readFromFolderById(cathFoldMis
-									.getComponent(1).getID()));
+									.getComponent(1).getId()));
 					cathFolMisWr.write(tr.getTmscore() + " " + tr.getGdt()
 							+ "\n");
 				} catch (Exception e) {
@@ -378,9 +378,9 @@ public class BMCathAndScop {
 					Transformation tr = tmMachine.calculateTransformation(
 							cathDifFol, nikoReader
 									.readFromFolderById(cathDifFol
-											.getComponent(0).getID()),
+											.getComponent(0).getId()),
 							nikoReader.readFromFolderById(cathDifFol
-									.getComponent(1).getID()));
+									.getComponent(1).getId()));
 					cathFolMisWr
 							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
 				} catch (Exception e) {
@@ -395,9 +395,9 @@ public class BMCathAndScop {
 					Transformation tr = tmMachine.calculateTransformation(
 							scopFamMis, nikoReader
 									.readFromFolderById(scopFamMis
-											.getComponent(0).getID()),
+											.getComponent(0).getId()),
 							nikoReader.readFromFolderById(scopFamMis
-									.getComponent(1).getID()));
+									.getComponent(1).getId()));
 					scopFamMisWr.write(tr.getTmscore() + " " + tr.getGdt()
 							+ "\n");
 				} catch (Exception e) {
@@ -409,9 +409,9 @@ public class BMCathAndScop {
 					Transformation tr = tmMachine.calculateTransformation(
 							scopDifFol, nikoReader
 									.readFromFolderById(scopDifFol
-											.getComponent(0).getID()),
+											.getComponent(0).getId()),
 							nikoReader.readFromFolderById(scopDifFol
-									.getComponent(1).getID()));
+									.getComponent(1).getId()));
 					scopFamMisWr
 							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
 				} catch (Exception e) {
@@ -424,9 +424,9 @@ public class BMCathAndScop {
 					Transformation tr = tmMachine.calculateTransformation(
 							scopSupMis, nikoReader
 									.readFromFolderById(scopSupMis
-											.getComponent(0).getID()),
+											.getComponent(0).getId()),
 							nikoReader.readFromFolderById(scopSupMis
-									.getComponent(1).getID()));
+									.getComponent(1).getId()));
 					scopSupMisWr.write(tr.getTmscore() + " " + tr.getGdt()
 							+ "\n");
 				} catch (Exception e) {
@@ -438,9 +438,9 @@ public class BMCathAndScop {
 					Transformation tr = tmMachine.calculateTransformation(
 							scopDifFol, nikoReader
 									.readFromFolderById(scopDifFol
-											.getComponent(0).getID()),
+											.getComponent(0).getId()),
 							nikoReader.readFromFolderById(scopDifFol
-									.getComponent(1).getID()));
+									.getComponent(1).getId()));
 					scopSupMisWr
 							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
 				} catch (Exception e) {
@@ -453,9 +453,9 @@ public class BMCathAndScop {
 					Transformation tr = tmMachine.calculateTransformation(
 							scopFoldMis, nikoReader
 									.readFromFolderById(scopFoldMis
-											.getComponent(0).getID()),
+											.getComponent(0).getId()),
 							nikoReader.readFromFolderById(scopFoldMis
-									.getComponent(1).getID()));
+									.getComponent(1).getId()));
 					scopFolMisWr.write(tr.getTmscore() + " " + tr.getGdt()
 							+ "\n");
 				} catch (Exception e) {
@@ -467,9 +467,9 @@ public class BMCathAndScop {
 					Transformation tr = tmMachine.calculateTransformation(
 							scopDifFol, nikoReader
 									.readFromFolderById(scopDifFol
-											.getComponent(0).getID()),
+											.getComponent(0).getId()),
 							nikoReader.readFromFolderById(scopDifFol
-									.getComponent(1).getID()));
+									.getComponent(1).getId()));
 					scopFolMisWr
 							.write(tr.getTmscore() + " " + tr.getGdt() + "\n");
 				} catch (Exception e) {

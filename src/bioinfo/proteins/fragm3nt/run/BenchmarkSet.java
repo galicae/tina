@@ -145,11 +145,11 @@ public class BenchmarkSet {
 			SequenceAlignment lAli = l.align(seq1, seq2);
 
 			BufferedWriter lw = new BufferedWriter(new FileWriter(
-					"./fastaFiles/loc" + seq1.getID() + "_" + seq2.getID()));
+					"./fastaFiles/loc" + seq1.getId() + "_" + seq2.getId()));
 			BufferedWriter fw = new BufferedWriter(new FileWriter(
-					"./fastaFiles/fre" + seq1.getID() + "_" + seq2.getID()));
+					"./fastaFiles/fre" + seq1.getId() + "_" + seq2.getId()));
 			BufferedWriter gw = new BufferedWriter(new FileWriter(
-					"./fastaFiles/glo" + seq1.getID() + "_" + seq2.getID()));
+					"./fastaFiles/glo" + seq1.getId() + "_" + seq2.getId()));
 			lw.write(toFastaFormat(lAli));
 			fw.write(toFastaFormat(fAli));
 			gw.write(toFastaFormat(gAli));
@@ -159,23 +159,23 @@ public class BenchmarkSet {
 
 			// try finding the best score
 			lcall = ("./lib/TMalign ");
-			lcall += (desktop + seq1.getID() + ".pdb ");
-			lcall += (desktop + seq2.getID() + ".pdb ");
-			lcall += "-I ./fastaFiles/loc" + seq1.getID() + "_" + seq2.getID();
+			lcall += (desktop + seq1.getId() + ".pdb ");
+			lcall += (desktop + seq2.getId() + ".pdb ");
+			lcall += "-I ./fastaFiles/loc" + seq1.getId() + "_" + seq2.getId();
 			lOut = execToString(lcall);
 			lScore = findMeTmScore(lOut);
 
 			gcall = ("./lib/TMalign ");
-			gcall += (desktop + seq1.getID() + ".pdb ");
-			gcall += (desktop + seq2.getID() + ".pdb ");
-			gcall += "-I ./fastaFiles/glo" + seq1.getID() + "_" + seq2.getID();
+			gcall += (desktop + seq1.getId() + ".pdb ");
+			gcall += (desktop + seq2.getId() + ".pdb ");
+			gcall += "-I ./fastaFiles/glo" + seq1.getId() + "_" + seq2.getId();
 			gOut = execToString(gcall);
 			gScore = findMeTmScore(gOut);
 
 			fcall = ("./lib/TMalign ");
-			fcall += (desktop + seq1.getID() + ".pdb ");
-			fcall += (desktop + seq2.getID() + ".pdb ");
-			fcall += "-I ./fastaFiles/fre" + seq1.getID() + "_" + seq2.getID();
+			fcall += (desktop + seq1.getId() + ".pdb ");
+			fcall += (desktop + seq2.getId() + ".pdb ");
+			fcall += "-I ./fastaFiles/fre" + seq1.getId() + "_" + seq2.getId();
 			fOut = execToString(fcall);
 			fScore = findMeTmScore(fOut);
 
@@ -224,14 +224,14 @@ public class BenchmarkSet {
 
 	public static String toFastaFormat(SequenceAlignment ali) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(">" + ali.getComponent(0).getID() + "\n");
+		sb.append(">" + ali.getComponent(0).getId() + "\n");
 		for (int i = 0; i < ali.getRowAsString(0).length(); i++) {
 			sb.append(ali.getRow(0)[i]);
 			if (i % 80 == 0 && i > 0)
 				sb.append("\n");
 		}
 		sb.append("\n");
-		sb.append(">" + ali.getComponent(1).getID() + "\n");
+		sb.append(">" + ali.getComponent(1).getId() + "\n");
 		for (int i = 0; i < ali.getRowAsString(1).length(); i++) {
 			sb.append(ali.getRow(1)[i]);
 			if (i % 80 == 0 && i > 0)

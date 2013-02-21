@@ -31,12 +31,12 @@ public class Fragmenter {
 					temp[j - i] = pdb.getAminoAcid(j).getAtomByType(AtomType.CA);
 				}
 				curSecStruct = secStruct.substring(i, i + fLength);
-				ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_" + i, curSecStruct, temp, fLength);
+				ProteinFragment tempFrag = new ProteinFragment(pdb.getId() + "_" + i, curSecStruct, temp, fLength);
 				l.add(tempFrag);
 			}
 			return l;
 		} catch (Exception e) {
-			System.out.println("Entry " + pdb.getID()
+			System.out.println("Entry " + pdb.getId()
 					+ " probably has incomplete records.");
 		}
 		return null;
@@ -66,12 +66,12 @@ public class Fragmenter {
 					seq.append(tempAA.getName().getOneLetterCode());
 					temp[j - i] = tempAA.getAtomByType(AtomType.CA).clone();
 				}
-				ProteinFragment tempFrag = new ProteinFragment(pdb.getID() + "_" + i, seq.toString(), temp, fLength);
+				ProteinFragment tempFrag = new ProteinFragment(pdb.getId() + "_" + i, seq.toString(), temp, fLength);
 				l.add(tempFrag);
 			}
 			return l;
 		} catch (Exception e) {
-			System.out.println("Entry " + pdb.getID()
+			System.out.println("Entry " + pdb.getId()
 					+ " probably has incomplete records.");
 			e.printStackTrace();
 		}

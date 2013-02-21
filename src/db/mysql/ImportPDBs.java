@@ -76,7 +76,7 @@ public class ImportPDBs {
 		
 		PDBEntry pdbentry = pdbconnector.getPDB(pdb);
 		DSSPEntry dssp = pdbconnector.getDSSP(pdb);
-		System.out.println(dssp.getLength());
+		System.out.println(dssp.length());
 		System.out.println(pdbentry.length());
 		System.out.println();
 	}

@@ -15,12 +15,13 @@ import opt.CommandLine;
 import opt.ParameterType;
 import opt.Setting;
 import opt.ValidationRule;
-
+import bioinfo.StructuralData;
 import bioinfo.energy.potential.AVoroPotential;
 import bioinfo.energy.potential.DSSPSolventPotential;
 import bioinfo.energy.potential.GridSolventPotential;
 import bioinfo.energy.potential.IEnergy;
 import bioinfo.energy.potential.SipplContactPotential;
+import bioinfo.energy.potential.voronoi.VoronoiData;
 import bioinfo.proteins.AminoAcidName;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
@@ -30,6 +31,8 @@ public class Eval {
 	
 	/**
 	 * generates evaluation test values to be plotted
+	 * values are calculated for one native sequence on the native structure and 
+	 * a lot of (numberOfShuffles) random sequences on the native structure
 	 * @param shuffle PDBSequenceShuffle instance with existing Distribution
 	 * @param model to be shuffled numberOfShuffles times
 	 * @param potential to be evaluated, should be prepared for preparation before calling it here
@@ -37,7 +40,7 @@ public class Eval {
 	 * @param numberOfShuffles 
 	 * @param output Writer stream to print the results to
 	 */
-	public static void nativeVsShuffles(PDBSequenceShuffle shuffle, PDBEntry model, IEnergy potential, int numberOfShuffles, Writer output){
+	public static void nativeVsCompleteShuffles(PDBSequenceShuffle shuffle, StructuralData model, IEnergy potential, int numberOfShuffles, Writer output){
 		potential.prepareSequenceScoring(model);
 		try{
 			output.append("identifier\tenergy\n");
@@ -61,7 +64,17 @@ public class Eval {
 		}
 	}
 	
-	public static void nativesVsShuffle(PDBSequenceShuffle shuffle, PDBFileReader reader, List<String> models, IEnergy potential, int numberOfShuffles, Writer output){
+	/**
+	 * calculates values for evaluation of potential performance
+	 * by generating random sequences (number of shuffles) of every given model in models
+	 * @param shuffle
+	 * @param reader
+	 * @param models
+	 * @param potential
+	 * @param numberOfShuffles
+	 * @param output
+	 */
+	public static void nativesVsCompleteShuffle(PDBSequenceShuffle shuffle, PDBFileReader reader, List<String> models, IEnergy potential, int numberOfShuffles, Writer output){
 		try{
 			output.append("identifier\tnativeenergy");
 			for(int i = 0; i != numberOfShuffles; i++){
@@ -79,7 +92,7 @@ public class Eval {
 			model = reader.readFromFolderById(mId);
 			potential.prepareSequenceScoring(model);
 			try{
-				output.append(model.getID()+"\t"+potential.getNativeScoring());
+				output.append(model.getId()+"\t"+potential.getNativeScoring());
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -104,6 +117,14 @@ public class Eval {
 		}
 	}
 	
+	/**
+	 * calculates "footprint" data for evaluation of potential performance
+	 * therefore all footprints of given models are calculated
+	 * @param reader
+	 * @param models
+	 * @param potential
+	 * @param output
+	 */
 	public static void footprints(PDBFileReader reader, List<String> models, IEnergy potential, Writer output){
 		double[][] data = new double[models.size()][];
 		int maxlength = 0;
@@ -148,12 +169,20 @@ public class Eval {
 		
 	}
 	
-	public static void footprintVsShuffles(PDBSequenceShuffle shuffle, PDBEntry model, IEnergy potential, int numberOfShuffles, Writer output){
+	/**
+	 * calculates comparative footprint data between the native footprint and alot of (numberofShuffles) random footprints
+	 * @param shuffle
+	 * @param model
+	 * @param potential
+	 * @param numberOfShuffles
+	 * @param output
+	 */
+	public static void footprintVsShuffles(PDBSequenceShuffle shuffle, StructuralData model, IEnergy potential, int numberOfShuffles, Writer output){
 		potential.prepareSequenceScoring(model);
 		double[][] data = new double[numberOfShuffles+1][model.length()];
 		String[] ids = new String[numberOfShuffles+1];
 		data[0] = potential.getNativeAminoScoring();
-		ids[0] = model.getID()+model.getChainID()+String.format("%02d", model.getChainIDNum());
+		ids[0] = model.getID();
 		
 		AminoAcidName[] shuffled;
 		for(int i = 0; i != numberOfShuffles; i++){
@@ -182,6 +211,9 @@ public class Eval {
 		}
 	}
 	
+	public static void nativeVSBlockShuffles(PDBSequenceShuffle shuffle, StructuralData model, IEnergy potential, int numberOfShuffles, Writer output){
+		
+	}
 
 	/**
 	 * @param args
@@ -342,7 +374,7 @@ public class Eval {
 				}else{
 					shuffle = null;
 				}
-				Eval.nativesVsShuffle(shuffle, reader, models, potential, numberOfShuffles, output);
+				Eval.nativesVsCompleteShuffle(shuffle, reader, models, potential, numberOfShuffles, output);
 			}else{
 				PDBEntry model = reader.readFromFolderById(modelId);
 				if(shuffletype.equals("random")){
@@ -352,7 +384,7 @@ public class Eval {
 				}else{
 					shuffle = null;
 				}
-				Eval.nativeVsShuffles(shuffle, model, potential, numberOfShuffles, output);
+				Eval.nativeVsCompleteShuffles(shuffle, model, potential, numberOfShuffles, output);
 			}
 		}else if(((String)coms.get("benchtype")).equals("footprint")){
 			if((modelId = (String)coms.get("model")) == null){

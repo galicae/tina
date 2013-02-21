@@ -214,7 +214,7 @@ public class RDPOracle implements Oracle {
 
 		SequenceAlignment result = new SequenceAlignment(new Sequence(threading.getStructure()
 				.getLongID(), templateRow), new Sequence(threading
-				.getSequence().getID(), targetRow), templateRow, targetRow,
+				.getSequence().getId(), targetRow), templateRow, targetRow,
 				1.0d * max / FACTOR);
 		
 		// DONE begin debugging

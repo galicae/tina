@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import bioinfo.StructuralData;
 import bioinfo.energy.potential.voronoi.VoroPrepType;
 import bioinfo.proteins.AminoAcid;
 import bioinfo.proteins.AminoAcidName;
@@ -18,11 +19,13 @@ import bioinfo.proteins.Atom;
 import bioinfo.proteins.AtomType;
 import bioinfo.proteins.DSSPEntry;
 import bioinfo.proteins.PDBEntry;
+import bioinfo.proteins.SecStructThree;
 
-public class VoronoiData {
+public class VoronoiData implements StructuralData{
 
 	private final String id;
 	
+	private HashMap<Integer, SecStructThree> secStruct;
 	private HashMap<Integer, double[]> pointPositions;
 	private HashMap<Integer, AminoAcidName> aminos;
 	private HashMap<Integer, HashMap<Integer, Double>> faces;
@@ -61,8 +64,20 @@ public class VoronoiData {
 		this.peptideIds = peptideIds;
 	}
 
-	public String getId() {
+	public String getID() {
 		return id;
+	}
+	
+	public int length(){
+		return peptideIds.size();
+	}
+	
+	public HashMap<Integer,SecStructThree> getSecStruct(){
+		return this.secStruct;
+	}
+	
+	public void setSecStruct(HashMap<Integer,SecStructThree> secStruct){
+		this.secStruct = secStruct;
 	}
 
 	public void setAminos(HashMap<Integer, AminoAcidName> aminos) {
@@ -100,11 +115,12 @@ public class VoronoiData {
 	 * constructor used for file read from .vorcontacts
 	 * used by "zimmer group"
 	 */
-	public VoronoiData(String id, HashMap<Integer,AminoAcidName> aminos, HashMap<Integer,HashMap<Integer,Double>> faces){
+	public VoronoiData(String id, HashMap<Integer,AminoAcidName> aminos, HashMap<Integer,SecStructThree> secStruct, HashMap<Integer,HashMap<Integer,Double>> faces){
 		this.id= id;
 		this.aminos = aminos;
 		this.faces = faces;
 		this.peptideIds = aminos.keySet();
+		this.secStruct = secStruct;
 	}
 
 	/**
@@ -189,7 +205,7 @@ public class VoronoiData {
 	 * 
 	 * @return the ID of the voronoi data set or the dssp/pdb model 
 	 */
-	public String getID() {
+	public String getId() {
 		return this.id;
 	}
 
@@ -409,7 +425,7 @@ public class VoronoiData {
 	 */
 	public void reduceDSSP(DSSPEntry dssp) {
 
-		for (int i = 0; i != dssp.getLength(); i++) {
+		for (int i = 0; i != dssp.length(); i++) {
 			addAminoValues(i, dssp.getCaTrace()[i], dssp.getNames()[i]);
 		}
 
@@ -528,12 +544,20 @@ public class VoronoiData {
 			}
 		}
 		
+		if(this.secStruct != null){
+			secStruct = new HashMap<Integer,SecStructThree>();
+			for(int i : this.secStruct.keySet()){
+				secStruct.put(i,this.secStruct.get(i));
+			}
+		}
+		
 		data.setAminos(aminos);
 		data.setFaces(faces);
 		data.setGridIds(gridIds);
 		data.setOuterGridIds(outerGridIds);
 		data.setPeptideIds(peptideIds);
 		data.setPointPositions(pointPositions);
+		data.setSecStruct(secStruct);
 		
 		return data;
 	}
@@ -560,6 +584,7 @@ public class VoronoiData {
 		String sequence = null;
 		String secStruc = null;
 		String line = null;
+		HashMap<Integer,SecStructThree> secStruct = new HashMap<Integer,SecStructThree>();
 		HashMap<Integer,AminoAcidName> aminos = new HashMap<Integer,AminoAcidName>();
 		HashMap<Integer,HashMap<Integer,Double>> faces = new HashMap<Integer,HashMap<Integer,Double>>();
 		HashMap<Integer,Double> tmp = null;
@@ -570,6 +595,9 @@ public class VoronoiData {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
 
 			while((line = br.readLine()) != null){
+				if(line.trim().length() == 0){
+					continue;
+				}
 				if(sequence == null){
 					sequence = line.trim();
 					continue;
@@ -580,20 +608,106 @@ public class VoronoiData {
 				}
 				line_split = line.split(":");
 				tmp = new HashMap<Integer,Double>();
-				face_split = line_split[1].trim().split(" ");
-				for(int i = 0; i != face_split.length; i++){
-					tmp.put(Integer.parseInt(face_split[i].trim()),1.0);
+				if(line_split.length > 1 && line_split[1] != null && line_split[1].trim().length() != 0){
+					face_split = line_split[1].trim().split(" ");
+					for(int i = 0; i != face_split.length; i++){
+						tmp.put(Integer.parseInt(face_split[i].trim()),1.0);
+					}
 				}
 				faces.put(Integer.parseInt(line_split[0].trim()),tmp);
 			}
 		} catch (Exception e) {
+			System.err.println(line.trim());
 			e.printStackTrace();
 		}
 		for(int i = 0; i != sequence.length(); i++){
 			aminos.put(i, AminoAcidName.getAAFromOLC(sequence.charAt(i)));
 		}
+		for(int i = 0; i != secStruc.length(); i++){
+			secStruct.put(i, SecStructThree.defSecStructThree(secStruc.charAt(i)));
+		}
 		String id = filename.split("/")[filename.split("/").length-1].split("\\.")[0];
-		return new VoronoiData(id, aminos, faces);
+		return new VoronoiData(id, aminos, secStruct, faces);
 	}
 	
+	public List<Core> detectCores(){
+		if(this.secStruct == null || this.aminos == null || this.faces == null){
+			return null;
+		}
+		
+		List<Core> cores = new ArrayList<Core>();
+		HashMap<Integer,Integer> seq2core = new HashMap<Integer,Integer>();
+		HashMap<Integer,int[]> core2pos = new HashMap<Integer,int[]>();
+		HashMap<Integer,SecStructThree> core2type = new HashMap<Integer,SecStructThree>();
+		HashMap<Integer,AminoAcidName[]> core2aas = new HashMap<Integer,AminoAcidName[]>();
+		HashMap<Integer,HashMap<Integer,Integer>> core2cont = new HashMap<Integer,HashMap<Integer,Integer>>();
+		
+		List<AminoAcidName> aas = new ArrayList<AminoAcidName>();
+		SecStructThree actType = this.secStruct.get(0);
+		int actFirst = 0;
+		int actLast = 0;
+		int coreCounter = 0;
+		
+		for(int i = 0; i != this.secStruct.size(); i++){
+			if(i != 0){
+				aas.add(this.aminos.get(i-1));
+			}
+			if(!this.secStruct.get(i).equals(actType)){
+				actLast = i-1;
+				int[] border = {actFirst,actLast};
+				core2pos.put(coreCounter, border);
+				actFirst = i;
+				core2type.put(coreCounter,actType);
+				core2aas.put(coreCounter, aas.toArray(new AminoAcidName[aas.size()]));
+				aas = new ArrayList<AminoAcidName>();
+				actType = this.secStruct.get(i);
+				coreCounter++;
+			}
+			seq2core.put(i,coreCounter);
+		}
+		aas.add(this.aminos.get(this.secStruct.size()-1));
+		int[] border = {actFirst,this.secStruct.size()-1};
+		core2type.put(coreCounter,actType);
+		core2pos.put(coreCounter, border);
+		core2aas.put(coreCounter, aas.toArray(new AminoAcidName[aas.size()]));
+		
+		HashMap<Integer,Integer> tmp;
+		int actCore;
+		for(int i = 0; i != seq2core.size(); i++){
+			actCore = seq2core.get(i);
+			if(this.faces.containsKey(i) && this.faces.get(i) != null){
+				for(int other : this.faces.get(i).keySet()){
+					other = seq2core.get(other);
+					if(core2cont.containsKey(actCore)){
+						tmp = core2cont.get(actCore);
+						if(tmp.containsKey(other)){
+							tmp.put(other, tmp.get(other)+1);
+						}else{
+							tmp.put(other, 1);
+						}
+						core2cont.put(actCore,tmp);
+					}else{
+						tmp = new HashMap<Integer,Integer>();
+						tmp.put(other, 1);
+						core2cont.put(actCore, tmp);
+					}
+				}
+			}
+		}
+		
+		Core core;
+		for(int i = 0; i != core2pos.size(); i++){
+			core = new Core(this.id, 
+					core2type.get(i), 
+					i, 
+					core2aas.get(i).length, 
+					core2pos.get(i)[0], 
+					core2pos.get(i)[1], 
+					core2cont.get(i).size(), 
+					core2cont.get(i), 
+					core2aas.get(i));
+			cores.add(core);
+		}
+		return cores;
+	}
 }

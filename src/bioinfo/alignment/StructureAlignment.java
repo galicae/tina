@@ -171,7 +171,7 @@ public class StructureAlignment implements Alignment {
 	 * @return String of the format "idone idtwo score"
 	 */
 	public String toString() {
-		String result = seq1.getID() + " " + seq2.getID() + " "
+		String result = seq1.getId() + " " + seq2.getId() + " "
 				+ DFLONG.format(score);
 		return result;
 	}
@@ -198,9 +198,9 @@ public class StructureAlignment implements Alignment {
 			}
 		}
 
-		String result = ">" + seq1.getID() + " " + seq2.getID() + " "
-				+ DFSHORT.format(score) + "\n" + seq1.getID() + ": " + amino1
-				+ "\n" + seq2.getID() + ": " + amino2;
+		String result = ">" + seq1.getId() + " " + seq2.getId() + " "
+				+ DFSHORT.format(score) + "\n" + seq1.getId() + ": " + amino1
+				+ "\n" + seq2.getId() + ": " + amino2;
 		return result;
 	}
 

@@ -44,17 +44,17 @@ public class aufg1Test2 {
 				SequenceAlignment ali = gotoh.align(sequence1, sequence2);
 				
 				PDBFileReader reader = new PDBFileReader();
-				PDBEntry pdb1 = reader.readPDBFromFile("C:/Users/nikos/Desktop/STRUCTURES/" + ali.getComponent(0).getID() + ".pdb");
-				PDBEntry pdb2 = reader.readPDBFromFile("C:/Users/nikos/Desktop/STRUCTURES/" + ali.getComponent(1).getID() + ".pdb");
+				PDBEntry pdb1 = reader.readPDBFromFile("C:/Users/nikos/Desktop/STRUCTURES/" + ali.getComponent(0).getId() + ".pdb");
+				PDBEntry pdb2 = reader.readPDBFromFile("C:/Users/nikos/Desktop/STRUCTURES/" + ali.getComponent(1).getId() + ".pdb");
 				
 				TMMain main = new TMMain();
 				Transformation tr = main.calculateTransformation(ali, pdb1, pdb2);
-				System.out.println(ali.getComponent(0).getID() + " " + ali.getComponent(1).getID() + " " + tr.getTmscore());
+				System.out.println(ali.getComponent(0).getId() + " " + ali.getComponent(1).getId() + " " + tr.getTmscore());
 //				System.out.println(tr.getTmscore());
 				tm.write(tr.getTmscore() + "\n");
 				gdt.write(tr.getGdt() + "\n");
 				if(tr.getTmscore() >= 1) {
-					System.err.println(ali.getComponent(0).getID() + " " + ali.getComponent(1).getID() + " " + tr.getTmscore());
+					System.err.println(ali.getComponent(0).getId() + " " + ali.getComponent(1).getId() + " " + tr.getTmscore());
 					break;
 				}
 			}

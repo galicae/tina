@@ -123,16 +123,16 @@ public class ReProf {
 			if (i % 80 == 0 && i > 0)
 				sb.append("\n");
 		}
-		sb.insert(0, ">" + pdb.getID() + "\n");
+		sb.insert(0, ">" + pdb.getId() + "\n");
 
 		try {
 			BufferedWriter wr = new BufferedWriter(new FileWriter(path
-					+ pdb.getID() + ".fasta"));
+					+ pdb.getId() + ".fasta"));
 			wr.write(sb.toString());
 			wr.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return path + pdb.getID() + ".fasta";
+		return path + pdb.getId() + ".fasta";
 	}
 }
