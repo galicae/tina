@@ -66,6 +66,8 @@ public class ProteinFragment {
 	}
 
 	public double[] getResidue(int i) {
+		if(i >= coordinates.length)
+			i = coordinates.length - 1;
 		return coordinates[i];
 	}
 

@@ -19,7 +19,7 @@ public class CoreSegmentGotoh extends Gotoh {
 	private static final int INIT_VAL = Integer.MIN_VALUE / 2;
 	private int[][] scoringmatrix;
 	private ProteinFragment used;
-	private ProteinFragment x;
+	private ProteinFragment xFrag;
 	private double cutoff;
 
 	// Sequence sequence1;
@@ -38,7 +38,7 @@ public class CoreSegmentGotoh extends Gotoh {
 		super(gapOpen, gapExtend);
 		this.cutoff = cutoff;
 		this.used = used;
-		this.x = x;
+		this.xFrag = x;
 	}
 
 	@Override
@@ -257,7 +257,7 @@ public class CoreSegmentGotoh extends Gotoh {
 	 */
 	private int score(int x, int y) {
 		double result = euclideanDistance(used.getResidue(x),
-				this.x.getResidue(y));
+				this.xFrag.getResidue(y));
 		result = 10* cutoff - result;
 		return (int) result * Gotoh.FACTOR;
 	}

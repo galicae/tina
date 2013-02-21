@@ -19,6 +19,6 @@ public interface Alignable {
 	 * 
 	 * @return identifier of alignable sequence
 	 */
-	public String getID();
+	public String getId();
 	
 }

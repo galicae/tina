@@ -31,7 +31,7 @@ public class LoopBaseline {
 	public LoopBaseline(SequenceAlignment input, String clusterDirectory,
 			String guideFile) {
 		this.input = input;
-		System.out.print(input.toString() + " ");
+//		System.out.print(input.toString() + " ");
 		this.ms = findMultipleSuperpos(clusterDirectory, guideFile);
 	}
 
@@ -53,7 +53,7 @@ public class LoopBaseline {
 		// clusterDirectory: msp_cluster05
 		// guideFile: cathscop.ids
 
-		String pdbId = input.getComponent(0).getID();
+		String pdbId = input.getComponent(0).getId();
 		String fold = parseGuide(guideFile, pdbId);
 
 		File cluster = new File(clusterDirectory + fold + "/");
@@ -153,11 +153,13 @@ public class LoopBaseline {
 	 */
 	private HashMap<Integer, LinkedList<ProteinFragment>> findLoops(
 			MultipleSuperposition ms, SequenceAlignment input) {
-		ms.sort(input.getComponent(0).getID());
+		ms.sort(input.getComponent(0).getId());
 		Sequence seq1 = input.getComponent(0);
 
 		double[][] coord = PDBReduce.reduceSinglePDB(ms.getStructures().get(0));
-		ProteinFragment usedFrag = new ProteinFragment(seq1.getID(),
+		if(coord == null)
+			return null;
+		ProteinFragment usedFrag = new ProteinFragment(seq1.getId(),
 				seq1.getSequenceAsString(), coord, coord.length);
 		templCores = calcCorePoints(input);
 		deriveQueryCores();
@@ -172,12 +174,12 @@ public class LoopBaseline {
 
 			for (int i = 1; i < ms.getStructures().size(); i++) {
 				PDBEntry pdbX = ms.getStructures().get(i);
-				if(pdbX == null)
+				if (pdbX == null)
 					continue;
 				double[][] xCoord = PDBReduce.reduceSinglePDB(pdbX);
-				if(xCoord == null)
+				if (xCoord == null)
 					continue;
-				ProteinFragment x = new ProteinFragment(pdbX.getID(), pdbX
+				ProteinFragment x = new ProteinFragment(pdbX.getId(), pdbX
 						.getSequence().getSequenceAsString(), xCoord,
 						pdbX.length());
 				CoreSegmentGotoh got = new CoreSegmentGotoh(-1, -1, 0.5,
@@ -189,13 +191,13 @@ public class LoopBaseline {
 				int[] xCore = got.traceback(prevCore[1], nextCore[0]);
 				// take last point of preceding and first point of following
 				// core as well - is important for later assembly
-				if(xCore[0] > 1)
+				if (xCore[0] > 1)
 					xCore[0]--;
-				if(xCore[1] < xSequence.length())
+				if (xCore[1] < xSequence.length())
 					xCore[1]++;
-				if(xCore[0] <= 0)
+				if (xCore[0] <= 0)
 					xCore[0]++;
-				if(xCore[0] >= xSequence.length())
+				if (xCore[0] >= xSequence.length())
 					xCore[1]--;
 				currentLoop.add(x.getPart(xCore));
 			}
@@ -278,6 +280,13 @@ public class LoopBaseline {
 		double[][] resultCoordinates = new double[input.getComponent(1)
 				.getSequence().length][3];
 		fillOutCores(resultCoordinates);
+		if(loopFragments == null){
+			String seq = input.getComponent(1).getSequenceAsString();
+			return new ProteinFragment("coreTest", seq, resultCoordinates,
+					seq.length());
+		}
+			
+		
 
 		// filter loop segments according to sequence length
 		for (int i = 1; i < templCores.size(); i++) {
@@ -311,14 +320,14 @@ public class LoopBaseline {
 			double[][] coord = PDBReduce.reduceSinglePDB(ms.getStructures()
 					.get(0));
 			ProteinFragment usedFrag = new ProteinFragment(input
-					.getComponent(0).getID(), input.getComponent(0)
+					.getComponent(0).getId(), input.getComponent(0)
 					.getSequenceAsString(), coord, coord.length);
 			LinkedList<ProteinFragment> loops = loopFragments.get(tempPos[0]);
 
 			LoopRotator rot = new LoopRotator(usedFrag, resultCoordinates,
 					loops, tempPos, queryPos);
 			ProteinFragment model = rot.rotateAllLoops();
-			if(model != null)
+			if (model != null)
 				resultCoordinates = model.getAllResidues();
 		}
 
@@ -354,10 +363,14 @@ public class LoopBaseline {
 					break;
 				}
 			}
-
-			for (int i = 0; i <= tempEnd - tempStart; i++) {
-				coord[querStart + i] = tempStructure.getAllResidues()[tempStart
-						+ i];
+			try {
+				for (int i = 0; i <= Math.min(tempEnd - tempStart, input
+						.getComponent(1).length()); i++) {
+					coord[querStart + i] = tempStructure.getAllResidues()[tempStart
+							+ i];
+				}
+			} catch (Exception e) {
+				return;
 			}
 		}
 	}
@@ -461,11 +474,11 @@ public class LoopBaseline {
 		else
 			return false;
 	}
-	
+
 	public LinkedList<int[]> getTmCores() {
 		return templCores;
 	}
-	
+
 	public LinkedList<int[]> getQuCores() {
 		return queryCores;
 	}

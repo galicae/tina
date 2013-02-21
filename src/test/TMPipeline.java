@@ -47,10 +47,10 @@ public class TMPipeline {
 
 		// PDBEntry of the first aligned protein
 		PDBEntry pdb1 = pdbReader.readPDBFromFile(protDir
-				+ curAli.getComponent(0).getID() + ".pdb");
+				+ curAli.getComponent(0).getId() + ".pdb");
 		// PDBEntry of the second aligned protein
 		PDBEntry pdb2 = pdbReader.readPDBFromFile(protDir
-				+ curAli.getComponent(1).getID() + ".pdb");
+				+ curAli.getComponent(1).getId() + ".pdb");
 
 		// create new TMMain object
 		TMMain main = new TMMain();
@@ -72,9 +72,9 @@ public class TMPipeline {
 
 			while (curAli != null) {
 				pdb1 = pdbReader.readPDBFromFile(protDir
-						+ curAli.getComponent(0).getID() + ".pdb");
+						+ curAli.getComponent(0).getId() + ".pdb");
 				pdb2 = pdbReader.readPDBFromFile(protDir
-						+ curAli.getComponent(1).getID() + ".pdb");
+						+ curAli.getComponent(1).getId() + ".pdb");
 				tmOr = tmc.createTMInput(curAli, pdb1, pdb2);
 				createTMFiles(curAli, tmOr);
 				// System.err.println("OBJECT ORIENTED#########################");
@@ -94,8 +94,8 @@ public class TMPipeline {
 	}
 
 	public static void createTMFiles(SequenceAlignment curAli, PDBEntry[] tmOr) {
-		p2 = "./temp/TM" + curAli.getComponent(1).getID() + ".pdb";
-		p1 = "./temp/TM" + curAli.getComponent(0).getID() + ".pdb";
+		p2 = "./temp/TM" + curAli.getComponent(1).getId() + ".pdb";
+		p1 = "./temp/TM" + curAli.getComponent(0).getId() + ".pdb";
 		try {
 			BufferedWriter wr1 = new BufferedWriter(new FileWriter(p1));
 			wr1.write(tmOr[0].getAtomSectionAsString());

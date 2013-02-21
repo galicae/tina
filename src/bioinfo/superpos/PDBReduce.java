@@ -123,8 +123,8 @@ public class PDBReduce {
 		}
 
 		// now change the PDBEntries, so that we can write them in files again
-		pdb1 = new PDBEntry(pdb1.getID(), pdb1Array);
-		pdb2 = new PDBEntry(pdb2.getID(), pdb2Array);
+		pdb1 = new PDBEntry(pdb1.getId(), pdb1Array);
+		pdb2 = new PDBEntry(pdb2.getId(), pdb2Array);
 		PDBEntry[] result = { pdb1, pdb2 };
 		return result;
 	}

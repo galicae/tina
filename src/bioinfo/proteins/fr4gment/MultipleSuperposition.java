@@ -62,7 +62,7 @@ public class MultipleSuperposition {
 		int index = -1;
 		for(PDBEntry p: models) {
 			index = models.indexOf(p);
-			if(id.contains(p.getID())) {
+			if(id.contains(p.getId())) {
 				models.add(0, p);
 				break;
 			}

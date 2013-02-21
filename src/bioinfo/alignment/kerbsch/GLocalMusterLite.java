@@ -71,8 +71,8 @@ public class GLocalMusterLite extends Gotoh {
 		
 		seq1 = ((Sequence) sequence1).getSequence();
 		seq2 = ((Sequence) sequence2).getSequence();
-		sec1 = secStructSeqlib.get(sequence1.getID());
-		sec2 = secStructSeqlib.get(sequence2.getID());
+		sec1 = secStructSeqlib.get(sequence1.getId());
+		sec2 = secStructSeqlib.get(sequence2.getId());
 	}
 
 	public GLocalMusterLite(double gapOpen, double gapExtend,
@@ -126,8 +126,8 @@ public class GLocalMusterLite extends Gotoh {
 		
 		seq1 = ((Sequence) sequence1).getSequence();
 		seq2 = ((Sequence) sequence2).getSequence();
-		sec1 = secStructSeqlib.get(sequence1.getID());
-		sec2 = secStructSeqlib.get(sequence2.getID());
+		sec1 = secStructSeqlib.get(sequence1.getId());
+		sec2 = secStructSeqlib.get(sequence2.getId());
 		
 		int maxtemp = Integer.MAX_VALUE;
 		//make tempscore

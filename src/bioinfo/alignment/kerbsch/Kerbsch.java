@@ -125,8 +125,8 @@ public class Kerbsch extends Gotoh {
 		this.sequence2 = (Sequence) sequence2;
 		this.seq1 = ((Sequence) sequence1).getSequence();
 		this.seq2 = ((Sequence) sequence2).getSequence();
-		this.sec1 = seclib.get(sequence1.getID());
-		this.sec2 = seclib.get(sequence2.getID());
+		this.sec1 = seclib.get(sequence1.getId());
+		this.sec2 = seclib.get(sequence2.getId());
 
 		prepareMatrices();
 		calculateMatrices();

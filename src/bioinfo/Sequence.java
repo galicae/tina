@@ -30,7 +30,7 @@ public class Sequence implements Alignable{
 	}
 	
 	@Override
-	public String getID() {
+	public String getId() {
 		return id;
 	}
 	

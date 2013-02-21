@@ -212,8 +212,12 @@ public class SipplContactPotential extends AContactPotential{
 	
 	@Override
 	public double getSequenceScoring(AminoAcidName[] sequence){
-		return 0.0d;
-		//TODO
+		AminoAcid[] aas = new AminoAcid[this.model.length()];
+		for(int i = 0; i != this.model.length(); i++){
+			aas[i] = new AminoAcid(sequence[i],i, model.getAminoAcid(i).getAtoms());
+		}
+		PDBEntry newModel = new PDBEntry(model.getId()+model.getChainID()+String.format("%02d",model.getChainIDNum())+"_shuffled", aas);
+		return scoreModel(newModel);
 	}
 	
 	@Override
@@ -223,8 +227,12 @@ public class SipplContactPotential extends AContactPotential{
 	
 	@Override
 	public double[] getSequenceAminoScoring(AminoAcidName[] sequence){
-		return null;
-		//TODO
+		AminoAcid[] aas = new AminoAcid[this.model.length()];
+		for(int i = 0; i != this.model.length(); i++){
+			aas[i] = new AminoAcid(sequence[i],i, model.getAminoAcid(i).getAtoms());
+		}
+		PDBEntry newModel = new PDBEntry(model.getId()+model.getChainID()+String.format("%02d",model.getChainIDNum())+"_shuffled", aas);
+		return getAminoScores(newModel);
 	}	
 	
 

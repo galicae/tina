@@ -15,11 +15,14 @@ import opt.CommandLine;
 import opt.ParameterType;
 import opt.Setting;
 import opt.ValidationRule;
-
+import bioinfo.StructuralData;
+import bioinfo.energy.potential.AVoroPotential;
 import bioinfo.energy.potential.DSSPSolventPotential;
 import bioinfo.energy.potential.GridSolventPotential;
 import bioinfo.energy.potential.IEnergy;
 import bioinfo.energy.potential.SipplContactPotential;
+import bioinfo.energy.potential.voronoi.VoronoiData;
+import bioinfo.proteins.AminoAcidName;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 import bioinfo.proteins.structure.PDBSequenceShuffle;
@@ -28,24 +31,28 @@ public class Eval {
 	
 	/**
 	 * generates evaluation test values to be plotted
+	 * values are calculated for one native sequence on the native structure and 
+	 * a lot of (numberOfShuffles) random sequences on the native structure
 	 * @param shuffle PDBSequenceShuffle instance with existing Distribution
 	 * @param model to be shuffled numberOfShuffles times
-	 * @param potential potential to be evaluated
+	 * @param potential to be evaluated, should be prepared for preparation before calling it here
+	 * this means, that prepare Sequence Scoring is called in here, all values that have to be set should be set here
 	 * @param numberOfShuffles 
 	 * @param output Writer stream to print the results to
 	 */
-	public static void nativeVsShuffles(PDBSequenceShuffle shuffle, PDBEntry model, IEnergy potential, int numberOfShuffles, Writer output){
+	public static void nativeVsCompleteShuffles(PDBSequenceShuffle shuffle, StructuralData model, IEnergy potential, int numberOfShuffles, Writer output){
+		potential.prepareSequenceScoring(model);
 		try{
 			output.append("identifier\tenergy\n");
-			output.append(model.getID()+"\t"+potential.scoreModel(model)+"\n");
+			output.append(model.getID()+"\t"+potential.getNativeScoring()+"\n");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		PDBEntry shuffled;
+		AminoAcidName[] shuffled;
 		for(int i = 0; i != numberOfShuffles; i++){
-			shuffled = shuffle.getShuffled(model);
+			shuffled = shuffle.shuffleSequence(model.length());
 			try{
-				output.append(model.getID()+"_shuffled"+i+"\t"+potential.scoreModel(shuffled)+"\n");
+				output.append(model.getID()+"_shuffled"+i+"\t"+potential.getSequenceScoring(shuffled)+"\n");
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -57,7 +64,17 @@ public class Eval {
 		}
 	}
 	
-	public static void nativesVsShuffle(PDBSequenceShuffle shuffle, PDBFileReader reader, List<String> models, IEnergy potential, int numberOfShuffles, Writer output){
+	/**
+	 * calculates values for evaluation of potential performance
+	 * by generating random sequences (number of shuffles) of every given model in models
+	 * @param shuffle
+	 * @param reader
+	 * @param models
+	 * @param potential
+	 * @param numberOfShuffles
+	 * @param output
+	 */
+	public static void nativesVsCompleteShuffle(PDBSequenceShuffle shuffle, PDBFileReader reader, List<String> models, IEnergy potential, int numberOfShuffles, Writer output){
 		try{
 			output.append("identifier\tnativeenergy");
 			for(int i = 0; i != numberOfShuffles; i++){
@@ -67,21 +84,22 @@ public class Eval {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		PDBEntry shuffled;
+		AminoAcidName[] shuffled;
 		PDBEntry model;
 		String mId;
 		for(int m = 0; m != models.size(); m++){
 			mId = models.get(m);
 			model = reader.readFromFolderById(mId);
+			potential.prepareSequenceScoring(model);
 			try{
-				output.append(model.getID()+"\t"+potential.scoreModel(model));
+				output.append(model.getId()+"\t"+potential.getNativeScoring());
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 			for(int i = 0; i != numberOfShuffles; i++){
-				shuffled = shuffle.getShuffled(model);
+				shuffled = shuffle.shuffleSequence(model.length());
 				try{
-					output.append("\t"+potential.scoreModel(shuffled));
+					output.append("\t"+potential.getSequenceScoring(shuffled));
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -99,6 +117,14 @@ public class Eval {
 		}
 	}
 	
+	/**
+	 * calculates "footprint" data for evaluation of potential performance
+	 * therefore all footprints of given models are calculated
+	 * @param reader
+	 * @param models
+	 * @param potential
+	 * @param output
+	 */
 	public static void footprints(PDBFileReader reader, List<String> models, IEnergy potential, Writer output){
 		double[][] data = new double[models.size()][];
 		int maxlength = 0;
@@ -143,17 +169,25 @@ public class Eval {
 		
 	}
 	
-	public static void footprintVsShuffles(PDBSequenceShuffle shuffle, PDBEntry model, IEnergy potential, int numberOfShuffles, Writer output){
-
+	/**
+	 * calculates comparative footprint data between the native footprint and alot of (numberofShuffles) random footprints
+	 * @param shuffle
+	 * @param model
+	 * @param potential
+	 * @param numberOfShuffles
+	 * @param output
+	 */
+	public static void footprintVsShuffles(PDBSequenceShuffle shuffle, StructuralData model, IEnergy potential, int numberOfShuffles, Writer output){
+		potential.prepareSequenceScoring(model);
 		double[][] data = new double[numberOfShuffles+1][model.length()];
 		String[] ids = new String[numberOfShuffles+1];
-		data[0] = potential.getAminoScores(model);
-		ids[0] = model.getID()+model.getChainID()+String.format("%02d", model.getChainIDNum());
+		data[0] = potential.getNativeAminoScoring();
+		ids[0] = model.getID();
 		
-		PDBEntry shuffled;
+		AminoAcidName[] shuffled;
 		for(int i = 0; i != numberOfShuffles; i++){
-			shuffled = shuffle.getShuffled(model);
-			data[i+1] = potential.getAminoScores(shuffled);
+			shuffled = shuffle.shuffleSequence(model.length());
+			data[i+1] = potential.getSequenceAminoScoring(shuffled);
 			ids[i+1] = ids[0]+"_shuffle"+i;
 		}
 		
@@ -164,7 +198,7 @@ public class Eval {
 			}
 			output.append("\n");
 			
-			for(int i = 0; i != data[0].length; i++){
+			for(int i = 0; i != model.length(); i++){
 				output.append(data[0][i]+"");
 				for(int j = 1; j != numberOfShuffles+1; j++){
 					output.append("\t"+data[j][i]);
@@ -177,6 +211,9 @@ public class Eval {
 		}
 	}
 	
+	public static void nativeVSBlockShuffles(PDBSequenceShuffle shuffle, StructuralData model, IEnergy potential, int numberOfShuffles, Writer output){
+		
+	}
 
 	/**
 	 * @param args
@@ -214,19 +251,35 @@ public class Eval {
 		List<ValidationRule> benchmarkRules = new ArrayList<ValidationRule>();
 		benchmarkRules.add(benchmarkRule);
 		
+		ValidationRule shuffleRule = new ValidationRule() {
+			@Override
+			public boolean validate(String value) {
+				List<String> potentialtypes = new ArrayList<String>();
+				potentialtypes.add("random");
+				potentialtypes.add("background");
+				if(potentialtypes.contains(value)){
+					return true;
+				}
+				return false;
+			}
+		};
+		List<ValidationRule> shuffleRules = new ArrayList<ValidationRule>();
+		shuffleRules.add(shuffleRule);
+		
 		List<Setting> settings = new ArrayList<Setting>();
 		settings.add(new Setting("-data", "data", true, null, ParameterType.String, false, null));
 		settings.add(new Setting("-potential", "potential",true,null,ParameterType.String, false,null));
 		settings.add(new Setting("-vorobin", "vorobin",true,null,ParameterType.String,false,null));
-		settings.add(new Setting("-minContact","minContact",true,null,ParameterType.Double,false,null));
-		settings.add(new Setting("-gridExtend","gridExtend",true,null,ParameterType.Double,false,null));
-		settings.add(new Setting("-gridDensity","gridDensity",true,null,ParameterType.Double,false,null));
-		settings.add(new Setting("-gridClash","gridClash",true,null,ParameterType.Double,false,null));
+		settings.add(new Setting("-minContact","minContact",false,null,ParameterType.Double,false,null));
+		settings.add(new Setting("-gridExtend","gridExtend",false,null,ParameterType.Double,false,null));
+		settings.add(new Setting("-gridDensity","gridDensity",false,null,ParameterType.Double,false,null));
+		settings.add(new Setting("-gridClash","gridClash",false,null,ParameterType.Double,false,null));
 		settings.add(new Setting("-shuffles","shuffles",true,2,ParameterType.Integer,false,null));
 		settings.add(new Setting("-out","out",false,null,ParameterType.String,false,null));
 		settings.add(new Setting("-model","model",false,null,ParameterType.String,false,null));
 		settings.add(new Setting("-pottype","pottype",true,null,ParameterType.String,true,potentialRules));
 		settings.add(new Setting("-benchtype","benchtype",true,null,ParameterType.String,true,benchmarkRules));
+		settings.add(new Setting("-shuffletype","shuffletype",true,null,ParameterType.String,true,shuffleRules));
 		settings.add(new Setting("-h","help",false,null,ParameterType.Boolean,false,null));
 		
 		CommandLine command = null;
@@ -247,10 +300,23 @@ public class Eval {
 		String dataFolder = (String)coms.get("data");
 		String potentialFile = (String)coms.get("potential");
 		String vorobin = (String)coms.get("vorobin");
-		double minContact = (Double)coms.get("minContact");
-		double gridExtend = (Double)coms.get("gridExtend");
-		double gridDensity = (Double)coms.get("gridDensity");
-		double gridClash = (Double)coms.get("gridClash");
+		
+		String shuffletype = (String)coms.get("shuffletype");
+		boolean voroParamSet = false;
+		double minContact = 0.0d;
+		double gridExtend = 0.0d;
+		double gridDensity = 0.0d;
+		double gridClash = 0.0d;
+		
+		if(coms.keySet().contains("minContact") && coms.keySet().contains("gridExtend") &&
+				coms.keySet().contains("gridDensity") && coms.keySet().contains("gridClash")){
+			minContact = (Double)coms.get("minContact");
+			gridExtend = (Double)coms.get("gridExtend");
+			gridDensity = (Double)coms.get("gridDensity");
+			gridClash = (Double)coms.get("gridClash");
+			voroParamSet = true;
+		}
+	
 		int numberOfShuffles = (Integer)coms.get("shuffles");
 		
 		Writer output = null;
@@ -271,9 +337,21 @@ public class Eval {
 		if(pottype.equals("sippl")){
 			potential = new SipplContactPotential();
 		}else if (pottype.equals("dsspsol")){
-			potential = new DSSPSolventPotential(vorobin, dataFolder, minContact, gridExtend, gridDensity, gridClash);
+			if(voroParamSet){
+				potential = new DSSPSolventPotential(vorobin, minContact, gridExtend, gridDensity, gridClash);
+				((AVoroPotential)potential).setVoroParam(vorobin, minContact, gridExtend, gridDensity, gridClash);
+			}else{
+				System.out.println("Please set voro params!");
+				System.out.println(Eval.produceHelp());
+			}
 		}else if (pottype.equals("gridsol")){
-			potential = new GridSolventPotential(vorobin, dataFolder, minContact, gridExtend, gridDensity, gridClash);
+			if(voroParamSet){
+				potential = new GridSolventPotential(vorobin, minContact, gridExtend, gridDensity, gridClash);
+				((AVoroPotential)potential).setVoroParam(vorobin, minContact, gridExtend, gridDensity, gridClash);
+			}else{
+				System.out.println("Please set voro params!");
+				System.out.println(Eval.produceHelp());
+			}
 		}else{
 			System.err.println("pottype unknown!");
 		}
@@ -289,12 +367,24 @@ public class Eval {
 				for (File f : file.listFiles()) {
 					models.add(f.getName().substring(0, 7));
 				}
-				shuffle = new PDBSequenceShuffle(reader,models);
-				Eval.nativesVsShuffle(shuffle, reader, models, potential, numberOfShuffles, output);
+				if(shuffletype.equals("random")){
+					shuffle = new PDBSequenceShuffle();
+				}else if(shuffletype.equals("background")){
+					shuffle = new PDBSequenceShuffle(reader,models);
+				}else{
+					shuffle = null;
+				}
+				Eval.nativesVsCompleteShuffle(shuffle, reader, models, potential, numberOfShuffles, output);
 			}else{
 				PDBEntry model = reader.readFromFolderById(modelId);
-				shuffle = new PDBSequenceShuffle(model);
-				Eval.nativeVsShuffles(shuffle, model, potential, numberOfShuffles, output);
+				if(shuffletype.equals("random")){
+					shuffle = new PDBSequenceShuffle();
+				}else if(shuffletype.equals("background")){
+					shuffle = new PDBSequenceShuffle(model);
+				}else{
+					shuffle = null;
+				}
+				Eval.nativeVsCompleteShuffles(shuffle, model, potential, numberOfShuffles, output);
 			}
 		}else if(((String)coms.get("benchtype")).equals("footprint")){
 			if((modelId = (String)coms.get("model")) == null){
@@ -303,11 +393,23 @@ public class Eval {
 				for (File f : file.listFiles()) {
 					models.add(f.getName().substring(0, 7));
 				}
-				shuffle = new PDBSequenceShuffle(reader,models);
+				if(shuffletype.equals("random")){
+					shuffle = new PDBSequenceShuffle();
+				}else if(shuffletype.equals("background")){
+					shuffle = new PDBSequenceShuffle(reader,models);
+				}else{
+					shuffle = null;
+				}
 				Eval.footprints(reader, models, potential, output);
 			}else{
 				PDBEntry model = reader.readFromFolderById(modelId);
-				shuffle = new PDBSequenceShuffle(model);
+				if(shuffletype.equals("random")){
+					shuffle = new PDBSequenceShuffle();
+				}else if(shuffletype.equals("background")){
+					shuffle = new PDBSequenceShuffle(model);
+				}else{
+					shuffle = null;
+				}
 				Eval.footprintVsShuffles(shuffle, model, potential, numberOfShuffles, output);
 			}
 		}else{
@@ -342,6 +444,7 @@ public class Eval {
 				"\tgridClash         YES          clash value for peptide-solvent points\n" +
 				"\tshuffles          NO           number of shuffles for evaluation (std 2), sometimes not needed eg \n" +
 				"                                      for footprints without any model defined\n" +
+				"\tshuffletype       YES          one of random or background\n" +
 				"\th                 NO           produces this help\n\n";
 	}
 

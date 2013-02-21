@@ -54,10 +54,10 @@ public class AlignmentAssembler extends Assembler {
 		// read PDBs as ProteinFragments
 		LinkedList<ProteinFragment> structures = new LinkedList<ProteinFragment>();
 		for (int i = 0; i < seqs.size(); i++) {
-			String id = seqs.get(i).getID();
+			String id = seqs.get(i).getId();
 			// query = seqs.get(i).getSequenceAsString();
 			PDBEntry temp = reader.readFromFolderById(id);
-			ProteinFragment tempFrag = new ProteinFragment(temp.getID(),
+			ProteinFragment tempFrag = new ProteinFragment(temp.getId(),
 					PDBReduce.reduceSinglePDB(temp), extent);
 			tempFrag.setSequence(temp.getSequenceAsString());
 			structures.add(tempFrag);
@@ -81,7 +81,7 @@ public class AlignmentAssembler extends Assembler {
 		ProteinFragment resultFragment = new ProteinFragment("RE",
 				new double[1][1], extent);
 		resultFragment = tempResFragment.clone();
-		resultFragment.setID(seqs.get(0).getID());
+		resultFragment.setID(seqs.get(0).getId());
 		resultFragment.setClusterIndex(result.get(0).getClusterIndex());
 		return resultFragment;
 	}

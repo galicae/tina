@@ -1,6 +1,5 @@
 package bioinfo.energy.potential;
 
-import bioinfo.energy.potential.voronoi.VoronoiData;
 import bioinfo.proteins.PDBEntry;
 
 public abstract class AContactPotential extends APotential{
@@ -10,7 +9,11 @@ public abstract class AContactPotential extends APotential{
 	 */
 	protected PDBEntry model;
 	
-	public void prepareSequenceScoring(PDBEntry model){
-		this.model = model;
+	/**
+	 * initializes bulk readout of shuffled sequences on model
+	 * @param model
+	 */
+	public void prepareSequenceScoring(Object model){
+		this.model = (PDBEntry)model;
 	}
 }

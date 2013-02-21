@@ -76,7 +76,7 @@ public class AlignmentAssemblyTest {
 					QuasarMatrix.DAYHOFF_MATRIX);
 			SequenceAlignment alignment = got.align(seqs.get(0), seqs.get(i));
 			PDBEntry temp = structures.get(i);
-			System.out.println(temp.getID());
+			System.out.println(temp.getId());
 
 			double[][][] kabschFood = PDBReduce.reduce(alignment, prediction,
 					temp);

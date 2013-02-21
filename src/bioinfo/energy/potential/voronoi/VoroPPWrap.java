@@ -33,7 +33,7 @@ public class VoroPPWrap {
 	 */
 	public void decomposite(VoronoiData data){
 				
-		String tmpfile = TMPDIR+data.getID()+".lst";
+		String tmpfile = TMPDIR+data.getId()+".lst";
 		File tmpfileF = new File(tmpfile);
 		try{
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpfile)));

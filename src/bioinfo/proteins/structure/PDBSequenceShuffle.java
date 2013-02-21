@@ -36,8 +36,8 @@ public class PDBSequenceShuffle {
 		for(int i = 1; i != tmp.length; i++){
 			bgDistributionBorders[i] = bgDistributionBorders[i-1]+tmp[i];
 		}
-		if(bgDistributionBorders[bgDistributionBorders.length] != 1.0d){
-			bgDistributionBorders[bgDistributionBorders.length] = 1.0d;
+		if(bgDistributionBorders[bgDistributionBorders.length-1] != 1.0d){
+			bgDistributionBorders[bgDistributionBorders.length-1] = 1.0d;
 		}
 	}
 	
@@ -228,7 +228,7 @@ public class PDBSequenceShuffle {
 		for(int i = 0; i != model.length(); i++){
 			aas[i] = new AminoAcid(getNextRandomAminoAcidName(),i, model.getAminoAcid(i).getAtoms());
 		}
-		return new PDBEntry(model.getID()+model.getChainID()+String.format("%02d",model.getChainIDNum())+"_shuffled", aas);
+		return new PDBEntry(model.getId()+model.getChainID()+String.format("%02d",model.getChainIDNum())+"_shuffled", aas);
 	}
 	
 	/**
@@ -257,7 +257,7 @@ public class PDBSequenceShuffle {
 			for(int i = 0; i != model.length(); i++){
 				aas[i] = new AminoAcid(getNextRandomAminoAcidName(),i, model.getAminoAcid(i).getAtoms());
 			}
-			results[m] = new PDBEntry(model.getID()+model.getChainID()+String.format("%02d",model.getChainIDNum())+"_shuffled"+m, aas);
+			results[m] = new PDBEntry(model.getId()+model.getChainID()+String.format("%02d",model.getChainIDNum())+"_shuffled"+m, aas);
 		}
 		return results;
 	}
@@ -288,7 +288,7 @@ public class PDBSequenceShuffle {
 			for(int i = 0; i != model.length(); i++){
 				aas[i] = new AminoAcid(getNextRandomAminoAcidName(),i, model.getAminoAcid(i).getAtoms());
 			}
-			results.add(new PDBEntry(model.getID()+model.getChainID()+String.format("%02d",model.getChainIDNum())+"_shuffled"+m, aas));
+			results.add(new PDBEntry(model.getId()+model.getChainID()+String.format("%02d",model.getChainIDNum())+"_shuffled"+m, aas));
 		}
 		return results;
 	}

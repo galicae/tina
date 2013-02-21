@@ -131,8 +131,8 @@ public class GlobalMusterLite extends Gotoh {
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
 		
-		char[] sec1 = secStructSeqlib.get(sequence1.getID());
-		char[] sec2 = secStructSeqlib.get(sequence2.getID());
+		char[] sec1 = secStructSeqlib.get(sequence1.getId());
+		char[] sec2 = secStructSeqlib.get(sequence2.getId());
 		
 //		DSSPEntry template = dbconnector.getDSSP(sequence1.getID());
 //		SecStructEight[] tSecStruct = template.getSecondaryStructure();

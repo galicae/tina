@@ -35,8 +35,8 @@ public class KabschTest {
 
 		FreeshiftSequenceGotoh got = new FreeshiftSequenceGotoh(-15, -3,
 				QuasarMatrix.DAYHOFF_MATRIX);
-		Sequence seq1 = new Sequence(pdb.getID(), pdb.getSequenceAsString());
-		Sequence seq2 = new Sequence(pdb1.getID(), pdb1.getSequenceAsString());
+		Sequence seq1 = new Sequence(pdb.getId(), pdb.getSequenceAsString());
+		Sequence seq2 = new Sequence(pdb1.getId(), pdb1.getSequenceAsString());
 		SequenceAlignment ali = got.align(seq1, seq2);
 
 		BufferedWriter wr2 = new BufferedWriter(new FileWriter("fastaTest.pdb"));

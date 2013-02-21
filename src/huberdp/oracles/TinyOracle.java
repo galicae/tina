@@ -73,7 +73,7 @@ public class TinyOracle implements Oracle {
 		}
 		
 		Sequence templateSequence = new Sequence(problem.getThreading().getStructure().getLongID(), template);
-		Sequence   targetSequence = new Sequence(problem.getThreading().getSequence().getID(), target);
+		Sequence   targetSequence = new Sequence(problem.getThreading().getSequence().getId(), target);
 		results.add(new PartialAlignment(problem, align(templateSequence, targetSequence)));
 		return results;
 	}
