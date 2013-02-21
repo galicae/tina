@@ -203,7 +203,7 @@ public class HubeRDP {
 							.addTAs(((RDPSolutionTreeAndNode) child).getTA());
 				}
 			} else if (node instanceof RDPSolutionTreeAndNode) {
-				((RDPSolutionTreeAndNode) node).MergeTAs();
+				((RDPSolutionTreeAndNode) node).MergeTAs(scoring);
 			}
 			node.setFinished(true);
 

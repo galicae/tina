@@ -34,7 +34,7 @@ public class PartialAlignment {
 	 *            the SequenceAlignment that was given by the oracle
 	 */
 	public PartialAlignment(RDPProblem problem, SequenceAlignment alignment) {
-		this.problem =problem;
+		this.problem = problem;
 		this.alignment = alignment;
 	}
 
@@ -53,7 +53,7 @@ public class PartialAlignment {
 	public LinkedList<RDPProblem> getSubProblems(Scoring scoring) {
 		LinkedList<RDPProblem> results = new LinkedList<RDPProblem>();
 
-		Threading newThreading = merge(scoring);
+		Threading newThreading = merge(scoring, this);
 
 		char[][] alirows = alignment.getRows();
 
@@ -62,7 +62,7 @@ public class PartialAlignment {
 		int pend = 0;
 		for (int i = 0; i < alignment.length(); i++) {
 			if (alirows[0][i] != '-' && alirows[1][i] != '-') {
-				pend = getProblem().getProblemStart() + i-1;
+				pend = getProblem().getProblemStart() + i - 1;
 				break;
 			}
 		}
@@ -89,42 +89,58 @@ public class PartialAlignment {
 		return results;
 	}
 
-	private Threading merge(Scoring scoring) {
+	/**
+	 * Merges a PartialAlignment into it's problem.
+	 * 
+	 * @param scoring
+	 *            the scoring to rescore the new threading
+	 * @param pa
+	 *            the Partial Alignment that needs to be merged
+	 * @return
+	 */
+	public static Threading merge(Scoring scoring, PartialAlignment pa) {
 		// Rows of the old (problem)alignment
-		int[][] oldRows = getProblem().getThreading().getRows();
+		int[][] oldRows = pa.getProblem().getThreading().getRows();
 		// rows of the new Alignment
-		int[][] aliRows = alignment.getRowsAsIntArray();
+		int[][] aliRows = pa.getAlignment().getRowsAsIntArray();
 
 		// calculate newRows[][]
 		int[][] newRows = new int[2][];
-		newRows[0] = new int[getProblem().getProblemStart() + alignment.length()
-				+ (getProblem().getThreading().length() - getProblem().getProblemEnd())
-				- 1];
+		newRows[0] = new int[pa.getProblem().getProblemStart()
+				+ pa.getAlignment().length()
+				+ (pa.getProblem().getThreading().length() - pa.getProblem()
+						.getProblemEnd()) - 1];
 		newRows[1] = new int[newRows[0].length];
 		// copy old start
-		for (int i = 0; i < getProblem().getProblemStart(); i++) {
+		for (int i = 0; i < pa.getProblem().getProblemStart(); i++) {
 			newRows[0][i] = oldRows[0][i];
 			newRows[1][i] = oldRows[1][i];
 		}
 		// copy new
-		for (int i = getProblem().getProblemStart(); i < getProblem().getProblemStart() + alignment.length(); i++) {
+		for (int i = pa.getProblem().getProblemStart(); i < pa.getProblem()
+				.getProblemStart() + pa.getAlignment().length(); i++) {
 			newRows[0][i] = aliRows[0][i];
 			newRows[1][i] = aliRows[1][i];
 		}
 		// copy old end
-		for (int i = getProblem().getProblemStart() + alignment.length(); i < newRows[0].length; i++) {
-			newRows[0][i] = oldRows[0][(getProblem().getProblemEnd()) - getProblem().getProblemStart() - alignment.length() + i + 1];
-			newRows[1][i] = oldRows[1][(getProblem().getProblemEnd()) - getProblem().getProblemStart() - alignment.length() + i + 1];
+		for (int i = pa.getProblem().getProblemStart()
+				+ pa.getAlignment().length(); i < newRows[0].length; i++) {
+			newRows[0][i] = oldRows[0][(pa.getProblem().getProblemEnd())
+					- pa.getProblem().getProblemStart()
+					- pa.getAlignment().length() + i + 1];
+			newRows[1][i] = oldRows[1][(pa.getProblem().getProblemEnd())
+					- pa.getProblem().getProblemStart()
+					- pa.getAlignment().length() + i + 1];
 		}
 
-		Threading result = new Threading(getProblem().getThreading().getStructure(),
-				getProblem().getThreading().getSequence(), newRows, 0.0);
+		Threading result = new Threading(pa.getProblem().getThreading()
+				.getStructure(), pa.getProblem().getThreading().getSequence(),
+				newRows, 0.0);
 
 		// recalculate the score
 		double score = scoring.score(result);
 		result.setScore(score);
 
-		
 		return result;
 	}
 

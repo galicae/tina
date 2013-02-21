@@ -151,4 +151,12 @@ public abstract class APotential implements IEnergy{
 		}
 	}
 
+	/**
+	 * @author huberste
+	 * @return the potential
+	 */
+	public PotentialDimension<Double> getPotential() {
+		return potential;
+	}
+	
 }
