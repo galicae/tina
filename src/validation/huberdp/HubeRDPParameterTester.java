@@ -42,9 +42,9 @@ public class HubeRDPParameterTester {
 	private static final String TARGETSTRING = "1dp7P00";
 	private static final String TEMPLATESTRING = "1j2xA00";
 	private static final String PDBPATH = "/home/h/huberste/gobi/data/pdb/";
-	private static final String GAMMASTRING = "1.0";
-	private static final String DELTASTRING = "0.1";
-	private static final String EPSILONSTRING = "2.0";
+	// private static final String GAMMASTRING = "1.0";
+	// private static final String DELTASTRING = "0.1";
+	// private static final String EPSILONSTRING = "2.0";
 	private static final String ZETASTRING = "4.0";
 	private static final String GAPSTRING = "3.0";
 	private static final String HYDROSTRING = "/home/h/huberste/gobi/data/hydrophobicityMatrices/hydro_1024";
@@ -87,7 +87,7 @@ public class HubeRDPParameterTester {
 
 		// allocate memory
 		String targetString = null, templateString = null, pdbpath = null, hydroFileString = null, ccpFileString = null, voroFileString = null, vpotFileString = null, dsspPathString = null, tempdir = null;
-		double gamma = 0.0, delta = 0.0, epsilon = 0.0, zeta = 0.0, gap = 0.0;
+		double /* gamma = 0.0, delta = 0.0, epsilon = 0.0, */zeta = 0.0, gap = 0.0;
 		if (test) {
 			targetString = TARGETSTRING;
 			templateString = TEMPLATESTRING;
@@ -97,9 +97,9 @@ public class HubeRDPParameterTester {
 			voroFileString = VOROSTRING;
 			vpotFileString = VPOTSTRING;
 			dsspPathString = DSSPSTRING;
-			gamma = Double.parseDouble(GAMMASTRING);
-			delta = Double.parseDouble(DELTASTRING);
-			epsilon = Double.parseDouble(EPSILONSTRING);
+			// gamma = Double.parseDouble(GAMMASTRING);
+			// delta = Double.parseDouble(DELTASTRING);
+			// epsilon = Double.parseDouble(EPSILONSTRING);
 			zeta = Double.parseDouble(ZETASTRING);
 			gap = Double.parseDouble(GAPSTRING);
 			tempdir = TEMPDIR;
@@ -145,21 +145,21 @@ public class HubeRDPParameterTester {
 				System.out.println("No --dssp was given");
 				System.exit(0);
 			}
-			if ((gamma = clp.getDoubleArg("--gamma")) == 0.0) {
-				System.out.println(usage);
-				System.out.println("No --gamma was given");
-				System.exit(0);
-			}
-			if ((delta = clp.getDoubleArg("--delta")) == 0.0) {
-				System.out.println(usage);
-				System.out.println("No --delta was given");
-				System.exit(0);
-			}
-			if ((epsilon = clp.getDoubleArg("--epsilon")) == 0.0) {
-				System.out.println(usage);
-				System.out.println("No --epsilon was given");
-				System.exit(0);
-			}
+			// if ((gamma = clp.getDoubleArg("--gamma")) == 0.0) {
+			// System.out.println(usage);
+			// System.out.println("No --gamma was given");
+			// System.exit(0);
+			// }
+			// if ((delta = clp.getDoubleArg("--delta")) == 0.0) {
+			// System.out.println(usage);
+			// System.out.println("No --delta was given");
+			// System.exit(0);
+			// }
+			// if ((epsilon = clp.getDoubleArg("--epsilon")) == 0.0) {
+			// System.out.println(usage);
+			// System.out.println("No --epsilon was given");
+			// System.exit(0);
+			// }
 			if ((zeta = clp.getDoubleArg("--zeta")) == 0.0) {
 				System.out.println(usage);
 				System.out.println("no --zeta was given");
@@ -193,48 +193,56 @@ public class HubeRDPParameterTester {
 		for (double gammavar = 1; gammavar <= 10; gammavar += 1) {
 			for (double deltavar = 1; deltavar <= 10; deltavar += 1) {
 				for (double epsilonvar = 1; epsilonvar <= 10; epsilonvar += 1) {
-					
-			// initialize HubeRDP stuff
-			HubeRDP rdp = new HubeRDP();
-			SipplContactPotential sippl = new SipplContactPotential();
-			sippl.readFromVPOTFile(vpotFileString);
-			RDPScoring scoring = new RDPScoring(gammavar, deltavar, epsilonvar, zeta, gap,
-					QuasarMatrix.DAYHOFF_MATRIX, new HydrophobicityMatrix(
-							hydroFileString), new CCPMatrix(ccpFileString),
-					dsspPathString, sippl, null, voroFileString,
-					RDPScoring.GRID_EXTEND, RDPScoring.GRID_DENSITY,
-					RDPScoring.GRID_CLASH, RDPScoring.MIN_CONTACT, tempdir);
-			rdp.setScoring(scoring);
-			rdp.addOracle(new RDPOracle(scoring));
-			
-			// align sequences with HubeRDP
-			RDPProblem root = new RDPProblem(templateStructure, targetSequence);
-			RDPSolutionTree t = new RDPSolutionTree(root);
-			RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
-			// run HubeRDP
-			rdp.rdp(t, pq);
-	
-			// get HubeRDP's alignment
-			SequenceAlignment rdpAlignment = t.getRoot().getTA().get(0)
-					.getThreading().asSequenceAlignment();
-	
-			// use CoordMapper on HubeRDP Alignment
-			PDBEntry rdpStructure = SimpleCoordMapper.map(templateStructure,
-					rdpAlignment);
-	
-			SequenceAlignment ali = new SequenceAlignment(
-					rdpStructure.getSequence(), targetStructure.getSequence(),
-					rdpStructure.getSequenceAsString().toCharArray(),
-					targetStructure.getSequenceAsString().toCharArray(), 0.0);
-	
-			Transformation rdptmtr = tmmain.calculateTransformation(ali,
-					rdpStructure, targetStructure);
-			System.out.println(df.format(gammavar) + " " + df.format(deltavar) + " "
-					+ df.format(epsilonvar) + " " + df.format(zeta) + " "
-					+ df.format(gap) + " " + df.format(rdptmtr.getRmsd()) + " "
-					+ df.format(rdptmtr.getGdt()) + " "
-					+ df.format(rdptmtr.getTmscore()));
-		}	}	}
+
+					// initialize HubeRDP stuff
+					HubeRDP rdp = new HubeRDP();
+					SipplContactPotential sippl = new SipplContactPotential();
+					sippl.readFromVPOTFile(vpotFileString);
+					RDPScoring scoring = new RDPScoring(gammavar, deltavar,
+							epsilonvar, zeta, gap, QuasarMatrix.DAYHOFF_MATRIX,
+							new HydrophobicityMatrix(hydroFileString),
+							new CCPMatrix(ccpFileString), dsspPathString,
+							sippl, null, voroFileString,
+							RDPScoring.GRID_EXTEND, RDPScoring.GRID_DENSITY,
+							RDPScoring.GRID_CLASH, RDPScoring.MIN_CONTACT,
+							tempdir);
+					rdp.setScoring(scoring);
+					rdp.addOracle(new RDPOracle(scoring));
+
+					// align sequences with HubeRDP
+					RDPProblem root = new RDPProblem(templateStructure,
+							targetSequence);
+					RDPSolutionTree t = new RDPSolutionTree(root);
+					RDPPriorityQueue pq = new RDPPriorityQueue(t.getRoot());
+					// run HubeRDP
+					rdp.rdp(t, pq);
+
+					// get HubeRDP's (first) alignment
+					SequenceAlignment rdpAlignment = t.getRoot().getTA().get(0)
+							.getThreading().asSequenceAlignment();
+
+					// use CoordMapper on HubeRDP Alignment
+					PDBEntry rdpStructure = SimpleCoordMapper.map(
+							templateStructure, rdpAlignment);
+
+					SequenceAlignment ali = new SequenceAlignment(
+							rdpStructure.getSequence(),
+							targetStructure.getSequence(),
+							rdpStructure.getSequenceAsString().toCharArray(),
+							targetStructure.getSequenceAsString().toCharArray(),
+							0.0);
+
+					Transformation rdptmtr = tmmain.calculateTransformation(
+							ali, rdpStructure, targetStructure);
+					System.out.println(df.format(gammavar) + " "
+							+ df.format(deltavar) + " " + df.format(epsilonvar)
+							+ " " + df.format(zeta) + " " + df.format(gap)
+							+ " " + df.format(rdptmtr.getRmsd()) + " "
+							+ df.format(rdptmtr.getGdt()) + " "
+							+ df.format(rdptmtr.getTmscore()));
+				}
+			}
+		}
 	}
 }
 

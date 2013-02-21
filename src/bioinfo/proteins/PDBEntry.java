@@ -131,15 +131,15 @@ public class PDBEntry implements Alignable, Serializable, StructuralData {
 	}
 
 	/**
-	 * return complete id
+	 * return complete id (xxxxA00)
 	 * @return
 	 */
 	public String getID(){
-		return id+chainID+chainIDNum;
+		return id+chainID+getChainIDNumAsString();
 	}
 	
 	/**
-	 * @return the ID without chain and num of the PDBEntry
+	 * @return the ID without chain and num of the PDBEntry (xxxx)
 	 */
 	public String getId() {
 		return id;
@@ -157,10 +157,6 @@ public class PDBEntry implements Alignable, Serializable, StructuralData {
 	 */
 	public int getChainIDNum() {
 		return chainIDNum;
-	}
-	
-	public String getLongID() {
-		return this.id + this.chainID + this.getChainIDNumAsString();
 	}
 
 	/**
@@ -297,7 +293,7 @@ public class PDBEntry implements Alignable, Serializable, StructuralData {
 	 * @return the Sequence that is depicted by this PDBEntry
 	 */
 	public Sequence getSequence() {
-		return new Sequence(getLongID(), getSequenceAsString());
+		return new Sequence(getID(), getSequenceAsString());
 	}
 
 	/**

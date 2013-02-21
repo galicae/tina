@@ -41,6 +41,11 @@ public class Util {
 		System.out.println();
 	}
 	
+	/**
+	 * makes sure that the given folder String ends with a "/"
+	 * @param folder
+	 * @return
+	 */
 	public static String checkedFolder(String folder){
 		if(folder.endsWith("/")){
 			return folder;
@@ -51,6 +56,7 @@ public class Util {
 	
 	/**
 	 * flips a char[] on itself
+	 * runtime: n. memory: 2n
 	 * @param in the character array in question
 	 * @return the reversed array
 	 */

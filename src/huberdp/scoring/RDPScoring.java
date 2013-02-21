@@ -1,13 +1,11 @@
 /******************************************************************************
- * huberdp.Scoring.RDPScoring.java                                            *
+ * huberdp.scoring.RDPScoring.java                                            *
  * This file contains the class RDPScoring which is RDP's scoring function.   *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
  ******************************************************************************/
 package huberdp.scoring;
-
-import huberdp.Scoring;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -29,89 +27,33 @@ import bioinfo.proteins.DSSPFileReader;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.SecStructEight;
 import bioinfo.proteins.SecStructThree;
+import huberdp.Scoring;
 
 /**
  * RDPScoring is an implementation of the scoring function given in the paper.
  * (Protein Threading by Recursive Dynamic Programming. JMB 290, 757-779)
  * 
  * @author huberste
- * @lastchange 2013-02-18
+ * @lastchange 2013-02-21
  */
 public class RDPScoring implements Scoring {
 
-	public double smax, smin, cmax, cmin, hmax, hmin, pmax, pmin, scoremin,
-			scoremax, deletemin, deletemax, insertmin, insertmax;
-	public double ssum, csum, hsum, psum, scoresum, deletesum, insertsum;
-	public int num, deletenum, insertnum;
-
-	// TODO optimize scoring. Only one for() is needed.
-
-	// TODO calibrate Scoring weights
+	/**
+	 * empirically calibrated weights for the scoring function
+	 */
+	public final static double GAMMA = 1.0, DELTA = 0.1, EPSILON = 2.0,
+			ZETA = 4.0, GAP = 3.0;
 
 	/**
-	 * empirically calibrated weight of the mutation matrix score
+	 * empirically calibrated values for voro++
 	 */
-	public final static double GAMMA = 1.0;
-	/**
-	 * empirically calibrated weight of the contact capacity score
-	 */
-	public final static double DELTA = 0.1;
-	/**
-	 * empirically calibrated weight of the hydrophobicity score
-	 */
-	public final static double EPSILON = 2.0;
-	/**
-	 * empirically calibrated weight of the pair interaction score
-	 */
-	public final static double ZETA = 4.0;
-	/**
-	 * empirically calibrated weight of the gaps
-	 */
-	public final static double GAP = 3.0;
+	public final static double GRID_EXTEND = 8.9, GRID_DENSITY = 1.0,
+			GRID_CLASH = 6.5, MIN_CONTACT = 2.0;
 
 	/**
-	 * static reference to voro++ path
+	 * weights for the scoring function
 	 */
-	public final static String VOROPATH = "/home/h/huberste/gobi/tina/tools/voro++_ubuntuquantal";
-
-	/**
-	 * empirically calibratet value for voro++
-	 */
-	public final static double GRID_EXTEND = 8.9;
-	/**
-	 * empirically calibratet value for voro++
-	 */
-	public final static double GRID_DENSITY = 1.0;
-	/**
-	 * empirically calibratet value for voro++
-	 */
-	public final static double GRID_CLASH = 6.5;
-	/**
-	 * empirically calibrate value for voro++
-	 */
-	public final static double MIN_CONTACT = 2.0;
-
-	/**
-	 * weight of the mutation matrix score
-	 */
-	private double gamma;
-	/**
-	 * weight of the contact capacity score
-	 */
-	private double delta;
-	/**
-	 * weight of the hydrophobicity score
-	 */
-	private double epsilon;
-	/**
-	 * weight of the pair interaction score
-	 */
-	private double zeta;
-
-	/**
-	 * additionally weight parameter for GAPs
-	 */
-	private double gap_weight;
+	private double gamma, delta, epsilon, zeta, gap_weight;
 
 	/**
 	 * mutation matrix for phiS
@@ -128,7 +70,10 @@ public class RDPScoring implements Scoring {
 	 */
 	private CCPMatrix ccpMatrix;
 
-	private String dsspFolder;
+	/**
+	 * Folder- and filenames
+	 */
+	private String dsspFolder, vorobin, tempdir;
 
 	/**
 	 * path to the vpot file (PairPotential File)
@@ -141,29 +86,9 @@ public class RDPScoring implements Scoring {
 	private PDBEntry templateStructure;
 
 	/**
-	 * absolute path to location of voro++ binary (dont have one? look at
-	 * ./tools/voro++)
-	 * 
-	 * @see http://math.lbl.gov/voro++/download/
+	 * Voronoi constants
 	 */
-	private String vorobin;
-
-	/**
-	 * Voronoi constant
-	 */
-	private double gridExtend;
-	/**
-	 * Voronoi constant
-	 */
-	private double gridDensity;
-	/**
-	 * Voronoi constant
-	 */
-	private double gridClash;
-	/**
-	 * Voronoi constant
-	 */
-	private double minContact;
+	private double gridExtend, gridDensity, gridClash, minContact;
 
 	/**
 	 * Voro++ stuff
@@ -183,8 +108,11 @@ public class RDPScoring implements Scoring {
 	private SecStructThree[] ss;
 
 	private double[] avgPotential;
-	
-	private String tempdir;
+
+	/**
+	 * for HydrobhobicityMatrix
+	 */
+	private int hydroBuckets;
 
 	/**
 	 * constructs a RDPScoring object with given paramters
@@ -197,18 +125,22 @@ public class RDPScoring implements Scoring {
 	 *            weight of the hydrophobicity score
 	 * @param zeta
 	 *            weight of the pair interaction score
+	 * @param gap
+	 *            weight of the gap score
 	 * @param mutationMatrix
 	 *            the mutation matrix that is to be used
 	 * @param hydrophobicityMatrix
 	 *            the hydrophobicityMatrix to be used
 	 * @param ccpMatrix
 	 *            the CCPMatrix to be used
+	 * @param dsspFolder
+	 *            folder to the dssp files
+	 * @param sippl
+	 *            sippl Pair Potential
 	 * @param templatestructure
 	 *            the template's structure
 	 * @param vorobin
 	 *            absolute path to location of voro++ binary
-	 * @param temp
-	 *            temporary directory for vorolign
 	 * @param gridExtend
 	 *            variable vor voro++
 	 * @param gridDensity
@@ -217,27 +149,33 @@ public class RDPScoring implements Scoring {
 	 *            variable vor voro++
 	 * @param minContact
 	 *            variable vor voro++
+	 * @param tempdir
+	 *            temporary directory for vorolign
 	 */
 	public RDPScoring(double gamma, double delta, double epsilon, double zeta,
 			double gap, double[][] mutationMatrix,
 			HydrophobicityMatrix hydrophobicityMatrix, CCPMatrix ccpMatrix,
 			String dsspFolder, SipplContactPotential sippl,
 			PDBEntry templatestructure, String vorobin, double gridExtend,
-			double gridDensity, double gridClash, double minContact, String tempdir) {
+			double gridDensity, double gridClash, double minContact,
+			String tempdir) {
 		this.gamma = gamma;
 		this.delta = delta;
 		this.epsilon = epsilon;
 		this.zeta = zeta;
-		this.gap_weight = gap;
+		this.gap_weight = -gap;
 		this.mutationMatrix = mutationMatrix;
 		this.hydrophobicityMatrix = hydrophobicityMatrix;
 		this.pcp = sippl;
 		this.ccpMatrix = ccpMatrix;
 		this.dsspFolder = dsspFolder;
 		this.vorobin = vorobin;
+		this.gridExtend = gridExtend;
+		this.gridDensity = gridDensity;
+		this.gridClash = gridClash;
+		this.minContact = minContact;
 		this.tempdir = tempdir;
 		calculateAveragePPs();
-		setVoroVars(gridExtend, gridDensity, gridClash, minContact);
 	}
 
 	/**
@@ -250,26 +188,41 @@ public class RDPScoring implements Scoring {
 		this(arg.gamma, arg.delta, arg.epsilon, arg.zeta, arg.gap_weight,
 				arg.mutationMatrix, arg.hydrophobicityMatrix, arg.ccpMatrix,
 				arg.dsspFolder, arg.pcp, arg.templateStructure, arg.vorobin,
-				arg.gridExtend, arg.gridDensity, arg.gridClash, arg.minContact, arg.tempdir);
+				arg.gridExtend, arg.gridDensity, arg.gridClash, arg.minContact,
+				arg.tempdir);
 	}
 
 	/**
-	 * initializes Voro++ stuff
-	 * 
-	 * @param gridExtend
-	 *            value in Angstrom, additional space which will be filled by
-	 *            grid, CAVE: MUST be greater then gridClash!!
-	 * @param gridDensisty
-	 *            value in Angstrom, denisty of solvent points with which grid
-	 *            will be filled
-	 * @param gridClash
-	 *            value in Angstrom, distance every solvent must have to every
-	 *            peptide atom!
+	 * calculates AveragePPs for insertions
+	 */
+	private void calculateAveragePPs() {
+		avgPotential = new double[26];
+		PotentialDimension<Double> potential = pcp.getPotential();
+		for (int aa1 = 0; aa1 < 26; aa1++) {
+			for (int k = 0; k < 6; k++) {
+				for (int d = 0; d < 6; d++) {
+					for (int aa2 = 0; aa2 < 26; aa2++) {
+						int[] path1 = { k, d, aa1, aa2 };
+						avgPotential[aa1] += potential.getByAddress(path1)
+								.getValue();
+						int[] path2 = { k, d, aa2, aa1 };
+						avgPotential[aa1] += potential.getByAddress(path2)
+								.getValue();
+					}
+				}
+			}
+			avgPotential[aa1] = avgPotential[aa1] / 936.0; // 936 = 26*6*6
+		}
+	}
+
+	/**
+	 * initializes stuff
 	 */
 	public void init() {
+		// set & calculate Voro++ stuff
 		if (vorobin != null && templateStructure != null) {
 			voro = new VoroPPWrap(tempdir, vorobin);
-			data = new VoronoiData(templateStructure.getLongID());
+			data = new VoronoiData(templateStructure.getID());
 			data.reducePDB(VoroPrepType.CA, templateStructure);
 			data.fillGridWithoutClashes(gridExtend, gridDensity, gridClash);
 			voro.decomposite(data);
@@ -299,50 +252,22 @@ public class RDPScoring implements Scoring {
 					}
 				}
 			}
+
+			// read SecStruct from DSSP File
+			String dsspFileName = dsspFolder
+					+ templateStructure.getId().toLowerCase()
+					+ templateStructure.getID().substring(4, 7) + ".dssp";
+			DSSPEntry dssp = DSSPFileReader.readDSSPFile(dsspFileName);
+			SecStructEight[] temp = dssp.getSecondaryStructure();
+			ss = new SecStructThree[temp.length];
+			for (int i = 0; i < temp.length; i++) {
+				ss[i] = temp[i].getThreeClassAnalogon();
+			}
 		}
 
-		// read SecStruct from DSSP File
-<<<<<<< HEAD
-		String dsspFileName = DSSPFileReader.DSSP_FOLDER
-				+ templateStructure.getId().toLowerCase()
-=======
-		String dsspFileName = dsspFolder
-				+ templateStructure.getID().toLowerCase()
->>>>>>> branch 'master' of https://github.com/galicae/tina.git
-				+ templateStructure.getLongID().substring(4, 7) + ".dssp";
-		DSSPEntry dssp = DSSPFileReader.readDSSPFile(dsspFileName);
-		SecStructEight[] temp = dssp.getSecondaryStructure();
-		ss = new SecStructThree[temp.length];
-		for (int i = 0; i < temp.length; i++) {
-			ss[i] = temp[i].getThreeClassAnalogon();
-		}
+		// initialize other variables
+		hydroBuckets = hydrophobicityMatrix.getBuckets();
 
-	}
-
-	/**
-	 * sets binary path of voro++
-	 * 
-	 * @param vorobin
-	 * @author seitza
-	 */
-	public void setVorobin(String vorobin) {
-		this.vorobin = vorobin;
-	}
-
-	/**
-	 * sets voronoi variables
-	 * 
-	 * @param gridExtend
-	 * @param gridDensity
-	 * @param gridClash
-	 * @param minContact
-	 */
-	public void setVoroVars(double gridExtend, double gridDensity,
-			double gridClash, double minContact) {
-		this.gridExtend = gridExtend;
-		this.gridDensity = gridDensity;
-		this.gridClash = gridClash;
-		this.minContact = minContact;
 	}
 
 	/**
@@ -359,7 +284,84 @@ public class RDPScoring implements Scoring {
 	@Override
 	public double score(Threading threading) {
 
-		double result = 0.0;
+		// check if correct structure is set
+		if ((this.templateStructure == null)
+				|| (templateStructure != threading.getStructure())) {
+			templateStructure = threading.getStructure();
+			init();
+		}
+
+		double sscore = 0.0;
+		double cscore = 0.0;
+		double hscore = 0.0;
+		double pscore = 0.0;
+		double gapscore = 0.0;
+
+		char[][] rows = threading.getRowsAsCharArray();
+		int temppos = 0; // position in template
+		int targpos = 0; // position in target
+
+		PDBEntry b = threading.getStructure();
+
+		for (int pos = 0; pos < rows[0].length; pos++) {
+
+			if (rows[0][pos] == '-') { // if insertion
+				// TODO find if gap is a real gap (i.e. don't calculate on
+				// not-yet aligned parts)
+				gapscore += getInsertionScore(threading, targpos);
+				// count up
+				targpos++;
+			} else if ((rows[1][pos] == '-')) { // if deletion
+				// TODO find if gap is a real gap (i.e. don't calculate on
+				// not-yet aligned parts)
+				gapscore += getDeletionScore(threading, temppos);
+				// count up
+				temppos++;
+			} else { // if match
+				int astemp = rows[0][pos] - 65;
+				int astarg = rows[1][pos] - 65;
+				// phiS
+				sscore += mutationMatrix[astemp][astarg];
+				// phiC
+				cscore += ccpMatrix.getValue(astarg, ss[temppos], 0,
+						contacts[0][temppos]);
+				cscore += ccpMatrix.getValue(astarg, ss[temppos], 1,
+						contacts[1][temppos]);
+				// phiH
+				double dob = dob(b, temppos);
+				for (int bucket = 0; bucket < hydroBuckets; bucket++) {
+					if (dob <= ((double) bucket + 1.0) / (double) hydroBuckets) {
+						hscore += hydrophobicityMatrix.getValue(astarg, bucket);
+						break;
+					}
+				}
+				// count up
+				temppos++;
+				targpos++;
+			}
+		}
+
+		// phiP
+		PDBEntry model = modifyModel(threading);
+		pscore = pcp.scoreModel(model);
+
+		// hint: gap_weight is applicated in getInsertionScore /
+		// getDeletionScore
+		return gamma * sscore + delta * cscore + epsilon * hscore + zeta
+				* pscore + gapscore;
+	}
+
+	/**
+	 * 
+	 * @param threading
+	 *            the treading to be scored
+	 * @param m
+	 *            the position in the template
+	 * @param n
+	 *            the position in the target
+	 * @return the score for the aligned positions n (target) and m (template)
+	 */
+	public double getScore(Threading threading, int m, int n) {
 
 		// check if correct structure is set
 		if ((this.templateStructure == null)
@@ -368,36 +370,10 @@ public class RDPScoring implements Scoring {
 			init();
 		}
 
-		result = gamma * phiS(threading) + delta * phiC(threading) + epsilon
-				* phiH(threading) + zeta * phiP(threading) - gap(threading);
+		return gamma * phiS(threading, m, n) + delta * phiC(threading, m, n)
+				+ epsilon * phiH(threading, m, n) + zeta
+				* phiP(threading, m, n);
 
-		return result;
-	}
-
-	/**
-	 * "phiS scores the alignment f with respect to well-known sequence based
-	 * mutation matrices" (From: Protein Threading by Recursive Dynamic
-	 * Programming. JMB 290, 757-779)
-	 * 
-	 * @param f
-	 *            the threading
-	 * @return the calculated sequence-based score
-	 */
-	private double phiS(Threading f) {
-
-		double result = 0.0;
-
-		char[][] rows = f.getRowsAsCharArray();
-
-		for (int pos = 0; pos < rows[0].length; pos++) {
-			// if positions are aligned
-			if ((rows[0][pos] != '-') && (rows[1][pos] != '-')) {
-				// sum up score from mutation matrix
-				result += mutationMatrix[rows[0][pos] - 65][rows[1][pos] - 65];
-			}
-		}
-
-		return result;
 	}
 
 	/**
@@ -415,60 +391,10 @@ public class RDPScoring implements Scoring {
 	 */
 	private double phiS(Threading f, int m, int n) {
 
-		char a = f.getStructure().getAminoAcid(m).getName()
-				.getThreeLetterCode().charAt(0);
-		char b = f.getSequence().getComp(n);
+		int a = f.getStructure().getAminoAcid(m).getName().getNumber();
+		int b = f.getSequence().getComp(n) - 65;
 
-		return mutationMatrix[a - 65][b - 65];
-	}
-
-	/**
-	 * "(...) contact-capacity-potential phiC (...)" (From: Protein Threading by
-	 * Recursive Dynamic Programming. JMB 290, 757-779) <br />
-	 * Two AminoAcids are in contact if their C alpha atoms are less than 7 Å
-	 * distant
-	 * 
-	 * @param f
-	 *            the threading
-	 * @return the calculated contact-capacity based score
-	 */
-	private double phiC(Threading f) {
-
-		double result = 0.0;
-
-		char[][] rows = f.getRowsAsCharArray();
-		Sequence a = f.getSequence();
-
-		// read SecStruct from DSSP File
-		String dsspFileName = DSSPFileReader.DSSP_FOLDER
-				+ f.getStructure().getId().toLowerCase()
-				+ f.getStructure().getLongID().substring(4, 7) + ".dssp";
-		DSSPEntry dssp = DSSPFileReader.readDSSPFile(dsspFileName);
-		SecStructEight[] ss = dssp.getSecondaryStructure();
-
-		int temppos = 0; // position in template
-		int targpos = 0; // position in target
-
-		for (int pos = 0; pos < rows[0].length; pos++) {
-
-			if (rows[0][pos] == '-') { // if insertion
-				targpos++;
-			} else if ((rows[1][pos] == '-')) { // if deletion
-				temppos++;
-			} else { // if match
-				// sum up score
-				int tmp = contacts[0][temppos];
-				result += ccpMatrix.getValue(a.getComp(targpos),
-						ss[temppos].getThreeClassAnalogon(), 0, tmp);
-				result += ccpMatrix.getValue(a.getComp(targpos),
-						ss[temppos].getThreeClassAnalogon(), 1,
-						contacts[1][temppos]);
-				temppos++;
-				targpos++;
-			}
-		}
-
-		return result;
+		return mutationMatrix[a][b];
 	}
 
 	/**
@@ -487,56 +413,10 @@ public class RDPScoring implements Scoring {
 	 */
 	private double phiC(Threading f, int m, int n) {
 
-		char aa = f.getSequence().getComp(n);
+		int aa = f.getSequence().getComp(n) - 65;
 
 		double result = ccpMatrix.getValue(aa, ss[m], 0, contacts[0][m])
 				+ ccpMatrix.getValue(aa, ss[m], 1, contacts[1][m]);
-
-		return result;
-	}
-
-	/**
-	 * "phiH [scores] (...) the hydrophobicity (...)" (From: Protein Threading
-	 * by Recursive Dynamic Programming. JMB 290, 757-779)
-	 * 
-	 * @param f
-	 *            the threading
-	 * @return the calculated hydrophobicity based score
-	 */
-	private double phiH(Threading f) {
-
-		double result = 0.0;
-
-		char[][] rows = f.getRowsAsCharArray();
-		PDBEntry b = f.getStructure();
-		Sequence a = f.getSequence();
-
-		int buckets = hydrophobicityMatrix.getBuckets();
-
-		int temppos = 0; // position in template
-		int targpos = 0; // position in target
-
-		for (int pos = 0; pos < rows[0].length; pos++) {
-
-			if (rows[0][pos] == '-') { // if insertion
-				targpos++;
-			} else if ((rows[1][pos] == '-')) { // if deletion
-				temppos++;
-			} else { // if match
-				// sum up score
-				int astype = (a.getComp(targpos)) - 65;
-				double dob = dob(b, temppos);
-				for (int bucket = 0; bucket < buckets; bucket++) {
-					if (dob <= ((double) bucket + 1.0)
-							* (1.0 / (double) buckets)) {
-						result += hydrophobicityMatrix.getValue(astype, bucket);
-						break;
-					}
-				}
-				temppos++;
-				targpos++;
-			}
-		}
 
 		return result;
 	}
@@ -555,42 +435,15 @@ public class RDPScoring implements Scoring {
 	 */
 	private double phiH(Threading f, int m, int n) {
 
-		double result = 0.0;
-
-		PDBEntry b = f.getStructure();
-		Sequence a = f.getSequence();
-
-		int buckets = hydrophobicityMatrix.getBuckets();
-
-		int astype = (a.getComp(n)) - 65;
-		double dob = dob(b, m);
-		for (int bucket = 0; bucket < buckets; bucket++) {
-			if (dob <= ((double) bucket + 1.0) * (1.0 / (double) buckets)) {
-				result = hydrophobicityMatrix.getValue(astype, bucket);
-				break;
+		int astype = (f.getSequence().getComp(n)) - 65;
+		double dob = dob(f.getStructure(), m);
+		for (int bucket = 0; bucket < hydroBuckets; bucket++) {
+			if (dob <= ((double) bucket + 1.0) / (double) hydroBuckets) {
+				return hydrophobicityMatrix.getValue(astype, bucket);
 			}
 		}
 
-		return result;
-	}
-
-	/**
-	 * "phiP denotes the pair interaction term (...)" (From: Protein Threading
-	 * by Recursive Dynamic Programming. JMB 290, 757-779)
-	 * 
-	 * @param f
-	 *            the alignment (so far)
-	 * @param a
-	 *            the target sequence
-	 * @param b
-	 *            the template structure
-	 * @return the calculated pair interaction based score
-	 */
-	private double phiP(Threading f) {
-		// use SipplContactPotential from bioinfo.energy.potential
-		PDBEntry model = modifyModel(f);
-		return pcp.scoreModel(model);
-		// return 0.0;
+		return 0.0;
 	}
 
 	/**
@@ -607,53 +460,8 @@ public class RDPScoring implements Scoring {
 	 */
 	private double phiP(Threading f, int m, int n) {
 		// use SipplContactPotential from bioinfo.energy.potential
-
 		PDBEntry model = modifyModel(f);
 		return pcp.getAminoScores(model)[m];
-	}
-
-	/**
-	 * "GAP penalizes insertions and deletions." (From: Protein Threading by
-	 * Recursive Dynamic Programming. JMB 290, 757-779)
-	 * 
-	 * @param f
-	 *            the alignment (so far)
-	 * @param a
-	 *            the target sequence
-	 * @param b
-	 *            the template structure
-	 * @return the calculated pair interaction based score
-	 */
-	private double gap(Threading f) {
-
-		double result = 0.0;
-
-		char[][] rows = f.getRowsAsCharArray();
-
-		int temppos = 0; // position in template
-		int targpos = 0; // position in target
-
-		for (int pos = 0; pos < rows[0].length; pos++) {
-
-			if (rows[0][pos] == '-') { // insertion: target has aa, template
-										// not.
-				// TODO find if gap is a real gap (i.e. don't calculate on
-				// not-yet aligned parts)
-				result += getInsertionScore(f, targpos);
-				targpos++;
-			} else if ((rows[1][pos] != '-')) { // deletion: template has aa,
-												// target not.
-				// TODO find if gap is a real gap (i.e. don't calculate on
-				// not-yet aligned parts)
-				result += getDeletionScore(f, temppos);
-				temppos++;
-			} else {
-				// result need not to be changed here
-				temppos++;
-				targpos++;
-			}
-		}
-		return result;
 	}
 
 	/**
@@ -671,7 +479,6 @@ public class RDPScoring implements Scoring {
 		if (caa != null && cab != null) {
 			return calcDistance(caa, cab);
 		}
-
 		return 0.0;
 	}
 
@@ -689,8 +496,8 @@ public class RDPScoring implements Scoring {
 		double[] bpos = b.getPosition();
 		double[] dis = { apos[0] - bpos[0], apos[1] - bpos[1],
 				apos[2] - bpos[2] };
-		return Math.sqrt(Math.pow(dis[0], 2) + Math.pow(dis[1], 2)
-				+ Math.pow(dis[2], 2));
+		return Math.sqrt((dis[0] * dis[0]) + (dis[1] * dis[1])
+				+ (dis[2] * dis[2]));
 	}
 
 	/**
@@ -723,15 +530,12 @@ public class RDPScoring implements Scoring {
 	}
 
 	/**
-	 * modifies the model so it can be scored by phiP
+	 * modifies the model so it can be scored by phiP. It replaces all aligned
+	 * AminoAcids.
 	 * 
 	 * @param f
 	 *            SequenceAlignment (template, target)
-	 * @param a
-	 *            target Sequence
-	 * @param b
-	 *            template structure
-	 * @return
+	 * @return a new, modified model
 	 */
 	private static PDBEntry modifyModel(Threading f) {
 
@@ -766,119 +570,34 @@ public class RDPScoring implements Scoring {
 	}
 
 	/**
-	 * 
-	 * @param threading
-	 * @param m
-	 *            the position in the template
-	 * @param n
-	 *            the position in the target
-	 * @return
-	 */
-	public double getScore(Threading threading, int m, int n) {
-
-		// check if correct structure is set
-		if ((this.templateStructure == null)
-				|| (templateStructure != threading.getStructure())) {
-			templateStructure = threading.getStructure();
-			init();
-		}
-
-		double sscore = gamma * phiS(threading, m, n);
-		smax = smax < sscore ? sscore : smax;
-		smin = smin > sscore ? sscore : smin;
-		ssum += sscore;
-		double cscore = delta * phiC(threading, m, n);
-		cmax = cmax < cscore ? cscore : cmax;
-		cmin = cmin > cscore ? cscore : cmin;
-		csum += cscore;
-		double hscore = epsilon * phiH(threading, m, n);
-		hmax = hmax < hscore ? hscore : hmax;
-		hmin = hmin > hscore ? hscore : hmin;
-		hsum += hscore;
-		double pscore = zeta * phiP(threading, m, n);
-		pmax = pmax < pscore ? pscore : pmax;
-		pmin = pmin > pscore ? pscore : pmin;
-		psum += pscore;
-
-		double result = sscore + cscore + hscore + pscore;
-		scoremax = scoremax < result ? result : scoremax;
-		scoremin = scoremin > result ? result : scoremin;
-		scoresum += result;
-
-		num++;
-
-		return result;
-
-	}
-
-	/**
 	 * Calculates the score for an insertion of target's AminoAcid n.
 	 * 
 	 * @param threading
 	 *            the threading to be scored
 	 * @param n
-	 *            the number of the aminoAcid in the target that needs to be
-	 *            inserted
-	 * @return the score of
+	 *            the number of the AminoAcid in the target that is inserted
+	 * @return the average PairPotential of the inserted AA
 	 */
 	public double getInsertionScore(Threading threading, int n) {
-
-		// PDBEntry model = modifyModel(threading);
-		double result = avgPotential[threading.getSequence().getComp(n) - 65];
-
-		result = -(zeta * 3 * result);
-		// result = -1;
-		insertmax = insertmax < result ? result : insertmax;
-		insertmin = insertmin > result ? result : insertmin;
-		insertsum += result;
-		insertnum++;
-		return result;
+		// hint: gap_weight gets negative in constructor!
+		return gap_weight
+				* (avgPotential[threading.getSequence().getComp(n) - 65]);
 	}
 
 	/**
+	 * Calculates the score for an deletion of template's AminoAcid m.
 	 * 
 	 * @param threading
+	 *            the threading to be scored
 	 * @param m
-	 * @return
+	 *            the number of the AminoAcid in the template that is deleted
+	 * @return the average PairPotential of the deleted AA
 	 */
 	public double getDeletionScore(Threading threading, int m) {
-
-		// phiP(m)
-		// PDBEntry model = modifyModel(threading);
-		// double result = pcp.getAminoScores(model)[m];
-		double result = avgPotential[threading.getStructure().getAminoAcid(m)
-				.getName().getNumber()];
-
-		result = -(zeta * 3 * result);
-		// result = - 1;
-		deletemax = deletemax < result ? result : deletemax;
-		deletemin = deletemin > result ? result : deletemin;
-		deletesum += result;
-		deletenum++;
-		return result;
-	}
-
-	/**
-	 * calculates AveragePPs for insertions
-	 */
-	private void calculateAveragePPs() {
-		avgPotential = new double[26];
-		PotentialDimension<Double> potential = pcp.getPotential();
-		for (int aa1 = 0; aa1 < 26; aa1++) {
-			for (int k = 0; k < 6; k++) {
-				for (int d = 0; d < 6; d++) {
-					for (int aa2 = 0; aa2 < 26; aa2++) {
-						int[] path1 = { k, d, aa1, aa2 };
-						avgPotential[aa1] += potential.getByAddress(path1)
-								.getValue();
-						int[] path2 = { k, d, aa2, aa1 };
-						avgPotential[aa1] += potential.getByAddress(path2)
-								.getValue();
-					}
-				}
-			}
-			avgPotential[aa1] = avgPotential[aa1] / 936.0; // 936 = 26*6*6
-		}
+		// hint: gap_weight gets negavite in constructor!
+		return gap_weight
+				* (avgPotential[threading.getStructure().getAminoAcid(m)
+						.getName().getNumber()]);
 	}
 
 }

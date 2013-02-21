@@ -10,22 +10,21 @@ package huberdp.oracles;
 
 import static bioinfo.alignment.gotoh.Gotoh.FACTOR;
 import static util.Util.flip;
-import huberdp.Oracle;
-import huberdp.PartialAlignment;
-import huberdp.RDPProblem;
-import huberdp.scoring.RDPScoring;
 
-import java.text.DecimalFormat;
 import java.util.LinkedList;
 
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
 import bioinfo.alignment.Threading;
 import bioinfo.proteins.PDBEntry;
+import huberdp.Oracle;
+import huberdp.PartialAlignment;
+import huberdp.RDPProblem;
+import huberdp.scoring.RDPScoring;
 
 /**
  * @author huberste
- * @lastchange 2013-02-19
+ * @lastchange 2013-02-21
  */
 public class RDPOracle implements Oracle {
 
@@ -113,8 +112,8 @@ public class RDPOracle implements Oracle {
 				// D Matrix and I Matrix are not needed :-)
 				// Use D Matrix instead for "comeFrom" values
 				int matchValue = m[i - 1][j - 1]
-						+ (int) (FACTOR * scoring.getScore(threading,
-								temppos, targpos));
+						+ (int) (FACTOR * scoring.getScore(threading, temppos,
+								targpos));
 				int insertValue = m[i - 1][j]
 						+ (int) (FACTOR * scoring.getInsertionScore(threading,
 								targpos));
@@ -124,49 +123,38 @@ public class RDPOracle implements Oracle {
 				// standard: match
 				int mValue = matchValue;
 				int fromValue = FROM_TOPLEFT;
-				// check Insertion
-				if (insertValue == mValue) { // insertion also possible
-					fromValue = fromValue | FROM_TOP;
-				} else if (insertValue > mValue) { // only insertion
-					fromValue = FROM_TOP;
-					mValue = insertValue;
-				}
-				// check deletion
-				if (deleteValue == mValue) { // insertion also possible
-					fromValue = fromValue | FROM_LEFT;
-				} else if (deleteValue > mValue) { // only insertion
-					fromValue = FROM_LEFT;
-					mValue = deleteValue;
-				}
 				// local: check 0
 				if (mValue < 0) {
 					fromValue = 0; // come from no direction
 					mValue = 0; // set 0 for local alignment
+				} else {
+					// check Insertion
+					if (insertValue == mValue) { // insertion also possible
+						fromValue = fromValue | FROM_TOP;
+					} else if (insertValue > mValue) { // only insertion
+						fromValue = FROM_TOP;
+						mValue = insertValue;
+					}
+					// check deletion
+					if (deleteValue == mValue) { // insertion also possible
+						fromValue = fromValue | FROM_LEFT;
+					} else if (deleteValue > mValue) { // only insertion
+						fromValue = FROM_LEFT;
+						mValue = deleteValue;
+					}
+					if (mValue >= max) {
+						max = mValue;
+						x = i - 1;
+						y = j - 1;
+					}
 				}
-				// fill M Matrix witch values
+
+				// fill M Matrix with value
 				m[i][j] = mValue;
-				// fill D Matrix with "comeFrom"
+				// fill from Matrix with value
 				from[i][j] = fromValue;
-				if (mValue >= max) {
-					max = mValue;
-					x = i - 1;
-					y = j - 1;
-				}
 			}
 		}
-		
-		// begin debugging
-//		DecimalFormat df = new DecimalFormat("00.0000");
-//		System.out.println("s:\tmax: "+df.format(scoring.smax) + ", min: "+df.format(scoring.smin) + ", avg: " + df.format(scoring.ssum / scoring.num));
-//		System.out.println("c:\tmax: "+df.format(scoring.cmax) + ", min: "+df.format(scoring.cmin) + ", avg: " + df.format(scoring.csum / scoring.num));
-//		System.out.println("h:\tmax: "+df.format(scoring.hmax) + ", min: "+df.format(scoring.hmin) + ", avg: " + df.format(scoring.hsum / scoring.num));
-//		System.out.println("p:\tmax: "+df.format(scoring.pmax) + ", min: "+df.format(scoring.pmin) + ", avg: " + df.format(scoring.psum / scoring.num));
-//		System.out.println("result:\tmax: "+df.format(scoring.scoremax) + ", min: "+df.format(scoring.scoremin) + ", avg: " + df.format(scoring.scoresum / scoring.num));
-//		System.out.println("insert:\tmax: "+df.format(scoring.insertmax) + ", min: "+df.format(scoring.insertmin) + ", avg: " + df.format(scoring.insertsum / scoring.insertnum));
-//		System.out.println("delete:\tmax: "+df.format(scoring.deletemax) + ", min: "+df.format(scoring.deletemin) + ", avg: " + df.format(scoring.deletesum / scoring.deletenum));
-//		util.Util.printIntegerArray(m);
-//		util.Util.printIntegerArray(from);
-		// end debugging
 
 		String row0 = "";
 		String row1 = "";
@@ -203,8 +191,8 @@ public class RDPOracle implements Oracle {
 				row0 += actx;
 				row1 += "-";
 				x--;
-			}
-			else break;
+			} else
+				break;
 		}
 		// end of alignment: unaligned sequences
 		for (int i = y + 1; i > 0; i--) {
@@ -218,18 +206,14 @@ public class RDPOracle implements Oracle {
 		char[] templateRow = flip(row0.toCharArray());
 		char[] targetRow = flip(row1.toCharArray());
 
-		SequenceAlignment result = new SequenceAlignment(new Sequence(threading.getStructure()
-				.getLongID(), templateRow), new Sequence(threading
-				.getSequence().getId(), targetRow), templateRow, targetRow,
-				1.0d * max / FACTOR);
-		
-		// DONE begin debugging
-//		System.out.println(result.toStringVerbose());
-		// end debugging
-		
-		return result;
+		SequenceAlignment result = new SequenceAlignment(new Sequence(threading
+				.getStructure().getID(), template), new Sequence(threading
+				.getSequence().getId(), target), templateRow, targetRow, 1.0
+				* max / FACTOR);
 
+		return result;
 	}
+	
 }
 
 /******************************************************************************

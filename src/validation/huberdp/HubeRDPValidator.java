@@ -125,7 +125,6 @@ public class HubeRDPValidator {
 		int rdpdepth = 0;
 		
 		// initialize HubeRDP stuff
-		// TODO
 		HubeRDP rdp = new HubeRDP();
 //		rdp.addOracle(new RDPOracle());
 		SipplContactPotential sippl = new SipplContactPotential();
@@ -135,7 +134,7 @@ public class HubeRDPValidator {
 				QuasarMatrix.DAYHOFF_MATRIX, new HydrophobicityMatrix(
 						HYDROSTRING), new CCPMatrix(CCPSTRING),
 				"/home/h/huberste/gobi/data/dssp/", sippl, null,
-				RDPScoring.VOROPATH, RDPScoring.GRID_EXTEND,
+				VOROSTRING, RDPScoring.GRID_EXTEND,
 				RDPScoring.GRID_DENSITY, RDPScoring.GRID_CLASH,
 				RDPScoring.MIN_CONTACT, TEMPDIR);
 		rdp.setScoring(scoring);

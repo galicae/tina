@@ -29,7 +29,7 @@ import bioinfo.proteins.PDBFileReader;
  */
 public class HubeRDPLoader {
 
-	private static final boolean test = true;
+	private static final boolean test = false;
 
 	private static final String TARGETESTRING = "1dp7P00:TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK";
 	private static final String TEMPLATESTRING = "/home/h/huberste/gobi/data/pdb/1j2xA00.pdb";
