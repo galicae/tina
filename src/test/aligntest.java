@@ -3,36 +3,20 @@ package test;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import util.JMolView;
-
 import bioinfo.Sequence;
 import bioinfo.alignment.SequenceAlignment;
-import bioinfo.alignment.gotoh.FreeshiftSequenceGotoh;
-import bioinfo.alignment.gotoh.GlobalSequenceGotoh;
 import bioinfo.alignment.gotoh.LocalSequenceGotoh;
 import bioinfo.alignment.kerbsch.FBGotoh;
-import bioinfo.alignment.kerbsch.FreeshiftMusterLite;
-import bioinfo.alignment.kerbsch.GLocalSequenceGotoh;
-import bioinfo.alignment.kerbsch.GlobalMusterLite;
-import bioinfo.alignment.kerbsch.GLocalMusterLite;
-import bioinfo.alignment.kerbsch.HSPAlignment;
 import bioinfo.alignment.kerbsch.Kerbsch;
 import bioinfo.alignment.kerbsch.temp.InitClass;
 import bioinfo.alignment.kerbsch.temp.PairReader;
 import bioinfo.alignment.kerbsch.temp.SecStructScores;
 import bioinfo.alignment.kerbsch.temp.SeqLibrary;
 import bioinfo.alignment.matrices.QuasarMatrix;
-import bioinfo.proteins.PDBEntry;
-import bioinfo.proteins.PDBFileReader;
-import bioinfo.superpos.Kabsch;
-import bioinfo.superpos.PDBReduce;
-import bioinfo.superpos.TMMain;
-import bioinfo.superpos.Transformation;
 
 
 public class aligntest {

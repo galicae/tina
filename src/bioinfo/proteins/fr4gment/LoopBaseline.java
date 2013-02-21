@@ -31,7 +31,7 @@ public class LoopBaseline {
 	public LoopBaseline(SequenceAlignment input, String clusterDirectory,
 			String guideFile) {
 		this.input = input;
-		System.out.print(input.toString() + " ");
+//		System.out.print(input.toString() + " ");
 		this.ms = findMultipleSuperpos(clusterDirectory, guideFile);
 	}
 
@@ -157,6 +157,8 @@ public class LoopBaseline {
 		Sequence seq1 = input.getComponent(0);
 
 		double[][] coord = PDBReduce.reduceSinglePDB(ms.getStructures().get(0));
+		if(coord == null)
+			return null;
 		ProteinFragment usedFrag = new ProteinFragment(seq1.getID(),
 				seq1.getSequenceAsString(), coord, coord.length);
 		templCores = calcCorePoints(input);
@@ -172,10 +174,10 @@ public class LoopBaseline {
 
 			for (int i = 1; i < ms.getStructures().size(); i++) {
 				PDBEntry pdbX = ms.getStructures().get(i);
-				if(pdbX == null)
+				if (pdbX == null)
 					continue;
 				double[][] xCoord = PDBReduce.reduceSinglePDB(pdbX);
-				if(xCoord == null)
+				if (xCoord == null)
 					continue;
 				ProteinFragment x = new ProteinFragment(pdbX.getID(), pdbX
 						.getSequence().getSequenceAsString(), xCoord,
@@ -189,13 +191,13 @@ public class LoopBaseline {
 				int[] xCore = got.traceback(prevCore[1], nextCore[0]);
 				// take last point of preceding and first point of following
 				// core as well - is important for later assembly
-				if(xCore[0] > 1)
+				if (xCore[0] > 1)
 					xCore[0]--;
-				if(xCore[1] < xSequence.length())
+				if (xCore[1] < xSequence.length())
 					xCore[1]++;
-				if(xCore[0] <= 0)
+				if (xCore[0] <= 0)
 					xCore[0]++;
-				if(xCore[0] >= xSequence.length())
+				if (xCore[0] >= xSequence.length())
 					xCore[1]--;
 				currentLoop.add(x.getPart(xCore));
 			}
@@ -278,6 +280,13 @@ public class LoopBaseline {
 		double[][] resultCoordinates = new double[input.getComponent(1)
 				.getSequence().length][3];
 		fillOutCores(resultCoordinates);
+		if(loopFragments == null){
+			String seq = input.getComponent(1).getSequenceAsString();
+			return new ProteinFragment("coreTest", seq, resultCoordinates,
+					seq.length());
+		}
+			
+		
 
 		// filter loop segments according to sequence length
 		for (int i = 1; i < templCores.size(); i++) {
@@ -318,7 +327,7 @@ public class LoopBaseline {
 			LoopRotator rot = new LoopRotator(usedFrag, resultCoordinates,
 					loops, tempPos, queryPos);
 			ProteinFragment model = rot.rotateAllLoops();
-			if(model != null)
+			if (model != null)
 				resultCoordinates = model.getAllResidues();
 		}
 
@@ -354,10 +363,14 @@ public class LoopBaseline {
 					break;
 				}
 			}
-
-			for (int i = 0; i <= tempEnd - tempStart; i++) {
-				coord[querStart + i] = tempStructure.getAllResidues()[tempStart
-						+ i];
+			try {
+				for (int i = 0; i <= Math.min(tempEnd - tempStart, input
+						.getComponent(1).length()); i++) {
+					coord[querStart + i] = tempStructure.getAllResidues()[tempStart
+							+ i];
+				}
+			} catch (Exception e) {
+				return;
 			}
 		}
 	}
@@ -461,11 +474,11 @@ public class LoopBaseline {
 		else
 			return false;
 	}
-	
+
 	public LinkedList<int[]> getTmCores() {
 		return templCores;
 	}
-	
+
 	public LinkedList<int[]> getQuCores() {
 		return queryCores;
 	}
