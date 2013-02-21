@@ -35,7 +35,7 @@ public class KerbschBenchmark {
 		}
 		in.close();
 		
-		Kerbsch kerbsch = new Kerbsch(-12.0,-1.0,seqMatrix,hbMatrix,polMatrix,secStructMatrix,seclib);
+		Kerbsch kerbsch = new Kerbsch(-6.0,-1.0,seqMatrix,hbMatrix,polMatrix,secStructMatrix,seclib);
 		ValidateAlignments bench = new ValidateAlignments(kerbsch,seqlib,targetlist,targetsfolder,out);
 		
 		bench.benchmark();
