@@ -131,19 +131,11 @@ public class PDBEntry implements Alignable, Serializable, StructuralData {
 	}
 
 	/**
-<<<<<<< HEAD
-	 * return complete id (sames as LongID but matching the interface) 
-=======
 	 * return complete id (xxxxA00)
->>>>>>> branch 'master' of https://github.com/galicae/tina.git
 	 * @return
 	 */
 	public String getID(){
-<<<<<<< HEAD
-		return this.getLongID();
-=======
 		return id+chainID+getChainIDNumAsString();
->>>>>>> branch 'master' of https://github.com/galicae/tina.git
 	}
 	
 	/**

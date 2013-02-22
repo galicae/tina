@@ -46,14 +46,18 @@ public class MultipleSuperposition {
 					new FileReader(directory));
 			PDBFileReader pdbReader = new PDBFileReader();
 			String line = "";
+			String nextID = null;
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("ENDMDL")) {
 					continue;
 				}
+				if(line.startsWith("REMARK")){
+					nextID = line.split("\\s+")[1];
+				}
 				if (line.startsWith("MODEL")) {
 					// and while reading also parse PDBs
 					PDBEntry e = pdbReader.readPDBFromModel(
-							line.split("\\s+")[1], reader);
+							nextID, reader);
 					models.add(e);
 				}
 			}
