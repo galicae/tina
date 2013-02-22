@@ -31,7 +31,6 @@ public class LoopBaseline {
 	public LoopBaseline(SequenceAlignment input, String clusterDirectory,
 			String guideFile) {
 		this.input = input;
-//		System.out.print(input.toString() + " ");
 		this.ms = findMultipleSuperpos(clusterDirectory, guideFile);
 	}
 
@@ -153,11 +152,13 @@ public class LoopBaseline {
 	 */
 	private HashMap<Integer, LinkedList<ProteinFragment>> findLoops(
 			MultipleSuperposition ms, SequenceAlignment input) {
+		if (ms == null)
+			return null;
 		ms.sort(input.getComponent(0).getId());
 		Sequence seq1 = input.getComponent(0);
 
 		double[][] coord = PDBReduce.reduceSinglePDB(ms.getStructures().get(0));
-		if(coord == null)
+		if (coord == null)
 			return null;
 		ProteinFragment usedFrag = new ProteinFragment(seq1.getId(),
 				seq1.getSequenceAsString(), coord, coord.length);
@@ -275,18 +276,23 @@ public class LoopBaseline {
 	public ProteinFragment makePrediction() {
 		HashMap<Integer, LinkedList<ProteinFragment>> loopFragments = findLoops(
 				ms, input);
-
+		if (ms == null)
+			return null;
+		if (ms.equals(null))
+			return null;
+		if (ms.getStructures().get(0) == null)
+			return null;
+		if (ms.getStructures().get(0).equals(null))
+			return null;
 		// the coordinates. First fill the cores out.
 		double[][] resultCoordinates = new double[input.getComponent(1)
 				.getSequence().length][3];
 		fillOutCores(resultCoordinates);
-		if(loopFragments == null){
+		if (loopFragments == null) {
 			String seq = input.getComponent(1).getSequenceAsString();
 			return new ProteinFragment("coreTest", seq, resultCoordinates,
 					seq.length());
 		}
-			
-		
 
 		// filter loop segments according to sequence length
 		for (int i = 1; i < templCores.size(); i++) {
@@ -345,8 +351,13 @@ public class LoopBaseline {
 	 */
 	private void fillOutCores(double[][] coord) {
 		int[][] aligned = input.getAlignedResidues();
-		ProteinFragment tempStructure = new ProteinFragment("template",
-				PDBReduce.reduceSinglePDB(ms.getStructures().get(0)), 1);
+		ProteinFragment tempStructure;
+		try {
+			tempStructure = new ProteinFragment("template",
+					PDBReduce.reduceSinglePDB(ms.getStructures().get(0)), 1);
+		} catch (NullPointerException e) {
+			return;
+		}
 		// the start of the core in sequence coordinates is already given for
 		// the template; we need to find the aligned coordinate for the query
 		for (int[] templatePos : templCores) {

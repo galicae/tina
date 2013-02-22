@@ -11,19 +11,28 @@ import bioinfo.proteins.PDBFileReader;
  * this class reads a cluster file containing a multiple superposition. Credit
  * for the construction of the set goes to Marie and the girl group. Credit for
  * not constructing it in a friendly way goes to them as well.
- * 
+ * (edit seitza): TRUE STORY!  =)
  * @author galicae
  * 
  */
 public class MultipleSuperposition {
 	private LinkedList<PDBEntry> models;
 	private String directory;
+	private int size;
 
 	public MultipleSuperposition(String directory) {
 		models = new LinkedList<PDBEntry>();
 		this.directory = directory;
-
 		readMultipleSuperpos();
+		this.size = models.size();
+	}
+	
+	public int length(){
+		return this.size;
+	}
+	
+	public void setSize(){
+		this.size = models.size();
 	}
 
 	/**
@@ -37,14 +46,18 @@ public class MultipleSuperposition {
 					new FileReader(directory));
 			PDBFileReader pdbReader = new PDBFileReader();
 			String line = "";
+			String nextID = null;
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("ENDMDL")) {
 					continue;
 				}
+				if(line.startsWith("REMARK")){
+					nextID = line.split("\\s+")[1];
+				}
 				if (line.startsWith("MODEL")) {
 					// and while reading also parse PDBs
 					PDBEntry e = pdbReader.readPDBFromModel(
-							line.split("\\s+")[1], reader);
+							nextID, reader);
 					models.add(e);
 				}
 			}

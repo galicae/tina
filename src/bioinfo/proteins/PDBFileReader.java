@@ -79,8 +79,8 @@ public class PDBFileReader {
 			e.printStackTrace();
 		}
 		String id = filename.split("/")[filename.split("/").length - 1]
-				.split("\\.")[0];
-		return parseEntry(br, id);
+				.split("\\.")[0].substring(0, 4);
+		return parseRealEntry(br, id);
 	}
 
 	/**
@@ -549,7 +549,7 @@ public class PDBFileReader {
 
 				}
 			}
-			newPdbId = pdbId.substring(0, 4) + chain + '0';
+//			newPdbId = pdbId.substring(0, 4) + chain + '0';
 			// last residue fix
 			if (atoms != null && atoms.size() != 0) {
 				aminoacids.add(new AminoAcid(AminoAcidName

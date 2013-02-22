@@ -162,6 +162,16 @@ public class PDBEntry implements Alignable, Serializable, StructuralData {
 	public int getChainIDNum() {
 		return chainIDNum;
 	}
+	
+	public AminoAcidName[] getSequenceData(){
+		AminoAcidName[] seq = new AminoAcidName[this.aminoAcids.length];
+		for(int i = 0; i != this.aminoAcids.length; i++){
+			seq[i] = this.aminoAcids[i].getName();
+		}
+		return seq;
+	}
+	
+	
 
 	/**
 	 * Adds an AminoAcid to the entry. Usage discouraged because very slow.

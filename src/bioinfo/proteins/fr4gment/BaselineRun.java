@@ -34,85 +34,117 @@ public class BaselineRun {
 		SequenceAlignment input = null;
 
 		while ((input = alireader.nextAlignment()) != null) {
+			try {
+				// if (counter > 0) {
+				// counter--;
+				// continue;
+				// }
 
-			ProteinFragment modellerPred = runModeller(input);
+				ProteinFragment modellerPred = runModeller(input, args[5]);
 
-			LoopBaseline luup = new LoopBaseline(input, args[2], args[3]);
-			ProteinFragment rr = luup.makePrediction();
+				LoopBaseline luup = new LoopBaseline(input, args[2], args[3]);
+				ProteinFragment rr = luup.makePrediction();
 
-			PDBFileReader re = new PDBFileReader(args[4]);
-			PDBEntry natStr = re.readFromFolderById(input.getComponent(1)
-					.getID());
+				PDBFileReader re = new PDBFileReader(args[4]);
+				PDBEntry natStr = re.readFromFolderById(input.getComponent(1)
+						.getId());
 
-			double[][] contr = PDBReduce.reduceSinglePDB(natStr);
-			if (contr == null)
-				continue;
-			ProteinFragment control = new ProteinFragment("control", contr, 4);
-			control.setSequence(natStr.getSequenceAsString());
-			LinkedList<int[]> cores = new LinkedList<int[]>();
-			cores.addAll(luup.getQuCores());
+				double[][] contr = PDBReduce.reduceSinglePDB(natStr);
+				ProteinFragment control = new ProteinFragment("control", contr,
+						4);
+				control.setSequence(natStr.getSequenceAsString());
+				LinkedList<int[]> cores = new LinkedList<int[]>();
+				cores.addAll(luup.getQuCores());
 
-			double[][] coord = rr.getAllResidues();
-			double[][] mod = modellerPred.getAllResidues();
+				double[][] coord = rr.getAllResidues();
+				double[][] mod = modellerPred.getAllResidues();
 
-			int length = 0;
-			for (int[] core : cores) {
-				length += core[1] - core[0] + 1;
-			}
-
-			double[][][] kabschFood = new double[2][length][3];
-
-			int c = 0;
-			for (int[] core : cores) {
-				for (int i = core[0]; i <= Math.min(core[1], contr.length - 1); i++) {
-					kabschFood[0][c] = coord[i];
-					kabschFood[1][c] = contr[i];
-					c++;
+				int length = 0;
+				for (int[] core : cores) {
+					length += core[1] - core[0] + 1;
 				}
-			}
 
-			Transformation t = Kabsch.calculateTransformation(kabschFood);
-			control.setCoordinates(t.transform(contr));
+				double[][][] kabschFood = new double[2][length][3];
 
-			
-			// BufferedWriter test = new BufferedWriter(new FileWriter("test"));
-			// test.write("MODEL        1\n");
-			// test.write(control.toString());
-			// test.write("ENDMDL\n");
-			// test.write("MODEL        2\n");
-			// test.write(rr.toString());
-			// test.write("ENDMDL\n");
-			// test.close();
-
-			for (int i = 1; i < cores.size(); i++) {
-				int[] prev = cores.get(i - 1);
-				int[] next = cores.get(i);
-
-				int loopLength = next[0] - prev[1] + 1;
-				double baseRmsd = calcLoopRmsd(coord, contr, prev, next);
-				
-				if (baseRmsd >= 0) {
-					
-					c=0;
-					for (int[] core : cores) {
-						for (int j = core[0]; j <= Math.min(core[1], contr.length - 1); j++) {
-							kabschFood[0][c] = contr[j];
-							kabschFood[1][c] = mod[j];
-							c++;
-						}
+				int c = 0;
+				for (int[] core : cores) {
+					for (int i = core[0]; i <= Math.min(core[1],
+							contr.length - 1); i++) {
+						kabschFood[0][c] = coord[i];
+						kabschFood[1][c] = contr[i];
+						c++;
 					}
-					Transformation tr = Kabsch.calculateTransformation(kabschFood);
-					double modRmsd = calcLoopRmsd(tr.transform(mod), contr, prev, next);
-					String seq1 = input.getComponent(0).getID();
-					String seq2 = input.getComponent(1).getID();
-					System.out.printf("%s %s %.4f %.4f %d %d\n", seq1, seq2,
-							baseRmsd, modRmsd, loopLength, cores.size());
-					wr.write(String.format("%s %s %.4f %.4f %d %d\n", seq1,
-							seq2, baseRmsd, modRmsd, loopLength, cores.size()));
 				}
+
+				Transformation t = Kabsch.calculateTransformation(kabschFood);
+				control.setCoordinates(t.transform(contr));
+				contr = control.getAllResidues();
+
+				// BufferedWriter test = new BufferedWriter(new
+				// FileWriter("test"));
+				// test.write("MODEL        1\n");
+				// test.write(control.toString());
+				// test.write("ENDMDL\n");
+				// test.write("MODEL        2\n");
+				// test.write(rr.toString());
+				// test.write("ENDMDL\n");
+				// test.close();
+
+				for (int i = 1; i < cores.size(); i++) {
+					int[] prev = cores.get(i - 1);
+					int[] next = cores.get(i);
+
+					int loopLength = next[0] - prev[1] + 1;
+					double baseRmsd = calcLoopRmsd(coord, contr, prev, next);
+
+					if (baseRmsd >= 0) {
+
+						kabschFood = new double[2][c][3];
+						c = 0;
+						for (int[] core : cores) {
+							for (int j = core[0]; j <= Math.min(core[1],
+									contr.length - 1); j++) {
+								kabschFood[0][c] = contr[j];
+								kabschFood[1][c] = mod[j];
+								c++;
+							}
+						}
+						Transformation tr = Kabsch
+								.calculateTransformation(kabschFood);
+						mod = tr.transform(mod);
+						modellerPred.setCoordinates(mod);
+						double modRmsd = calcLoopRmsd(mod, contr, prev, next);
+						String seq1 = input.getComponent(0).getId();
+						String seq2 = input.getComponent(1).getId();
+						wr = new BufferedWriter(new FileWriter(args[0], true));
+						System.out.printf("%s %s %.4f %.4f %d %d\n", seq1,
+								seq2, baseRmsd, modRmsd, loopLength,
+								cores.size());
+						wr.write(String.format("%s %s %.4f %.4f %d %d\n", seq1,
+								seq2, baseRmsd, modRmsd, loopLength,
+								cores.size()));
+						wr.close();
+					}
+				}
+				BufferedWriter test = new BufferedWriter(new FileWriter(
+						"/home/p/papadopoulos/" + args[5] + "/"
+								+ input.getComponent(0).getId() + "_"
+								+ input.getComponent(1).getId() + ".pdb"));
+				test.write("MODEL        1\n");
+				test.write(control.toString());
+				test.write("ENDMDL\n");
+				test.write("MODEL        2\n");
+				test.write(rr.toString());
+				test.write("ENDMDL\n");
+				test.write("MODEL        3\n");
+				test.write(modellerPred.toString());
+				test.write("ENDMDL\n");
+				test.close();
+			} catch (Exception e) {
+				continue;
 			}
 		}
-		wr.close();
+
 	}
 
 	/**
@@ -181,31 +213,32 @@ public class BaselineRun {
 	 * @param input
 	 * @return
 	 */
-	private static ProteinFragment runModeller(SequenceAlignment input)
-			throws Exception {
+	private static ProteinFragment runModeller(SequenceAlignment input,
+			String dir) throws Exception {
 		// first write the alignment to a file
 		BufferedWriter aliw = new BufferedWriter(new FileWriter(
-				"/home/p/papadopoulos/Desktop/test.ali"));
-//		String newline = System.getProperty("line.separator");
-		
+				"/home/p/papadopoulos/" + dir + "/test.ali"));
+		// String newline = System.getProperty("line.separator");
+
 		String[] ali = input.toStringVerbose().split("\n");
 		ali[1] = ali[1].replace(" ", "");
 		ali[2] = ali[2].replace(" ", "");
-//		System.out.println(ali[1]);
+		// System.out.println(ali[1]);
 		aliw.write(ali[2] + "\n");
 		aliw.write(ali[1] + "\n");
 		aliw.close();
-
-		String command = "/home/proj/biosoft/PROTEINS/scripts/model_full.sh -i /home/p/papadopoulos/Desktop/test.ali -S /home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/ -o /home/p/papadopoulos/modeller/" + input.getComponent(1).getID().substring(0, 4) +  ".pdb";
+		String command = "/home/proj/biosoft/PROTEINS/scripts/model_full.sh -i /home/p/papadopoulos/"
+				+ dir
+				+ "/test.ali -S /home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/ -o /home/p/papadopoulos/"
+				+ dir + "/" + input.getComponent(1).getId() + ".pdb";
 		RunHelper.execToString(command);
 
 		PDBFileReader read = new PDBFileReader();
-		PDBEntry model = read
-				.readPDBFromFile("/home/p/papadopoulos/modeller/" + input.getComponent(1).getID().substring(0, 4) +  ".pdb");
-
+		PDBEntry model = read.readPDBFromFile("/home/p/papadopoulos/" + dir
+				+ "/" + input.getComponent(1).getId() + ".pdb");
 		double[][] modelCoordinates = PDBReduce.reduceSinglePDB(model);
 		String sequence = model.getSequenceAsString();
-		ProteinFragment result = new ProteinFragment(model.getID(), sequence,
+		ProteinFragment result = new ProteinFragment(model.getId(), sequence,
 				modelCoordinates, sequence.length());
 		return result;
 	}
