@@ -68,11 +68,11 @@ public class RunHelper {
 		SequenceAlignment lAli = l.align(seq1, seq2);
 
 		BufferedWriter lw = new BufferedWriter(new FileWriter(
-				"./fastaFiles/loc" + seq1.getID() + "_" + seq2.getID()));
+				"./fastaFiles/loc" + seq1.getId() + "_" + seq2.getId()));
 		BufferedWriter fw = new BufferedWriter(new FileWriter(
-				"./fastaFiles/fre" + seq1.getID() + "_" + seq2.getID()));
+				"./fastaFiles/fre" + seq1.getId() + "_" + seq2.getId()));
 		BufferedWriter gw = new BufferedWriter(new FileWriter(
-				"./fastaFiles/glo" + seq1.getID() + "_" + seq2.getID()));
+				"./fastaFiles/glo" + seq1.getId() + "_" + seq2.getId()));
 		lw.write(toFastaFormat(lAli));
 		fw.write(toFastaFormat(fAli));
 		gw.write(toFastaFormat(gAli));
@@ -265,14 +265,14 @@ public class RunHelper {
 	 */
 	public static String toFastaFormat(SequenceAlignment ali) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(">" + ali.getComponent(0).getID() + "\n");
+		sb.append(">" + ali.getComponent(0).getId() + "\n");
 		for (int i = 0; i < ali.getRowAsString(0).length(); i++) {
 			sb.append(ali.getRow(0)[i]);
 			if (i % 80 == 0 && i > 0)
 				sb.append("\n");
 		}
 		sb.append("\n");
-		sb.append(">" + ali.getComponent(1).getID() + "\n");
+		sb.append(">" + ali.getComponent(1).getId() + "\n");
 		for (int i = 0; i < ali.getRowAsString(1).length(); i++) {
 			sb.append(ali.getRow(1)[i]);
 			if (i % 80 == 0 && i > 0)

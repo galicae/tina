@@ -210,7 +210,7 @@ public class SequenceAlignment implements Alignment {
 	 * @return String of the format "id1 id2 score"
 	 */
 	public String toString() {
-		String result = seq1.getID() + " " + seq2.getID() + " "
+		String result = seq1.getId() + " " + seq2.getId() + " "
 				+ DFLONG.format(score);
 		return result;
 	}
@@ -220,9 +220,9 @@ public class SequenceAlignment implements Alignment {
 	 * @return String of the format ">id1 id2 score\n id1: row1\n id2: row2"
 	 */
 	public String toStringVerbose() {
-		String result = ">" + seq1.getID() + " " + seq2.getID() + " "
-				+ DFSHORT.format(score) + "\n" + seq1.getID() + ": "
-				+ String.valueOf(rows[0]) + "\n" + seq2.getID() + ": "
+		String result = ">" + seq1.getId() + " " + seq2.getId() + " "
+				+ DFSHORT.format(score) + "\n" + seq1.getId() + ": "
+				+ String.valueOf(rows[0]) + "\n" + seq2.getId() + ": "
 				+ String.valueOf(rows[1]);
 		return result;
 	}

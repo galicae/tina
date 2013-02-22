@@ -91,8 +91,8 @@ public class RDPProblem {
 	public String toString() {
 		String[] result = new String[2];
 		String[] rows = threading.getRowsAsString();
-		result[0] = threading.getStructure().getLongID() + ": ";
-		result[1] = threading.getSequence().getID() + ": ";
+		result[0] = threading.getStructure().getID() + ": ";
+		result[1] = threading.getSequence().getId() + ": ";
 		for (int i = 0; i < threading.length(); i++) {
 			if (problemStart == i) {
 				result[0] += ">";

@@ -727,7 +727,7 @@ public class PDBFileReader {
 					BufferedWriter bw = new BufferedWriter(
 							new OutputStreamWriter(new FileOutputStream(
 									"/Users/andreseitz/Desktop/strConsTestSet/"
-											+ entry.getID()
+											+ entry.getId()
 											+ entry.getChainID()
 											+ String.format("%02d",
 													entry.getChainIDNum())

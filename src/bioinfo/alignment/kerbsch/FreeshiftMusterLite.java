@@ -104,8 +104,8 @@ public class FreeshiftMusterLite extends Gotoh {
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
 		
-		char[] sec1 = secStructSeqlib.get(sequence1.getID());
-		char[] sec2 = secStructSeqlib.get(sequence2.getID());
+		char[] sec1 = secStructSeqlib.get(sequence1.getId());
+		char[] sec2 = secStructSeqlib.get(sequence2.getId());
 		
 		for (int i = 1; i < xsize; i++) {
 			for (int j = 1; j < ysize; j++) {

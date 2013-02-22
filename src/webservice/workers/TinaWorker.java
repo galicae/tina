@@ -121,7 +121,7 @@ public class TinaWorker extends Worker {
 			PDBFileReader pdbReader = new PDBFileReader(PDB_FILE_PATH);
 			PDBEntry[] pdbentries = new PDBEntry[TOP_NUM];
 			for (int i = 0; i < TOP_NUM; i++) {
-				String idi = topAlis[i].getComponent(1).getID().toUpperCase();
+				String idi = topAlis[i].getComponent(1).getId().toUpperCase();
 				// Get PDB Files from PDB Server
 				PDBFile.getFile(PDB_FILE_PATH, idi.substring(0, 4));
 				// read Entrys from PDBFiles

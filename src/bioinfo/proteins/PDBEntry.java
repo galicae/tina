@@ -12,13 +12,14 @@ import java.io.Serializable;
 import java.util.List;
 
 import bioinfo.Sequence;
+import bioinfo.StructuralData;
 import bioinfo.alignment.Alignable;
 
 /**
  * @author gobi_4
  * @lastchange 2013-02-18
  */
-public class PDBEntry implements Alignable, Serializable {
+public class PDBEntry implements Alignable, Serializable, StructuralData {
 
 	/**
 	 * needed for class check. for serialization. please increase in case of
@@ -130,10 +131,17 @@ public class PDBEntry implements Alignable, Serializable {
 	}
 
 	/**
-	 * @return the ID of the PDBEntry
+	 * return complete id (xxxxA00)
+	 * @return
 	 */
-	@Override
-	public String getID() {
+	public String getID(){
+		return id+chainID+getChainIDNumAsString();
+	}
+	
+	/**
+	 * @return the ID without chain and num of the PDBEntry (xxxx)
+	 */
+	public String getId() {
 		return id;
 	}
 
@@ -149,10 +157,6 @@ public class PDBEntry implements Alignable, Serializable {
 	 */
 	public int getChainIDNum() {
 		return chainIDNum;
-	}
-	
-	public String getLongID() {
-		return this.id + this.chainID + this.getChainIDNumAsString();
 	}
 
 	/**
@@ -289,7 +293,7 @@ public class PDBEntry implements Alignable, Serializable {
 	 * @return the Sequence that is depicted by this PDBEntry
 	 */
 	public Sequence getSequence() {
-		return new Sequence(getLongID(), getSequenceAsString());
+		return new Sequence(getID(), getSequenceAsString());
 	}
 
 	/**

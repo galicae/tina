@@ -8,7 +8,6 @@
  ******************************************************************************/
 package huberdp.oracles;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import bioinfo.Sequence;
@@ -34,7 +33,6 @@ public class TinyOracle implements Oracle {
 	 * @return the alignment of the two given sequences
 	 */
 	protected SequenceAlignment align(Sequence templateSequence, Sequence targetSequence) {
-		// TODO check if correct!
 				
 		// Create new Gotoh
 		LocalSequenceGotoh gotoh = new LocalSequenceGotoh(
@@ -72,8 +70,8 @@ public class TinyOracle implements Oracle {
 			}
 		}
 		
-		Sequence templateSequence = new Sequence(problem.getThreading().getStructure().getLongID(), template);
-		Sequence   targetSequence = new Sequence(problem.getThreading().getSequence().getID(), target);
+		Sequence templateSequence = new Sequence(problem.getThreading().getStructure().getID(), template);
+		Sequence   targetSequence = new Sequence(problem.getThreading().getSequence().getId(), target);
 		results.add(new PartialAlignment(problem, align(templateSequence, targetSequence)));
 		return results;
 	}

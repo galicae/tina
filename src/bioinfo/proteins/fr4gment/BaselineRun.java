@@ -47,7 +47,7 @@ public class BaselineRun {
 
 				PDBFileReader re = new PDBFileReader(args[4]);
 				PDBEntry natStr = re.readFromFolderById(input.getComponent(1)
-						.getID());
+						.getId());
 
 				double[][] contr = PDBReduce.reduceSinglePDB(natStr);
 				ProteinFragment control = new ProteinFragment("control", contr,
@@ -114,8 +114,8 @@ public class BaselineRun {
 						mod = tr.transform(mod);
 						modellerPred.setCoordinates(mod);
 						double modRmsd = calcLoopRmsd(mod, contr, prev, next);
-						String seq1 = input.getComponent(0).getID();
-						String seq2 = input.getComponent(1).getID();
+						String seq1 = input.getComponent(0).getId();
+						String seq2 = input.getComponent(1).getId();
 						wr = new BufferedWriter(new FileWriter(args[0], true));
 						System.out.printf("%s %s %.4f %.4f %d %d\n", seq1,
 								seq2, baseRmsd, modRmsd, loopLength,
@@ -128,8 +128,8 @@ public class BaselineRun {
 				}
 				BufferedWriter test = new BufferedWriter(new FileWriter(
 						"/home/p/papadopoulos/" + args[5] + "/"
-								+ input.getComponent(0).getID() + "_"
-								+ input.getComponent(1).getID() + ".pdb"));
+								+ input.getComponent(0).getId() + "_"
+								+ input.getComponent(1).getId() + ".pdb"));
 				test.write("MODEL        1\n");
 				test.write(control.toString());
 				test.write("ENDMDL\n");
@@ -227,20 +227,18 @@ public class BaselineRun {
 		aliw.write(ali[2] + "\n");
 		aliw.write(ali[1] + "\n");
 		aliw.close();
-
 		String command = "/home/proj/biosoft/PROTEINS/scripts/model_full.sh -i /home/p/papadopoulos/"
 				+ dir
 				+ "/test.ali -S /home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/ -o /home/p/papadopoulos/"
-				+ dir + "/" + input.getComponent(1).getID() + ".pdb";
+				+ dir + "/" + input.getComponent(1).getId() + ".pdb";
 		RunHelper.execToString(command);
 
 		PDBFileReader read = new PDBFileReader();
 		PDBEntry model = read.readPDBFromFile("/home/p/papadopoulos/" + dir
-				+ "/" + input.getComponent(1).getID() + ".pdb");
-
+				+ "/" + input.getComponent(1).getId() + ".pdb");
 		double[][] modelCoordinates = PDBReduce.reduceSinglePDB(model);
 		String sequence = model.getSequenceAsString();
-		ProteinFragment result = new ProteinFragment(model.getID(), sequence,
+		ProteinFragment result = new ProteinFragment(model.getId(), sequence,
 				modelCoordinates, sequence.length());
 		return result;
 	}

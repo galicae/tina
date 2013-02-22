@@ -61,8 +61,8 @@ public class GapOptimizer {
 			SequenceAlignment aliHyd = gotohHyd.align(sequence1, sequence2);
 			
 			PDBFileReader reader = new PDBFileReader();
-			PDBEntry pdb1 = reader.readPDBFromFile("/home/p/papadopoulos/Desktop/STRUCTURES/" + aliHyd.getComponent(0).getID() + ".pdb");
-			PDBEntry pdb2 = reader.readPDBFromFile("/home/p/papadopoulos/Desktop/STRUCTURES/" + aliHyd.getComponent(1).getID() + ".pdb");
+			PDBEntry pdb1 = reader.readPDBFromFile("/home/p/papadopoulos/Desktop/STRUCTURES/" + aliHyd.getComponent(0).getId() + ".pdb");
+			PDBEntry pdb2 = reader.readPDBFromFile("/home/p/papadopoulos/Desktop/STRUCTURES/" + aliHyd.getComponent(1).getId() + ".pdb");
 			
 			tr= tmCalculator.calculateTransformation(aliHyd, pdb1, pdb2);
 			System.out.println(tr.getTmscore());

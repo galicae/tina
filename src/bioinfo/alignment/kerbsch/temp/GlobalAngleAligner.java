@@ -85,7 +85,7 @@ public class GlobalAngleAligner extends Gotoh {
 		char[] seq1 = ((Sequence) sequence1).getSequence();
 		char[] seq2 = ((Sequence) sequence2).getSequence();
 		stances = DihedralAngles.readStances(dssppath + "/"
-				+ sequence1.getID() + ".dssp");
+				+ sequence1.getId() + ".dssp");
 
 		for (int i = 2; i < sequence1.length(); i++) {
 			for (int j = 2; j < sequence2.length(); j++) {
