@@ -48,7 +48,7 @@ public class ManualOracle implements Oracle {
 			}
 		}
 		
-		Sequence templateSequence = new Sequence(problem.getThreading().getStructure().getLongID(), template);
+		Sequence templateSequence = new Sequence(problem.getThreading().getStructure().getID(), template);
 		Sequence   targetSequence = new Sequence(problem.getThreading().getSequence().getId(), target);
 		
 		System.out.println("Please align the following Sequences:");

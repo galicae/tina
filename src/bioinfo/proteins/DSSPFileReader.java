@@ -147,7 +147,7 @@ public class DSSPFileReader {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(
-					folder + id + ".dssp")));
+					filename)));
 		} catch (Exception e) {
 			return null;
 		}

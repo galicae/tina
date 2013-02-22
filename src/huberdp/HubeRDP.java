@@ -81,7 +81,8 @@ public class HubeRDP {
 				// for each u := <PA, {}>^{\wedge} \in U do
 				for (RDPSolutionTreeAndNode u : uSet) {
 					// if (Leaf(u)) do <PA,TA>^{\wedge} <-- Finish (u, T)
-					// TODO this would always be correct, something's wrong here
+					// this would always be correct, something's wrong here.
+					// Either it's me or the paper. Or ma implementation.
 					// if (u.isLeaf()) {
 					// finish(u,t);
 					// } else {

@@ -86,9 +86,27 @@ public class CCPMatrix {
 			return matrix[aa-65][2][dist][contacts];
 		}
 	}
-
+	
 	/**
 	 * 
+	 * @param aa
+	 * @param ss
+	 * @param dist
+	 * @param contacts
+	 * @return
+	 */
+	public double getValue(int aa, SecStructThree ss, int dist, int contacts) {
+		if (ss == SecStructThree.H) { // alpha Helix
+			return matrix[aa][0][dist][contacts];
+		} else if (ss == SecStructThree.E) { // beta shEEt
+			return matrix[aa][1][dist][contacts];
+		} else { // Coil
+			return matrix[aa][2][dist][contacts];
+		}
+	}
+
+	/**
+	 * reads a CCP Matrix
 	 * @param filename Filename of the CCP files, not includin a,la, b,lb, o,lo
 	 * @return
 	 */
@@ -116,6 +134,12 @@ public class CCPMatrix {
 		return result;
 	}
 
+	/**
+	 * reads a sinlge CCPFile
+	 * @param filename
+	 * @param ss
+	 * @return
+	 */
 	private static double[][] readCCPFile(String filename, int ss) {
 
 		double[][] result = new double[26][14];
@@ -170,6 +194,13 @@ public class CCPMatrix {
 		writeCCPFile(filename +  "o", 2, 1, matrix);
 	}
 
+	/**
+	 * writes a CCPFile
+	 * @param filename
+	 * @param ss
+	 * @param dist
+	 * @param matrix
+	 */
 	private static void writeCCPFile(String filename, int ss, int dist,
 			double[][][][] matrix) {
 		BufferedWriter bw = null;
@@ -204,15 +235,6 @@ public class CCPMatrix {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	/**
-	 * for testing
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-
 	}
 
 }

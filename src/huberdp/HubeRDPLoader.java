@@ -10,6 +10,8 @@ package huberdp;
 
 import java.io.File;
 
+import static bioinfo.Sequence.getSequenceFromString;
+
 import huberdp.oracles.RDPOracle;
 import huberdp.scoring.RDPScoring;
 import util.CommandLineParser;
@@ -27,7 +29,7 @@ import bioinfo.proteins.PDBFileReader;
  */
 public class HubeRDPLoader {
 
-	private static final boolean test = true;
+	private static final boolean test = false;
 
 	private static final String TARGETESTRING = "1dp7P00:TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK";
 	private static final String TEMPLATESTRING = "/home/h/huberste/gobi/data/pdb/1j2xA00.pdb";
@@ -41,6 +43,7 @@ public class HubeRDPLoader {
 	private static final String VOROSTRING = "/home/h/huberste/gobi/tina/tools/voro++_ubuntuquantal";
 	private static final String VPOTSTRING = "/home/h/huberste/gobi/data/vpot/s3d3_hob97_25_ED6_SD6_cb_all.md15.hssp95.vpot";
 	private static final String DSSPSTRING = "/home/h/huberste/gobi/data/dssp/";
+	private static final String TEMPDIR = "/tmp/";
 
 	private static String usage = "HubeRDP Threading Tool\n"
 			+ "usage: java -jar HubeRDP.jar \n" + "\t--target <sequence>\n"
@@ -61,7 +64,7 @@ public class HubeRDPLoader {
 	 */
 	public static void main(String[] args) {
 		// allocate memory
-		String targetString = null, templateString = null, hydroFileString = null, ccpFileString = null, voroFileString = null, vpotFileString = null, dsspPathString = null;
+		String targetString = null, templateString = null, hydroFileString = null, ccpFileString = null, voroFileString = null, vpotFileString = null, dsspPathString = null, tempdir = null;
 		Sequence target = null;
 		double gamma = 0.0, delta = 0.0, epsilon = 0.0, zeta = 0.0, gap = 0.0;
 		if (test) {
@@ -78,6 +81,7 @@ public class HubeRDPLoader {
 			epsilon = Double.parseDouble(EPSILONSTRING);
 			zeta = Double.parseDouble(ZETASTRING);
 			gap = Double.parseDouble(GAPSTRING);
+			tempdir = TEMPDIR;
 		} else {
 			CommandLineParser clp = new CommandLineParser(args);
 			if ((targetString = clp.getStringArg("--target")) == null) {
@@ -150,6 +154,11 @@ public class HubeRDPLoader {
 				System.out.println("no --gap was given");
 				System.exit(1);
 			}
+			if ((tempdir = clp.getStringArg("--temp")) == null) {
+				System.out.println(usage);
+				System.out.println("no --temp was given");
+				System.exit(1);
+			}
 			clp = null;
 		}
 
@@ -171,7 +180,7 @@ public class HubeRDPLoader {
 						hydroFileString), new CCPMatrix(ccpFileString),
 				dsspPathString, sippl, template, voroFileString,
 				RDPScoring.GRID_EXTEND, RDPScoring.GRID_DENSITY,
-				RDPScoring.GRID_CLASH, RDPScoring.MIN_CONTACT);
+				RDPScoring.GRID_CLASH, RDPScoring.MIN_CONTACT, tempdir);
 
 		rdp.setScoring(scoring);
 
@@ -181,19 +190,6 @@ public class HubeRDPLoader {
 		rdp.rdp(t, pq);
 		// Solution is now in t.getRoot();
 		System.out.println(t.getRoot().getTA().toString());
-
-	}
-
-	private static Sequence getSequenceFromString(String arg) {
-		if (arg == null) {
-			return null;
-		}
-		String[] temp = arg.split(":");
-		if (temp.length != 2) {
-			return null;
-		}
-
-		return new Sequence(temp[0], temp[1]);
 
 	}
 

@@ -232,11 +232,11 @@ public class Threading implements Alignment {
 	@Override
 	public String toStringVerbose() {
 		DecimalFormat df = new DecimalFormat("0.0000");
-		String result = "> " + "Threading: structure: " + structure.getLongID()
+		String result = "> " + "Threading: structure: " + structure.getID()
 				+ ", sequence: " + sequence.getId() + ", score: "
 				+ df.format(score) + "\n";
 		String[] temp = getRowsAsString();
-		result += structure.getLongID() + ": " + temp[0] + "\n";
+		result += structure.getID() + ": " + temp[0] + "\n";
 		result += sequence.getId() + ": " + temp[1] + "\n";
 		return result;
 	}

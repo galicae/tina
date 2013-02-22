@@ -125,8 +125,6 @@ public class RDPSolutionTreeAndNode extends RDPSolutionTreeNode {
 				int[][] addRows = childsTA.getThreading().getRows();
 
 				// calculate newRows[][]
-				// TODO TEST! THIS CAN'T BE RIGHT I CANT SAY WHY!
-				// TODO DOUBLE CHECK!
 
 				int before = problem.getProblemStart();
 				int after = parentTA.getThreading().length()

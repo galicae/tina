@@ -131,15 +131,23 @@ public class PDBEntry implements Alignable, Serializable, StructuralData {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * return complete id (sames as LongID but matching the interface) 
+=======
+	 * return complete id (xxxxA00)
+>>>>>>> branch 'master' of https://github.com/galicae/tina.git
 	 * @return
 	 */
 	public String getID(){
+<<<<<<< HEAD
 		return this.getLongID();
+=======
+		return id+chainID+getChainIDNumAsString();
+>>>>>>> branch 'master' of https://github.com/galicae/tina.git
 	}
 	
 	/**
-	 * @return the ID without chain and num of the PDBEntry
+	 * @return the ID without chain and num of the PDBEntry (xxxx)
 	 */
 	public String getId() {
 		return id;
@@ -157,10 +165,6 @@ public class PDBEntry implements Alignable, Serializable, StructuralData {
 	 */
 	public int getChainIDNum() {
 		return chainIDNum;
-	}
-	
-	public String getLongID() {
-		return this.id + this.chainID + this.getChainIDNumAsString();
 	}
 	
 	public AminoAcidName[] getSequenceData(){
@@ -307,7 +311,7 @@ public class PDBEntry implements Alignable, Serializable, StructuralData {
 	 * @return the Sequence that is depicted by this PDBEntry
 	 */
 	public Sequence getSequence() {
-		return new Sequence(getLongID(), getSequenceAsString());
+		return new Sequence(getID(), getSequenceAsString());
 	}
 
 	/**
