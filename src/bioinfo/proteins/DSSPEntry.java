@@ -190,6 +190,10 @@ public class DSSPEntry implements StructuralData{
 	public int getChainIDNum() {
 		return chainIDNum;
 	}
+	
+	public AminoAcidName[] getSequenceData(){
+		return this.getNames();
+	}
 
 	/**
 	 * 
