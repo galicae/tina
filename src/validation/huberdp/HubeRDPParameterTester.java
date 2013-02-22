@@ -234,10 +234,19 @@ public class HubeRDPParameterTester {
 
 					Transformation rdptmtr = tmmain.calculateTransformation(
 							ali, rdpStructure, targetStructure);
-					System.out.println(df.format(gammavar) + " "
-							+ df.format(deltavar) + " " + df.format(epsilonvar)
-							+ " " + df.format(zeta) + " " + df.format(gap)
-							+ " " + df.format(rdptmtr.getRmsd()) + " "
+					System.out.println(df.format(gammavar)
+							+ " "
+							+ df.format(deltavar)
+							+ " "
+							+ df.format(epsilonvar)
+							+ " "
+							+ df.format(zeta)
+							+ " "
+							+ df.format(gap)
+							+ " "
+							+ df.format(t.getRoot().getTA().getFirst()
+									.getThreading().getScore()) + " "
+							+ df.format(rdptmtr.getRmsd()) + " "
 							+ df.format(rdptmtr.getGdt()) + " "
 							+ df.format(rdptmtr.getTmscore()));
 				}
