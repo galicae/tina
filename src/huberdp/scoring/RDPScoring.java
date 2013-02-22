@@ -7,6 +7,8 @@
  ******************************************************************************/
 package huberdp.scoring;
 
+import static util.Util.*;
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -19,8 +21,6 @@ import bioinfo.energy.potential.voronoi.VoroPPWrap;
 import bioinfo.energy.potential.voronoi.VoroPrepType;
 import bioinfo.energy.potential.voronoi.VoronoiData;
 import bioinfo.proteins.AminoAcid;
-import bioinfo.proteins.Atom;
-import bioinfo.proteins.AtomType;
 import bioinfo.proteins.CCPMatrix;
 import bioinfo.proteins.DSSPEntry;
 import bioinfo.proteins.DSSPFileReader;
@@ -462,42 +462,6 @@ public class RDPScoring implements Scoring {
 		// use SipplContactPotential from bioinfo.energy.potential
 		PDBEntry model = modifyModel(f);
 		return pcp.getAminoScores(model)[m];
-	}
-
-	/**
-	 * calculates the euklidian distance between two AminoAcids
-	 * 
-	 * @param a
-	 *            an AmoniAcid
-	 * @param b
-	 *            another AminoAcid
-	 * @return the euklidian distance between the two AminoAcid's C alpha atoms
-	 */
-	private double calcDistance(AminoAcid a, AminoAcid b) {
-		Atom caa = a.getAtomByType(AtomType.CA);
-		Atom cab = b.getAtomByType(AtomType.CA);
-		if (caa != null && cab != null) {
-			return calcDistance(caa, cab);
-		}
-		return 0.0;
-	}
-
-	/**
-	 * calculates the distance between two atoms
-	 * 
-	 * @param a
-	 *            an Atom
-	 * @param b
-	 *            another Atom
-	 * @return the euklidian distance between two Atoms
-	 */
-	private double calcDistance(Atom a, Atom b) {
-		double[] apos = a.getPosition();
-		double[] bpos = b.getPosition();
-		double[] dis = { apos[0] - bpos[0], apos[1] - bpos[1],
-				apos[2] - bpos[2] };
-		return Math.sqrt((dis[0] * dis[0]) + (dis[1] * dis[1])
-				+ (dis[2] * dis[2]));
 	}
 
 	/**

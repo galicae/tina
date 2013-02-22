@@ -20,7 +20,7 @@ import bioinfo.proteins.PDBEntry;
 import huberdp.Oracle;
 import huberdp.PartialAlignment;
 import huberdp.RDPProblem;
-import huberdp.scoring.RDPScoring;
+import huberdp.Scoring;
 
 /**
  * @author huberste
@@ -33,12 +33,12 @@ public class RDPOracle implements Oracle {
 	protected static final int FROM_TOP = 2;
 	protected static final int FROM_LEFT = 4;
 
-	protected RDPScoring scoring;
+	protected Scoring scoring;
 	protected RDPProblem problem;
 	protected PDBEntry template;
 	protected Sequence target;
 
-	public RDPOracle(RDPScoring scoring) {
+	public RDPOracle(Scoring scoring) {
 		this.scoring = scoring;
 	}
 

@@ -8,8 +8,12 @@
  ******************************************************************************/
 package bioinfo.proteins;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
 
 import bioinfo.Sequence;
 import bioinfo.StructuralData;
@@ -310,6 +314,31 @@ public class PDBEntry implements Alignable, Serializable, StructuralData {
 	
 	public String toString() {
 		return "PDBEntry: "+this.getSequenceAsString();
+	}
+	
+	/**
+	 * writes the PDBEntry to a PDB File
+	 * @param fileName
+	 */
+	public void writeToPDBFile(String fileName) {
+		BufferedWriter bw = null;
+		try {
+			bw = new BufferedWriter(new FileWriter(fileName));
+			bw.write(this.getAtomSectionAsString());
+		} catch (IOException e) {
+			System.err.println("Error writing file: " + e.getLocalizedMessage());
+			e.printStackTrace();
+		} finally {
+			try {
+				if (bw != null) {
+					bw.close();
+					bw = null;	// GC
+				}
+			} catch (IOException e) {
+				System.err.println("Error closing file: " + e.getLocalizedMessage());
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

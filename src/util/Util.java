@@ -1,6 +1,13 @@
 package util;
 
+import static java.lang.Math.sqrt;
+
 import java.util.Locale;
+
+import bioinfo.proteins.AminoAcid;
+import bioinfo.proteins.Atom;
+import bioinfo.proteins.AtomType;
+
 
 /**
  * The class Util contains some useful methods
@@ -66,6 +73,42 @@ public class Util {
 			out[out.length - 1 - i] = in[i];
 		}
 		return out;
+	}
+	
+	/**
+	 * calculates the euklidian distance between two AminoAcids
+	 * 
+	 * @param a
+	 *            an AmoniAcid
+	 * @param b
+	 *            another AminoAcid
+	 * @return the euklidian distance between the two AminoAcid's C alpha atoms
+	 */
+	public static double calcDistance(AminoAcid a, AminoAcid b) {
+		Atom caa = a.getAtomByType(AtomType.CA);
+		Atom cab = b.getAtomByType(AtomType.CA);
+		if (caa != null && cab != null) {
+			return calcDistance(caa, cab);
+		}
+		return Double.NaN;
+	}
+
+	/**
+	 * calculates the distance between two atoms
+	 * 
+	 * @param a
+	 *            an Atom
+	 * @param b
+	 *            another Atom
+	 * @return the euklidian distance between two Atoms
+	 */
+	public static double calcDistance(Atom a, Atom b) {
+		double[] apos = a.getPosition();
+		double[] bpos = b.getPosition();
+		double[] dis = { apos[0] - bpos[0], apos[1] - bpos[1],
+				apos[2] - bpos[2] };
+		return sqrt((dis[0] * dis[0]) + (dis[1] * dis[1])
+				+ (dis[2] * dis[2]));
 	}
 	
 }

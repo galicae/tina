@@ -8,6 +8,11 @@
  ******************************************************************************/
 package util;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Locale;
+
 /**
  * @author huberste
  *
@@ -52,6 +57,36 @@ public class MatrixTools {
 		result += objectarray[objectarray.length -1];
 		result +="}";
 		return result;
+	}
+	
+	public static void writeToFile(double[][] matrix, String fileName, int precision) {
+		BufferedWriter bw = null;
+		try {
+			bw = new BufferedWriter(new FileWriter(fileName));
+			int y = 0;
+			while (y < matrix[0].length) {
+				int x = 0;
+				while(x < matrix.length) {
+					bw.write(String.format(Locale.US,"%."+precision+"f", matrix[x][y])+"\t");
+					x++;
+				}
+				bw.write("\n");
+				y++;
+			}
+		} catch (IOException e) {
+			System.err.println("Error writing file: " + e.getLocalizedMessage());
+			e.printStackTrace();
+		} finally {
+			try {
+				if (bw != null) {
+					bw.close();
+					bw = null;	// GC
+				}
+			} catch (IOException e) {
+				System.err.println("Error closing file: " + e.getLocalizedMessage());
+				e.printStackTrace();
+			}
+		}
 	}
 	
 }

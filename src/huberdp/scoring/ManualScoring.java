@@ -46,6 +46,24 @@ public class ManualScoring implements Scoring {
 		return score;
 	}
 
+	@Override
+	public double getScore(Threading t, int m, int n) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getInsertionScore(Threading t, int n) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getDeletionScore(Threading t, int m) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }
 
 /******************************************************************************

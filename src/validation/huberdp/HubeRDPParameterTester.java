@@ -44,7 +44,7 @@ public class HubeRDPParameterTester {
 	private static final String PDBPATH = "/home/h/huberste/gobi/data/pdb/";
 	// private static final String GAMMASTRING = "1.0";
 	// private static final String DELTASTRING = "0.1";
-	// private static final String EPSILONSTRING = "2.0";
+	private static final String EPSILONSTRING = "2.0";
 	private static final String ZETASTRING = "4.0";
 	private static final String GAPSTRING = "3.0";
 	private static final String HYDROSTRING = "/home/h/huberste/gobi/data/hydrophobicityMatrices/hydro_1024";
@@ -190,26 +190,29 @@ public class HubeRDPParameterTester {
 				.readPDBFromFile(pdbpath + targetString + ".pdb");
 		Sequence targetSequence = targetStructure.getSequence();
 
+		SipplContactPotential sippl = new SipplContactPotential();
+		sippl.readFromVPOTFile(vpotFileString);
+
+		HydrophobicityMatrix hydroM = new HydrophobicityMatrix(hydroFileString);
+		CCPMatrix ccpM = new CCPMatrix(ccpFileString);
+
 		for (double gammavar = 1; gammavar <= 10; gammavar += 1) {
 			for (double deltavar = 1; deltavar <= 10; deltavar += 1) {
 				for (double epsilonvar = 1; epsilonvar <= 10; epsilonvar += 1) {
 
+					// align sequences with HubeRDP
 					// initialize HubeRDP stuff
 					HubeRDP rdp = new HubeRDP();
-					SipplContactPotential sippl = new SipplContactPotential();
-					sippl.readFromVPOTFile(vpotFileString);
 					RDPScoring scoring = new RDPScoring(gammavar, deltavar,
 							epsilonvar, zeta, gap, QuasarMatrix.DAYHOFF_MATRIX,
-							new HydrophobicityMatrix(hydroFileString),
-							new CCPMatrix(ccpFileString), dsspPathString,
-							sippl, null, voroFileString,
+							hydroM, ccpM, dsspPathString, sippl,
+							templateStructure, voroFileString,
 							RDPScoring.GRID_EXTEND, RDPScoring.GRID_DENSITY,
 							RDPScoring.GRID_CLASH, RDPScoring.MIN_CONTACT,
 							tempdir);
 					rdp.setScoring(scoring);
 					rdp.addOracle(new RDPOracle(scoring));
 
-					// align sequences with HubeRDP
 					RDPProblem root = new RDPProblem(templateStructure,
 							targetSequence);
 					RDPSolutionTree t = new RDPSolutionTree(root);
@@ -221,19 +224,9 @@ public class HubeRDPParameterTester {
 					SequenceAlignment rdpAlignment = t.getRoot().getTA().get(0)
 							.getThreading().asSequenceAlignment();
 
-					// use CoordMapper on HubeRDP Alignment
-					PDBEntry rdpStructure = SimpleCoordMapper.map(
-							templateStructure, rdpAlignment);
-
-					SequenceAlignment ali = new SequenceAlignment(
-							rdpStructure.getSequence(),
-							targetStructure.getSequence(),
-							rdpStructure.getSequenceAsString().toCharArray(),
-							targetStructure.getSequenceAsString().toCharArray(),
-							0.0);
-
 					Transformation rdptmtr = tmmain.calculateTransformation(
-							ali, rdpStructure, targetStructure);
+							rdpAlignment, templateStructure, targetStructure);
+
 					System.out.println(df.format(gammavar)
 							+ " "
 							+ df.format(deltavar)

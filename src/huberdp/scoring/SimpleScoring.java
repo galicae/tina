@@ -23,8 +23,25 @@ public class SimpleScoring implements Scoring {
 	 */
 	@Override
 	public double score(Threading threading) {
-		
 		return (threading.getScore());
+	}
+
+	@Override
+	public double getScore(Threading t, int m, int n) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getInsertionScore(Threading t, int n) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getDeletionScore(Threading t, int m) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
