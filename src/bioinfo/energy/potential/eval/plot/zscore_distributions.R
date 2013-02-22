@@ -1,4 +1,26 @@
 
+setwd("~/Desktop/voroeval/");
+folder <- "randomsamplingPerPeptide";
+
+zscore <- function(var,vars){
+  return ((var-mean(vars))/sd(vars));
+}
+
+files <- list.files(path=folder, full.names=TRUE, pattern=".*\\.scores")
+for(file in files){
+  file <- files[1]
+  a <- read.delim(file,header=TRUE);
+  name <. a$identifier[1];
+  native <- a$energy[1];
+  distribution <- a$energy[c(2:length(a$energy))];
+  score <-     zscore(native,distribution)
+  if(!exists(zscores)){
+    zscores <- c(name,score);
+  }else{
+    zscores <- cbind(zscores, c(name,score));
+  }
+}
+
 a <- read.delim("Desktop/voroeval/randomsamplingPerPeptide/sampling.zscores",header=FALSE)
 b <- read.delim("Desktop/voroeval/randomsamplingPerPeptide/sampling.zscores",header=FALSE)
 bucketnum <- 50
