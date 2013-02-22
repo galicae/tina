@@ -95,6 +95,23 @@ public class VoronoiData implements StructuralData{
 	public void setOuterGridIds(Set<Integer> outerGridIds) {
 		this.outerGridIds = outerGridIds;
 	}
+	
+	public AminoAcidName[] getSequenceData(){
+		AminoAcidName[] seq = new AminoAcidName[this.getAminos().keySet().size()];
+		int c = 0;
+		int pos = 0;
+		int last = this.getAminos().keySet().size()-1;
+		while(c <= last){
+			if(this.getAminos().keySet().contains(c)){
+				seq[pos] = this.getAminos().get(c);
+				pos++;
+			}else{
+				last++;
+			}
+			c++;
+		}
+		return seq;
+	}
 
 	/**
 	 * simple constructor initialising all data

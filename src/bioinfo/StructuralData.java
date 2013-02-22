@@ -1,5 +1,7 @@
 package bioinfo;
 
+import bioinfo.proteins.AminoAcidName;
+
 public interface StructuralData {
 	
 	/**
@@ -14,5 +16,10 @@ public interface StructuralData {
 	 * in normal / most cases it will be the PDB id
 	 */
 	String getID();
+	
+	/**
+	 * returns sequence Data as AminoAcidName[]
+	 */
+	AminoAcidName[] getSequenceData();
 
 }

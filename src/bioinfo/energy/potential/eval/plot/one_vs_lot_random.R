@@ -3,7 +3,7 @@
 #with firstline native
 
 
-file <- "Desktop/tmp.tmp";
+file <- "Desktop/voroeval/randomsamplingPerBlockpair/1a04A01.scores";
 a <- read.delim(file,header=TRUE);
 native <- a[1,2];
 aa <- na.omit(a[c(2:length(a[,1])),2]);
@@ -13,7 +13,7 @@ xlab="score";
 ylab="frequency";
 names <- c("native","shuffles");
 
-hist(aa,breaks=bucketnumber,col="lightgrey",main=main,xlab=xlab,ylab=ylab);
+hist(aa,breaks=bucketnumber,col="lightgrey",xlim=(range(aa,0)),main=main,xlab=xlab,ylab=ylab);
 abline(v=native,col="red",lwd=5);
 
 h <- hist(aa,breaks=bucketnumber,plot=FALSE);
@@ -22,6 +22,5 @@ legend <- c("shuffles","native");
 col <- c("lightgrey","red");
 lwd <- 6;
 
-legend(max(aa),max(h$counts),xjust=TRUE,bty="n",legend=legend,lty=lty, col=col,lwd=lwd);
+legend(x="top",xjust=TRUE,bty="n",legend=legend,lty=lty, col=col,lwd=lwd);
 dis <- round(100*(length(aa[aa <= native])/length(aa)),digits=1)
-legend(min(aa),max(h$count),bty="n",legend=c(paste0(dis,"% < native")),col=0,lty=0)
