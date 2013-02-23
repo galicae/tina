@@ -43,14 +43,6 @@ import util.CommandLineParser;
  */
 public class HubeRDPValidator {
 
-	private static final String TARGETESTRING = "1dp7P00:TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK";
-	private static final Sequence TARGET = new Sequence("1dp7P00","TVQWLLDNYETAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGLRIK");
-	private static final String TEMPLATESTRING = "/home/h/huberste/gobi/data/pdb/1j2xA00.pdb";
-	private static final String GAMMASTRING = "1.0";
-	private static final String DELTASTRING = "0.1";
-	private static final String EPSILONSTRING = "2.0";
-	private static final String ZETASTRING = "4.0";
-	private static final String GAPSTRING = "3.0";
 	private static final String HYDROSTRING = "/home/h/huberste/gobi/data/hydrophobicityMatrices/hydro_1024";
 	private static final String CCPSTRING = "/home/h/huberste/gobi/data/CCP/ccp";
 	private static final String VOROSTRING = "/home/h/huberste/gobi/tina/tools/voro++_ubuntuquantal";
@@ -126,18 +118,19 @@ public class HubeRDPValidator {
 		
 		// initialize HubeRDP stuff
 		HubeRDP rdp = new HubeRDP();
-//		rdp.addOracle(new RDPOracle());
+
 		SipplContactPotential sippl = new SipplContactPotential();
 		sippl.readFromVPOTFile(VPOTSTRING);
 		RDPScoring scoring = new RDPScoring(RDPScoring.GAMMA, RDPScoring.DELTA,
 				RDPScoring.EPSILON, RDPScoring.ZETA, RDPScoring.GAP,
 				QuasarMatrix.DAYHOFF_MATRIX, new HydrophobicityMatrix(
 						HYDROSTRING), new CCPMatrix(CCPSTRING),
-				"/home/h/huberste/gobi/data/dssp/", sippl, null,
+						DSSPSTRING, sippl, null,
 				VOROSTRING, RDPScoring.GRID_EXTEND,
 				RDPScoring.GRID_DENSITY, RDPScoring.GRID_CLASH,
 				RDPScoring.MIN_CONTACT, TEMPDIR);
 		rdp.setScoring(scoring);
+		rdp.addOracle(new RDPOracle(scoring));
 		
 		// initialize TM stuff
 		TMMain tmmain = new TMMain();

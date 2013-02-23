@@ -27,7 +27,7 @@ import huberdp.scoring.*;
 /**
  * 
  * @author huberste
- * @lastchange 2013-02-14
+ * @lastchange 2013-02-22
  */
 public class HubeRDPTest {
 
@@ -43,7 +43,7 @@ public class HubeRDPTest {
 	private static final String TEMPDIR = "/tmp/";
 
 	private static final double GAMMA = 1.0, DELTA = 0.1, EPSILON = 2.0,
-			ZETA = 4.0, GAP = 5.0;
+			ZETA = 4.0, GAP = 14.0;
 
 	/**
 	 * main function
@@ -88,6 +88,7 @@ public class HubeRDPTest {
 				RDPScoring.GRID_DENSITY, RDPScoring.GRID_CLASH,
 				RDPScoring.MIN_CONTACT, TEMPDIR);
 		rdp.setScoring(scoring);
+//		rdp.setScoring(new SimpleScoring());
 //		MagicScoring magic = new MagicScoring(PDBSTRING, TMALIGN);
 //		rdp.setScoring(magic);
 
@@ -95,6 +96,7 @@ public class HubeRDPTest {
 		// rdp.addOracle(new ManualOracle());
 		// rdp.addOracle(new TinyOracle());
 		rdp.addOracle(new RDPOracle(scoring));
+//		rdp.addOracle(new TinyOracle());
 
 		// execute rdp algorithm
 		rdp.rdp(t, pq);
@@ -144,8 +146,9 @@ public class HubeRDPTest {
 		// PREDICT STRUCTURE
 		// use CoordMapper on HubeRDP Alignment to construct Structure from
 		// Alignment
-		// PDBEntry rdpStructure = SimpleCoordMapper.map(templateStructure,
-		// rdpAlignment);
+//		 PDBEntry rdpStructure = SimpleCoordMapper.map(templateStructure,
+//		 rdpAlignment);
+//		 rdpStructure.writeToPDBFile("/home/h/huberste/gobi/out/"+templateStructure.getID()+targetStructure.getID()+".pdb");
 
 	}
 

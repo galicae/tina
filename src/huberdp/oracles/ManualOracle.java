@@ -85,6 +85,7 @@ public class ManualOracle implements Oracle {
 		
 		return null;
 	}
+	
 }
 
 /******************************************************************************

@@ -10,6 +10,7 @@ package huberdp.scoring;
 
 import huberdp.Scoring;
 import bioinfo.alignment.Threading;
+import bioinfo.alignment.matrices.QuasarMatrix;
 
 /**
  * SimpleScoring provides a simple scoring function for OR nodes.
@@ -18,12 +19,45 @@ import bioinfo.alignment.Threading;
  */
 public class SimpleScoring implements Scoring {
 
+	private double[][] dayhoff = QuasarMatrix.DAYHOFF_MATRIX;
+	
 	/* (non-Javadoc)
 	 * @see huberdp.Scoring#score(huberdp.RDPSolutionTreeOrNode)
 	 */
 	@Override
 	public double score(Threading threading) {
-		return (threading.getScore());
+		double result = 0;
+		char[][] rows = threading.getRowsAsCharArray();
+		boolean first = false;
+		boolean gap=false;
+		double lastgap = 0.0;
+		for (int i = 0; i < threading.length(); i++) {
+			if (rows[0][i] == '-') {	// insertion
+				if (first) { // first Gap is through
+					if (gap) {
+						lastgap -= 2.0;
+					} else {
+						gap = true;
+						lastgap = 10;
+					}
+				}
+			} else if (rows[1][i] == '-') {	// deletion
+				if (first) { // first Gap is through
+					if (gap) { // gap already opened
+						lastgap -= 2.0;
+					} else {
+						gap = true;
+						lastgap = 10;
+					}
+				}
+			} else {	// match
+				first = true;
+				gap = false;
+				result += lastgap;
+				result += dayhoff[rows[0][i]-65][rows[1][i]-65];
+			} 
+		}
+		return result;
 	}
 
 	@Override

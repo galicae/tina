@@ -26,30 +26,6 @@ import huberdp.RDPProblem;
  */
 public class TinyOracle implements Oracle {
 
-	/**
-	 * this is the _real_ alignment step.
-	 * @param templateSequence
-	 * @param targetSequence
-	 * @return the alignment of the two given sequences
-	 */
-	protected SequenceAlignment align(Sequence templateSequence, Sequence targetSequence) {
-				
-		// Create new Gotoh
-		LocalSequenceGotoh gotoh = new LocalSequenceGotoh(
-				-10.0, -2.0,
-				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX);
-		// start debugging
-//				System.out.println(templateSequence + "\n" + targetSequence);
-		// end debugging
-		SequenceAlignment result = gotoh.align
-				(templateSequence, targetSequence);
-		// begin debugging
-//		System.out.println("Gotoh Alignment worked fine:\n"+result.toStringVerbose());
-		// end debugging
-		
-		return result;
-	}
-
 	@Override
 	public LinkedList<PartialAlignment> findSimiliarSegments(
 			RDPProblem problem, int m) {
@@ -74,6 +50,30 @@ public class TinyOracle implements Oracle {
 		Sequence   targetSequence = new Sequence(problem.getThreading().getSequence().getId(), target);
 		results.add(new PartialAlignment(problem, align(templateSequence, targetSequence)));
 		return results;
+	}
+	
+	/**
+	 * this is the _real_ alignment step.
+	 * @param templateSequence
+	 * @param targetSequence
+	 * @return the alignment of the two given sequences
+	 */
+	protected SequenceAlignment align(Sequence templateSequence, Sequence targetSequence) {
+				
+		// Create new Gotoh
+		LocalSequenceGotoh gotoh = new LocalSequenceGotoh(
+				-10.0, -2.0,
+				bioinfo.alignment.matrices.QuasarMatrix.DAYHOFF_MATRIX);
+		// start debugging
+//				System.out.println(templateSequence + "\n" + targetSequence);
+		// end debugging
+		SequenceAlignment result = gotoh.align
+				(templateSequence, targetSequence);
+		// begin debugging
+//		System.out.println("Gotoh Alignment worked fine:\n"+result.toStringVerbose());
+		// end debugging
+		
+		return result;
 	}
 
 }

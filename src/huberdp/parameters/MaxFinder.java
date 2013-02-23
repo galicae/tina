@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 public class MaxFinder {
 
-	private static final String outputfile = "/home/h/huberste/gobi/bioclient/paramopt/out";
+	private static final String outputfile = "/home/h/huberste/gobi/out/out";
 	private static final int MAX_NUM = 10;
 	
 	/**
@@ -38,7 +38,7 @@ public class MaxFinder {
 			String line = null;
 			while ((line = br.readLine()) != null) {
 				String[] temp = line.split(" ");
-				if (Double.parseDouble(temp[7]) > maxVals[min]) {
+				if (Double.parseDouble(temp[8]) > maxVals[min]) {
 					maxLines[min] = line;
 					maxVals[min] = Double.parseDouble(temp[7]);
 					for (int i = 0; i < MAX_NUM; i++) {

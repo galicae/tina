@@ -17,7 +17,6 @@ import bioinfo.energy.potential.hydrophobicity.HydrophobicityMatrix;
 import bioinfo.proteins.CCPMatrix;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
-import bioinfo.proteins.structure.SimpleCoordMapper;
 import bioinfo.superpos.TMMain;
 import bioinfo.superpos.Transformation;
 import huberdp.HubeRDP;
@@ -29,11 +28,11 @@ import huberdp.scoring.*;
 import util.CommandLineParser;
 
 /**
- * HubeRDPValidator validates HubeRDP as an Sequence Alignment Tool against
- * Gotoh.
+ * HubeRDPParameterOptimzer changes parameters for parameter optimization. use
+ * with script & on grid!
  * 
  * @author huberste
- * @lastchange 2013-02-14
+ * @lastchange 2013-02-22
  */
 public class HubeRDPParameterTester {
 
@@ -44,7 +43,7 @@ public class HubeRDPParameterTester {
 	private static final String PDBPATH = "/home/h/huberste/gobi/data/pdb/";
 	// private static final String GAMMASTRING = "1.0";
 	// private static final String DELTASTRING = "0.1";
-	private static final String EPSILONSTRING = "2.0";
+	// private static final String EPSILONSTRING = "2.0";
 	private static final String ZETASTRING = "4.0";
 	private static final String GAPSTRING = "3.0";
 	private static final String HYDROSTRING = "/home/h/huberste/gobi/data/hydrophobicityMatrices/hydro_1024";
@@ -54,28 +53,7 @@ public class HubeRDPParameterTester {
 	private static final String DSSPSTRING = "/home/h/huberste/gobi/data/dssp/";
 	private static final String TEMPDIR = "/tmp/";
 
-	private static String usage = "Alignment aller Paare in pairfile:\n"
-			+ "java HubeRDPValidator --seqlib <seqlibfile> --pairs <pairfile> "
-			+ "\t--pdbpath <pdbfilepath>\n\n"
-			+ "<seqlibfile> enthaelt Zeilen der Form \"id:sequence\"\n"
-			+ "<pairfile> enthaelt Zeilen der Form \"idone idtwo\"\n\n"
-			+ "<pdbfilepath> is the path where the pdbFiles are in."
-			+
-			/*
-			 * "Optionale Parameter sind:\n"+
-			 * "\t-m\t\tmatrixname (Standard dayhoff)\n"+
-			 * "\t-go\t\tgapopen (Standard -12)\n"+
-			 * "\t-ge\t\tgapextend (Standard -1)\n"+
-			 * "\t-mode\t\teines aus local|global|freeshift (Standard freeshift)\n"
-			 * + "\t-printali\tgibt auch jedes Alignment aus\n"+
-			 * "\t-printmatrices\teines aus txt|html, gibt auch die Gotoh-Matrizen aus,\n"
-			 * + "\t\t\tentweder als tab separiert oder html\n"+
-			 * "\t-check\t\tueberprueft die berechneten Scores anhand des Alignments\n\n"
-			 * +
-			 */
-			"Beispiel-Aufruf:\n"
-			+ "java HubeRDPValidator --seqlib domains.seqlib --pairs cathscop.inpairs \n"
-			+ "\t--pdbpath";
+	private static String USAGE = "";
 
 	/**
 	 * Validates the HubeRDP.
@@ -83,7 +61,7 @@ public class HubeRDPParameterTester {
 	 * @param args
 	 * @throws Exception
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
 		// allocate memory
 		String targetString = null, templateString = null, pdbpath = null, hydroFileString = null, ccpFileString = null, voroFileString = null, vpotFileString = null, dsspPathString = null, tempdir = null;
@@ -106,42 +84,42 @@ public class HubeRDPParameterTester {
 		} else {
 			CommandLineParser clp = new CommandLineParser(args);
 			if ((targetString = clp.getStringArg("--target")) == null) {
-				System.out.println(usage);
+				System.out.println(USAGE);
 				System.out.println("No --target was given");
 				System.exit(0);
 			}
 			if ((templateString = clp.getStringArg("--template")) == null) {
-				System.out.println(usage);
+				System.out.println(USAGE);
 				System.out.println("No --template was given");
 				System.exit(0);
 			}
 			if ((pdbpath = clp.getStringArg("--pdb")) == null) {
-				System.out.println(usage);
+				System.out.println(USAGE);
 				System.out.println("No --pdb was given");
 				System.exit(0);
 			}
 			if ((hydroFileString = clp.getStringArg("--hydro")) == null) {
-				System.out.println(usage);
+				System.out.println(USAGE);
 				System.out.println("No --hydro was given");
 				System.exit(0);
 			}
 			if ((ccpFileString = clp.getStringArg("--ccp")) == null) {
-				System.out.println(usage);
+				System.out.println(USAGE);
 				System.out.println("No --ccp was given");
 				System.exit(0);
 			}
 			if ((voroFileString = clp.getStringArg("--voro")) == null) {
-				System.out.println(usage);
+				System.out.println(USAGE);
 				System.out.println("No --voro was given");
 				System.exit(0);
 			}
 			if ((vpotFileString = clp.getStringArg("--vpot")) == null) {
-				System.out.println(usage);
+				System.out.println(USAGE);
 				System.out.println("No --vpot was given");
 				System.exit(0);
 			}
 			if ((dsspPathString = clp.getStringArg("--dssp")) == null) {
-				System.out.println(usage);
+				System.out.println(USAGE);
 				System.out.println("No --dssp was given");
 				System.exit(0);
 			}
@@ -161,17 +139,17 @@ public class HubeRDPParameterTester {
 			// System.exit(0);
 			// }
 			if ((zeta = clp.getDoubleArg("--zeta")) == 0.0) {
-				System.out.println(usage);
+				System.out.println(USAGE);
 				System.out.println("no --zeta was given");
 				System.exit(1);
 			}
 			if ((gap = clp.getDoubleArg("--gap")) == 0.0) {
-				System.out.println(usage);
+				System.out.println(USAGE);
 				System.out.println("no --gap was given");
 				System.exit(1);
 			}
 			if ((tempdir = clp.getStringArg("--temp")) == null) {
-				System.out.println(usage);
+				System.out.println(USAGE);
 				System.out.println("no --temp was given");
 				System.exit(1);
 			}
@@ -224,24 +202,30 @@ public class HubeRDPParameterTester {
 					SequenceAlignment rdpAlignment = t.getRoot().getTA().get(0)
 							.getThreading().asSequenceAlignment();
 
-					Transformation rdptmtr = tmmain.calculateTransformation(
-							rdpAlignment, templateStructure, targetStructure);
-
-					System.out.println(df.format(gammavar)
-							+ " "
-							+ df.format(deltavar)
-							+ " "
-							+ df.format(epsilonvar)
-							+ " "
-							+ df.format(zeta)
-							+ " "
-							+ df.format(gap)
-							+ " "
-							+ df.format(t.getRoot().getTA().getFirst()
-									.getThreading().getScore()) + " "
-							+ df.format(rdptmtr.getRmsd()) + " "
-							+ df.format(rdptmtr.getGdt()) + " "
-							+ df.format(rdptmtr.getTmscore()));
+					Transformation rdptmtr = null;
+					try {
+						rdptmtr = tmmain.calculateTransformation(rdpAlignment,
+								templateStructure, targetStructure);
+						System.out.println(df.format(gammavar)
+								+ " "
+								+ df.format(deltavar)
+								+ " "
+								+ df.format(epsilonvar)
+								+ " "
+								+ df.format(zeta)
+								+ " "
+								+ df.format(gap)
+								+ " "
+								+ df.format(t.getRoot().getTA().getFirst()
+										.getThreading().getScore()) + " "
+								+ df.format(rdptmtr.getRmsd()) + " "
+								+ df.format(rdptmtr.getGdt()) + " "
+								+ df.format(rdptmtr.getTmscore()));
+					} catch (Exception e) {
+						System.err.println("error calculating TM Stuff: "
+								+ e.getLocalizedMessage());
+						e.printStackTrace();
+					}
 				}
 			}
 		}
