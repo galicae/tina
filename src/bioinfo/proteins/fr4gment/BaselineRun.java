@@ -42,7 +42,7 @@ public class BaselineRun {
 
 				ProteinFragment modellerPred = runModeller(input, args[5]);
 
-				LoopBaseline luup = new LoopBaseline(input, args[2], args[3]);
+				LoopBaseline luup = new LoopBaseline(input, args[2], args[3], args[6]);
 				ProteinFragment rr = luup.makePrediction();
 
 				PDBFileReader re = new PDBFileReader(args[4]);
@@ -82,10 +82,10 @@ public class BaselineRun {
 
 				// BufferedWriter test = new BufferedWriter(new
 				// FileWriter("test"));
-				// test.write("MODEL        1\n");
+				// test.write("MODEL 1\n");
 				// test.write(control.toString());
 				// test.write("ENDMDL\n");
-				// test.write("MODEL        2\n");
+				// test.write("MODEL 2\n");
 				// test.write(rr.toString());
 				// test.write("ENDMDL\n");
 				// test.close();
@@ -95,7 +95,7 @@ public class BaselineRun {
 					int[] next = cores.get(i);
 
 					int loopLength = next[0] - prev[1] + 1;
-					double baseRmsd = calcLoopRmsd(coord, contr, prev, next);
+					double baseRmsd = calcLoopGDT_TS(coord, contr, prev, next);
 
 					if (baseRmsd >= 0) {
 
@@ -113,7 +113,7 @@ public class BaselineRun {
 								.calculateTransformation(kabschFood);
 						mod = tr.transform(mod);
 						modellerPred.setCoordinates(mod);
-						double modRmsd = calcLoopRmsd(mod, contr, prev, next);
+						double modRmsd = calcLoopGDT_TS(mod, contr, prev, next);
 						String seq1 = input.getComponent(0).getId();
 						String seq2 = input.getComponent(1).getId();
 						wr = new BufferedWriter(new FileWriter(args[0], true));
@@ -130,20 +130,22 @@ public class BaselineRun {
 						"/home/p/papadopoulos/" + args[5] + "/"
 								+ input.getComponent(0).getId() + "_"
 								+ input.getComponent(1).getId() + ".pdb"));
-				test.write("MODEL        1\n");
+				test.write("MODEL 1\n");
 				test.write(control.toString());
 				test.write("ENDMDL\n");
-				test.write("MODEL        2\n");
+				test.write("MODEL 2\n");
 				test.write(rr.toString());
 				test.write("ENDMDL\n");
-				test.write("MODEL        3\n");
+				test.write("MODEL 3\n");
 				test.write(modellerPred.toString());
 				test.write("ENDMDL\n");
 				test.close();
 			} catch (Exception e) {
+				e.printStackTrace();
 				continue;
 			}
 		}
+		System.out.println("finished with alignments");
 
 	}
 
@@ -173,7 +175,7 @@ public class BaselineRun {
 	 * @param cores
 	 * @return
 	 */
-	private static double calcLoopRmsd(double[][] coord, double[][] contr,
+	private static double calcLoopGDT_TS(double[][] coord, double[][] contr,
 			int[] prev, int[] next) {
 		if (!checkPrediction(coord, prev, next))
 			return -1;
@@ -183,7 +185,7 @@ public class BaselineRun {
 			a[i - prev[1]] = coord[i];
 			b[i - prev[1]] = contr[i];
 		}
-		double rmsd = calcRmsd(a, b);
+		double rmsd = calcGDT_TS(a, b);
 
 		return rmsd;
 	}
@@ -206,6 +208,39 @@ public class BaselineRun {
 		return rmsd;
 	}
 
+	
+	private static double calcGDT_TS(double[][] p, double[][] q) {
+		double result = 0;
+		int counter1 = 0;
+		int counter2 = 0;
+		int counter4 = 0;
+		int counter8 = 0;
+		double distance = 0;
+		
+		for (int i = 0; i < p.length; i++) {
+			distance = euclideanDistance(p[i], q[i]);
+			if(distance < 1)
+				counter1++;
+			if(distance < 2)
+				counter2++;
+			if(distance < 4)
+				counter4++;
+			if(distance < 8)
+				counter8++;
+		}
+		result = (counter1 + counter2 + counter4 + counter8) / (4.0 * p.length);
+		return result;
+	}
+	
+	
+	private static double euclideanDistance(double[] x, double[] y) {
+		double result = 0;
+		for (int i = 0; i < x.length; i++) {
+			result += Math.pow(x[i] - y[i], 2);
+		}
+		return Math.sqrt(result);
+	}
+	
 	/**
 	 * this method encapsulates the MODELLER call and reads the prediction PDB
 	 * file
