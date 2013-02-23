@@ -165,14 +165,12 @@ public class MagicScoring implements Scoring {
 
 	@Override
 	public double getInsertionScore(Threading t, int n) {
-		// TODO Auto-generated method stub
-		return 0;
+		return -5.0;
 	}
 
 	@Override
 	public double getDeletionScore(Threading t, int m) {
-		// TODO Auto-generated method stub
-		return 0;
+		return -5.0;
 	}
 
 }

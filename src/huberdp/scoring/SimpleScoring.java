@@ -14,14 +14,20 @@ import bioinfo.alignment.matrices.QuasarMatrix;
 
 /**
  * SimpleScoring provides a simple scoring function for OR nodes.
+ * 
  * @author huberste
  * @lastchange 2013-02-14
  */
 public class SimpleScoring implements Scoring {
 
 	private double[][] dayhoff = QuasarMatrix.DAYHOFF_MATRIX;
-	
-	/* (non-Javadoc)
+
+	private boolean gap = false;
+	double lastgap = 0.0;
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see huberdp.Scoring#score(huberdp.RDPSolutionTreeOrNode)
 	 */
 	@Override
@@ -29,10 +35,10 @@ public class SimpleScoring implements Scoring {
 		double result = 0;
 		char[][] rows = threading.getRowsAsCharArray();
 		boolean first = false;
-		boolean gap=false;
+		boolean gap = false;
 		double lastgap = 0.0;
 		for (int i = 0; i < threading.length(); i++) {
-			if (rows[0][i] == '-') {	// insertion
+			if (rows[0][i] == '-') { // insertion
 				if (first) { // first Gap is through
 					if (gap) {
 						lastgap -= 2.0;
@@ -41,7 +47,7 @@ public class SimpleScoring implements Scoring {
 						lastgap = 10;
 					}
 				}
-			} else if (rows[1][i] == '-') {	// deletion
+			} else if (rows[1][i] == '-') { // deletion
 				if (first) { // first Gap is through
 					if (gap) { // gap already opened
 						lastgap -= 2.0;
@@ -50,38 +56,50 @@ public class SimpleScoring implements Scoring {
 						lastgap = 10;
 					}
 				}
-			} else {	// match
+			} else { // match
 				first = true;
 				gap = false;
 				result += lastgap;
-				result += dayhoff[rows[0][i]-65][rows[1][i]-65];
-			} 
+				result += dayhoff[rows[0][i] - 65][rows[1][i] - 65];
+			}
 		}
 		return result;
 	}
 
 	@Override
 	public double getScore(Threading t, int m, int n) {
-		// TODO Auto-generated method stub
-		return 0;
+		gap = false;
+		double result = lastgap;
+		result += dayhoff[t.getStructure().getAminoAcid(m).getName()
+				.getNumber()][t.getSequence().getComp(n) - 65];
+		lastgap = 0;
+		return result;
 	}
 
 	@Override
 	public double getInsertionScore(Threading t, int n) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getGapScore();
 	}
 
 	@Override
 	public double getDeletionScore(Threading t, int m) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getGapScore();
+	}
+	
+	private double getGapScore() {
+		// check if there comes a match after this gap isn't needed because
+		// local
+		if (gap) {
+			return -2.0;
+		} else {
+			gap = true;
+			return -10;
+		}
 	}
 
 }
 
 /******************************************************************************
- * "A question that sometimes drives me hazy:                                 *
- *  Am I or are the others crazy?"                                            *
- *     - Albert Einstein (1879 - 1955)                                        *
+ * "A question that sometimes drives me hazy: * Am I or are the others crazy?" *
+ * - Albert Einstein (1879 - 1955) *
  ******************************************************************************/

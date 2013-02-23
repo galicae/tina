@@ -1,6 +1,7 @@
 /******************************************************************************
  * test.HubeRDPTest.java                                                      *
- * huberdptest is mainly a test routine for calling hubeRDP.                  *
+ *                                                                            *
+ * Contains a main method for calling and testing HubeRDP.                    *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -17,7 +18,6 @@ import bioinfo.energy.potential.hydrophobicity.HydrophobicityMatrix;
 import bioinfo.proteins.CCPMatrix;
 import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
-import bioinfo.proteins.structure.SimpleCoordMapper;
 import bioinfo.superpos.TMMain;
 import bioinfo.superpos.Transformation;
 import huberdp.*;
@@ -43,10 +43,10 @@ public class HubeRDPTest {
 	private static final String TEMPDIR = "/tmp/";
 
 	private static final double GAMMA = 1.0, DELTA = 0.1, EPSILON = 2.0,
-			ZETA = 4.0, GAP = 14.0;
+			ZETA = 6.0, GAP = 30.0;
 
 	/**
-	 * main function
+	 * main function for calling HubeRDP
 	 * 
 	 * @param args
 	 *            no args needed
@@ -77,26 +77,24 @@ public class HubeRDPTest {
 		HubeRDP rdp = new HubeRDP();
 
 		// set scoring
-		// rdp.setScoring(new ManualScoring());
-		// rdp.setScoring(new SimpleScoring());
+		Scoring simpleScoring = new SimpleScoring();
+		Scoring magicScoring = new MagicScoring(PDBSTRING, TMALIGN);
+
 		SipplContactPotential sippl = new SipplContactPotential();
 		sippl.readFromVPOTFile(VPOTSTRING);
-		RDPScoring scoring = new RDPScoring(GAMMA, DELTA, EPSILON, ZETA, GAP,
+		Scoring rdpScoring = new RDPScoring(GAMMA, DELTA, EPSILON, ZETA, GAP,
 				QuasarMatrix.DAYHOFF_MATRIX, new HydrophobicityMatrix(
 						HYDROSTRING), new CCPMatrix(CCPSTRING), DSSPSTRING,
 				sippl, templateStructure, VOROSTRING, RDPScoring.GRID_EXTEND,
 				RDPScoring.GRID_DENSITY, RDPScoring.GRID_CLASH,
 				RDPScoring.MIN_CONTACT, TEMPDIR);
+
+		Scoring scoring = magicScoring;
+
 		rdp.setScoring(scoring);
-//		rdp.setScoring(new SimpleScoring());
-//		MagicScoring magic = new MagicScoring(PDBSTRING, TMALIGN);
-//		rdp.setScoring(magic);
 
 		// add oracles
-		// rdp.addOracle(new ManualOracle());
-		// rdp.addOracle(new TinyOracle());
 		rdp.addOracle(new RDPOracle(scoring));
-//		rdp.addOracle(new TinyOracle());
 
 		// execute rdp algorithm
 		rdp.rdp(t, pq);
@@ -105,13 +103,6 @@ public class HubeRDPTest {
 		// get HubeRDP's (first) alignment
 		SequenceAlignment rdpAlignment = t.getRoot().getTA().get(0)
 				.getThreading().asSequenceAlignment();
-
-		// SequenceAlignment rdpAlignment = new SequenceAlignment(
-		// templateStructure.getSequence(),
-		// targetStructure.getSequence(),
-		// "GPLDVQVT--EDAVRRYLTR-KPMTTKDLLKKF-Q-TKKTGLSSEQTVNVLAQILKR-LNPERKMIN----DKMHFSLKE----",
-		// "------TVQWLLDNYE-TAEGVSLPRSTLYNHYLLHSQEQKLEPVNAASFGKLIRSVFMGLRTRRLGTRGNSKYHYYGL-RIKA",
-		// 0.0);
 
 		System.out.println(rdpAlignment.toStringVerbose());
 
@@ -124,31 +115,19 @@ public class HubeRDPTest {
 		// initialize output stuff
 		Locale.setDefault(Locale.US);
 		DecimalFormat df = new DecimalFormat("0.0000");
-		DecimalFormat dfshort = new DecimalFormat("0.00");
 
-		System.out
-				.println("gamma\tdelta\tepsilon\tzeta\tgap\tRDP-Scr\tRMSD\tGDT\tTM-Scr");
-		System.out.println(dfshort.format(GAMMA)
-				+ "\t"
-				+ dfshort.format(DELTA)
-				+ "\t"
-				+ dfshort.format(EPSILON)
-				+ "\t"
-				+ dfshort.format(ZETA)
-				+ "\t"
-				+ dfshort.format(GAP)
-				+ "\t"
-				+ df.format(t.getRoot().getTA().getFirst().getThreading()
-						.getScore()) + "\t" + df.format(rdptmtr.getRmsd())
-				+ "\t" + df.format(rdptmtr.getGdt()) + "\t"
+		System.out.println("RDP-Scr\tRMSD\tGDT\tTM-Scr");
+		System.out.println(df.format(rdpAlignment.getScore()) + "\t"
+				+ df.format(rdptmtr.getRmsd()) + "\t"
+				+ df.format(rdptmtr.getGdt()) + "\t"
 				+ df.format(rdptmtr.getTmscore()));
 
 		// PREDICT STRUCTURE
 		// use CoordMapper on HubeRDP Alignment to construct Structure from
 		// Alignment
-//		 PDBEntry rdpStructure = SimpleCoordMapper.map(templateStructure,
-//		 rdpAlignment);
-//		 rdpStructure.writeToPDBFile("/home/h/huberste/gobi/out/"+templateStructure.getID()+targetStructure.getID()+".pdb");
+		// PDBEntry rdpStructure = SimpleCoordMapper.map(templateStructure,
+		// rdpAlignment);
+		// rdpStructure.writeToPDBFile("/home/h/huberste/gobi/out/"+templateStructure.getID()+targetStructure.getID()+".pdb");
 
 	}
 

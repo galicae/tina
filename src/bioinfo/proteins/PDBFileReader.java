@@ -66,20 +66,23 @@ public class PDBFileReader {
 
 	/**
 	 * 
-	 * @param filename
+	 * @param filepath
 	 *            representing pdb file to read in format: relpath/aaaaA00.pdb
 	 * @return
 	 */
-	public PDBEntry readPDBFromFile(String filename) {
+	public PDBEntry readPDBFromFile(String filepath) {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(
-					filename)));
+					filepath)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String id = filename.split("/")[filename.split("/").length - 1]
-				.split("\\.")[0].substring(0, 4);
+		// split at file.separator 
+		String[] pathStruct = filepath.split(System.getProperty("file.separator"));
+		String fileName = pathStruct[pathStruct.length - 1];
+		String id = fileName.substring(0,fileName.length()-4);
+		
 		return parseRealEntry(br, id);
 	}
 
@@ -487,8 +490,8 @@ public class PDBFileReader {
 		String newPdbId = pdbId;
 		try {
 			char chain;
-			if (pdbId.length() == 6)
-				chain = pdbId.charAt(5);
+			if (pdbId.length() > 4)
+				chain = pdbId.charAt(4);
 			else
 				chain = '.';
 			String line;
