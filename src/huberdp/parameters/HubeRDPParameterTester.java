@@ -4,7 +4,7 @@
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
  ******************************************************************************/
-package validation.huberdp;
+package huberdp.parameters;
 
 import java.text.DecimalFormat;
 import java.util.Locale;

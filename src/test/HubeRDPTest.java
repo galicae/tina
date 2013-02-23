@@ -43,7 +43,7 @@ public class HubeRDPTest {
 	private static final String TEMPDIR = "/tmp/";
 
 	private static final double GAMMA = 1.0, DELTA = 0.1, EPSILON = 2.0,
-			ZETA = 6.0, GAP = 30.0;
+			ZETA = 4.0, GAP = 14.0;
 
 	/**
 	 * main function for calling HubeRDP
@@ -78,7 +78,7 @@ public class HubeRDPTest {
 
 		// set scoring
 		Scoring simpleScoring = new SimpleScoring();
-		Scoring magicScoring = new MagicScoring(PDBSTRING, TMALIGN);
+		Scoring magicScoring = new MagicScoring(PDBSTRING, TMALIGN, TEMPDIR);
 
 		SipplContactPotential sippl = new SipplContactPotential();
 		sippl.readFromVPOTFile(VPOTSTRING);
@@ -89,7 +89,7 @@ public class HubeRDPTest {
 				RDPScoring.GRID_DENSITY, RDPScoring.GRID_CLASH,
 				RDPScoring.MIN_CONTACT, TEMPDIR);
 
-		Scoring scoring = magicScoring;
+		Scoring scoring = rdpScoring;
 
 		rdp.setScoring(scoring);
 

@@ -22,7 +22,7 @@ import huberdp.Scoring;
 
 /**
  * @author huberste
- * @lastchange 2013-02-22
+ * @lastchange 2013-02-24
  */
 public class MagicScoring implements Scoring {
 
@@ -30,6 +30,8 @@ public class MagicScoring implements Scoring {
 	 * Strings for paths
 	 */
 	String pdbpath;
+	
+	String tmppath;
 
 	TMAlign tmalign;
 
@@ -46,8 +48,9 @@ public class MagicScoring implements Scoring {
 	/**
 	 * constructor for a MagicScoring
 	 */
-	public MagicScoring(String pdbpath, String tmpath) {
+	public MagicScoring(String pdbpath, String tmpath, String tmppath) {
 		this.pdbpath = pdbpath;
+		this.tmppath = tmppath;
 		this.tmalign = new TMAlign(tmpath);
 	}
 
@@ -64,10 +67,10 @@ public class MagicScoring implements Scoring {
 		String templatepdbfile = pdbpath + template + ".pdb";
 		String targetpdbfile = pdbpath + target + ".pdb";
 		// calculate Rotation Matrix
-		tmalign.align(templatepdbfile, targetpdbfile, "/tmp/asdfghkj");
+		tmalign.align(templatepdbfile, targetpdbfile, tmppath+"rmt");
 
 		// load rotation matrix file
-		double[][] u = TMAlign.loadRotationMatrixFromFile("/tmp/asdfghkj");
+		double[][] u = TMAlign.loadRotationMatrixFromFile(tmppath+"rmt");
 
 		// rotate the template structure
 		PDBEntry templateStruct = new PDBFileReader()
@@ -118,7 +121,7 @@ public class MagicScoring implements Scoring {
 		double result = 0.0;
 		int temppos = 0;
 		int targpos = 0;
-		int[][] rows = threading.calcMap();
+		int[][] rows = threading.getRows();
 		for (int i = 0; i < rows[0].length; i++) {
 			if (rows[0][i] == -1) { // insertion
 				result += getInsertionScore(threading, targpos);

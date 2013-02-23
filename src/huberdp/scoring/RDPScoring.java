@@ -42,7 +42,7 @@ public class RDPScoring implements Scoring {
 	 * empirically calibrated weights for the scoring function
 	 */
 	public final static double GAMMA = 1.0, DELTA = 0.1, EPSILON = 2.0,
-			ZETA = 4.0, GAP = 15.0;
+			ZETA = 4.0, GAP = 14.0;
 
 	/**
 	 * empirically calibrated values for voro++
