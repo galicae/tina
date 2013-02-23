@@ -38,8 +38,7 @@ public class Test {
 				"ET------VQVNLPVSLEDLFVGKK----------------------KSFKIGRKGPHGASEKTQIDIQLKPGWKAGTKITYKNQGDYNPQTGRRK----------------------------TLQFVIQEKS---",
 				0.208);
 
-		LoopBaseline luup = new LoopBaseline(input, "msp_cluster05",
-				"cathscop.ids");
+		LoopBaseline luup = new LoopBaseline(input, "msp_cluster05", "cathscop.ids", "family");
 		ProteinFragment rr = luup.makePrediction();
 
 		PDBFileReader re = new PDBFileReader("/home/galicae/Desktop/STRUCTURES/");

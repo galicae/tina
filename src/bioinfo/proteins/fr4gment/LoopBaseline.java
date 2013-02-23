@@ -29,9 +29,14 @@ public class LoopBaseline {
 	private LinkedList<int[]> queryCores;
 
 	public LoopBaseline(SequenceAlignment input, String clusterDirectory,
-			String guideFile) {
+			String guideFile, String filter) {
 		this.input = input;
 		this.ms = findMultipleSuperpos(clusterDirectory, guideFile);
+		
+		if(filter.equals("family"))
+			ms.filterFamily(guideFile, input.getComponent(1).getId());
+		if(filter.equals("superfamily"))
+			ms.filterSuperfamily(guideFile, input.getComponent(1).getId());
 	}
 
 	/**
