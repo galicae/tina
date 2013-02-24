@@ -1,5 +1,6 @@
 /******************************************************************************
  * huberdp.RDPSolutionTreeNode.java                                           *
+ *                                                                            *
  * Contains the abstract class RDPSolutionTreeNode which is part of the data  *
  * structure of RDP's solution tree.                                          *
  * It needs to be inherited by AND and OR nodes.                              *
@@ -209,6 +210,7 @@ public abstract class RDPSolutionTreeNode {
 }
 
 /******************************************************************************
- * "A question that sometimes drives me hazy: * Am I or are the others crazy?" *
- * - Albert Einstein (1879 - 1955) *
+ * "A question that sometimes drives me hazy:                                 *
+ *  Am I or are the others crazy?"                                            *
+ * - Albert Einstein (1879 - 1955)                                            *
  ******************************************************************************/

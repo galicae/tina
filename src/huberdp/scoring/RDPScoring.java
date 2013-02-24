@@ -1,5 +1,6 @@
 /******************************************************************************
  * huberdp.scoring.RDPScoring.java                                            *
+ *                                                                            *
  * This file contains the class RDPScoring which is RDP's scoring function.   *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
@@ -567,6 +568,7 @@ public class RDPScoring implements Scoring {
 }
 
 /******************************************************************************
- * "A question that sometimes drives me hazy: * Am I or are the others crazy?" *
- * - Albert Einstein (1879 - 1955) *
+ * "A question that sometimes drives me hazy:                                 *
+ *  Am I or are the others crazy?"                                            *
+ * - Albert Einstein (1879 - 1955)                                            *
  ******************************************************************************/

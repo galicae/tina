@@ -1,5 +1,6 @@
 /******************************************************************************
  * huberdp.oracles.ManualOracle.java                                          *
+ *                                                                            *
  * Contains the class ManualOracle which is an oracle for the RDP featuring   *
  * manual input.                                                              *
  *                                                                            *
@@ -89,6 +90,7 @@ public class ManualOracle implements Oracle {
 }
 
 /******************************************************************************
- * "A question that sometimes drives me hazy: * Am I or are the others crazy?" *
- * - Albert Einstein (1879 - 1955) *
+ * "A question that sometimes drives me hazy:                                 *
+ *  Am I or are the others crazy?"                                            *
+ * - Albert Einstein (1879 - 1955)                                            *
  ******************************************************************************/

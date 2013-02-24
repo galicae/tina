@@ -1,5 +1,6 @@
 /******************************************************************************
  * huberdp.RDPPriorityQueue.java                                              *
+ *                                                                            *
  * Contains the Class RDPPriorityQueue which is a part of the data structure  *
  * of RDP.                                                                    *
  *                                                                            *

@@ -1,5 +1,6 @@
 /******************************************************************************
  * huberdp.scoring.ManualScoring.java                                         *
+ *                                                                            *
  * Contains the class ManualScoring that provides a function to manually      *
  * score OR nodes.                                                            *
  *                                                                            *

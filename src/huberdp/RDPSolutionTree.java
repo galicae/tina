@@ -1,5 +1,6 @@
 /******************************************************************************
  * huberdp.RDPSolutionTree.java                                               *
+ *                                                                            *
  * Contains the class RDPSolutionTree which is an implementation of the tree  *
  * data structure of RDP.                                                     *
  *                                                                            *

@@ -1,7 +1,8 @@
 /******************************************************************************
  * huberdp.PartialAlignment.java                                              *
+ *                                                                            *
  * Contains the PartialAlignment class which is the definition of an oracle's *
- * partial alignment.                                                                   *
+ * partial alignment.                                                         *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
  *                                                                   huberste *
@@ -165,6 +166,7 @@ public class PartialAlignment {
 }
 
 /******************************************************************************
- * "A question that sometimes drives me hazy: * Am I or are the others crazy?" *
- * - Albert Einstein (1879 - 1955) *
+ * "A question that sometimes drives me hazy:                                 *
+ *  Am I or are the others crazy?"                                            *
+ * - Albert Einstein (1879 - 1955)                                            *
  ******************************************************************************/

@@ -1,5 +1,6 @@
 /******************************************************************************
- * huberdp.Oracle                                                             *
+ * huberdp.Oracle.java                                                        *
+ *                                                                            *
  * Contains the abstract class Oracle to be inherited from oracles for a rdp. *
  *                                                                            *
  * This file is best read at line width 80 and tab width 4.                   *
