@@ -13,7 +13,7 @@ import java.util.LinkedList;
 
 /**
  * @author huberste
- * @lastchange 2013-02-20
+ * @lastchange 2013-02-24
  */
 public class HubeRDP {
 
@@ -55,9 +55,7 @@ public class HubeRDP {
 	}
 
 	/**
-	 * first rdp must be called with t = new RDPSolutionTree(); pq = new
-	 * RDPPriorityQueue(t.getRoot()); rdp (t, pq); Optimal solution is now in
-	 * t.getRoot();
+	 * rdp main function. directly transcriped from the RDP paper.
 	 */
 	// RDP (T, pq):=
 	public void rdp(RDPSolutionTree t, RDPPriorityQueue pq) {
@@ -82,7 +80,7 @@ public class HubeRDP {
 				for (RDPSolutionTreeAndNode u : uSet) {
 					// if (Leaf(u)) do <PA,TA>^{\wedge} <-- Finish (u, T)
 					// this would always be correct, something's wrong here.
-					// Either it's me or the paper. Or ma implementation.
+					// Either it's me or the paper. Or my implementation.
 					// if (u.isLeaf()) {
 					// finish(u,t);
 					// } else {
@@ -119,8 +117,6 @@ public class HubeRDP {
 	 * @param m
 	 *            maximum number of alternative extensions this function shall
 	 *            create
-	 * @param t
-	 *            the complete SolutionTree
 	 * @return (partial) solutions for this subproblem
 	 */
 	private RDPSolutionTreeAndNode[] gAND(RDPSolutionTreeOrNode v, int m) {
@@ -148,8 +144,6 @@ public class HubeRDP {
 	 * 
 	 * @param u
 	 *            the AndNode of the SolutionTree to be worked on
-	 * @param t
-	 *            the complete SolutionTree
 	 * @return subproblems
 	 */
 	private RDPSolutionTreeOrNode[] gOR(RDPSolutionTreeAndNode u) {
@@ -189,8 +183,6 @@ public class HubeRDP {
 	 * 
 	 * @param node
 	 *            the node to be finished
-	 * @param t
-	 *            the tree the node is part of
 	 */
 	private void finish(RDPSolutionTreeNode node) {
 

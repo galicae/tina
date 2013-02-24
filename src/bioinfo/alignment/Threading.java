@@ -1,5 +1,6 @@
 /******************************************************************************
  * bioinfo.alignment.Threading.java                                           *
+ *                                                                            *
  * Contains the Class Threading which is an implementation of a               *
  * Structure - Sequence Alignment.                                            *
  *                                                                            *
@@ -380,6 +381,7 @@ public class Threading implements Alignment {
 }
 
 /******************************************************************************
- * "A question that sometimes drives me hazy: * Am I or are the others crazy?" *
- * - Albert Einstein (1879 - 1955) *
+ * "A question that sometimes drives me hazy:                                 *
+ *  Am I or are the others crazy?"                                            *
+ * - Albert Einstein (1879 - 1955)                                            *
  ******************************************************************************/
