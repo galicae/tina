@@ -69,12 +69,12 @@ public class HubeRDP {
 			// v := <SP, \empty >^{\vee} \leftarrow first(pq)
 			RDPSolutionTreeOrNode v = pq.getFirst();
 			// U := {<PA, \empty >^{\wedge}}
-			RDPSolutionTreeAndNode[] uSet = gAND(v, M, t);
+			RDPSolutionTreeAndNode[] uSet = gAND(v, M);
 			// U <-- sf_{\wedge}(U)
 			sf(uSet);
 			// if (U = {}) do <SP, TA>^{\wedge} <-- Finish(v,T)
 			if (uSet.length == 0) {
-				finish(v, t);
+				finish(v);
 			} else {
 				// T <-- insert (T,U)
 				v.addChildren(uSet);
@@ -87,10 +87,10 @@ public class HubeRDP {
 					// finish(u,t);
 					// } else {
 					// V:= {<SP', {}>^{\vee}} <-- g_{\vee}(u, T)
-					RDPSolutionTreeOrNode[] vSet = gOR(u, t);
+					RDPSolutionTreeOrNode[] vSet = gOR(u);
 
 					if (vSet.length == 0) {
-						finish(u, t);
+						finish(u);
 					} else {
 						// T <-- insert (T, V)
 						u.addChildren(vSet);
@@ -123,8 +123,7 @@ public class HubeRDP {
 	 *            the complete SolutionTree
 	 * @return (partial) solutions for this subproblem
 	 */
-	private RDPSolutionTreeAndNode[] gAND(RDPSolutionTreeOrNode v, int m,
-			RDPSolutionTree t) {
+	private RDPSolutionTreeAndNode[] gAND(RDPSolutionTreeOrNode v, int m) {
 
 		LinkedList<RDPSolutionTreeAndNode> results = new LinkedList<RDPSolutionTreeAndNode>();
 
@@ -153,8 +152,7 @@ public class HubeRDP {
 	 *            the complete SolutionTree
 	 * @return subproblems
 	 */
-	private RDPSolutionTreeOrNode[] gOR(RDPSolutionTreeAndNode u,
-			RDPSolutionTree t) {
+	private RDPSolutionTreeOrNode[] gOR(RDPSolutionTreeAndNode u) {
 		// for most oracles there are only 2 subproblems created: To the left
 		// and to the right of the new aligned segment.
 		LinkedList<RDPSolutionTreeOrNode> results = new LinkedList<RDPSolutionTreeOrNode>();
@@ -194,7 +192,7 @@ public class HubeRDP {
 	 * @param t
 	 *            the tree the node is part of
 	 */
-	private void finish(RDPSolutionTreeNode node, RDPSolutionTree t) {
+	private void finish(RDPSolutionTreeNode node) {
 
 		// checkFinal() checks if the node can be finished
 		if (node.checkFinal()) {
@@ -210,7 +208,7 @@ public class HubeRDP {
 
 			// finish parent node (if exists)
 			if (node.getParent() != null) {
-				finish(node.getParent(), t);
+				finish(node.getParent());
 			}
 		}
 	}

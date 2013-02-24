@@ -97,14 +97,14 @@ public class Threading implements Alignment {
 		// }
 		// set rows
 		if (rows == null) {
-			rows = new int[2][structure.length()+sequence.length()];
+			rows = new int[2][structure.length() + sequence.length()];
 			for (int i = 0; i < structure.length(); i++) {
-				rows[0][i]=i;
-				rows[1][i]=-1;
+				rows[0][i] = i;
+				rows[1][i] = -1;
 			}
 			for (int i = 0; i < sequence.length(); i++) {
-				rows[0][structure.length()+i]=-1;
-				rows[1][structure.length()+i]=i;
+				rows[0][structure.length() + i] = -1;
+				rows[1][structure.length() + i] = i;
 			}
 		}
 		this.rows = rows;
@@ -211,34 +211,13 @@ public class Threading implements Alignment {
 	public void setScore(double score) {
 		this.score = score;
 	}
-	
+
 	/**
 	 * @return the score of the Threading
 	 */
 	@Override
 	public double getScore() {
 		return score;
-	}
-
-	@Override
-	public String toString() {
-		return toStringVerbose();
-//		DecimalFormat df = new DecimalFormat("0.0000");
-//		return "Threading: structure: " + structure.getLongID()
-//				+ ", sequence: " + sequence.getID() + ", score: "
-//				+ df.format(score) + "\n";
-	}
-
-	@Override
-	public String toStringVerbose() {
-		DecimalFormat df = new DecimalFormat("0.0000");
-		String result = "> " + "Threading: structure: " + structure.getID()
-				+ ", sequence: " + sequence.getId() + ", score: "
-				+ df.format(score) + "\n";
-		String[] temp = getRowsAsString();
-		result += structure.getID() + ": " + temp[0] + "\n";
-		result += sequence.getId() + ": " + temp[1] + "\n";
-		return result;
 	}
 
 	public int[][] getRows() {
@@ -337,9 +316,10 @@ public class Threading implements Alignment {
 	public int getPositionInStructure(int n) {
 		return positionsInAlignables[0][n];
 	}
-	
+
 	public int getFirstAfterInStructure(int n) {
-		while(n < positionsInAlignables[0].length && positionsInAlignables[0][n] == -1) {
+		while (n < positionsInAlignables[0].length
+				&& positionsInAlignables[0][n] == -1) {
 			n++;
 		}
 		return positionsInAlignables[0][n];
@@ -353,9 +333,10 @@ public class Threading implements Alignment {
 	public int getPositionInSequence(int n) {
 		return positionsInAlignables[1][n];
 	}
-	
+
 	public int getFirstAfterInSequence(int n) {
-		while(n < positionsInAlignables[1].length && positionsInAlignables[1][n] == -1) {
+		while (n < positionsInAlignables[1].length
+				&& positionsInAlignables[1][n] == -1) {
 			n++;
 		}
 		return positionsInAlignables[1][n];
@@ -374,7 +355,28 @@ public class Threading implements Alignment {
 				structure.getSequence(), sequence, getRowsAsCharArray(), score);
 		return result;
 	}
-	
+
+	@Override
+	public String toString() {
+		return toStringVerbose();
+		// DecimalFormat df = new DecimalFormat("0.0000");
+		// return "Threading: structure: " + structure.getLongID()
+		// + ", sequence: " + sequence.getID() + ", score: "
+		// + df.format(score) + "\n";
+	}
+
+	@Override
+	public String toStringVerbose() {
+		DecimalFormat df = new DecimalFormat("0.0000");
+		String result = "> " + "Threading: structure: " + structure.getID()
+				+ ", sequence: " + sequence.getId() + ", score: "
+				+ df.format(score) + "\n";
+		String[] temp = getRowsAsString();
+		result += structure.getID() + ": " + temp[0] + "\n";
+		result += sequence.getId() + ": " + temp[1] + "\n";
+		return result;
+	}
+
 }
 
 /******************************************************************************

@@ -89,7 +89,7 @@ public class HubeRDPTest {
 				RDPScoring.GRID_DENSITY, RDPScoring.GRID_CLASH,
 				RDPScoring.MIN_CONTACT, TEMPDIR);
 
-		Scoring scoring = rdpScoring;
+		Scoring scoring = magicScoring;
 
 		rdp.setScoring(scoring);
 

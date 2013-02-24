@@ -71,6 +71,21 @@ public class RDPSolutionTreeOrNode extends RDPSolutionTreeNode implements
 	}
 
 	/**
+	 * @return the score
+	 */
+	public double getScore() {
+		return score;
+	}
+
+	/**
+	 * @param score
+	 *            the score to set
+	 */
+	private void setScore(double score) {
+		this.score = score;
+	}
+
+	/**
 	 * simple toString() function, mainly for debugging
 	 * 
 	 * @return String representation of this OR node
@@ -84,21 +99,6 @@ public class RDPSolutionTreeOrNode extends RDPSolutionTreeNode implements
 		}
 		result += "SP:\n" + this.problem.toString();
 		return result;
-	}
-
-	/**
-	 * @return the score
-	 */
-	public double getScore() {
-		return score;
-	}
-
-	/**
-	 * @param score
-	 *            the score to set
-	 */
-	private void setScore(double score) {
-		this.score = score;
 	}
 
 }
