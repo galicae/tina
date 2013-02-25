@@ -126,7 +126,7 @@ public class LoopBaseline {
 			BufferedReader re = new BufferedReader(new FileReader(f));
 			String line = "";
 			while ((line = re.readLine()) != null) {
-				if (line.startsWith("MODEL")) {
+				if (line.startsWith("REMARK")) {
 					if (line.contains(query)) {
 						re.close();
 						return true;

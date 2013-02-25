@@ -75,9 +75,10 @@ public class BaselineJar {
 		if (options.has("h")) {
 			System.out
 					.println("========================BASELINE========================\n"
-							+ "Baseline loop prediction software based on a multiple \n"
-							+ "assembly. Developement abandoned due to poor performance\n"
-							+ "and time pressure. Welcome to the help screen.");
+							+ "Baseline loop prediction software based on a multiple  \n"
+							+ "assembly. This method is a baseline method, and wasn't \n"
+							+ "meant to have an amazing performance. It still manages \n"
+							+ "to be better than a naive MODELLER in most cases.");
 			parser.printHelpOn(System.out);
 			System.exit(0);
 		}
@@ -119,12 +120,12 @@ public class BaselineJar {
 					c++;
 				}
 			}
-			
+
 			checkProgress(cores, rr);
 			Transformation t = Kabsch.calculateTransformation(kabschFood);
 			control.setCoordinates(t.transform(contr));
 			contr = control.getAllResidues();
-			
+
 			BufferedWriter test = new BufferedWriter(new FileWriter(output));
 			test.write("MODEL        1\n");
 			test.write(control.toString());
@@ -136,5 +137,31 @@ public class BaselineJar {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * this function outputs whether a prediction was made and where
+	 * 
+	 * @param cores
+	 * @param rr
+	 */
+	public static void checkProgress(LinkedList<int[]> cores, ProteinFragment rr) {
+		double[][] coords = rr.getAllResidues();
+		boolean predictedSomething = false;
+		for(int i = 1; i < cores.size(); i++) {
+			int[] prev = cores.get(i-1);
+			int[] next = cores.get(i);
+			
+			int start = prev[1];
+			int end = next[0];
+			
+			if(coords[start+1][0] != coords[start+1][1]) {
+				predictedSomething = true;
+				System.out.printf("predicted segment from %d to %d\n", start, end);
+			}
+		}
+		
+		if(!predictedSomething)
+			System.out.println("No loop fragments were predicted.");
 	}
 }
