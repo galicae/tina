@@ -67,9 +67,12 @@ public class IkeTest {
 	 */
 	private static void calculateAllMCs(LinkedList<String> ids,
 			LinkedList<MultiCurve> allCurves) throws IOException, ClassNotFoundException {
+		
+		MultiCurveEvaluationTree tree = new MultiCurveEvaluationTree();
+		
 		PDBFileReader re = new PDBFileReader(pdbDir);
 		VoroPPWrap voro = new VoroPPWrap(voroBin);
-		PrintWriter wr = new PrintWriter("voroLength");
+//		PrintWriter wr = new PrintWriter("bla");
 		for (int i = 0; i < ids.size(); i++) {
 			try {
 				String currentId = ids.get(i);
@@ -87,15 +90,15 @@ public class IkeTest {
 				HashMap<Integer, HashMap<Integer, Double>> faces = data
 						.getFaces();
 				for (int j = 0; j < curves.size() - 1; j++) {
-					if(curves.get(j).getType() != 'H')
-						continue;
+//					if(curves.get(j).getType() != 'H')
+//						continue;
 //					if(curves.get(j).getSeqLength() < 6)
 //						continue;
 					for (int k = j + 1; k < curves.size(); k++) {
 //						if(k == j)
 //							continue;
-						if(curves.get(k).getType() != 'H')
-							continue;
+//						if(curves.get(k).getType() != 'H')
+//							continue;
 //						if(curves.get(k).getSeqLength() < 6)
 //							continue;
 						double contact = contactArea(curves.get(j),
@@ -113,16 +116,19 @@ public class IkeTest {
 							mc.addElement(curves.get(k), ef.getPart(pos2));
 							allCurves.add(mc);
 							mc.calculateAllAngles();
-							wr.printf("%f %f %d\n", mc.getTheta(0, 1) * 180 / Math.PI, contact, Math.min(curves.get(j).getSeqLength(), curves.get(k).getSeqLength()));
+							String type = curves.get(j).getType() + "" + curves.get(k).getType();
+							MultiCurveDataPoint bla = new MultiCurveDataPoint(e.getID(), contact, mc.getTheta(0, 1), type);
+							tree.insertData(bla);
+//							wr.printf("%f %f %d\n", mc.getTheta(0, 1) * 180 / Math.PI, contact, Math.min(curves.get(j).getSeqLength(), curves.get(k).getSeqLength()));
 						}
 					}
 				}
 			} catch (NullPointerException e) {
 				continue;
 			}
-			System.out.println(i + "/" + ids.size());
+			tree.printTree();
 		}
-		wr.close();
+//		wr.close();
 	}
 
 	/**
