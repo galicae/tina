@@ -154,8 +154,6 @@ public class MultipleSuperposition {
 					nextID = line.split("\\s+")[1];
 				}
 				if (line.startsWith("MODEL")) {
-					// TODO remove
-					nextID = line.split("\\s+")[1];
 					// and while reading also parse PDBs
 					PDBEntry e = pdbReader.readPDBFromModel(nextID, reader);
 					models.add(e);
