@@ -78,7 +78,7 @@
 		showMessage(JobCreator.createJob(args));
 	}
 	void createBaselineJob(String strAli, String strFilter) {
-		String[] args = new String[4];
+		String[] args = new String[5];
 		args[0] = JOBS_DIR;
 		args[1] = WEBAPP_HOME;
 		args[2] = "baseline";
