@@ -11,7 +11,7 @@
 	
 	<![CDATA[
 	//@DECLARATION
-	//Declaration Here, remove this if you don't need it
+	// Declaration here, remove this if you don't need it
 	void showMessage(int jobID) {
 		alert("Your job was created with the jobID " + String.valueOf(jobID)
 				+ ".\n" + "You can retrieve the result when it's done.");

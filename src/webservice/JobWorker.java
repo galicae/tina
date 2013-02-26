@@ -129,9 +129,9 @@ public class JobWorker {
 		} else if (jobType.equalsIgnoreCase("muster")) {
 			worker = new MusterWorker(workingFile);
 		} else if (jobType.equalsIgnoreCase("fragm3nt")) {
-			// TODO
+			worker = new Fragm3ntWorker(workingFile);
 		} else if (jobType.equalsIgnoreCase("baseline")) {
-			// TODO
+			worker = new BaselineWorker(workingFile);
 		}
 		
 		// Do the actual work

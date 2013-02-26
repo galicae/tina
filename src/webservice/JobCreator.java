@@ -115,9 +115,10 @@ public class JobCreator {
 				out.write("TEMPLATE_ID=" + args[3] + "\n");
 				out.write("TARGET_ID=" + args[4] + "\n");
 			} else if (jobType.equalsIgnoreCase("fragm3nt")) {
-				// TODO
+				out.write("QUERY_SEQUENCE=" + args[3] + "\n");
 			} else if (jobType.equalsIgnoreCase("baseline")) {
-				// TODO
+				out.write("ALIGNMNET= " + args[3] + "\n");
+				out.write("FILTER=" + args[4] + "\n");
 			}
 
 		} catch (IOException e) {
@@ -146,8 +147,8 @@ public class JobCreator {
 				pb.directory(new File(workingDir));
 
 				// DONE debugging: what command was called?
-//				System.out.println("New process will be started now: "
-//						+ pb.command());
+				// System.out.println("New process will be started now: "
+				// + pb.command());
 				// end debugging
 
 				pb.start();
