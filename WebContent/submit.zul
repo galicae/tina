@@ -1,34 +1,34 @@
 <?page title="tina - submit" contentType="text/html;charset=UTF-8"?>
 <zk>
 
-<zscript>
-<![CDATA[//@IMPORT
+	<zscript>
+<![CDATA[
+	//@IMPORT
 	//Import Here, remove this if you don't need it.
 	import org.zkoss.Version;
 	import webservice.JobCreator;
-	]]>
+]]>
 	
-	<![CDATA[//@DECLARATION
+	<![CDATA[
+	//@DECLARATION
 	//Declaration Here, remove this if you don't need it
 	void showMessage(int jobID) {
-		alert ("Your job was created with the jobID " +
-				String.valueOf(jobID)+".\n"+
-				"You can retrieve the result when it's done.");
+		alert("Your job was created with the jobID " + String.valueOf(jobID)
+				+ ".\n" + "You can retrieve the result when it's done.");
 	}
-	void createTinaJob(String strSequence){
+	void createTinaJob(String strSequence) {
 		String[] args = new String[4];
 		args[0] = JOBS_DIR;
-		args[1] = WEBAPP_HOME; 
+		args[1] = WEBAPP_HOME;
 		args[2] = "tina";
 		args[3] = strSequence;
-		
 		showMessage(JobCreator.createJob(args));
 	}
-	
-	void createGotohJob(String strSeq1, String strSeq2, String strMatrixSelector, String strMatrix){
+	void createGotohJob(String strSeq1, String strSeq2,
+			String strMatrixSelector, String strMatrix) {
 		String[] args = new String[7];
 		args[0] = JOBS_DIR;
-		args[1] = WEBAPP_HOME; 
+		args[1] = WEBAPP_HOME;
 		args[2] = "gotoh";
 		args[3] = strSeq1;
 		args[4] = strSeq2;
@@ -37,206 +37,338 @@
 			args[6] = strMatrix;
 		} else {
 			args[5] = "true";
-			args[6] = strMatrixSelector;	
+			args[6] = strMatrixSelector;
 		}
-		
+
 		showMessage(JobCreator.createJob(args));
 	}
-	]]>
+	void createHubeRDPJob(String strTmplt, String strTrgt) {
+		String[] args = new String[5];
+		args[0] = JOBS_DIR;
+		args[1] = WEBAPP_HOME;
+		args[2] = "huberdp";
+		args[3] = strTmplt;
+		args[4] = strTrgt;
+		showMessage(JobCreator.createJob(args));
+	}
+	void createKerbschJob(String strSeq1, String strSeq2) {
+		String[] args = new String[5];
+		args[0] = JOBS_DIR;
+		args[1] = WEBAPP_HOME;
+		args[2] = "kerbsch";
+		args[3] = strSeq1;
+		args[4] = strSeq2;
+		showMessage(JobCreator.createJob(args));
+	}
+	void createMusterJob(String strSeq1, String strSeq2) {
+		String[] args = new String[5];
+		args[0] = JOBS_DIR;
+		args[1] = WEBAPP_HOME;
+		args[2] = "muster";
+		args[3] = strSeq1;
+		args[4] = strSeq2;
+		showMessage(JobCreator.createJob(args));
+	}
+	void createFragmentJob(String strSeq) {
+		String[] args = new String[4];
+		args[0] = JOBS_DIR;
+		args[1] = WEBAPP_HOME;
+		args[2] = "fragm3nt";
+		args[3] = strSeq;
+		showMessage(JobCreator.createJob(args));
+	}
+	void createBaselineJob(String strSeq) {
+		String[] args = new String[4];
+		args[0] = JOBS_DIR;
+		args[1] = WEBAPP_HOME;
+		args[2] = "baseline";
+		args[3] = strSeq;
+		showMessage(JobCreator.createJob(args));
+	}
+]]>
 	<![CDATA[
 	//Other code, remove this if you don't need it
-		String WEBAPP_HOME = "/home/h/huberste/gobi/webserver/webapp";
-		String JOBS_DIR = "/home/h/huberste/gobi/webserver/jobs";
-	]]>
+	String WEBAPP_HOME = "/home/h/huberste/gobi/webserver/webapp";
+	String JOBS_DIR = "/home/h/huberste/gobi/webserver/jobs";
+]]>
 </zscript>
 
-<tabbox width="100%">
-<tabs>
-	<tab label="tina-Predicion"></tab>
-	<tab label="Gotoh"></tab> 
-	<tab label="Coord"></tab>
-	<tab label="123D"></tab>
-	<tab label="kabsch"></tab>
-	<tab label="huberste"></tab>
-	<tab label="kerbs"></tab>
-	<tab label="papadopoulos"></tab>
-	<tab label="seitza"></tab>
-</tabs>
-<tabpanels>
-	<tabpanel> <!-- tina-Prediction -->
-		<window title="under construction" border="normal">
-		<vlayout>
-		<label>The tina - server is still under construction.</label>
-		<label>The content you want to access is not accessible yet.</label>
-		<label>We thank you for your patience.</label>
-		</vlayout>
-		</window>
-	</tabpanel>
-	<tabpanel style="overflow:auto"><!-- Gotoh -->
-		<vlayout>
-		<label>Here you can submit two sequences to be aligned by Gotoh. At the moment they are being aligned with free-shift algorithm, gap opening cost of 10 and gap extension cost of 2.</label>
-		<label>SequenceOne (id:seq)</label>
-		<textbox id="txtbxSequenceOne"
-				rows="1" cols="300" />
-		<label>SequenceTwo (id:seq)</label>
-		<textbox id="txtbxSequenceTwo"
-				rows="1" cols="300" />
-		<label>Select the matrix that shall be used for the alignment:</label>
-		
-		<combobox id="cmbbxMatrix" readonly="true" autodrop="true" value="dayhoff">
-			<attribute name="onChanging">
+	<tabbox width="100%">
+		<tabs>
+			<tab label="tina-Predicion"></tab>
+			<tab label="Gotoh"></tab>
+			<tab label="Coord"></tab>
+			<tab label="123D"></tab>
+			<tab label="kabsch"></tab>
+			<tab label="huberste"></tab>
+			<tab label="kerbs"></tab>
+			<tab label="papadopoulos"></tab>
+			<tab label="seitza"></tab>
+		</tabs>
+		<tabpanels>
+			<tabpanel><!-- tina-Prediction -->
+				<window title="under construction" border="normal">
+					<vlayout>
+						<label>
+							The tina - server is still under
+							construction.
+						</label>
+						<label>
+							The content you want to access is not
+							accessible yet.
+						</label>
+						<label>We thank you for your patience.</label>
+					</vlayout>
+				</window>
+			</tabpanel>
+			<tabpanel style="overflow:auto"><!-- Gotoh -->
+				<vlayout>
+					<label>
+						Here you can submit two sequences to be aligned
+						by Gotoh. At the moment they are being aligned
+						with free-shift algorithm, gap opening cost of
+						10 and gap extension cost of 2.
+					</label>
+					<label>SequenceOne (id:seq)</label>
+					<textbox id="txtbxSequenceOne" rows="1" cols="300" />
+					<label>SequenceTwo (id:seq)</label>
+					<textbox id="txtbxSequenceTwo" rows="1" cols="300" />
+					<label>
+						Select the matrix that shall be used for the
+						alignment:
+					</label>
+
+					<combobox id="cmbbxMatrix" readonly="true"
+						autodrop="true" value="dayhoff">
+						<attribute name="onChanging">
 				<![CDATA[
-					if (cmbbxMatrix.getValue().equals("use own matrix...")) {
-						lbltxtbxMatrix.setVisible(true);
-						txtbxMatrix.setVisible(true);
-					} else {
-						lbltxtbxMatrix.setVisible(false);
-						txtbxMatrix.setVisible(false);
-					}
-				]]>
+	if (cmbbxMatrix.getValue().equals("use own matrix...")) {
+		lbltxtbxMatrix.setVisible(true);
+		txtbxMatrix.setVisible(true);
+	} else {
+		lbltxtbxMatrix.setVisible(false);
+		txtbxMatrix.setVisible(false);
+	}
+]]>
 			</attribute>
-			<attribute name="onSelect">
+						<attribute name="onSelect">
 				<![CDATA[
-					if (cmbbxMatrix.getValue().equals("use own matrix...")) {
-						lbltxtbxMatrix.setVisible(true);
-						txtbxMatrix.setVisible(true);
-					} else {
-						lbltxtbxMatrix.setVisible(false);
-						txtbxMatrix.setVisible(false);
-					}
-				]]>
+	if (cmbbxMatrix.getValue().equals("use own matrix...")) {
+		lbltxtbxMatrix.setVisible(true);
+		txtbxMatrix.setVisible(true);
+	} else {
+		lbltxtbxMatrix.setVisible(false);
+		txtbxMatrix.setVisible(false);
+	}
+]]>
 			</attribute>
-			<!-- <comboitem label="BlakeCohen" />
-		    <comboitem label="blosum50" />  -->
-		    <comboitem label="dayhoff" />
-		    <!-- <comboitem label="pam250" />
-		    <comboitem label="THREADER" />
-		    <comboitem label="use own matrix..." /> -->
-		</combobox>
-		<label id="lbltxtbxMatrix" visible="false">
-			paste the Matrix that shall be used here:
-		</label>
-		<textbox id="txtbxMatrix"
-				rows="5" cols="300" visible="false" />
-		
-		<button id="btnSubmit"
-				label="submit"
-				onClick="createGotohJob(txtbxSequenceOne.getValue(), txtbxSequenceTwo.getValue(), cmbbxMatrix.getValue(), txtbxMatrix.getValue())"/>
-		</vlayout>
-	</tabpanel>
-	<tabpanel><!-- Coord -->
-		<window title="under construction" border="normal">
-		<vlayout>
-		<label>The tina - server is still under construction.</label>
-		<label>The content you want to access is not accessible yet.</label>
-		<label>We thank you for your patience.</label>
-		</vlayout>
-		</window>
-	</tabpanel>
-	<tabpanel><!-- 123D -->
-		<window title="under construction" border="normal">
-		<vlayout>
-		<label>The tina - server is still under construction.</label>
-		<label>The content you want to access is not accessible yet.</label>
-		<label>We thank you for your patience.</label>
-		</vlayout>
-		</window>
-	</tabpanel>
-	<tabpanel><!-- kabsch -->
-		<window title="under construction" border="normal">
-		<vlayout>
-		<label>The tina - server is still under construction.</label>
-		<label>The content you want to access is not accessible yet.</label>
-		<label>We thank you for your patience.</label>
-		</vlayout>
-		</window>
-	</tabpanel>
-	<tabpanel><!-- huberste -->
-	<window title="under construction" border="normal">
-		<vlayout>
-		<label>The tina - server is still under construction.</label>
-		<label>The content you want to access is not accessible yet.</label>
-		<label>We thank you for your patience.</label>
-		</vlayout>
-		</window>
-	</tabpanel>
-	<tabpanel><!-- kerbs -->
-	<window title="under construction" border="normal">
-		<vlayout>
-		<label>The tina - server is still under construction.</label>
-		<label>The content you want to access is not accessible yet.</label>
-		<label>We thank you for your patience.</label>
-		</vlayout>
-		</window>
-	</tabpanel>
-	<tabpanel><!-- papadopoulos -->
-	<window title="under construction" border="normal">
-		<vlayout>
-		<label>The tina - server is still under construction.</label>
-		<label>The content you want to access is not accessible yet.</label>
-		<label>We thank you for your patience.</label>
-		</vlayout>
-		</window>
-		<vlayout>
-			<label>Here you can submit two sequences to be aligned by Gotoh. At the moment they are being aligned with free-shift algorithm, gap opening cost of 10 and gap extension cost of 2.</label>
-			<label>SequenceOne (id:seq)</label>
-			<textbox id="txtbxSequenceOne"
-					rows="1" cols="300" />
-			<label>SequenceTwo (id:seq)</label>
-			<textbox id="txtbxSequenceTwo"
-					rows="1" cols="300" />
-			<label>Select the matrix that shall be used for the alignment:</label>
-			
-			<combobox id="cmbbxMatrix" readonly="true" autodrop="true" value="dayhoff">
-				<attribute name="onChanging">
-					<![CDATA[
-						if (cmbbxMatrix.getValue().equals("use own matrix...")) {
-							lbltxtbxMatrix.setVisible(true);
-							txtbxMatrix.setVisible(true);
-						} else {
-							lbltxtbxMatrix.setVisible(false);
-							txtbxMatrix.setVisible(false);
-						}
-					]]>
-				</attribute>
-				<attribute name="onSelect">
-					<![CDATA[
-						if (cmbbxMatrix.getValue().equals("use own matrix...")) {
-							lbltxtbxMatrix.setVisible(true);
-							txtbxMatrix.setVisible(true);
-						} else {
-							lbltxtbxMatrix.setVisible(false);
-							txtbxMatrix.setVisible(false);
-						}
-					]]>
-				</attribute>
-				<!-- <comboitem label="BlakeCohen" />
-			    <comboitem label="blosum50" />  -->
-			    <comboitem label="dayhoff" />
-			    <!-- <comboitem label="pam250" />
-			    <comboitem label="THREADER" />
-			    <comboitem label="use own matrix..." /> -->
-			</combobox>
-			<label id="lbltxtbxMatrix" visible="false">
-				paste the Matrix that shall be used here:
-			</label>
-			<textbox id="txtbxMatrix"
-					rows="5" cols="300" visible="false" />
-			
-			<button id="btnSubmit"
-					label="submit"
-					onClick="createGotohJob(txtbxSequenceOne.getValue(), txtbxSequenceTwo.getValue(), cmbbxMatrix.getValue(), txtbxMatrix.getValue())"/>
-			</vlayout>
-	</tabpanel>
-	<tabpanel><!-- seitza -->
-	<window title="under construction" border="normal">
-		<vlayout>
-		<label>The tina - server is still under construction.</label>
-		<label>The content you want to access is not accessible yet.</label>
-		<label>We thank you for your patience.</label>
-		</vlayout>
-		</window>
-	</tabpanel>
-</tabpanels>
-</tabbox>
+						<!-- <comboitem label="BlakeCohen" />
+							<comboitem label="blosum50" />  -->
+						<comboitem label="dayhoff" />
+						<!-- <comboitem label="pam250" />
+							<comboitem label="THREADER" />
+							<comboitem label="use own matrix..." /> -->
+					</combobox>
+					<label id="lbltxtbxMatrix" visible="false">
+						paste the Matrix that shall be used here:
+					</label>
+					<textbox id="txtbxMatrix" rows="5" cols="300"
+						visible="false" />
+
+					<button id="btnSubmit" label="submit"
+						onClick="createGotohJob(txtbxSequenceOne.getValue(), txtbxSequenceTwo.getValue(), cmbbxMatrix.getValue(), txtbxMatrix.getValue())" />
+				</vlayout>
+			</tabpanel>
+			<tabpanel><!-- Coord -->
+				<window title="under construction" border="normal">
+					<vlayout>
+						<label>
+							The tina - server is still under
+							construction.
+						</label>
+						<label>
+							The content you want to access is not
+							accessible yet.
+						</label>
+						<label>We thank you for your patience.</label>
+					</vlayout>
+				</window>
+			</tabpanel>
+			<tabpanel><!-- 123D -->
+				<window title="under construction" border="normal">
+					<vlayout>
+						<label>
+							The tina - server is still under
+							construction.
+						</label>
+						<label>
+							The content you want to access is not
+							accessible yet.
+						</label>
+						<label>We thank you for your patience.</label>
+					</vlayout>
+				</window>
+			</tabpanel>
+			<tabpanel><!-- kabsch -->
+				<window title="under construction" border="normal">
+					<vlayout>
+						<label>
+							The tina - server is still under
+							construction.
+						</label>
+						<label>
+							The content you want to access is not
+							accessible yet.
+						</label>
+						<label>We thank you for your patience.</label>
+					</vlayout>
+				</window>
+			</tabpanel>
+			<tabpanel><!-- huberste -->
+				<vlayout>
+					<window title="under construction"
+						border="normal">
+						<vlayout>
+							<label>
+								The tina - server is still under
+								construction.
+							</label>
+							<label>
+								We thank you for your patience.
+							</label>
+						</vlayout>
+					</window>
+					<vlayout>
+						<label>HubeRDP</label>
+						<label>HubeRDP is an implementation of the RDP.</label>
+						<label>Sequence One (id)</label>
+						<textbox id="txtbxHubeRDPTmplt" rows="1"
+							cols="25" />
+						<label>Sequence Two (id)</label>
+						<textbox id="txtbxHubeRDPTrgt" rows="1"
+							cols="25" />
+						<button id="btnSubmitHubeRDP" label="submit"
+							onClick="createHubeRDPJob(txtbxHubeRDPTmplt.getValue(), txtbxHubeRDPTrgt.getValue())" />
+					</vlayout>
+
+				</vlayout>
+			</tabpanel>
+			<tabpanel><!-- kerbs -->
+				<vlayout>
+					<window title="under construction"
+						border="normal">
+						<vlayout>
+							<label>
+								The tina - server is still under
+								construction.
+							</label>
+							<label>
+								We thank you for your patience.
+							</label>
+						</vlayout>
+					</window>
+					<hlayout>
+						<vlayout>
+							<label>kerbsch</label>
+							<label>Sequence One (id)</label>
+							<textbox id="txtbxKerbschSeq1" rows="1"
+								cols="25" />
+							<label>Sequence Two (id)</label>
+							<textbox id="txtbxKerbschSeq2" rows="1"
+								cols="25" />
+							<button id="btnSubmitKerbsch" label="submit"
+								onClick="createKerbschJob(txtbxKerbschSeq1.getValue(), txtbxKerbschSeq2.getValue())" />
+						</vlayout>
+						<vlayout>
+							<label>MUSTER</label>
+							<label>Sequence One (id)</label>
+							<textbox id="txtbxMusterSeq1" rows="1"
+								cols="25" />
+							<label>Sequence Two (id)</label>
+							<textbox id="txtbxMusterSeq2" rows="1"
+								cols="25" />
+							<button id="btnSubmitMuster" label="submit"
+								onClick="createMusterJob(txtbxMusterSeq1.getValue(), txtbxMusterSeq2.getValue())" />
+						</vlayout>
+					</hlayout>
+				</vlayout>
+			</tabpanel>
+			<tabpanel><!-- papadopoulos -->
+				<vlayout>
+					<window title="under construction"
+						border="normal">
+						<vlayout>
+							<label>
+								The tina - server is still under
+								construction.
+							</label>
+							<label>
+								We thank you for your patience.
+							</label>
+						</vlayout>
+					</window>
+					<hlayout>
+						<vlayout>
+							<label>fragm3nt</label>
+							<label>
+								Protein backbone prediction software
+								based on fragment assembly.
+							</label>
+							<label>
+								Developement abandoned due to poor
+								performance and time pressure.
+							</label>
+							<label>
+								Sequence to be predicted (id:seq)
+							</label>
+							<textbox id="txtbxFragmentSequence" rows="1"
+								cols="50" />
+							<button id="btnSubmitFragment"
+								label="submit"
+								onClick="createFragmentJob(txtbxFragmentSequence.getValue())" />
+						</vlayout>
+						<vlayout>
+							<label>baseline</label>
+							<label>
+								Baseline loop prediction software based
+								on a multiple assembly.
+							</label>
+							<label>
+								Developement abandoned due to poor
+								performance and time pressure.
+							</label>
+							<label>
+								Sequences to be predicted (id:seq)
+							</label>
+							<textbox id="txtbxBaselineIDs" rows="5"
+								cols="50" />
+							<button id="btnSubmitBaseline"
+								label="submit"
+								onClick="createBaselineJob(txtbxBaselineIDs.getValue())" />
+						</vlayout>
+					</hlayout>
+				</vlayout>
+			</tabpanel>
+			<tabpanel><!-- seitza -->
+				<window title="under construction" border="normal">
+					<vlayout>
+						<label>
+							The tina - server is still under
+							construction.
+						</label>
+						<label>
+							The content you want to access is not
+							accessible yet due to major time problems.
+						</label>
+						<label>
+							In case you want to sell us a flux
+							compensator and some atomic fuel please
+							write a mail.
+						</label>
+						<label>We thank you for your patience.</label>
+					</vlayout>
+				</window>
+			</tabpanel>
+		</tabpanels>
+	</tabbox>
 </zk>

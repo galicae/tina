@@ -1,11 +1,8 @@
-/**
- * 
- */
 package webservice.workers;
 
 /**
  * @author huberste
- *
+ * @lastchange 2013-02-26
  */
 public abstract class Worker {
 
