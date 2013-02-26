@@ -72,7 +72,7 @@ public class IkeTest {
 		
 		PDBFileReader re = new PDBFileReader(pdbDir);
 		VoroPPWrap voro = new VoroPPWrap(voroBin);
-//		PrintWriter wr = new PrintWriter("bla");
+		PrintWriter wr = new PrintWriter("bla");
 		for (int i = 0; i < ids.size(); i++) {
 			try {
 				String currentId = ids.get(i);
@@ -90,15 +90,15 @@ public class IkeTest {
 				HashMap<Integer, HashMap<Integer, Double>> faces = data
 						.getFaces();
 				for (int j = 0; j < curves.size() - 1; j++) {
-//					if(curves.get(j).getType() != 'H')
-//						continue;
+					if(curves.get(j).getType() != 'E')
+						continue;
 //					if(curves.get(j).getSeqLength() < 6)
 //						continue;
 					for (int k = j + 1; k < curves.size(); k++) {
 //						if(k == j)
 //							continue;
-//						if(curves.get(k).getType() != 'H')
-//							continue;
+						if(curves.get(k).getType() != 'E')
+							continue;
 //						if(curves.get(k).getSeqLength() < 6)
 //							continue;
 						double contact = contactArea(curves.get(j),
@@ -117,9 +117,9 @@ public class IkeTest {
 							allCurves.add(mc);
 							mc.calculateAllAngles();
 							String type = curves.get(j).getType() + "" + curves.get(k).getType();
-							MultiCurveDataPoint bla = new MultiCurveDataPoint(e.getID(), contact, mc.getTheta(0, 1), type);
+							MultiCurveDataPoint bla = new MultiCurveDataPoint(e.getID(), contact, mc.getTheta(0, 1), type, Math.min(curves.get(j).getSeqLength(), curves.get(k).getSeqLength()));
 							tree.insertData(bla);
-//							wr.printf("%f %f %d\n", mc.getTheta(0, 1) * 180 / Math.PI, contact, Math.min(curves.get(j).getSeqLength(), curves.get(k).getSeqLength()));
+							wr.printf("%f %f %d\n", mc.getTheta(0, 1) * 180 / Math.PI, contact, Math.min(curves.get(j).getSeqLength(), curves.get(k).getSeqLength()));
 						}
 					}
 				}
@@ -128,7 +128,7 @@ public class IkeTest {
 			}
 			tree.printTree();
 		}
-//		wr.close();
+		wr.close();
 	}
 
 	/**
