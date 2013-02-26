@@ -57,19 +57,20 @@
 	<tab label="Coord"></tab>
 	<tab label="123D"></tab>
 	<tab label="kabsch"></tab>
+	<tab label="huberste"></tab>
+	<tab label="kerbs"></tab>
+	<tab label="papadopoulos"></tab>
+	<tab label="seitza"></tab>
 </tabs>
 <tabpanels>
 	<tabpanel> <!-- tina-Prediction -->
+		<window title="under construction" border="normal">
 		<vlayout>
-			<label>Here you can let tina predict the structure of a protein.
-			</label>
-			<label>Please insert the amino acid sequence of the protein you want to predict in the following style:</label>
-			<label>id:sequence</label>
-			<textbox id="txtbxTinaSequence" rows="1" cols="300" />
-			<button id="btnTinaSubmit"
-				label="submit"
-				onClick="createTinaJob(txtbxTinaSequence.getValue())"/>
+		<label>The tina - server is still under construction.</label>
+		<label>The content you want to access is not accessible yet.</label>
+		<label>We thank you for your patience.</label>
 		</vlayout>
+		</window>
 	</tabpanel>
 	<tabpanel style="overflow:auto"><!-- Gotoh -->
 		<vlayout>
@@ -150,7 +151,92 @@
 		</vlayout>
 		</window>
 	</tabpanel>
+	<tabpanel><!-- huberste -->
+	<window title="under construction" border="normal">
+		<vlayout>
+		<label>The tina - server is still under construction.</label>
+		<label>The content you want to access is not accessible yet.</label>
+		<label>We thank you for your patience.</label>
+		</vlayout>
+		</window>
+	</tabpanel>
+	<tabpanel><!-- kerbs -->
+	<window title="under construction" border="normal">
+		<vlayout>
+		<label>The tina - server is still under construction.</label>
+		<label>The content you want to access is not accessible yet.</label>
+		<label>We thank you for your patience.</label>
+		</vlayout>
+		</window>
+	</tabpanel>
+	<tabpanel><!-- papadopoulos -->
+	<window title="under construction" border="normal">
+		<vlayout>
+		<label>The tina - server is still under construction.</label>
+		<label>The content you want to access is not accessible yet.</label>
+		<label>We thank you for your patience.</label>
+		</vlayout>
+		</window>
+		<vlayout>
+			<label>Here you can submit two sequences to be aligned by Gotoh. At the moment they are being aligned with free-shift algorithm, gap opening cost of 10 and gap extension cost of 2.</label>
+			<label>SequenceOne (id:seq)</label>
+			<textbox id="txtbxSequenceOne"
+					rows="1" cols="300" />
+			<label>SequenceTwo (id:seq)</label>
+			<textbox id="txtbxSequenceTwo"
+					rows="1" cols="300" />
+			<label>Select the matrix that shall be used for the alignment:</label>
+			
+			<combobox id="cmbbxMatrix" readonly="true" autodrop="true" value="dayhoff">
+				<attribute name="onChanging">
+					<![CDATA[
+						if (cmbbxMatrix.getValue().equals("use own matrix...")) {
+							lbltxtbxMatrix.setVisible(true);
+							txtbxMatrix.setVisible(true);
+						} else {
+							lbltxtbxMatrix.setVisible(false);
+							txtbxMatrix.setVisible(false);
+						}
+					]]>
+				</attribute>
+				<attribute name="onSelect">
+					<![CDATA[
+						if (cmbbxMatrix.getValue().equals("use own matrix...")) {
+							lbltxtbxMatrix.setVisible(true);
+							txtbxMatrix.setVisible(true);
+						} else {
+							lbltxtbxMatrix.setVisible(false);
+							txtbxMatrix.setVisible(false);
+						}
+					]]>
+				</attribute>
+				<!-- <comboitem label="BlakeCohen" />
+			    <comboitem label="blosum50" />  -->
+			    <comboitem label="dayhoff" />
+			    <!-- <comboitem label="pam250" />
+			    <comboitem label="THREADER" />
+			    <comboitem label="use own matrix..." /> -->
+			</combobox>
+			<label id="lbltxtbxMatrix" visible="false">
+				paste the Matrix that shall be used here:
+			</label>
+			<textbox id="txtbxMatrix"
+					rows="5" cols="300" visible="false" />
+			
+			<button id="btnSubmit"
+					label="submit"
+					onClick="createGotohJob(txtbxSequenceOne.getValue(), txtbxSequenceTwo.getValue(), cmbbxMatrix.getValue(), txtbxMatrix.getValue())"/>
+			</vlayout>
+	</tabpanel>
+	<tabpanel><!-- seitza -->
+	<window title="under construction" border="normal">
+		<vlayout>
+		<label>The tina - server is still under construction.</label>
+		<label>The content you want to access is not accessible yet.</label>
+		<label>We thank you for your patience.</label>
+		</vlayout>
+		</window>
+	</tabpanel>
 </tabpanels>
-
 </tabbox>
 </zk>
