@@ -1,9 +1,19 @@
 <?page title="tina - validation" contentType="text/html;charset=UTF-8"?>
 <zk>
-<window title="tina - validation" border="normal">
-<vlayout>
-<label>nothing to see here.</label>
-<label>yet.</label>
-</vlayout>
-</window>
+	<window title="tina - validation" border="normal">
+		<vlayout>
+			<label>
+				The tina - server is still under construction.
+			</label>
+			<label>
+				The content you want to access is not accessible yet due
+				to major time problems.
+			</label>
+			<label>
+				In case you want to sell us a flux compensator and some
+				atomic fuel please write a mail.
+			</label>
+			<label>We thank you for your patience.</label>
+		</vlayout>
+	</window>
 </zk>

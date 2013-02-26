@@ -12,12 +12,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import webservice.workers.CoordWorker;
-import webservice.workers.D123Worker;
-import webservice.workers.GotohWorker;
-import webservice.workers.KabschWorker;
-import webservice.workers.TinaWorker;
-import webservice.workers.Worker;
+import webservice.workers.*;
 
 /**
  * The JobWorker works on created jobs.
@@ -38,6 +33,7 @@ public class JobWorker {
 	 * @param args the first argument must be $JOB_DIR. No arguments must follow.
 	 */
 	public static void main (String[] args) {
+//		System.out.println("Line 36");
 		
 		String JOBS_DIR = args[0];
 		JobWorker[] workers = new JobWorker[WORKER_LIMIT];
@@ -126,6 +122,16 @@ public class JobWorker {
 			worker = new D123Worker(workingFile);
 		} else if (jobType.equalsIgnoreCase("kabsch")) {
 			worker = new KabschWorker(workingFile);
+		} else if (jobType.equalsIgnoreCase("huberdp")) {
+			worker = new HubeRDPWorker(workingFile);
+		} else if (jobType.equalsIgnoreCase("kerbsch")) {
+			worker = new KerbschWorker(workingFile);
+		} else if (jobType.equalsIgnoreCase("muster")) {
+			worker = new MusterWorker(workingFile);
+		} else if (jobType.equalsIgnoreCase("fragm3nt")) {
+			// TODO
+		} else if (jobType.equalsIgnoreCase("baseline")) {
+			// TODO
 		}
 		
 		// Do the actual work
@@ -174,8 +180,8 @@ public class JobWorker {
 	 * @return false if failed, else true
 	 */
 	static boolean move(String fromFile, String toFile) {
-		
 		boolean result = (copy(fromFile, toFile) && (new File(fromFile).delete()));
 		return result;
 	}
+	
 }

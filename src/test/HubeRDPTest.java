@@ -8,10 +8,22 @@
  ******************************************************************************/
 package test;
 
+import huberdp.HubeRDP;
+import huberdp.RDPPriorityQueue;
+import huberdp.RDPProblem;
+import huberdp.RDPSolutionTree;
+import huberdp.Scoring;
+import huberdp.oracles.RDPOracle;
+import huberdp.scoring.MagicScoring;
+import huberdp.scoring.RDPScoring;
+import huberdp.scoring.SimpleScoring;
+
 import java.text.DecimalFormat;
 import java.util.Locale;
 
 import bioinfo.alignment.SequenceAlignment;
+import bioinfo.alignment.gotoh.Gotoh;
+import bioinfo.alignment.gotoh.LocalSequenceGotoh;
 import bioinfo.alignment.matrices.QuasarMatrix;
 import bioinfo.energy.potential.SipplContactPotential;
 import bioinfo.energy.potential.hydrophobicity.HydrophobicityMatrix;
@@ -20,9 +32,6 @@ import bioinfo.proteins.PDBEntry;
 import bioinfo.proteins.PDBFileReader;
 import bioinfo.superpos.TMMain;
 import bioinfo.superpos.Transformation;
-import huberdp.*;
-import huberdp.oracles.*;
-import huberdp.scoring.*;
 
 /**
  * 
@@ -89,7 +98,7 @@ public class HubeRDPTest {
 				RDPScoring.GRID_DENSITY, RDPScoring.GRID_CLASH,
 				RDPScoring.MIN_CONTACT, TEMPDIR);
 
-		Scoring scoring = magicScoring;
+		Scoring scoring = rdpScoring;
 
 		rdp.setScoring(scoring);
 
@@ -104,8 +113,6 @@ public class HubeRDPTest {
 		SequenceAlignment rdpAlignment = t.getRoot().getTA().get(0)
 				.getThreading().asSequenceAlignment();
 
-		System.out.println(rdpAlignment.toStringVerbose());
-
 		// initialize TM stuff
 		TMMain tmmain = new TMMain();
 
@@ -116,12 +123,28 @@ public class HubeRDPTest {
 		Locale.setDefault(Locale.US);
 		DecimalFormat df = new DecimalFormat("0.0000");
 
+		System.out.println("RDP:");
+		System.out.println(rdpAlignment.toStringVerbose());
 		System.out.println("RDP-Scr\tRMSD\tGDT\tTM-Scr");
 		System.out.println(df.format(rdpAlignment.getScore()) + "\t"
 				+ df.format(rdptmtr.getRmsd()) + "\t"
 				+ df.format(rdptmtr.getGdt()) + "\t"
 				+ df.format(rdptmtr.getTmscore()));
 
+		Gotoh gotoh = new LocalSequenceGotoh(-10.0, -2.0, QuasarMatrix.DAYHOFF_MATRIX);
+		SequenceAlignment gotAlignment = (SequenceAlignment) gotoh.align(targetStructure.getSequence(), templateStructure.getSequence());
+		Transformation gottmtr = tmmain.calculateTransformation(gotAlignment,
+				templateStructure, targetStructure);
+		
+		System.out.println("Gotoh:");
+		System.out.println(gotAlignment.toStringVerbose());
+		System.out.println("gth-Scr\tRMSD\tGDT\tTM-Scr");
+		System.out.println(df.format(gotAlignment.getScore()) + "\t"
+				+ df.format(gottmtr.getRmsd()) + "\t"
+				+ df.format(gottmtr.getGdt()) + "\t"
+				+ df.format(gottmtr.getTmscore()));
+		
+		
 		// PREDICT STRUCTURE
 		// use CoordMapper on HubeRDP Alignment to construct Structure from
 		// Alignment
