@@ -18,6 +18,7 @@ public class BaselineWorker extends Worker {
 	private String filter;
 
 	private String result;
+	private String pdbfile;
 
 	public BaselineWorker(String jobFile) {
 		super(jobFile);
@@ -29,7 +30,7 @@ public class BaselineWorker extends Worker {
 		readFile();
 
 		try {
-			String workingDir = "/home/h/huberste/gobi/abgabe";
+			String workingDir = "/home/h/huberste/gobi/abgabe/";
 			String arg1 = "-jar";
 			String arg2 = "baseline.jar";
 			String arg3 = "--ali";
@@ -38,27 +39,42 @@ public class BaselineWorker extends Worker {
 			String arg6 = filter;
 			String arg7 = "--ids";
 			String arg8 = "/home/h/huberste/gobi/data/cathscop.ids";
-			String arg9 = "-mss";
-			String arg10 = "/home/h/huberste/gobi/data/cutoff05";
+			String arg9 = "--mss";
+			String arg10 = "/home/h/huberste/gobi/data/cutoff05/";
 			String arg11 = "--pdb";
-			String arg12 = "/home/h/huberste/gobi/data/pdb";
+			String arg12 = "/home/h/huberste/gobi/data/pdb/";
 			String arg13 = "-o";
 			String arg14 = DONE_FILE + ".pdb";
 
+			System.out.println("java"+ arg1+ arg2+ arg3+
+					arg4+ arg5+ arg6+ arg7+ arg8+ arg9+ arg10+ arg11+ arg12+
+					arg13+ arg14);
+			
 			ProcessBuilder pb = new ProcessBuilder("java", arg1, arg2, arg3,
 					arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12,
 					arg13, arg14);
 			pb.directory(new File(workingDir));
 
-			result = arg14;
+			pdbfile = arg14;
+			result = "";
 			Process proc = pb.start();
-
 			BufferedInputStream outstr = new BufferedInputStream(
+					proc.getInputStream());
+			BufferedInputStream errstr = new BufferedInputStream(
 					proc.getInputStream());
 			byte[] buf = new byte[1024];
 			int nr = outstr.read(buf);
 			while (nr != -1) {
-				// DO NOTHING!
+				for (int i = 0; i < nr; i++) {
+					result += (char) buf[i];
+				}
+				nr = outstr.read(buf);
+			}
+
+			nr = errstr.read(buf);
+			while (nr != -1) {
+				System.err.print(buf);
+				nr = outstr.read(buf);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -79,10 +95,11 @@ public class BaselineWorker extends Worker {
 				if (line.startsWith("ALIGNMENT=")) {
 					String alignment = line.substring(10);
 					line = from.readLine();
-					alignment += "\n"+line;
+					alignment += "\n" + line;
 					line = from.readLine();
-					alignment += "\n"+line + "\n";
-					BufferedWriter bw = new BufferedWriter (new FileWriter(DONE_FILE + ".ali"));
+					alignment += "\n" + line + "\n";
+					BufferedWriter bw = new BufferedWriter(new FileWriter(
+							DONE_FILE + ".ali"));
 					bw.write(alignment);
 					bw.close();
 					ali = DONE_FILE + ".ali";
@@ -95,7 +112,10 @@ public class BaselineWorker extends Worker {
 			e.printStackTrace();
 		} finally {
 			try {
-				from.close();
+				if (from != null) {
+					from.close();
+					from = null;
+				}
 			} catch (IOException e) {
 				System.err
 						.println("Error while trying close " + JOB_FILE + ".");
@@ -116,6 +136,7 @@ public class BaselineWorker extends Worker {
 			while ((line = from.readLine()) != null) {
 				to.write(line + "\n");
 			}
+			to.write("PDB_OUTPUT=" + pdbfile + "\n");
 			to.write("RESULT=\n");
 			to.write(result);
 		} catch (IOException e) {

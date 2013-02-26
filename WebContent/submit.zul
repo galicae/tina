@@ -311,7 +311,7 @@
 						</vlayout>
 					</window>
 					<hlayout>
-						<vlayout>
+						<vlayout> <!-- fragm3nt -->
 							<label>fragm3nt</label>
 							<label>
 								Protein backbone prediction software
@@ -332,7 +332,7 @@
 								label="submit"
 								onClick="createFragmentJob(txtbxFragmentSequence.getValue())" />
 						</vlayout>
-						<vlayout>
+						<vlayout> <!-- baseline -->
 							<label>baseline</label>
 							<label>
 								Baseline loop prediction software based
@@ -345,7 +345,7 @@
 							<label>
 								CoreAlignment for loop prediction.
 							</label>
-							<textbox id="txtbxBaselineIDs" rows="5"
+							<textbox id="txtbxBaselineAli" rows="5"
 								cols="75" />
 							<combobox id="cmbbxBaselineFilter"
 								readonly="true" autodrop="true" value="no filter">
@@ -355,7 +355,7 @@
 							</combobox>
 							<button id="btnSubmitBaseline"
 								label="submit"
-								onClick="createBaselineJob(txtbxBaselineIDs.getValue(), cmbbxBaselineFilter.getValue())" />
+								onClick="createBaselineJob(txtbxBaselineAli.getValue(), cmbbxBaselineFilter.getValue())" />
 						</vlayout>
 					</hlayout>
 				</vlayout>

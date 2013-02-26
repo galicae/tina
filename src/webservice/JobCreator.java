@@ -117,7 +117,7 @@ public class JobCreator {
 			} else if (jobType.equalsIgnoreCase("fragm3nt")) {
 				out.write("QUERY_SEQUENCE=" + args[3] + "\n");
 			} else if (jobType.equalsIgnoreCase("baseline")) {
-				out.write("ALIGNMNET= " + args[3] + "\n");
+				out.write("ALIGNMENT=" + args[3] + "\n");
 				out.write("FILTER=" + args[4] + "\n");
 			}
 
@@ -151,27 +151,27 @@ public class JobCreator {
 				// + pb.command());
 				// end debugging
 
-				pb.start();
-				// Process proc = pb.start();
-				//
-				// // TODO debugging: Give error stream! GIVE!
-				// BufferedInputStream err = new BufferedInputStream(
-				// proc.getErrorStream());
-				// BufferedInputStream outstr = new BufferedInputStream(
-				// proc.getInputStream());
-				// // print output
-				// byte[] buf = new byte[1024];
-				// int nr = outstr.read(buf);
-				// while (nr != -1) {
-				// System.out.write(buf, 0, nr);
-				// nr = outstr.read(buf);
-				// }
-				// nr = err.read(buf);
-				// while (nr != -1) {
-				// System.err.write(buf, 0, nr);
-				// nr = err.read(buf);
-				// }
-				// end debugging
+				 pb.start();
+
+//				// debugging: fetch error / output stream
+//				Process proc = pb.start();
+//				BufferedInputStream err = new BufferedInputStream(
+//						proc.getErrorStream());
+//				BufferedInputStream outstr = new BufferedInputStream(
+//						proc.getInputStream());
+//				// print output
+//				byte[] buf = new byte[1024];
+//				int nr = outstr.read(buf);
+//				while (nr != -1) {
+//					System.out.write(buf, 0, nr);
+//					nr = outstr.read(buf);
+//				}
+//				nr = err.read(buf);
+//				while (nr != -1) {
+//					System.err.write(buf, 0, nr);
+//					nr = err.read(buf);
+//				}
+//				// end debugging
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

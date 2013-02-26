@@ -116,11 +116,9 @@ public class HubeRDPWorker extends Worker {
 			from = new BufferedReader(new FileReader(JOB_FILE));
 			while ((line = from.readLine()) != null) {
 				if (line.startsWith("TEMPLATE_ID=")) {
-					String[] temp = line.substring(13).split("=");
-					template = temp[1];
+					template = line.substring(12);
 				} else if (line.startsWith("TARGET_ID=")) {
-					String[] temp = line.substring(13).split("=");
-					target = temp[1];
+					target = line.substring(10);
 				}
 			}
 		} catch (IOException e) {

@@ -16,7 +16,7 @@ public class Fragm3ntWorker extends Worker {
 
 	private String query;
 
-	private String result;
+	private String pdb_output;
 
 	public Fragm3ntWorker(String jobFile) {
 		super(jobFile);
@@ -42,7 +42,7 @@ public class Fragm3ntWorker extends Worker {
 					arg4, arg5, arg6, arg7, arg8);
 			pb.directory(new File(workingDir));
 
-			result = arg6;
+			pdb_output = arg6;
 			Process proc = pb.start();
 
 			BufferedInputStream outstr = new BufferedInputStream(
@@ -50,7 +50,7 @@ public class Fragm3ntWorker extends Worker {
 			byte[] buf = new byte[1024];
 			int nr = outstr.read(buf);
 			while (nr != -1) {
-				// DO NOTHING
+				nr = outstr.read(buf);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -99,7 +99,7 @@ public class Fragm3ntWorker extends Worker {
 				to.write(line + "\n");
 			}
 			to.write("RESULT=\n");
-			to.write(result);
+			to.write(pdb_output);
 		} catch (IOException e) {
 			System.err.println("Error while trying to copy " + JOB_FILE
 					+ " to " + DONE_FILE + ".");
