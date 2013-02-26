@@ -77,12 +77,13 @@
 		args[3] = strSeq;
 		showMessage(JobCreator.createJob(args));
 	}
-	void createBaselineJob(String strSeq) {
+	void createBaselineJob(String strAli, String strFilter) {
 		String[] args = new String[4];
 		args[0] = JOBS_DIR;
 		args[1] = WEBAPP_HOME;
 		args[2] = "baseline";
-		args[3] = strSeq;
+		args[3] = strAli;
+		args[4] = strFilter;
 		showMessage(JobCreator.createJob(args));
 	}
 ]]>
@@ -240,7 +241,9 @@
 					</window>
 					<vlayout>
 						<label>HubeRDP</label>
-						<label>HubeRDP is an implementation of the RDP.</label>
+						<label>
+							HubeRDP is an implementation of the RDP.
+						</label>
 						<label>Sequence One (id)</label>
 						<textbox id="txtbxHubeRDPTmplt" rows="1"
 							cols="25" />
@@ -319,10 +322,12 @@
 								performance and time pressure.
 							</label>
 							<label>
-								Sequence to be predicted (id:seq)
+								Sequence to be predicted (no ID, only
+								AAs).
 							</label>
+							<label>e.g. "ASDFASDFASDFASDFASDF"</label>
 							<textbox id="txtbxFragmentSequence" rows="1"
-								cols="50" />
+								cols="75" />
 							<button id="btnSubmitFragment"
 								label="submit"
 								onClick="createFragmentJob(txtbxFragmentSequence.getValue())" />
@@ -331,20 +336,26 @@
 							<label>baseline</label>
 							<label>
 								Baseline loop prediction software based
-								on a multiple assembly.
+								on a multiple sequence assembly.
 							</label>
 							<label>
 								Developement abandoned due to poor
 								performance and time pressure.
 							</label>
 							<label>
-								Sequences to be predicted (id:seq)
+								CoreAlignment for loop prediction.
 							</label>
 							<textbox id="txtbxBaselineIDs" rows="5"
-								cols="50" />
+								cols="75" />
+							<combobox id="cmbbxBaselineFilter"
+								readonly="true" autodrop="true" value="no filter">
+								<comboitem label="no filter" />
+								<comboitem label="family" />
+								<comboitem label="superfamily" />
+							</combobox>
 							<button id="btnSubmitBaseline"
 								label="submit"
-								onClick="createBaselineJob(txtbxBaselineIDs.getValue())" />
+								onClick="createBaselineJob(txtbxBaselineIDs.getValue(), cmbbxBaselineFilter.getValue())" />
 						</vlayout>
 					</hlayout>
 				</vlayout>
